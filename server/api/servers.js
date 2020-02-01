@@ -7,7 +7,7 @@ steps to setup the config:
 1. createdb nestegg
 2. psql
 3. \c nestegg
-4. CREATE SUPERUSER yourname WITH PASSWORD 'yourname';
+4. CREATE SUPERUSER yourname WITH PASSWORD 'yourpassword';
 */
 const client = new pg.Client(config)
 client.connect()
