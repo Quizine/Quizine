@@ -2,23 +2,24 @@ const {normalDistributionFunc} = require('./utilities')
 
 //for seeding waiters
 let servers = [
-  {name: 'Fred Reynolds', sex: 'male', age: 27},
-  {name: 'Cynthia Klein', sex: 'female', age: 31},
-  {name: 'Adam Essaire', sex: 'male', age: 24},
-  {name: 'Paula Davidson', sex: 'female', age: 34},
-  {name: 'Nicole Eastman', sex: 'female', age: 26},
-  {name: 'Leo Jackson', sex: 'male', age: 37},
-  {name: 'Erik Jenson', sex: 'male', age: 32},
-  {name: 'John Cho', sex: 'male', age: 21},
-  {name: 'Tina Smith', sex: 'female', age: 28},
-  {name: 'Desi Shunturova', sex: 'female', age: 32},
-  {name: 'Adam Vare', sex: 'male', age: 22},
-  {name: 'Slava Adronau', sex: 'male', age: 29}
+  {id: 1, name: 'Fred Reynolds', sex: 'male', age: 27},
+  {id: 2, name: 'Cynthia Klein', sex: 'female', age: 31},
+  {id: 3, name: 'Adam Essaire', sex: 'male', age: 24},
+  {id: 4, name: 'Paula Davidson', sex: 'female', age: 34},
+  {id: 5, name: 'Nicole Eastman', sex: 'female', age: 26},
+  {id: 6, name: 'Leo Jackson', sex: 'male', age: 37},
+  {id: 7, name: 'Erik Jenson', sex: 'male', age: 32},
+  {id: 8, name: 'John Cho', sex: 'male', age: 21},
+  {id: 9, name: 'Tina Smith', sex: 'female', age: 28},
+  {id: 10, name: 'Desi Shunturova', sex: 'female', age: 32},
+  {id: 11, name: 'Adam Vare', sex: 'male', age: 22},
+  {id: 12, name: 'Slava Adronau', sex: 'male', age: 29}
 ]
 
 //for seeding menu
 let menu = [
   {
+    id: 1,
     menuName: 'lobster',
     beverageType: null,
     foodType: 'main',
@@ -26,6 +27,7 @@ let menu = [
     price: 3200
   },
   {
+    id: 2,
     menuName: 'steak',
     beverageType: null,
     foodType: 'main',
@@ -33,6 +35,7 @@ let menu = [
     price: 4500
   },
   {
+    id: 3,
     menuName: 'chicken',
     beverageType: null,
     foodType: 'main',
@@ -40,6 +43,7 @@ let menu = [
     price: 2700
   },
   {
+    id: 4,
     menuName: 'pasta',
     beverageType: null,
     foodType: 'main',
@@ -47,6 +51,7 @@ let menu = [
     price: 2100
   },
   {
+    id: 5,
     menuName: 'lobster',
     beverageType: null,
     foodType: 'main',
@@ -54,6 +59,7 @@ let menu = [
     price: 2200
   },
   {
+    id: 6,
     menuName: 'steak',
     beverageType: null,
     foodType: 'main',
@@ -61,6 +67,7 @@ let menu = [
     price: 3500
   },
   {
+    id: 7,
     menuName: 'chicken',
     beverageType: null,
     foodType: 'main',
@@ -68,6 +75,7 @@ let menu = [
     price: 1700
   },
   {
+    id: 8,
     menuName: 'pasta',
     beverageType: null,
     foodType: 'main',
@@ -75,6 +83,7 @@ let menu = [
     price: 1100
   },
   {
+    id: 9,
     menuName: 'springRolls',
     beverageType: null,
     foodType: 'appetizer',
@@ -82,6 +91,7 @@ let menu = [
     price: 1700
   },
   {
+    id: 10,
     menuName: 'deviledEggs',
     beverageType: null,
     foodType: 'appetizer',
@@ -89,6 +99,7 @@ let menu = [
     price: 1500
   },
   {
+    id: 11,
     menuName: 'soup',
     beverageType: null,
     foodType: 'appetizer',
@@ -96,6 +107,7 @@ let menu = [
     price: 1800
   },
   {
+    id: 12,
     menuName: 'salad',
     beverageType: null,
     foodType: 'appetizer',
@@ -103,6 +115,7 @@ let menu = [
     price: 1900
   },
   {
+    id: 13,
     menuName: 'springRolls',
     beverageType: null,
     foodType: 'appetizer',
@@ -110,6 +123,7 @@ let menu = [
     price: 1200
   },
   {
+    id: 14,
     menuName: 'deviledEggs',
     beverageType: null,
     foodType: 'appetizer',
@@ -117,6 +131,7 @@ let menu = [
     price: 1000
   },
   {
+    id: 15,
     menuName: 'soup',
     beverageType: null,
     foodType: 'appetizer',
@@ -124,6 +139,7 @@ let menu = [
     price: 1300
   },
   {
+    id: 16,
     menuName: 'salad',
     beverageType: null,
     foodType: 'appetizer',
@@ -131,6 +147,7 @@ let menu = [
     price: 1400
   },
   {
+    id: 17,
     menuName: 'chocolateCake',
     beverageType: null,
     foodType: 'dessert',
@@ -138,6 +155,7 @@ let menu = [
     price: 1800
   },
   {
+    id: 18,
     menuName: 'tiramisu',
     beverageType: null,
     foodType: 'dessert',
@@ -145,6 +163,7 @@ let menu = [
     price: 1900
   },
   {
+    id: 19,
     menuName: 'icecream',
     beverageType: null,
     foodType: 'dessert',
@@ -152,6 +171,7 @@ let menu = [
     price: 1400
   },
   {
+    id: 20,
     menuName: 'fruit',
     beverageType: null,
     foodType: 'dessert',
@@ -159,6 +179,7 @@ let menu = [
     price: 1500
   },
   {
+    id: 21,
     menuName: 'chocolateCake',
     beverageType: null,
     foodType: 'dessert',
@@ -166,6 +187,7 @@ let menu = [
     price: 1300
   },
   {
+    id: 22,
     menuName: 'tiramisu',
     beverageType: null,
     foodType: 'dessert',
@@ -173,6 +195,7 @@ let menu = [
     price: 1400
   },
   {
+    id: 23,
     menuName: 'icecream',
     beverageType: null,
     foodType: 'dessert',
@@ -180,6 +203,7 @@ let menu = [
     price: 900
   },
   {
+    id: 24,
     menuName: 'fruit',
     beverageType: null,
     foodType: 'dessert',
@@ -187,29 +211,33 @@ let menu = [
     price: 1000
   },
   {
+    id: 25,
     menuName: 'coke',
-    beverageType: 'nonAlcoholic',
+    beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
     price: 500
   },
   {
+    id: 26,
     menuName: 'sprite',
-    beverageType: 'nonAlcoholic',
+    beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
     price: 400
   },
   {
+    id: 27,
     menuName: 'redWine',
-    beverageType: 'alcoholic',
+    beverageType: 'alcohol',
     foodType: null,
     mealType: null,
     price: 1200
   },
   {
+    id: 28,
     menuName: 'whiteWine',
-    beverageType: 'alcoholic',
+    beverageType: 'alcohol',
     foodType: null,
     mealType: null,
     price: 1300
@@ -254,9 +282,71 @@ let randomizeTime = function(mealType) {
   return time
 }
 
-// let randomizeMenu = function() {
+const pickMenuItem = function(menu) {
+  let menuIndex = Math.floor(Math.random() * menu.length)
+  let menuItem = menu[menuIndex]
+  return menuItem
+}
 
-// }
+let randomizeMenuOrder = function(mealType, isFood, type) {
+  let selectedList = []
+  if (isFood) {
+    for (let i = 0; i < menu.length; i++) {
+      if (menu[i].mealType === mealType && menu[i].foodType === type) {
+        selectedList.push(menu[i])
+      }
+    }
+  }
+  else {
+    for (let i = 0; i < menu.length; i++) {
+      if (menu[i].mealType === null && menu[i].beverageType === type) {
+        selectedList.push(menu[i])
+      }
+    }
+  }
+  selectedMenu = pickMenuItem(selectedList)
+
+  return selectedMenu.id
+}
+
+let randomizeSinglePersonPurchase = function (orderHour) {
+  let personOrder = []
+  let mealType
+  let foodType = ['appetizer', 'dessert']
+  let beverageType = ['alcohol', 'nonAlcohol']
+  if (orderHour < 16) {
+    mealType = 'lunch'
+  }
+  else {
+    mealType = 'dinner'
+  }
+  personOrder.push(randomizeMenuOrder(mealType, true, 'main'))
+  for (let i = 0; i < foodType.length; i++) {
+    let foodRandomNumber = Math.random()
+    if (foodRandomNumber < 0.5) {
+      personOrder.push(randomizeMenuOrder(mealType, true, foodType[i]))
+    }
+  }
+  let beverageRandomNumber = Math.random()
+  if (mealType === 'lunch') {
+    if (beverageRandomNumber < 0.8) {
+      personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+    }
+    else {
+      personOrder.push(randomizeMenuOrder(null, false ,beverageType[0]))
+    }
+  }
+  else if (mealType === 'dinner') {
+    if (beverageRandomNumber < 0.2) {
+      personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+    }
+    else {
+      personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
+    }
+  }
+  return personOrder
+}
+
 
 const generatePurchase = function() {
   let meal
@@ -286,36 +376,54 @@ const generatePurchase = function() {
 
   purchaseData.serverId = selectRandomServer().serverId
 
-  // make sure to round spend amounts
-  purchaseData.subtotal = Math.round(
-    Math.max(5000 + 2000 * normalDistributionFunc(), 5)
-  ) //REVISIT
-
-  // randomly generate number of guests (probably skewed so there's more parties of 2-4 than 5-8)
-  // use number of guests as mean of items selected
-
-  // if you want to reflect what they bought, build a menu object and select a random number of items from it and use their prices
-  // make alc. drinks more commonly bought in drinking times
-  // make sure menu items are in your database...
-
-  //   let menu = [{lobster: {id: 1, price: 32, is_beverage: false}}]
+  let numGuests
+  let guestRandomNumber = Math.random()
+  if (guestRandomNumber > 0.3) {
+    numGuests = Math.floor(Math.random() * (4 - 2 + 1)) + 2
+  }
+  else {
+    numGuests = Math.floor(Math.random() * (8 - 5 + 1)) + 5
+  }
+  purchaseData.numGuests = numGuests
+  purchaseData.menuOrderList = []
+  for (let i = 1; i <= numGuests; i++) {
+    purchaseData.menuOrderList = purchaseData.menuOrderList.concat(randomizeSinglePersonPurchase(hour))
+  }
+  let hashOfMenuOrderList = {}
+  menu.forEach(item => {
+    hashOfMenuOrderList[item.id] = item.price
+  })
+  purchaseData.subtotal = purchaseData.menuOrderList.reduce((acc, currVal) => {
+    return acc + hashOfMenuOrderList[currVal]
+  },0)
 
   let tipPercentage =
     (20 + 4 * normalDistributionFunc()) *
     serverSkill[purchaseData.serverId - 1].skill_level
 
-  purchaseData.tip = tipPercentage / 100 * purchaseData.subtotal
-  purchaseData.tax = 0.1 * purchaseData.subtotal
+  purchaseData.tip = Math.floor(tipPercentage / 100 * purchaseData.subtotal)
+  purchaseData.tax = Math.floor(0.1 * purchaseData.subtotal)
   purchaseData.total =
     purchaseData.subtotal + purchaseData.tip + purchaseData.tax
   return purchaseData
 }
 
 let purchaseList = []
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 20; i++) {
   let potentialPurchase = generatePurchase()
-
+  potentialPurchase.id = i
   // if purchase on holiday, 40% chance of NOT pushing it into list...
   purchaseList.push(potentialPurchase)
 }
-console.log(purchaseList)
+
+let orderMenuTable = []
+
+
+for (let i = 0; i < purchaseList.length; i++) {
+  let singlePurchase = purchaseList[i]
+  for (let j = 0; j < singlePurchase.menuOrderList.length; j++) {
+    let singleMenuId = singlePurchase.menuOrderList[j]
+    let singleOrderPerMenu = {'orderId': singlePurchase.id, 'menuId': singleMenuId}
+    orderMenuTable.push(singleOrderPerMenu)
+  }
+}
