@@ -8,18 +8,18 @@ const Menu = db.define('menu', {
   },
   beverageType: {
     type: Sequelize.ENUM,
-    allowNull: false,
-    values: ['alcoholic', 'nonAlcoholic', null]
+    values: ['alcoholic', 'nonAlcoholic'],
+    allowNull: true
   },
   foodType: {
     type: Sequelize.ENUM,
-    allowNull: false,
-    values: ['appetizer', 'main', 'dessert', null]
+    values: ['appetizer', 'main', 'dessert'],
+    allowNull: true
   },
   mealType: {
-    allowNull: false,
     type: Sequelize.ENUM,
-    values: ['lunch', 'dinner', null]
+    values: ['lunch', 'dinner'],
+    allowNull: true
   },
   price: {
     type: Sequelize.INTEGER,
