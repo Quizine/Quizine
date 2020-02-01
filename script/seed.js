@@ -1,7 +1,29 @@
 'use strict'
 
 const db = require('../server/db')
-const {User} = require('../server/db/models')
+const {
+  User,
+  Restaurant,
+  Order,
+  Waiter,
+  Menu,
+  menuOrder
+} = require('../server/db/models')
+
+const {
+  server,
+  menu,
+  purchaseList,
+  orderMenuTable
+} = require('../databaseSeedScripts/orderSeedScript')
+
+let restaurant = [
+  {
+    restaurantName: 'Pastis',
+    category: 'French',
+    location: '52 Gansevoort St, New York, NY 10014'
+  }
+]
 
 async function seed() {
   await db.sync({force: true})
@@ -11,8 +33,12 @@ async function seed() {
     User.create({email: 'cody@email.com', password: '123'}),
     User.create({email: 'murphy@email.com', password: '123'})
   ])
+  const restaurants = await Restaurant.bulkCreate(restaurant)
+  const waiters = await Waiter.bulkCreate(server)
+  const menus = await Menu.bulkCreate(menu)
+  const orders = await Order.bulkCreate(purchaseList)
+  const menuOrders = await menuOrder.bulkCreate(orderMenuTable)
 
-  console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)
 }
 

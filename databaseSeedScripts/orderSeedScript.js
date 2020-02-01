@@ -1,7 +1,7 @@
 const {normalDistributionFunc} = require('./utilities')
 
 //for seeding waiters
-let servers = [
+let server = [
   {id: 1, name: 'Fred Reynolds', sex: 'male', age: 27},
   {id: 2, name: 'Cynthia Klein', sex: 'female', age: 31},
   {id: 3, name: 'Adam Essaire', sex: 'male', age: 24},
@@ -296,8 +296,7 @@ let randomizeMenuOrder = function(mealType, isFood, type) {
         selectedList.push(menu[i])
       }
     }
-  }
-  else {
+  } else {
     for (let i = 0; i < menu.length; i++) {
       if (menu[i].mealType === null && menu[i].beverageType === type) {
         selectedList.push(menu[i])
@@ -309,15 +308,14 @@ let randomizeMenuOrder = function(mealType, isFood, type) {
   return selectedMenu.id
 }
 
-let randomizeSinglePersonPurchase = function (orderHour) {
+let randomizeSinglePersonPurchase = function(orderHour) {
   let personOrder = []
   let mealType
   let foodType = ['appetizer', 'dessert']
   let beverageType = ['alcohol', 'nonAlcohol']
   if (orderHour < 16) {
     mealType = 'lunch'
-  }
-  else {
+  } else {
     mealType = 'dinner'
   }
   personOrder.push(randomizeMenuOrder(mealType, true, 'main'))
@@ -331,22 +329,18 @@ let randomizeSinglePersonPurchase = function (orderHour) {
   if (mealType === 'lunch') {
     if (beverageRandomNumber < 0.8) {
       personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+    } else {
+      personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
     }
-    else {
-      personOrder.push(randomizeMenuOrder(null, false ,beverageType[0]))
-    }
-  }
-  else if (mealType === 'dinner') {
+  } else if (mealType === 'dinner') {
     if (beverageRandomNumber < 0.2) {
       personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
-    }
-    else {
+    } else {
       personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
     }
   }
   return personOrder
 }
-
 
 const generatePurchase = function() {
   let meal
@@ -380,14 +374,15 @@ const generatePurchase = function() {
   let guestRandomNumber = Math.random()
   if (guestRandomNumber > 0.3) {
     numGuests = Math.floor(Math.random() * (4 - 2 + 1)) + 2
-  }
-  else {
+  } else {
     numGuests = Math.floor(Math.random() * (8 - 5 + 1)) + 5
   }
   purchaseData.numGuests = numGuests
   purchaseData.menuOrderList = []
   for (let i = 1; i <= numGuests; i++) {
-    purchaseData.menuOrderList = purchaseData.menuOrderList.concat(randomizeSinglePersonPurchase(hour))
+    purchaseData.menuOrderList = purchaseData.menuOrderList.concat(
+      randomizeSinglePersonPurchase(hour)
+    )
   }
   let hashOfMenuOrderList = {}
   menu.forEach(item => {
@@ -395,7 +390,7 @@ const generatePurchase = function() {
   })
   purchaseData.subtotal = purchaseData.menuOrderList.reduce((acc, currVal) => {
     return acc + hashOfMenuOrderList[currVal]
-  },0)
+  }, 0)
 
   let tipPercentage =
     (20 + 4 * normalDistributionFunc()) *
@@ -417,12 +412,21 @@ for (let i = 0; i < 20; i++) {
 
 let orderMenuTable = []
 
-
 for (let i = 0; i < purchaseList.length; i++) {
   let singlePurchase = purchaseList[i]
   for (let j = 0; j < singlePurchase.menuOrderList.length; j++) {
     let singleMenuId = singlePurchase.menuOrderList[j]
-    let singleOrderPerMenu = {'orderId': singlePurchase.id, 'menuId': singleMenuId}
+    let singleOrderPerMenu = {orderId: singlePurchase.id, menuId: singleMenuId}
     orderMenuTable.push(singleOrderPerMenu)
   }
+  delete singlePurchase.menuOrderList
+}
+
+console.log(orderMenuTable)
+
+module.exports = {
+  server,
+  menu,
+  purchaseList,
+  orderMenuTable
 }
