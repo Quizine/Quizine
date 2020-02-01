@@ -17,9 +17,9 @@ module.exports = router
 router.get('/', async (req, res, next) => {
   try {
     // callback
-    const allServers = await client.query('SELECT * FROM SERVERS')
-    console.log(`here are all servers: `, allServers)
-    res.json(allServers)
+    const allWaiters = await client.query('SELECT * FROM WAITERS')
+    console.log(`here are all waiters: `, allWaiters)
+    res.json(allWaiters)
   } catch (error) {
     next(error)
   }
