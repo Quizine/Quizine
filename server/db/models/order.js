@@ -6,7 +6,7 @@ const Order = db.define('order', {
     type: Sequelize.DATE,
     allowNull: false
   },
-  subTotal: {
+  subtotal: {
     type: Sequelize.INTEGER,
     allowNull: false
   },
@@ -24,11 +24,6 @@ const Order = db.define('order', {
   },
   numGuests: {
     type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  paymentMethod: {
-    type: Sequelize.ENUM,
-    values: ['cash', 'credit', 'debit'], //NOT SURE WHAT ENUM VALUES EVERYONE WANTS
     allowNull: false
   }
 })

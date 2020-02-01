@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const Server = db.define('server', {
+const Waiter = db.define('server', {
   name: {
     type: Sequelize.STRING,
     allowNull: false
@@ -17,4 +17,4 @@ const Server = db.define('server', {
   }
 })
 
-module.exports = Server
+module.exports = Waiter
