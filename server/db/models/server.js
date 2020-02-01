@@ -12,8 +12,8 @@ const Server = db.define('server', {
   },
   sex: {
     type: Sequelize.ENUM,
-    allowNull: false,
-    values: ['male', 'female']
+    values: ['male', 'female'],
+    allowNull: true
   }
 })
 
