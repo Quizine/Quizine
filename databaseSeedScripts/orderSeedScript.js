@@ -412,7 +412,6 @@ let purchaseList = []
 for (let i = 0; i < 20; i++) {
   let potentialPurchase = generatePurchase()
   potentialPurchase.id = i
-  // if purchase on holiday, 40% chance of NOT pushing it into list...
   purchaseList.push(potentialPurchase)
 }
 
