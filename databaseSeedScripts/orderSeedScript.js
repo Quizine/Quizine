@@ -369,7 +369,7 @@ const generatePurchase = function() {
 
   purchaseData.timeOfPurchase = dateOfPurchase
 
-  purchaseData.serverId = selectRandomServer().serverId
+  purchaseData.waiterId = selectRandomServer().serverId
 
   let numGuests
   let guestRandomNumber = Math.random()
@@ -395,7 +395,7 @@ const generatePurchase = function() {
 
   let tipPercentage =
     (20 + 4 * normalDistributionFunc()) *
-    serverSkill[purchaseData.serverId - 1].skill_level
+    serverSkill[purchaseData.waiterId - 1].skill_level
 
   purchaseData.tip = Math.floor(tipPercentage / 100 * purchaseData.subtotal)
   purchaseData.tax = Math.floor(0.1 * purchaseData.subtotal)
@@ -422,8 +422,9 @@ for (let i = 0; i < purchaseList.length; i++) {
   }
   delete singlePurchase.menuOrderList
 }
+// console.log(purchaseList)
 
-// console.log(orderMenuTable)
+console.log(orderMenuTable)
 module.exports = {
   server,
   menu,
