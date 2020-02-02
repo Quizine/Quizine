@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-
+import {SideBar} from './'
 /**
  * COMPONENT
  */
@@ -9,7 +9,10 @@ export const UserHome = props => {
   const {email} = props
 
   return (
-    <div>
+    <div className="home-container">
+      <div className="sidebar-container">
+        <SideBar />
+      </div>
       <h3>Welcome, {email}</h3>
     </div>
   )

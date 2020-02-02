@@ -3,7 +3,7 @@ const Restaurant = require('./restaurant')
 const Order = require('./order')
 const Waiter = require('./waiter')
 const Menu = require('./menu')
-const {menuOrder} = require('./menu_order')
+const {MenuOrder} = require('./menu_order')
 
 /**
  * If we had any associations to make, this would be a great place to put them!

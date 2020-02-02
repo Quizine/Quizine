@@ -23,6 +23,7 @@ class Routes extends Component {
         <Route path="/signup" component={Signup} />
         <Route path="/summary" component={Summary} />
         <Route path="/newquery" component={NewQuery} />
+
         {isLoggedIn && (
           <Switch>
             {/* Routes placed here are only available after logging in */}

@@ -19,3 +19,17 @@ form div {
   margin: 1em;
   display: inline-block;
 }
+/* -----------SIDEBAR COMPONENT--------------------- */
+.home-container {
+  display: flex;
+}
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  position: sticky;
+  width: 10vw;
+  height: 90vh;
+  /* margin-top: 3em; */
+  background-color: darkgrey;
+}
