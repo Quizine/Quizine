@@ -3,18 +3,18 @@ const {normalDistributionFunc} = require('./utilities')
 
 //for seeding waiters
 let server = [
-  {id: 1, name: 'Fred Reynolds', sex: 'male', age: 27},
-  {id: 2, name: 'Cynthia Klein', sex: 'female', age: 31},
-  {id: 3, name: 'Adam Essaire', sex: 'male', age: 24},
-  {id: 4, name: 'Paula Davidson', sex: 'female', age: 34},
-  {id: 5, name: 'Nicole Eastman', sex: 'female', age: 26},
-  {id: 6, name: 'Leo Jackson', sex: 'male', age: 37},
-  {id: 7, name: 'Erik Jenson', sex: 'male', age: 32},
-  {id: 8, name: 'John Cho', sex: 'male', age: 21},
-  {id: 9, name: 'Tina Smith', sex: 'female', age: 28},
-  {id: 10, name: 'Desi Shunturova', sex: 'female', age: 32},
-  {id: 11, name: 'Adam Vare', sex: 'male', age: 22},
-  {id: 12, name: 'Slava Adronau', sex: 'male', age: 29}
+  {id: 1, name: 'Fred Reynolds', sex: 'male', age: 27, restaurantId: 1},
+  {id: 2, name: 'Cynthia Klein', sex: 'female', age: 31, restaurantId: 1},
+  {id: 3, name: 'Adam Essaire', sex: 'male', age: 24, restaurantId: 1},
+  {id: 4, name: 'Paula Davidson', sex: 'female', age: 34, restaurantId: 1},
+  {id: 5, name: 'Nicole Eastman', sex: 'female', age: 26, restaurantId: 1},
+  {id: 6, name: 'Leo Jackson', sex: 'male', age: 37, restaurantId: 1},
+  {id: 7, name: 'Erik Jenson', sex: 'male', age: 32, restaurantId: 1},
+  {id: 8, name: 'John Cho', sex: 'male', age: 21, restaurantId: 1},
+  {id: 9, name: 'Tina Smith', sex: 'female', age: 28, restaurantId: 1},
+  {id: 10, name: 'Desi Shunturova', sex: 'female', age: 32, restaurantId: 1},
+  {id: 11, name: 'Adam Vare', sex: 'male', age: 22, restaurantId: 1},
+  {id: 12, name: 'Slava Adronau', sex: 'male', age: 29, restaurantId: 1}
 ]
 
 //for seeding menu
@@ -25,7 +25,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
-    price: 3200
+    price: 3200,
+    restaurantId: 1
   },
   {
     id: 2,
@@ -33,7 +34,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
-    price: 4500
+    price: 4500,
+    restaurantId: 1
   },
   {
     id: 3,
@@ -41,7 +43,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
-    price: 2700
+    price: 2700,
+    restaurantId: 1
   },
   {
     id: 4,
@@ -49,7 +52,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
-    price: 2100
+    price: 2100,
+    restaurantId: 1
   },
   {
     id: 5,
@@ -57,7 +61,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
-    price: 2200
+    price: 2200,
+    restaurantId: 1
   },
   {
     id: 6,
@@ -65,7 +70,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
-    price: 3500
+    price: 3500,
+    restaurantId: 1
   },
   {
     id: 7,
@@ -73,7 +79,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
-    price: 1700
+    price: 1700,
+    restaurantId: 1
   },
   {
     id: 8,
@@ -81,7 +88,8 @@ let menu = [
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
-    price: 1100
+    price: 1100,
+    restaurantId: 1
   },
   {
     id: 9,
@@ -89,7 +97,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
-    price: 1700
+    price: 1700,
+    restaurantId: 1
   },
   {
     id: 10,
@@ -97,7 +106,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
-    price: 1500
+    price: 1500,
+    restaurantId: 1
   },
   {
     id: 11,
@@ -105,7 +115,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
-    price: 1800
+    price: 1800,
+    restaurantId: 1
   },
   {
     id: 12,
@@ -113,7 +124,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
-    price: 1900
+    price: 1900,
+    restaurantId: 1
   },
   {
     id: 13,
@@ -121,7 +133,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
-    price: 1200
+    price: 1200,
+    restaurantId: 1
   },
   {
     id: 14,
@@ -129,7 +142,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
-    price: 1000
+    price: 1000,
+    restaurantId: 1
   },
   {
     id: 15,
@@ -137,7 +151,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
-    price: 1300
+    price: 1300,
+    restaurantId: 1
   },
   {
     id: 16,
@@ -145,7 +160,8 @@ let menu = [
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
-    price: 1400
+    price: 1400,
+    restaurantId: 1
   },
   {
     id: 17,
@@ -153,7 +169,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
-    price: 1800
+    price: 1800,
+    restaurantId: 1
   },
   {
     id: 18,
@@ -161,7 +178,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
-    price: 1900
+    price: 1900,
+    restaurantId: 1
   },
   {
     id: 19,
@@ -169,7 +187,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
-    price: 1400
+    price: 1400,
+    restaurantId: 1
   },
   {
     id: 20,
@@ -177,7 +196,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
-    price: 1500
+    price: 1500,
+    restaurantId: 1
   },
   {
     id: 21,
@@ -185,7 +205,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
-    price: 1300
+    price: 1300,
+    restaurantId: 1
   },
   {
     id: 22,
@@ -193,7 +214,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
-    price: 1400
+    price: 1400,
+    restaurantId: 1
   },
   {
     id: 23,
@@ -201,7 +223,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
-    price: 900
+    price: 900,
+    restaurantId: 1
   },
   {
     id: 24,
@@ -209,7 +232,8 @@ let menu = [
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
-    price: 1000
+    price: 1000,
+    restaurantId: 1
   },
   {
     id: 25,
@@ -217,7 +241,8 @@ let menu = [
     beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
-    price: 500
+    price: 500,
+    restaurantId: 1
   },
   {
     id: 26,
@@ -225,7 +250,8 @@ let menu = [
     beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
-    price: 400
+    price: 400,
+    restaurantId: 1
   },
   {
     id: 27,
@@ -233,7 +259,8 @@ let menu = [
     beverageType: 'alcohol',
     foodType: null,
     mealType: null,
-    price: 1200
+    price: 1200,
+    restaurantId: 1
   },
   {
     id: 28,
@@ -241,7 +268,8 @@ let menu = [
     beverageType: 'alcohol',
     foodType: null,
     mealType: null,
-    price: 1300
+    price: 1300,
+    restaurantId: 1
   }
 ]
 
@@ -405,9 +433,10 @@ const generatePurchase = function() {
 }
 
 let purchaseList = []
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < 10000; i++) {
   let potentialPurchase = generatePurchase()
   potentialPurchase.id = i + 1
+  potentialPurchase.restaurantId = 1
   purchaseList.push(potentialPurchase)
 }
 
@@ -421,14 +450,20 @@ for (let i = 0; i < purchaseList.length; i++) {
     let singleOrderPerMenu
     if (hashOfMenuQty[singleMenuId]) {
       for (let k = 0; k < orderMenuTable.length; k++) {
-        if (singleMenuId === orderMenuTable[k].menuId && singlePurchase.id === orderMenuTable[k].orderId) {
+        if (
+          singleMenuId === orderMenuTable[k].menuId &&
+          singlePurchase.id === orderMenuTable[k].orderId
+        ) {
           orderMenuTable[k].quantity++
         }
       }
-    }
-    else {
+    } else {
       hashOfMenuQty[singleMenuId] = true
-      singleOrderPerMenu = {quantity: 1, orderId: singlePurchase.id, menuId: singleMenuId}
+      singleOrderPerMenu = {
+        quantity: 1,
+        orderId: singlePurchase.id,
+        menuId: singleMenuId
+      }
       orderMenuTable.push(singleOrderPerMenu)
     }
   }
