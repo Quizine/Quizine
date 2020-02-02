@@ -3,7 +3,8 @@ const db = require('../db')
 
 const MenuOrder = db.define('menuOrder', {
   quantity: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    defaultValue: 1
   }
 })
 
