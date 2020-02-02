@@ -9,9 +9,9 @@ module.exports = router
 router.get('/', async (req, res, next) => {
   try {
     // callback
-    const allWaiters = await client.query('SELECT * FROM WAITERS')
-    console.log(`here are all waiters: `, allWaiters)
-    res.json(allWaiters)
+    const allOrders = await client.query('SELECT * FROM ORDERS')
+    console.log(`here are all waiters: `, allOrders)
+    res.json(allOrders)
   } catch (error) {
     next(error)
   }
