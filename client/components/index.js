@@ -7,5 +7,6 @@ export {default as Navbar} from './navbar'
 export {default as UserHome} from './user-home'
 export {default as Summary} from './Summary'
 export {default as NewQuery} from './NewQuery'
+export {default as SideBar} from './SideBar'
 
 export {Login, Signup} from './auth-form'
