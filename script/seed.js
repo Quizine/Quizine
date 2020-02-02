@@ -29,14 +29,16 @@ let userArray = [
   {
     firstName: 'Nathan',
     lastName: 'Lilson',
-    email: 'cody@email.com',
-    password: '123'
+    email: 'nathan@email.com',
+    password: '123',
+    restaurantId: 1
   },
   {
     firstName: 'Stanley',
     lastName: 'Verrier',
-    email: 'murphy@email.com',
-    password: '123'
+    email: 'stanley@email.com',
+    password: '123',
+    restaurantId: 1
   }
 ]
 
@@ -44,12 +46,11 @@ async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
+  const restaurants = await Restaurant.bulkCreate(restaurant)
   const waiters = await Waiter.bulkCreate(server)
   const orders = await Order.bulkCreate(purchaseList)
   const users = await User.bulkCreate(userArray)
-  const restaurants = await Restaurant.bulkCreate(restaurant)
   const menus = await Menu.bulkCreate(menu)
-
   const menuOrders = await MenuOrder.bulkCreate(orderMenuTable)
 
   console.log(`seeded successfully`)
