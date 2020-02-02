@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 const {normalDistributionFunc} = require('./utilities')
 
 //for seeding waiters
@@ -412,9 +413,9 @@ for (let i = 0; i < 20; i++) {
 
 let orderMenuTable = []
 
-for (let i = 0; i < purchaseList.length; i++) {
+for (let i = 1; i < purchaseList.length; i++) {
   let singlePurchase = purchaseList[i]
-  for (let j = 0; j < singlePurchase.menuOrderList.length; j++) {
+  for (let j = 1; j < singlePurchase.menuOrderList.length; j++) {
     let singleMenuId = singlePurchase.menuOrderList[j]
     let singleOrderPerMenu = {orderId: singlePurchase.id, menuId: singleMenuId}
     orderMenuTable.push(singleOrderPerMenu)
@@ -422,7 +423,7 @@ for (let i = 0; i < purchaseList.length; i++) {
   delete singlePurchase.menuOrderList
 }
 
-console.log(orderMenuTable)
+// console.log(orderMenuTable)
 
 module.exports = {
   server,
