@@ -22,7 +22,7 @@ const Order = db.define('order', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  numGuests: {
+  numberOfGuests: {
     type: Sequelize.INTEGER,
     allowNull: false
   }

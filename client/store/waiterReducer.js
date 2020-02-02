@@ -39,7 +39,12 @@ const filterFieldsFunction = function(array) {
         field.name !== 'updatedAt' &&
         !field.name.includes('Id')
     )
-    .map(field => field.name)
+    .map(field => {
+      let name = field.name
+      name = name.replace(/([A-Z])/g, ' $1') // COVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+      name = name[0].toUpperCase() + name.slice(1)
+      return name
+    })
 }
 
 /**

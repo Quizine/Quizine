@@ -399,16 +399,16 @@ const generatePurchase = function() {
 
   purchaseData.waiterId = selectRandomServer().serverId
 
-  let numGuests
+  let numberOfGuests
   let guestRandomNumber = Math.random()
   if (guestRandomNumber > 0.3) {
-    numGuests = Math.floor(Math.random() * (4 - 2 + 1)) + 2
+    numberOfGuests = Math.floor(Math.random() * (4 - 2 + 1)) + 2
   } else {
-    numGuests = Math.floor(Math.random() * (8 - 5 + 1)) + 5
+    numberOfGuests = Math.floor(Math.random() * (8 - 5 + 1)) + 5
   }
-  purchaseData.numGuests = numGuests
+  purchaseData.numberOfGuests = numberOfGuests
   purchaseData.menuOrderList = []
-  for (let i = 1; i <= numGuests; i++) {
+  for (let i = 1; i <= numberOfGuests; i++) {
     purchaseData.menuOrderList = purchaseData.menuOrderList.concat(
       randomizeSinglePersonPurchase(hour)
     )
