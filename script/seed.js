@@ -40,27 +40,14 @@ let userArray = [
   }
 ]
 
-// let ordersArr = [
-//   {
-//     timeOfPurchase: '2020-02-07T00:44:00.000Z',
-//     serverId: 7,
-//     numGuests: 3,
-//     subtotal: 17000,
-//     tip: 3114,
-//     tax: 1700,
-//     total: 21814
-//   }
-// ]
-
 async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  // const orders = await Order.bulkCreate(ordersArr)
+  const waiters = await Waiter.bulkCreate(server)
   const orders = await Order.bulkCreate(purchaseList)
   const users = await User.bulkCreate(userArray)
   const restaurants = await Restaurant.bulkCreate(restaurant)
-  const waiters = await Waiter.bulkCreate(server)
   const menus = await Menu.bulkCreate(menu)
 
   const menuOrders = await MenuOrder.bulkCreate(orderMenuTable)

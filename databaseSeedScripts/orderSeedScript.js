@@ -405,7 +405,7 @@ const generatePurchase = function() {
 }
 
 let purchaseList = []
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 100000; i++) {
   let potentialPurchase = generatePurchase()
   potentialPurchase.id = i + 1
   purchaseList.push(potentialPurchase)
@@ -415,16 +415,26 @@ let orderMenuTable = []
 
 for (let i = 0; i < purchaseList.length; i++) {
   let singlePurchase = purchaseList[i]
+  let hashOfMenuQty = {}
   for (let j = 0; j < singlePurchase.menuOrderList.length; j++) {
     let singleMenuId = singlePurchase.menuOrderList[j]
-    let singleOrderPerMenu = {orderId: singlePurchase.id, menuId: singleMenuId}
-    orderMenuTable.push(singleOrderPerMenu)
+    let singleOrderPerMenu
+    if (hashOfMenuQty[singleMenuId]) {
+      for (let k = 0; k < orderMenuTable.length; k++) {
+        if (singleMenuId === orderMenuTable[k].menuId && singlePurchase.id === orderMenuTable[k].orderId) {
+          orderMenuTable[k].quantity++
+        }
+      }
+    }
+    else {
+      hashOfMenuQty[singleMenuId] = true
+      singleOrderPerMenu = {quantity: 1, orderId: singlePurchase.id, menuId: singleMenuId}
+      orderMenuTable.push(singleOrderPerMenu)
+    }
   }
   delete singlePurchase.menuOrderList
 }
-// console.log(purchaseList)
 
-console.log(orderMenuTable)
 module.exports = {
   server,
   menu,

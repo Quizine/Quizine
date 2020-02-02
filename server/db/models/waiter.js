@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const Waiter = db.define('server', {
+const Waiter = db.define('waiter', {
   name: {
     type: Sequelize.STRING,
     allowNull: false
