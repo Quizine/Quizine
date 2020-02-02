@@ -1,17 +1,17 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getWaiters} from '../store/waiterReducer'
+import {getMenu} from '../store/menuReducer'
 
-export class NewQueryWaiters extends Component {
+export class NewQueryMenu extends Component {
   componentDidMount() {
-    this.props.getWaiters()
+    this.props.getMenu()
   }
 
   render() {
     const fields = this.props.fields
     const rows = this.props.rows
     const selected = this.props.selected
-    const isSelected = selected === 'Waiters'
+    const isSelected = selected === 'Menu'
 
     return (
       <div>
@@ -23,8 +23,8 @@ export class NewQueryWaiters extends Component {
               })}
             </select>
             <ul>
-              {rows.map((waiter, idx) => {
-                return <li key={idx}>{waiter.name}</li>
+              {rows.map((menu, idx) => {
+                return <li key={idx}>{menu.menuName}</li>
               })}
             </ul>
           </div>
@@ -39,19 +39,15 @@ export class NewQueryWaiters extends Component {
  */
 const mapState = state => {
   return {
-    rows: state.waiters.rows,
-    fields: state.waiters.fields
+    rows: state.menu.rows,
+    fields: state.menu.fields
   }
 }
-
-// mapState -> waiters, orders, menu
 
 const mapDispatchToProps = dispatch => {
   return {
-    getWaiters: () => dispatch(getWaiters())
+    getMenu: () => dispatch(getMenu())
   }
 }
 
-// dispatch -> getWaiters, getOrders, and getMenu
-
-export default connect(mapState, mapDispatchToProps)(NewQueryWaiters)
+export default connect(mapState, mapDispatchToProps)(NewQueryMenu)
