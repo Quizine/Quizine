@@ -406,7 +406,7 @@ const generatePurchase = function() {
 let purchaseList = []
 for (let i = 0; i < 20; i++) {
   let potentialPurchase = generatePurchase()
-  potentialPurchase.id = i
+  potentialPurchase.id = i + 1
   purchaseList.push(potentialPurchase)
 }
 
@@ -422,7 +422,8 @@ for (let i = 0; i < purchaseList.length; i++) {
   delete singlePurchase.menuOrderList
 }
 
-console.log(orderMenuTable)
+// console.log(orderMenuTable)
+console.log(purchaseList)
 
 module.exports = {
   server,

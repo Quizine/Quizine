@@ -7,7 +7,7 @@ const {
   Order,
   Waiter,
   Menu,
-  menuOrder
+  MenuOrder
 } = require('../server/db/models')
 
 const {
@@ -25,19 +25,45 @@ let restaurant = [
   }
 ]
 
+let userArray = [
+  {
+    firstName: 'Nathan',
+    lastName: 'Lilson',
+    email: 'cody@email.com',
+    password: '123'
+  },
+  {
+    firstName: 'Stanley',
+    lastName: 'Verrier',
+    email: 'murphy@email.com',
+    password: '123'
+  }
+]
+
+// let ordersArr = [
+//   {
+//     timeOfPurchase: '2020-02-07T00:44:00.000Z',
+//     serverId: 7,
+//     numGuests: 3,
+//     subtotal: 17000,
+//     tip: 3114,
+//     tax: 1700,
+//     total: 21814
+//   }
+// ]
+
 async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  const users = await Promise.all([
-    User.create({email: 'cody@email.com', password: '123'}),
-    User.create({email: 'murphy@email.com', password: '123'})
-  ])
+  // const orders = await Order.bulkCreate(ordersArr)
+  const orders = await Order.bulkCreate(purchaseList)
+  const users = await User.bulkCreate(userArray)
   const restaurants = await Restaurant.bulkCreate(restaurant)
   const waiters = await Waiter.bulkCreate(server)
   const menus = await Menu.bulkCreate(menu)
-  const orders = await Order.bulkCreate(purchaseList)
-  const menuOrders = await menuOrder.bulkCreate(orderMenuTable)
+
+  const menuOrders = await MenuOrder.bulkCreate(orderMenuTable)
 
   console.log(`seeded successfully`)
 }
