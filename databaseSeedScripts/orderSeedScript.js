@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 const {normalDistributionFunc} = require('./utilities')
 
 //for seeding waiters
@@ -423,8 +424,6 @@ for (let i = 0; i < purchaseList.length; i++) {
 }
 
 // console.log(orderMenuTable)
-console.log(purchaseList)
-
 module.exports = {
   server,
   menu,
