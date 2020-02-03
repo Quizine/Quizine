@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getQueryWaiters, getWaiters} from '../store/waiterReducer'
+import axios from 'axios'
 
 export class NewQueryWaitersSex extends Component {
   constructor() {

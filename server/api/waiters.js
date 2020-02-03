@@ -26,3 +26,13 @@ router.get('/query/:field/:input', async (req, res, next) => {
     next(error)
   }
 })
+
+//SEQUELIZE GET REQUEST (FOR NOW...) GETS ALL ENUM TYPES
+const {Waiter} = require('../db/models')
+router.get('/enumValues', async (req, res, next) => {
+  try {
+    res.json(Waiter.rawAttributes.sex.values)
+  } catch (err) {
+    next(err)
+  }
+})
