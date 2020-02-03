@@ -1,8 +1,20 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getWaiters} from '../store/waiterReducer'
+import NewQueryWaitersSex from './NewQueryWaitersSex'
 
 export class NewQueryWaiters extends Component {
+  constructor() {
+    super()
+    this.state = {
+      selected: false
+    }
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange(event) {
+    this.setState({selected: event.target.value})
+  }
   componentDidMount() {
     this.props.getWaiters()
   }
@@ -17,16 +29,21 @@ export class NewQueryWaiters extends Component {
       <div>
         {isSelected ? (
           <div>
-            <select>
+            <select onChange={() => this.handleChange(event)}>
               {fields.map((field, idx) => {
                 return <option key={idx}>{field}</option>
               })}
             </select>
-            <ul>
+            {this.state.selected ? (
+              <div>
+                <NewQueryWaitersSex selected={this.state.selected} />
+              </div>
+            ) : null}
+            {/* <ul>
               {rows.map((waiter, idx) => {
                 return <li key={idx}>{waiter.name}</li>
               })}
-            </ul>
+            </ul> */}
           </div>
         ) : null}
       </div>
@@ -44,14 +61,10 @@ const mapState = state => {
   }
 }
 
-// mapState -> waiters, orders, menu
-
 const mapDispatchToProps = dispatch => {
   return {
     getWaiters: () => dispatch(getWaiters())
   }
 }
-
-// dispatch -> getWaiters, getOrders, and getMenu
 
 export default connect(mapState, mapDispatchToProps)(NewQueryWaiters)
