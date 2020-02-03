@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
 import {logout} from '../store'
 
 //BELOW IS MATERIAL UI, ABOVE IS NORMAL REACT
@@ -17,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(1)
   },
   title: {
     flexGrow: 1
@@ -36,34 +35,21 @@ const Navbar = ({handleClick, isLoggedIn}) => {
           </Typography>
           {isLoggedIn ? (
             <div>
-              {/* The navbar will show these links after you log in */}
-              <Link href="/home">
-                {' '}
-                <Button color="inherit">Home</Button>
-              </Link>
-              {/* <a href="#" onClick={handleClick}>
+              <Button color="inherit">Home</Button>
+              <Button color="inherit" onClick={handleClick}>
                 Logout
-              </a> */}
-              <Link>
-                <Button color="inherit" onClick={handleClick}>
-                  Logout
-                </Button>
-              </Link>
+              </Button>
             </div>
           ) : (
             <div>
-              {/* The navbar will show these links before you log in */}
-              <Link to="/login">
-                <Button color="inherit">Login</Button>
-              </Link>
-              <Link to="/signup">
-                {' '}
-                <Button color="inherit">Signup</Button>
-              </Link>
+              <Button color="inherit" href="/login">
+                Login
+              </Button>
+              <Button color="inherit" href="/signup">
+                Signup
+              </Button>
             </div>
           )}
-          {/* <Button color="inherit">Login</Button>
-          <Button color="inherit">Signup</Button> */}
         </Toolbar>
       </AppBar>
     </div>
