@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {getQueryWaiters, getWaiters} from '../store/waiterReducer'
 import NewQueryResults from './NewQueryResults'
 
+
 export class NewQueryWaitersSex extends Component {
   constructor() {
     super()
