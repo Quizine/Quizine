@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getWaiters} from '../store/waiterReducer'
+import {getWaiterFields, getWaiters} from '../store/waiterReducer'
 import NewQueryWaitersSex from './NewQueryWaitersSex'
 
 export class NewQueryWaiters extends Component {
@@ -16,7 +16,7 @@ export class NewQueryWaiters extends Component {
     this.setState({selected: event.target.value})
   }
   componentDidMount() {
-    this.props.getWaiters()
+    this.props.getWaiterFields()
   }
 
   render() {
@@ -63,6 +63,7 @@ const mapState = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getWaiterFields: () => dispatch(getWaiterFields()),
     getWaiters: () => dispatch(getWaiters())
   }
 }

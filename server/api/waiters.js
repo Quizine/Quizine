@@ -15,13 +15,24 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+router.get('/fields', async (req, res, next) => {
+  try {
+    const waiterFields = await client.query(
+      'SELECT * FROM WAITERS WHERE ID = 1'
+    )
+    res.json(waiterFields.fields)
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.get('/query/:field/:input', async (req, res, next) => {
   try {
     const {field, input} = req.params
-    const allWaiters = await client.query(
+    const queriedWaiters = await client.query(
       `SELECT * FROM WAITERS WHERE ${field} = '${input}'`
     )
-    res.json(allWaiters)
+    res.json(queriedWaiters)
   } catch (error) {
     next(error)
   }

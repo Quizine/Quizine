@@ -14,3 +14,12 @@ router.get('/', async (req, res, next) => {
     next(error)
   }
 })
+
+router.get('/fields', async (req, res, next) => {
+  try {
+    const menuFields = await client.query('SELECT * FROM MENUS WHERE ID = 1')
+    res.json(menuFields.fields)
+  } catch (error) {
+    next(error)
+  }
+})
