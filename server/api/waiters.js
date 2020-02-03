@@ -8,9 +8,19 @@ module.exports = router
 
 router.get('/', async (req, res, next) => {
   try {
-    // callback
     const allWaiters = await client.query('SELECT * FROM WAITERS')
-    console.log(`here are all waiters: `, allWaiters)
+    res.json(allWaiters)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/query/:field/:input', async (req, res, next) => {
+  try {
+    const {field, input} = req.params
+    const allWaiters = await client.query(
+      `SELECT * FROM WAITERS WHERE ${field} = '${input}'`
+    )
     res.json(allWaiters)
   } catch (error) {
     next(error)

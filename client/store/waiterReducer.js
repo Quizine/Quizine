@@ -4,6 +4,7 @@ import axios from 'axios'
  * ACTION TYPES
  */
 const GET_WAITERS = 'GET_WAITERS'
+const QUERY_WAITERS = 'QUERY_WAITERS'
 
 /**
  * INITIAL STATE
@@ -17,6 +18,7 @@ const initialState = {
  * ACTION CREATORS
  */
 const gotWaiters = waiters => ({type: GET_WAITERS, waiters})
+const gotQueryWaiters = waiters => ({type: QUERY_WAITERS, waiters})
 
 /**
  * THUNK CREATORS
@@ -25,6 +27,17 @@ export const getWaiters = () => async dispatch => {
   try {
     const res = await axios.get('/api/waiters')
     dispatch(gotWaiters(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getQueryWaiters = (queryField, queryInput) => async dispatch => {
+  try {
+    const res = await axios.get(
+      `/api/waiters/query/${queryField}/${queryInput}`
+    )
+    dispatch(gotQueryWaiters(res.data))
   } catch (err) {
     console.error(err)
   }
@@ -53,6 +66,12 @@ const filterFieldsFunction = function(array) {
 export default function(state = initialState, action) {
   switch (action.type) {
     case GET_WAITERS:
+      return {
+        ...state,
+        rows: action.waiters.rows,
+        fields: filterFieldsFunction(action.waiters.fields)
+      }
+    case QUERY_WAITERS:
       return {
         ...state,
         rows: action.waiters.rows,
