@@ -7,7 +7,7 @@ export class NewQuery extends Component {
   constructor() {
     super()
     this.state = {
-      selected: false
+      selected: ''
     }
     this.handleChange = this.handleChange.bind(this)
   }
