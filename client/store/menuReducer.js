@@ -3,6 +3,7 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
+const GET_MENU_FIELDS = 'GET_MENU_FIELDS'
 const GET_MENU = 'GET_MENU'
 
 /**
@@ -16,11 +17,24 @@ const initialState = {
 /**
  * ACTION CREATORS
  */
+const gotMenuFields = menuFields => ({
+  type: GET_MENU_FIELDS,
+  menuFields
+})
 const gotMenu = menu => ({type: GET_MENU, menu})
 
 /**
  * THUNK CREATORS
  */
+export const getMenuFields = () => async dispatch => {
+  try {
+    const res = await axios.get('/api/menu/fields')
+    dispatch(gotMenuFields(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const getMenu = () => async dispatch => {
   try {
     const res = await axios.get('/api/menu')
@@ -52,6 +66,11 @@ const filterFieldsFunction = function(array) {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_MENU_FIELDS:
+      return {
+        ...state,
+        fields: filterFieldsFunction(action.menuFields)
+      }
     case GET_MENU:
       return {
         ...state,

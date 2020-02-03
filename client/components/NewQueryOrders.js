@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getOrders} from '../store/orderReducer'
+import {getOrderFields, getOrders} from '../store/orderReducer'
 
 export class NewQueryOrders extends Component {
   componentDidMount() {
-    this.props.getOrders()
+    this.props.getOrderFields()
   }
 
   render() {
@@ -38,6 +38,7 @@ const mapState = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getOrderFields: () => dispatch(getOrderFields()),
     getOrders: () => dispatch(getOrders())
   }
 }

@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getQueryWaiters, getWaiters} from '../store/waiterReducer'
-import axios from 'axios'
+import NewQueryResults from './NewQueryResults'
+
 
 export class NewQueryWaitersSex extends Component {
   constructor() {
@@ -14,16 +15,8 @@ export class NewQueryWaitersSex extends Component {
 
   handleChange(event) {
     this.setState({selected: event.target.value})
-    console.log('THIS STATE', this.state, event.target.value)
-    console.log(
-      'TO THUNK',
-      this.props.selected.toLowerCase(),
-      event.target.value
-    )
-    this.props.getQueryWaiters(
-      this.props.selected.toLowerCase(),
-      event.target.value
-    )
+
+    this.props.getQueryWaiters(this.props.selected, event.target.value)
     // this.props.getWaiters()
   }
   // componentDidMount() {
@@ -45,6 +38,11 @@ export class NewQueryWaitersSex extends Component {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
+            {this.state.selected ? (
+              <div>
+                <NewQueryResults />
+              </div>
+            ) : null}
           </div>
         ) : null}
         <ul>

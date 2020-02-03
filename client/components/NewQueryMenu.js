@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getMenu} from '../store/menuReducer'
+import {getMenuFields, getMenu} from '../store/menuReducer'
 
 export class NewQueryMenu extends Component {
   componentDidMount() {
-    this.props.getMenu()
+    this.props.getMenu() //SWITCH TO getMenuFields after POC
   }
 
   render() {
@@ -46,6 +46,7 @@ const mapState = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getMenuFields: () => dispatch(getMenuFields()),
     getMenu: () => dispatch(getMenu())
   }
 }
