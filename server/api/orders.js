@@ -15,10 +15,10 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-router.get('/query', async (req, res, next) => {
+router.get('/fields', async (req, res, next) => {
   try {
-    const allOrders = await client.query('SELECT * FROM ORDERS')
-    res.json(allOrders)
+    const orderFields = await client.query('SELECT * FROM ORDERS WHERE ID = 1')
+    res.json(orderFields.fields)
   } catch (error) {
     next(error)
   }

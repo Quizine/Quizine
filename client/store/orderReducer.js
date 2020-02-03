@@ -3,6 +3,7 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
+const GET_ORDER_FIELDS = 'GET_ORDER_FIELDS'
 const GET_ORDERS = 'GET_ORDERS'
 
 /**
@@ -16,11 +17,24 @@ const initialState = {
 /**
  * ACTION CREATORS
  */
+const gotOrderFields = orderFields => ({
+  type: GET_ORDER_FIELDS,
+  orderFields
+})
 const gotOrders = orders => ({type: GET_ORDERS, orders})
 
 /**
  * THUNK CREATORS
  */
+export const getOrderFields = () => async dispatch => {
+  try {
+    const res = await axios.get('/api/orders/fields')
+    dispatch(gotOrderFields(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const getOrders = () => async dispatch => {
   try {
     const res = await axios.get('/api/orders')
@@ -52,6 +66,11 @@ const filterFieldsFunction = function(array) {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_ORDER_FIELDS:
+      return {
+        ...state,
+        fields: filterFieldsFunction(action.orderFields)
+      }
     case GET_ORDERS:
       return {
         ...state,
