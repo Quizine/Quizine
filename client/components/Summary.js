@@ -25,19 +25,17 @@ export class Summary extends Component {
 /**
  * CONTAINER
  */
+//test
+const mapState = state => {
+  return {
+    summary: state.summary.summary
+  }
+}
 
-// NOT USED FOR NOW
-
-// const mapState = state => {
-//   return {
-//     summary: state.summary.summary
-//   }
-// }
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     getSummary: () => dispatch(getSummary())
-//   }
-// }
+const mapDispatchToProps = dispatch => {
+  return {
+    getSummary: () => dispatch(getSummary())
+  }
+}
 
 export default connect(mapState, mapDispatchToProps)(Summary)
