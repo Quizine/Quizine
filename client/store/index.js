@@ -7,8 +7,16 @@ import waiters from './waiterReducer'
 import orders from './orderReducer'
 import menu from './menuReducer'
 import summary from './summaryReducer'
+import stockQueries from './stockQueryReducer'
 
-const reducer = combineReducers({user, summary, waiters, menu, orders})
+const reducer = combineReducers({
+  user,
+  summary,
+  waiters,
+  menu,
+  orders,
+  stockQueries
+})
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )
