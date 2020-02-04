@@ -23,7 +23,9 @@ router.get('/summary', async (req, res, next) => {
     EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
     SUM("total") AS "monthlyRevenue"
     FROM orders
-    GROUP BY 1,2`)
+    WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+    GROUP BY 1,2
+    LIMIT 12`)
     responseObject.revenueVsTime = revenueVsTime.rows
 
     const waiterCount = await client.query(`
