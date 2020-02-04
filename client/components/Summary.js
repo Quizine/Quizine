@@ -16,7 +16,9 @@ export class Summary extends Component {
         <h2>Welcome, !</h2>
         <p>Quick summary:</p>
         <Link to="/newquery">
-          <button type="submit">New Query</button>
+          {' '}
+          {/*change route*/}
+          <button type="submit">VIEW BUSINESS ANALYTICS</button>
         </Link>
         <PeakTimeGraph />
       </div>
