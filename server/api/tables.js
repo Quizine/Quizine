@@ -40,6 +40,7 @@ router.get('/summary', async (req, res, next) => {
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY hours ORDER BY hours;
     `)
+    responseObject.numberOfGuestsByHour = numberOfGuestsByHour.rows
 
     res.json(responseObject)
   } catch (error) {
