@@ -20,11 +20,11 @@ router.get('/searchlast', async (req, res, next) => {
     // callback
     const interval = req.query.interval
     const allOrders = await client.query(
-      `SELECT extract(hour from orders."timeOfPurchase"), orders."numGuests" FROM ORDERS WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'`
+      `SELECT extract(hour from orders."timeOfPurchase"), orders."numberOfGuests" FROM ORDERS WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'`
     )
     const arr = new Array(24).fill(0)
     allOrders.rows.forEach(order => {
-      arr[order.date_part] += order.numGuests
+      arr[order.date_part] += order.numberOfGuests
     })
     const totalGuests = arr.slice(11, -1).reduce((accum, val) => accum + val)
     const arrInPercentage = arr
