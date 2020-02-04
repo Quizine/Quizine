@@ -15,7 +15,6 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-
 router.get('/searchlast', async (req, res, next) => {
   try {
     // callback
@@ -37,7 +36,6 @@ router.get('/searchlast', async (req, res, next) => {
     next(error)
   }
 })
-
 
 router.get('/fields', async (req, res, next) => {
   try {

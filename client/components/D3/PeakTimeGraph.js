@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getPeakTimeOrders} from '../../store/peakTimeOrderReducer'
+import {getPeakTimeOrders} from '../../store/summaryReducer'
 import {Bar} from 'react-chartjs-2'
 
 class PeakTimeGraph extends Component {
@@ -8,17 +8,20 @@ class PeakTimeGraph extends Component {
     super(props)
 
     this.state = {
-      selectedOption: 'year'
+      selectedOption: 'month'
     }
     this.handleChange = this.handleChange.bind(this)
   }
 
   componentDidMount() {
-    this.props.loadPeakTimeOrders()
+    this.props.loadPeakTimeOrders(this.state.selectedOption)
   }
 
-  handleChange(e) {
-    this.setState({selectedOption: e.target.value})
+  handleChange(event) {
+    this.setState({selectedOption: event.target.value})
+    if (!Object.keys(this.props.peakTimeOrders[event.target.value]).length) {
+      this.props.loadPeakTimeOrders(event.target.value)
+    }
   }
 
   render() {
@@ -51,8 +54,8 @@ class PeakTimeGraph extends Component {
     return (
       <div className="peak-time-div">
         <select onChange={this.handleChange}>
-          <option value="year">Year</option>
           <option value="month">Month</option>
+          <option value="year">Year</option>
           <option value="week">Week</option>
         </select>
         <div>
@@ -73,13 +76,14 @@ class PeakTimeGraph extends Component {
 
 const mapStateToProps = state => {
   return {
-    peakTimeOrders: state.peakTimeOrders
+    peakTimeOrders: state.summary.peakTimeOrders
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadPeakTimeOrders: () => dispatch(getPeakTimeOrders())
+    loadPeakTimeOrders: timeInterval =>
+      dispatch(getPeakTimeOrders(timeInterval))
   }
 }
 
