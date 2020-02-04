@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-import PeakTimeGraph from './D3/PeakTimeGraph'
+import PeakTimeGraph from './charts/PeakTimeGraph'
 import {getSummary} from '../store/summaryReducer'
 
 export class Summary extends Component {
@@ -13,13 +13,12 @@ export class Summary extends Component {
     console.log(this.props.summary)
     return (
       <div>
-      <h2>Welcome, !</h2>
+        <h2>Welcome, !</h2>
         <p>Quick summary:</p>
         <Link to="/newquery">
           <button type="submit">New Query</button>
         </Link>
         <PeakTimeGraph />
-        
       </div>
     )
   }

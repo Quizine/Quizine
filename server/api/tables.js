@@ -35,7 +35,7 @@ router.get('/summary', async (req, res, next) => {
     const numberOfGuestsByHour = await client.query(`
     SELECT
     EXTRACT(hour from orders."timeOfPurchase") AS hours,
-    ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests
+    ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests 
     FROM ORDERS
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY hours ORDER BY hours;
@@ -68,15 +68,38 @@ router.get('/fields', async (req, res, next) => {
 
 router.get('/businessAnalytics', async (req, res, next) => {
   try {
+    const responseObject = {}
+    const mealType = 'dinner'
     const interval = 'year'
-    const waitersByTipPercent = await client.query(`SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.total) * 100) as averageTipPercentage FROM ORDERS
-    JOIN WAITERS ON orders."waiterId" = waiters.id GROUP BY waiters.name ORDER BY averageTipPercentage DESC WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval};`)
+
+    const waitersByTipPercent = await client.query(`SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage" FROM ORDERS
+    JOIN WAITERS ON orders."waiterId" = waiters.id WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}' GROUP BY waiters.name ORDER BY "averageTipPercentage" DESC;`)
+    responseObject.waitersByTipPercent = waitersByTipPercent.rows
 
     const waitersByAvgServedDish = await client.query(`SELECT waiters.name, ROUND(SUM ("menuOrders".quantity) / 7) FROM "menuOrders"
     JOIN ORDERS ON orders.id = "menuOrders"."orderId"
     JOIN WAITERS ON orders."waiterId" = waiters.id
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY waiters.name;`)
+    responseObject.waitersByAvgServedDish = waitersByAvgServedDish.rows
+
+    // WOULD BE NICE TO CONVERT TO %
+    const menuItemsByOrder = await client.query(`SELECT menus."menuName" AS "menuItem",  
+    SUM("menuOrders".quantity) AS "quantity" FROM menus 
+    JOIN "menuOrders" ON menus.id = "menuOrders"."menuId" 
+    JOIN orders ON orders.id = "menuOrders"."orderId" 
+    WHERE menus."mealType" = '${mealType}' 
+    AND orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+    GROUP BY "menuItem";`)
+    responseObject.menuItemsByOrder = menuItemsByOrder.rows
+
+    const guestPerDay = await client.query(`SELECT SUM (orders."numberOfGuests") AS "totalNumberOfGuests", 
+    EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek" FROM orders
+    WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+    GROUP BY "dayOfWeek" ORDER BY "dayOfWeek" ASC;`)
+    responseObject.guestPerDay = guestPerDay.rows
+
+    res.json(responseObject)
   } catch (error) {
     next(error)
   }
