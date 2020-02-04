@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
+import PeakTimeGraph from './D3/PeakTimeGraph'
 
 export class Summary extends Component {
   render() {
@@ -9,6 +10,7 @@ export class Summary extends Component {
         <Link to="/newquery">
           <button type="submit">New Query</button>
         </Link>
+        <PeakTimeGraph />
       </div>
     )
   }

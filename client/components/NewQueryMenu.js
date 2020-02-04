@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import * as d3 from 'd3'
 import {connect} from 'react-redux'
 import {getMenu} from '../store/menuReducer'
 import D3BarChart from './D3/D3BarChart'
@@ -44,7 +43,6 @@ export class NewQueryMenu extends Component {
   }
 
   render() {
-    console.log('CURR STATE', this.props)
     const fields = this.props.fields
     const rows = this.props.rows
     const selected = this.props.selected
