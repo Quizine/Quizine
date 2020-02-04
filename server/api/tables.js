@@ -9,6 +9,7 @@ module.exports = router
 router.get('/summary', async (req, res, next) => {
   try {
     const responseObject = {} //<------- MAKE SURE MATCHES RESTAURANT ID
+    const interval = 'year'
     const revenue = await client.query(`
     SELECT
     SUM (total)   
@@ -31,7 +32,14 @@ router.get('/summary', async (req, res, next) => {
     WHERE "updatedAt" > now() - interval '1 month' `)
     responseObject.waiterCount = parseInt(waiterCount.rows[0].count)
 
-    // const ordersPerHours =
+    const numberOfGuestsByHour = await client.query(`
+    SELECT
+    EXTRACT(hour from orders."timeOfPurchase") AS hours,
+    ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests
+    FROM ORDERS 
+    WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+    GROUP BY hours ORDER BY hours;
+    `)
 
     res.json(responseObject)
   } catch (error) {
