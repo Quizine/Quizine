@@ -9,7 +9,8 @@ module.exports = router
 router.get('/summary', async (req, res, next) => {
   try {
     const responseObject = {} //<------- MAKE SURE MATCHES RESTAURANT ID
-    const interval = 'year'
+    console.log('BECKENDIIIIII', req.query)
+    const interval = req.query.interval
     const revenue = await client.query(`
     SELECT
     SUM (total)
@@ -32,16 +33,37 @@ router.get('/summary', async (req, res, next) => {
     WHERE "updatedAt" > now() - interval '1 month' `)
     responseObject.waiterCount = parseInt(waiterCount.rows[0].count)
 
-    const numberOfGuestsByHour = await client.query(`
-    SELECT
-    EXTRACT(hour from orders."timeOfPurchase") AS hours,
-    ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests 
-    FROM ORDERS
-    WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
-    GROUP BY hours ORDER BY hours;
-    `)
-    responseObject.numberOfGuestsByHour = numberOfGuestsByHour.rows
+    // const numberOfGuestsByHour = await client.query(`
+    // SELECT
+    // EXTRACT(hour from orders."timeOfPurchase") AS hours,
+    // ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests
+    // FROM ORDERS
+    // WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+    // GROUP BY hours ORDER BY hours;
+    // `)
+    // responseObject.numberOfGuestsByHour = numberOfGuestsByHour.rows
 
+    const numberOfGuestsByHour = await client.query(
+      `
+    SELECT
+  EXTRACT(hour from orders."timeOfPurchase") AS hours,
+  SUM(orders."numberOfGuests"),
+  ROUND( 100.0 * (
+  	SUM(orders."numberOfGuests")::DECIMAL / ( 
+  		SELECT SUM(orders."numberOfGuests")
+  		FROM orders
+  		WHERE orders."timeOfPurchase" >= NOW() - INTERVAL '1 ${interval}' 
+  	)), 1) AS percentage
+FROM ORDERS
+WHERE orders."timeOfPurchase" >= NOW() - INTERVAL '1 ${interval}' 
+GROUP BY hours 
+ORDER BY hours; 
+      `
+    )
+    const percentageArr = numberOfGuestsByHour.rows.map(el =>
+      Number(el.percentage)
+    )
+    responseObject.numberOfGuestsByHour = percentageArr
     res.json(responseObject)
   } catch (error) {
     next(error)
