@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getWaiterFields, getWaiters} from '../store/waiterReducer'
-import NewQueryWaitersSex from './NewQueryWaitersSex'
+import {getQueryWaiters, getWaiters} from '../store/waiterReducer'
+import NewQueryResults from './NewQueryResults'
 
-export class NewQueryWaiters extends Component {
+
+export class NewQueryWaitersSex extends Component {
   constructor() {
     super()
     this.state = {
@@ -14,38 +15,42 @@ export class NewQueryWaiters extends Component {
 
   handleChange(event) {
     this.setState({selected: event.target.value})
+
+    this.props.getQueryWaiters(this.props.selected, event.target.value)
+    // this.props.getWaiters()
   }
-  componentDidMount() {
-    this.props.getWaiterFields()
-  }
+  // componentDidMount() {
+  //   this.props.getQueryWaiters()
+  // }
 
   render() {
     const fields = this.props.fields
     const rows = this.props.rows
     const selected = this.props.selected
-    const isSelected = selected === 'Waiters'
+    const isSelected = selected === 'Sex'
 
     return (
       <div>
         {isSelected ? (
           <div>
             <select onChange={() => this.handleChange(event)}>
-              {fields.map((field, idx) => {
-                return <option key={idx}>{field}</option>
-              })}
+              <option>Select Sex</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </select>
             {this.state.selected ? (
               <div>
-                <NewQueryWaitersSex selected={this.state.selected} />
+                <NewQueryResults />
               </div>
             ) : null}
-            {/* <ul>
-              {rows.map((waiter, idx) => {
-                return <li key={idx}>{waiter.name}</li>
-              })}
-            </ul> */}
           </div>
         ) : null}
+        <ul>
+          {/* {rows &&
+            rows.map((waiter, idx) => {
+              return <li key={idx}>{waiter.name}</li>
+            })} */}
+        </ul>
       </div>
     )
   }
@@ -63,9 +68,10 @@ const mapState = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getWaiterFields: () => dispatch(getWaiterFields()),
+    getQueryWaiters: (queryField, queryInput) =>
+      dispatch(getQueryWaiters(queryField, queryInput)),
     getWaiters: () => dispatch(getWaiters())
   }
 }
 
-export default connect(mapState, mapDispatchToProps)(NewQueryWaiters)
+export default connect(mapState, mapDispatchToProps)(NewQueryWaitersSex)

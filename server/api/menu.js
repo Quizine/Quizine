@@ -8,10 +8,17 @@ module.exports = router
 
 router.get('/', async (req, res, next) => {
   try {
-    // callback
     const allMenu = await client.query('SELECT * FROM MENUS')
-    console.log(`here are all waiters: `, allMenu)
     res.json(allMenu)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/fields', async (req, res, next) => {
+  try {
+    const menuFields = await client.query('SELECT * FROM MENUS WHERE ID = 1')
+    res.json(menuFields.fields)
   } catch (error) {
     next(error)
   }

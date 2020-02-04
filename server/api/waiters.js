@@ -8,11 +8,42 @@ module.exports = router
 
 router.get('/', async (req, res, next) => {
   try {
-    // callback
     const allWaiters = await client.query('SELECT * FROM WAITERS')
-    console.log(`here are all waiters: `, allWaiters)
     res.json(allWaiters)
   } catch (error) {
     next(error)
+  }
+})
+
+router.get('/fields', async (req, res, next) => {
+  try {
+    const waiterFields = await client.query(
+      'SELECT * FROM WAITERS WHERE ID = 1'
+    )
+    res.json(waiterFields.fields)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/query/:field/:input', async (req, res, next) => {
+  try {
+    const {field, input} = req.params
+    const queriedWaiters = await client.query(
+      `SELECT * FROM WAITERS WHERE ${field} = '${input}'`
+    )
+    res.json(queriedWaiters)
+  } catch (error) {
+    next(error)
+  }
+})
+
+//SEQUELIZE GET REQUEST (FOR NOW...) GETS ALL ENUM TYPES
+const {Waiter} = require('../db/models')
+router.get('/enumValues', async (req, res, next) => {
+  try {
+    res.json(Waiter.rawAttributes.sex.values)
+  } catch (err) {
+    next(err)
   }
 })

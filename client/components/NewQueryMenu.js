@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getMenu} from '../store/menuReducer'
+import {getMenuFields, getMenu} from '../store/menuReducer'
 
 export class NewQueryMenu extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ export class NewQueryMenu extends Component {
     this.generateDataForD3 = this.generateDataForD3.bind(this)
   }
   componentDidMount() {
-    this.props.getMenu()
+    this.props.getMenu() //SWITCH TO getMenuFields after POC
   }
 
   handleChange(e) {
@@ -92,6 +92,7 @@ const mapState = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getMenuFields: () => dispatch(getMenuFields()),
     getMenu: () => dispatch(getMenu())
   }
 }

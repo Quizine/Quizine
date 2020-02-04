@@ -8,14 +8,13 @@ module.exports = router
 
 router.get('/', async (req, res, next) => {
   try {
-    // callback
     const allOrders = await client.query('SELECT * FROM ORDERS')
-    console.log(`here are all waiters: `, allOrders)
     res.json(allOrders)
   } catch (error) {
     next(error)
   }
 })
+
 
 router.get('/searchlast', async (req, res, next) => {
   try {
@@ -34,6 +33,11 @@ router.get('/searchlast', async (req, res, next) => {
       .slice(11, -1)
     console.log(arrInPercentage)
     res.json(arrInPercentage)
+
+router.get('/fields', async (req, res, next) => {
+  try {
+    const orderFields = await client.query('SELECT * FROM ORDERS WHERE ID = 1')
+    res.json(orderFields.fields)
   } catch (error) {
     next(error)
   }
