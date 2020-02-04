@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getMenu} from '../store/menuReducer'
-import D3BarChart from './D3/D3BarChart'
 
 export class NewQueryMenu extends Component {
   constructor(props) {

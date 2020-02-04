@@ -36,8 +36,7 @@ class PeakTimeGraph extends Component {
       '7pm',
       '8pm'
     ]
-    // const arrPerc = this.props.peakTimeOrders[this.state.selectedOption]
-    const arrPerc = [13, 16, 11, 3, 1, 2, 8, 21, 20, 9, 2, 1]
+    const arrPerc = this.props.peakTimeOrders[this.state.selectedOption]
 
     const chartData = {
       labels: labels,
