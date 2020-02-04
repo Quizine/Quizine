@@ -97,14 +97,28 @@ router.get('/stockQueries', async (req, res, next) => {
 
     const waitersByTipPercent = await client.query(`SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage" FROM ORDERS
     JOIN WAITERS ON orders."waiterId" = waiters.id WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}' GROUP BY waiters.name ORDER BY "averageTipPercentage" DESC;`)
-    responseObject.waitersByTipPercent = waitersByTipPercent.rows
+    const waitersByTipPercentFormatted = axisMapping(
+      waitersByTipPercent.rows,
+      waitersByTipPercent.fields[0].name,
+      waitersByTipPercent.fields[1].name
+    )
+    responseObject.waitersByTipPercentXAxis = waitersByTipPercentFormatted[0]
+    responseObject.waitersByTipPercentYAxis = waitersByTipPercentFormatted[1]
 
     const waitersByAvgServedDish = await client.query(`SELECT waiters.name, ROUND(SUM ("menuOrders".quantity) / 7) FROM "menuOrders"
     JOIN ORDERS ON orders.id = "menuOrders"."orderId"
     JOIN WAITERS ON orders."waiterId" = waiters.id
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY waiters.name;`)
-    responseObject.waitersByAvgServedDish = waitersByAvgServedDish.rows
+    const waitersByAvgServedDishFormatted = axisMapping(
+      waitersByAvgServedDish.rows,
+      waitersByAvgServedDish.fields[0].name,
+      waitersByAvgServedDish.fields[1].name
+    )
+    responseObject.waitersByAvgServedDishXAxis =
+      waitersByAvgServedDishFormatted[0]
+    responseObject.waitersByAvgServedDishYAxis =
+      waitersByAvgServedDishFormatted[1]
 
     // WOULD BE NICE TO CONVERT TO %
     const menuItemsByOrder = await client.query(`SELECT menus."menuName" AS "menuItem",
@@ -114,16 +128,39 @@ router.get('/stockQueries', async (req, res, next) => {
     WHERE menus."mealType" = '${mealType}'
     AND orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY "menuItem";`)
-    responseObject.menuItemsByOrder = menuItemsByOrder.rows
+    const menuItemsByOrderFormatted = axisMapping(
+      menuItemsByOrder.rows,
+      menuItemsByOrder.fields[0].name,
+      menuItemsByOrder.fields[1].name
+    )
+    responseObject.menuItemsByOrderXAxis = menuItemsByOrderFormatted[0]
+    responseObject.menuItemsByOrderYAxis = menuItemsByOrderFormatted[1]
 
-    const guestPerDay = await client.query(`SELECT SUM (orders."numberOfGuests") AS "totalNumberOfGuests",
-    EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek" FROM orders
+    const guestPerDay = await client.query(`SELECT
+    EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM (orders."numberOfGuests") AS "totalNumberOfGuests" FROM orders
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY "dayOfWeek" ORDER BY "dayOfWeek" ASC;`)
-    responseObject.guestPerDay = guestPerDay.rows
+    const guestPerDayFormatted = axisMapping(
+      guestPerDay.rows,
+      guestPerDay.fields[0].name,
+      guestPerDay.fields[1].name
+    )
+    responseObject.guestPerDayXAxis = guestPerDayFormatted[0]
+    responseObject.guestPerDayYAxis = guestPerDayFormatted[1]
 
     res.json(responseObject)
   } catch (error) {
     next(error)
   }
 })
+
+function axisMapping(arr, xAxisName, yAxisName) {
+  const xAxis = []
+  const yAxis = []
+  arr.forEach(el => {
+    xAxis.push(el[xAxisName])
+    yAxis.push(+el[yAxisName])
+  })
+
+  return [xAxis, yAxis]
+}
