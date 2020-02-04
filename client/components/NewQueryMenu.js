@@ -3,8 +3,42 @@ import {connect} from 'react-redux'
 import {getMenuFields, getMenu} from '../store/menuReducer'
 
 export class NewQueryMenu extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      selectedType: ''
+    }
+    this.handleChange = this.handleChange.bind(this)
+    this.generateDataForD3 = this.generateDataForD3.bind(this)
+  }
   componentDidMount() {
     this.props.getMenu() //SWITCH TO getMenuFields after POC
+  }
+
+  handleChange(e) {
+    this.setState({selectedType: e.target.value})
+  }
+
+  generateDataForD3(arr) {
+    const hash = {}
+    const arrOfTypes = arr.map(el => el[this.state.selectedType])
+    arrOfTypes.forEach(el => {
+      if (hash[el]) {
+        hash[el]++
+      } else {
+        hash[el] = 1
+      }
+    })
+    let keys = []
+    let numbers = []
+    for (let key in hash) {
+      if (hash.hasOwnProperty(key)) {
+        keys.push(key)
+        numbers.push(hash[key])
+      }
+    }
+    return [keys, numbers]
   }
 
   render() {
@@ -12,21 +46,33 @@ export class NewQueryMenu extends Component {
     const rows = this.props.rows
     const selected = this.props.selected
     const isSelected = selected === 'Menu'
+    const rowsToDisplay = rows.filter(row => row[this.state.selectedType])
+    const [xData, yData] = this.generateDataForD3(rowsToDisplay)
 
     return (
       <div>
         {isSelected ? (
           <div>
-            <select>
+            <select onChange={this.handleChange}>
               {fields.map((field, idx) => {
-                return <option key={idx}>{field}</option>
+                return (
+                  <option key={idx} value={field}>
+                    {field}
+                  </option>
+                )
               })}
             </select>
-            <ul>
-              {rows.map((menu, idx) => {
-                return <li key={idx}>{menu.menuName}</li>
-              })}
-            </ul>
+
+            {this.state.selectedType ? (
+              <div className="chartDiv">
+                <ul>
+                  {rowsToDisplay.map((menu, idx) => {
+                    return <li key={idx}>{menu.menuName}</li>
+                  })}
+                </ul>
+                <D3BarChart xData={xData} yData={yData} />
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

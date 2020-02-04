@@ -10,7 +10,9 @@ const GET_MENU = 'GET_MENU'
  * INITIAL STATE
  */
 const initialState = {
+  // coke
   rows: [],
+  // nonAlc
   fields: []
 }
 
@@ -54,9 +56,10 @@ const filterFieldsFunction = function(array) {
         !field.name.includes('Id')
     )
     .map(field => {
+      console.log('FIELD=>>>', field)
       let name = field.name
-      name = name.replace(/([A-Z])/g, ' $1') // COVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
-      name = name[0].toUpperCase() + name.slice(1)
+      // name = name.replace(/([A-Z])/g, ' $1') // COVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+      // name = name[0].toUpperCase() + name.slice(1)
       return name
     })
 }

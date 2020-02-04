@@ -44,7 +44,7 @@ export default function PermanentDrawerLeft() {
 
   return (
     <div>
-      <Button variant="contained" color="primary" fullWidth>
+      <Button variant="contained" color="primary" fullWidth href="/summary">
         Summary
       </Button>
       <Button variant="contained" color="primary" fullWidth>
