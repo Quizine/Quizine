@@ -10,16 +10,10 @@ const initialState = {
 
 const gotOrders = orders => ({type: GET_PEAK_TIME_ORDERS, orders})
 
-export const getPeakTimeOrders = () => async dispatch => {
+export const getPeakTimeOrders = timeInterval => async dispatch => {
   try {
-    const year = await axios.get('/api/orders/searchlast', {
-      params: {interval: 'year'}
-    })
-    const month = await axios.get('/api/orders/searchlast', {
-      params: {interval: 'month'}
-    })
-    const week = await axios.get('/api/orders/searchlast', {
-      params: {interval: 'week'}
+    await axios.get('/api/orders/searchlast', {
+      params: {interval: timeInterval}
     })
     dispatch(
       gotOrders({
