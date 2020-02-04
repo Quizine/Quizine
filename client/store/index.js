@@ -8,7 +8,9 @@ import orders from './orderReducer'
 import menu from './menuReducer'
 import peakTimeOrders from './peakTimeOrderReducer'
 
-const reducer = combineReducers({user, waiters, menu, orders, peakTimeOrders})
+import summary from './summaryReducer'
+
+const reducer = combineReducers({user, summary, waiters, menu, orders, peakTimeOrders})
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )
