@@ -1,26 +1,37 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
+import {getSummary} from '../store/summaryReducer'
 
 export class Summary extends Component {
+  componentDidMount() {
+    this.props.getSummary()
+  }
+
   render() {
+    console.log(this.props.summary)
     return (
       <div>
-        <Link to="/newquery">
-          <button type="submit">New Query</button>
-        </Link>
+        <h2>Welcome, !</h2>
+        <p>Quick summary:</p>
       </div>
     )
   }
 }
 
-// const mapStateToProps = state => {
-//   return {
-//     email: state.user.email
-//   }
-// }
+/**
+ * CONTAINER
+ */
 
-// const mapDispatchToProps = () => {}
-// export default connect(mapStateToProps, mapDispatchToProps)(Summary)
+const mapState = state => {
+  return {
+    summary: state.summary.summary
+  }
+}
 
-export default Summary
+const mapDispatchToProps = dispatch => {
+  return {
+    getSummary: () => dispatch(getSummary())
+  }
+}
+
+export default connect(mapState, mapDispatchToProps)(Summary)

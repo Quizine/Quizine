@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
 router.get('/fields', async (req, res, next) => {
   try {
     const waiterFields = await client.query(
-      'SELECT * FROM WAITERS WHERE ID = 1'
+      'SELECT * FROM WAITERS WHERE ID = 1' // <---
     )
     res.json(waiterFields.fields)
   } catch (error) {
@@ -30,7 +30,7 @@ router.get('/query/:field/:input', async (req, res, next) => {
   try {
     const {field, input} = req.params
     const queriedWaiters = await client.query(
-      `SELECT * FROM WAITERS WHERE ${field} = '${input}'`
+      `SELECT * FROM WAITERS WHERE ${field} = '${input}'` //add LIMIT
     )
     res.json(queriedWaiters)
   } catch (error) {
