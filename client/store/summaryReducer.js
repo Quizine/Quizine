@@ -30,21 +30,27 @@ const gotPeakTimeOrders = (orders, timeInterval) => ({
 /**
  * THUNK CREATORS
  */
-export const getSummary = () => async dispatch => {
-  try {
-    const res = await axios.get('/api/tables/summary')
-    dispatch(gotSummary(res.data))
-  } catch (err) {
-    console.error(err)
-  }
-}
+
+// NOT USED FOR NOW
+
+// export const getSummary = () => async dispatch => {
+//   try {
+//     const res = await axios.get('/api/tables/summary')
+//     dispatch(gotSummary(res.data))
+//   } catch (err) {
+//     console.error(err)
+//   }
+// }
 
 export const getPeakTimeOrders = timeInterval => async dispatch => {
+  console.log('TIMEMEMEMEMEM', timeInterval)
   try {
-    const response = await axios.get('/api/orders/searchlast', {
+    const response = await axios.get('/api/tables/summary', {
       params: {interval: timeInterval}
     })
-    dispatch(gotPeakTimeOrders(response.data, timeInterval))
+    dispatch(
+      gotPeakTimeOrders(response.data.numberOfGuestsByHour, timeInterval)
+    )
   } catch (err) {
     console.error(err)
   }
