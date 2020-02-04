@@ -15,7 +15,6 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-
 router.get('/searchlast', async (req, res, next) => {
   try {
     // callback
@@ -33,6 +32,10 @@ router.get('/searchlast', async (req, res, next) => {
       .slice(11, -1)
     console.log(arrInPercentage)
     res.json(arrInPercentage)
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.get('/fields', async (req, res, next) => {
   try {
