@@ -6,46 +6,9 @@ client.connect()
 
 module.exports = router
 
-router.get('/summary', async (req, res, next) => {
+router.get('/summary/graphs/numberOfGuestsByHour', async (req, res, next) => {
   try {
-    const responseObject = {} //<------- MAKE SURE MATCHES RESTAURANT ID
-    console.log('BECKENDIIIIII', req.query)
     const interval = req.query.interval
-    const revenue = await client.query(`
-    SELECT
-    SUM (total)
-    FROM orders
-    WHERE "timeOfPurchase" > now() - interval '1 year'`) //make time dynamic  <------
-    responseObject.revenue = parseInt(revenue.rows[0].sum)
-
-    const revenueVsTime = await client.query(`
-    SELECT to_char("timeOfPurchase",'Mon') AS mon,
-    EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-    SUM("total") AS "monthlyRevenue"
-    FROM orders
-    WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
-    GROUP BY 1,2
-    LIMIT 12`)
-    responseObject.revenueVsTime = revenueVsTime.rows
-
-    const waiterCount = await client.query(`
-    SELECT
-    COUNT(*)
-    FROM waiters
-    WHERE "updatedAt" > now() - interval '1 month' `)
-    responseObject.waiterCount = parseInt(waiterCount.rows[0].count)
-
-    // const numberOfGuestsByHour = await client.query(`
-    // SELECT
-    // EXTRACT(hour from orders."timeOfPurchase") AS hours,
-    // ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests
-    // FROM ORDERS
-    // WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
-    // GROUP BY hours ORDER BY hours;
-    // `)
-    // responseObject.numberOfGuestsByHour = numberOfGuestsByHour.rows
-
-
     const numberOfGuestsByHour = await client.query(
       `
     SELECT
@@ -66,7 +29,63 @@ ORDER BY hours;
     const percentageArr = numberOfGuestsByHour.rows.map(el =>
       Number(el.percentage)
     )
-    responseObject.numberOfGuestsByHour = percentageArr
+    res.json(percentageArr)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/summary/graphs/revenueVsTime', async (req, res, next) => {
+  try {
+    const year = req.query.year
+    const revenueVsTime = await client.query(`
+    SELECT to_char("timeOfPurchase",'Mon') AS mon,
+    EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+    SUM("total") AS "monthlyRevenue"
+    FROM orders
+    WHERE orders."timeOfPurchase" >= NOW() - interval '${year} year'
+    GROUP BY 1,2
+    --ORDER BY ?????
+    `)
+    const allDateRevenue = {month: [], revenue: []}
+    revenueVsTime.rows.forEach(row => {
+      allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
+      allDateRevenue.revenue.push(Number(row.monthlyRevenue))
+    })
+    console.log(allDateRevenue)
+    res.json(allDateRevenue)
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/summary', async (req, res, next) => {
+  try {
+    const responseObject = {} //<------- MAKE SURE MATCHES RESTAURANT ID
+    const interval = req.query.interval
+    const revenue = await client.query(`
+    SELECT
+    SUM (total)
+    FROM orders
+    WHERE "timeOfPurchase" > now() - interval '1 year'`) //make time dynamic  <------
+    responseObject.revenue = parseInt(revenue.rows[0].sum)
+
+    const waiterCount = await client.query(`
+    SELECT
+    COUNT(*)
+    FROM waiters
+    WHERE "updatedAt" > now() - interval '1 month' `)
+    responseObject.waiterCount = parseInt(waiterCount.rows[0].count)
+
+    // const numberOfGuestsByHour = await client.query(`
+    // SELECT
+    // EXTRACT(hour from orders."timeOfPurchase") AS hours,
+    // ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests
+    // FROM ORDERS
+    // WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+    // GROUP BY hours ORDER BY hours;
+    // `)
+    // responseObject.numberOfGuestsByHour = numberOfGuestsByHour.rows
     res.json(responseObject)
   } catch (error) {
     next(error)

@@ -8,8 +8,9 @@ import {
   UserHome,
   Summary,
   NewQuery,
-  Home,
-  StockQueryAnalytics
+  WelcomePage,
+  StockQueryAnalytics,
+  Sidebar
 } from './components'
 import {me} from './store'
 /**
@@ -23,32 +24,26 @@ class Routes extends Component {
   render() {
     const {isLoggedIn} = this.props
 
-    return (
+    return isLoggedIn ? (
+      <div className="routes-cont">
+        <Sidebar />
+        <Switch>
+          <Route path="/home" component={UserHome} />
+          <Route path="/newquery" component={NewQuery} />
+          <Route path="/summary" component={Summary} />
+          <Route path="/stockQueries" component={StockQueryAnalytics} />
+        </Switch>
+      </div>
+    ) : (
       <Switch>
-        {/* Routes placed here are available to all visitors */}
-
-        <Route exact path="/" component={Home} />
+        <Route exact path="/" component={WelcomePage} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
-        <Route path="/newquery" component={NewQuery} />
-        <Route path="/summary" component={Summary} />
-        <Route path="/stockQueries" component={StockQueryAnalytics} />
-        {isLoggedIn && (
-          <Switch>
-            {/* Routes placed here are only available after logging in */}
-            <Route path="/home" component={UserHome} />
-          </Switch>
-        )}
-        {/* Displays our Login component as a fallback */}
-        <Route component={Login} />
       </Switch>
     )
   }
 }
 
-/**
- * CONTAINER
- */
 const mapState = state => {
   return {
     // Being 'logged in' for our purposes will be defined has having a state.user that has a truthy id.

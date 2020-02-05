@@ -10,10 +10,7 @@ export const UserHome = props => {
 
   return (
     <div className="home-container">
-      <div className="sidebar-container">
-        <Sidebar />
-      </div>
-      <h3>Welcome, {email}</h3>
+      <h3>Welcome back, {email}</h3>
     </div>
   )
 }

@@ -10,35 +10,79 @@ label {
   display: block;
 }
 
-nav a {
+/* nav a {
   display: inline-block;
   margin: 1em;
-}
+} */
 
 form div {
   margin: 1em;
   display: inline-block;
 }
 
-/* -----------SIDEBAR COMPONENT--------------------- */
-.home-container {
+.app-cont {
   display: flex;
 }
+
+.routes-cont {
+  display: flex;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+}
+
+.home-container h3 {
+  text-align: center;
+}
+
+/* -----------SIDEBAR COMPONENT--------------------- */
 
 .sidebar-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   position: sticky;
   width: 10vw;
   height: 90vh;
   /* margin-top: 3em; */
-  background-color: darkgrey;
+  background-color: rgb(228, 229, 238);
+}
+
+.sidebar-btn {
+  padding: 1em 0 0 0;
 }
 
 .peak-time-div {
-  height: 400px;
-  width: 700px;
-  margin: 5em;
+  height: 300px;
+  width: 40vw;
+  margin: 1em;
   background-color: rgb(228, 229, 238);
+}
+
+.rev-time-div {
+  height: 300px;
+  width: 40vw;
+  margin: 1em;
+  background-color: rgb(228, 229, 238);
+}
+
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ------SUMMARY-------- */
+.summary-cont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+}
+
+.summary-data {
+  display: flex;
 }

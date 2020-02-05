@@ -35,7 +35,6 @@ const Navbar = ({handleClick, isLoggedIn}) => {
           </Typography>
           {isLoggedIn ? (
             <div>
-              <Button color="inherit">Home</Button>
               <Button color="inherit" onClick={handleClick}>
                 Logout
               </Button>
