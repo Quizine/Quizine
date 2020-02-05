@@ -39,18 +39,20 @@ router.get('/summary/graphs/revenueVsTime', async (req, res, next) => {
   try {
     const year = req.query.year
     const revenueVsTime = await client.query(`
-    SELECT to_char("timeOfPurchase",'Mon') AS mon,
-    EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-    SUM("total") AS "monthlyRevenue"
-    FROM orders
-    WHERE orders."timeOfPurchase" >= NOW() - interval '${year} year'
-    GROUP BY 1,2
-    --ORDER BY ?????
+    select 
+	to_char("timeOfPurchase",'Mon') AS mon,
+	date_trunc('month', orders."timeOfPurchase" ) as m,
+	EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+	SUM("total") AS "monthlyRevenue"
+	from orders 
+	WHERE orders."timeOfPurchase" >= NOW() - interval '${year} year'
+	group by mon, m, yyyy 
+	order by m
     `)
     const allDateRevenue = {month: [], revenue: []}
     revenueVsTime.rows.forEach(row => {
       allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-      allDateRevenue.revenue.push(Number(row.monthlyRevenue))
+      allDateRevenue.revenue.push(financial(Number(row.monthlyRevenue) / 100))
     })
     console.log(allDateRevenue)
     res.json(allDateRevenue)
@@ -184,4 +186,8 @@ function axisMapping(arr, xAxisName, yAxisName) {
   })
 
   return [xAxis, yAxis]
+}
+
+function financial(x) {
+  return Number(Number.parseFloat(x).toFixed(2))
 }
