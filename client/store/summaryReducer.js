@@ -5,6 +5,7 @@ import axios from 'axios'
  */
 const GET_SUMMARY = 'GET_SUMMARY'
 const GET_PEAK_TIME_ORDERS = 'GET_PEAK_TIME_ORDERS'
+const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
 
 /**
  * INITIAL STATE
@@ -15,6 +16,11 @@ const initialState = {
     year: [],
     month: [],
     week: []
+  },
+  revenueVsTime: {
+    allPeriod: {},
+    oneYear: {},
+    twoYears: {}
   }
 }
 
@@ -26,6 +32,11 @@ const gotPeakTimeOrders = (orders, timeInterval) => ({
   type: GET_PEAK_TIME_ORDERS,
   orders,
   timeInterval
+})
+const gotRevenueVsTime = (chartData, yearQty) => ({
+  type: GET_REVENUE_VS_TIME,
+  chartData,
+  yearQty
 })
 /**
  * THUNK CREATORS
@@ -43,16 +54,31 @@ const gotPeakTimeOrders = (orders, timeInterval) => ({
 // }
 
 export const getPeakTimeOrders = timeInterval => async dispatch => {
-  console.log('TIMEMEMEMEMEM', timeInterval)
   try {
-    const response = await axios.get('/api/tables/summary', {
-      params: {interval: timeInterval}
-    })
-    dispatch(
-      gotPeakTimeOrders(response.data.numberOfGuestsByHour, timeInterval)
+    const {data} = await axios.get(
+      '/api/tables/summary/graphs/numberOfGuestsByHour',
+      {
+        params: {interval: timeInterval}
+      }
     )
+    dispatch(gotPeakTimeOrders(data, timeInterval))
   } catch (err) {
     console.error(err)
+  }
+}
+
+export const getRevenueVsTime = yearQty => async dispatch => {
+  let sendYear
+  if (yearQty === 'oneYear') sendYear = '1'
+  else if (yearQty === 'twoYears') sendYear = '2'
+  else sendYear = '3'
+  try {
+    const {data} = await axios.get('/api/tables/summary/graphs/revenueVsTime', {
+      params: {year: sendYear}
+    })
+    dispatch(gotRevenueVsTime(data, yearQty))
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -69,6 +95,14 @@ export default function(state = initialState, action) {
         peakTimeOrders: {
           ...state.peakTimeOrders,
           [`${action.timeInterval}`]: action.orders
+        }
+      }
+    case GET_REVENUE_VS_TIME:
+      return {
+        ...state,
+        revenueVsTime: {
+          ...state.revenueVsTime,
+          [`${action.yearQty}`]: action.chartData
         }
       }
     default:

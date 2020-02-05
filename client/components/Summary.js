@@ -1,22 +1,19 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
 import PeakTimeGraph from './charts/PeakTimeGraph'
+import LineGraphRevenue from './charts/LineGraphRevenue'
 import {getSummary} from '../store/summaryReducer'
 
 export class Summary extends Component {
   render() {
     console.log(this.props.summary)
     return (
-      <div>
-        <h2>Welcome, !</h2>
-        <p>Quick summary:</p>
-        <Link to="/newquery">
-          {' '}
-          {/*change route*/}
-          <button type="submit">VIEW BUSINESS ANALYTICS</button>
-        </Link>
-        <PeakTimeGraph />
+      <div className="summary-cont">
+        <h2>BUSINESS SUMMARY</h2>
+        <div className="summary-data">
+          <PeakTimeGraph />
+          <LineGraphRevenue />
+        </div>
       </div>
     )
   }

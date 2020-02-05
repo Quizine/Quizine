@@ -1,55 +1,55 @@
 import React from 'react'
-import {makeStyles} from '@material-ui/core/styles'
-import Drawer from '@material-ui/core/Drawer'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import List from '@material-ui/core/List'
-import Typography from '@material-ui/core/Typography'
-import Divider from '@material-ui/core/Divider'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import MailIcon from '@material-ui/icons/Mail'
+
 import {Button} from '@material-ui/core'
+import {withRouter} from 'react-router-dom'
 
-const drawerWidth = 240
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex'
-  },
-  appBar: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth
-  },
-  toolbar: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3)
-  }
-}))
-
-export default function PermanentDrawerLeft() {
-  const classes = useStyles()
-
+const Sidebar = props => {
   return (
-    <div>
-      <Button variant="contained" color="primary" fullWidth href="/summary">
-        Summary
-      </Button>
-      <Button variant="contained" color="primary" fullWidth>
-        Saved Queries
-      </Button>
+    <div className="sidebar-container">
+      <div className="sidebar-btn">
+        {' '}
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          onClick={e => {
+            e.preventDefault()
+            props.history.push('/summary')
+          }}
+        >
+          Summary
+        </Button>
+      </div>
+      <div className="sidebar-btn">
+        {' '}
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          onClick={e => {
+            e.preventDefault()
+            props.history.push('/newquery')
+          }}
+        >
+          BUSINESS ANALYTICS
+        </Button>
+      </div>
+      <div className="sidebar-btn">
+        {' '}
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          onClick={e => {
+            e.preventDefault()
+            props.history.push('/stockQueries')
+          }}
+        >
+          QUERIES
+        </Button>
+      </div>
     </div>
   )
 }
+
+export default withRouter(Sidebar)
