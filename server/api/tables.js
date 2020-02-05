@@ -94,23 +94,23 @@ router.get('/summary', async (req, res, next) => {
   }
 })
 
-router.get('/fields', async (req, res, next) => {
-  try {
-    const allFields = await client.query(
-      `SELECT table_name
-        FROM information_schema.tables
-        WHERE table_type='BASE TABLE'
-        AND table_schema='public'
-        AND table_name !='Sessions'
-        AND table_name !='users'
-        AND table_name !='menuOrders'
-        AND table_name !='restaurants'`
-    )
-    res.json(allFields.rows)
-  } catch (error) {
-    next(error)
-  }
-})
+// router.get('/fields', async (req, res, next) => {
+//   try {
+//     const allFields = await client.query(
+//       `SELECT table_name
+//         FROM information_schema.tables
+//         WHERE table_type='BASE TABLE'
+//         AND table_schema='public'
+//         AND table_name !='Sessions'
+//         AND table_name !='users'
+//         AND table_name !='menuOrders'
+//         AND table_name !='restaurants'`
+//     )
+//     res.json(allFields.rows)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 router.get('/stockQueries', async (req, res, next) => {
   try {
@@ -118,8 +118,13 @@ router.get('/stockQueries', async (req, res, next) => {
     const mealType = 'dinner'
     const interval = 'year'
 
-    const waitersByTipPercent = await client.query(`SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage" FROM ORDERS
-    JOIN WAITERS ON orders."waiterId" = waiters.id WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}' GROUP BY waiters.name ORDER BY "averageTipPercentage" DESC;`)
+    const waitersByTipPercent = await client.query(`
+    SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage" 
+    FROM ORDERS
+    JOIN WAITERS ON orders."waiterId" = waiters.id 
+    WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}' 
+    GROUP BY waiters.name 
+    ORDER BY "averageTipPercentage" DESC;`)
     const waitersByTipPercentFormatted = axisMapping(
       waitersByTipPercent.rows,
       waitersByTipPercent.fields[0].name,
@@ -128,7 +133,9 @@ router.get('/stockQueries', async (req, res, next) => {
     responseObject.waitersByTipPercentXAxis = waitersByTipPercentFormatted[0]
     responseObject.waitersByTipPercentYAxis = waitersByTipPercentFormatted[1]
 
-    const waitersByAvgServedDish = await client.query(`SELECT waiters.name, ROUND(SUM ("menuOrders".quantity) / 7) FROM "menuOrders"
+    const waitersByAvgServedDish = await client.query(`
+    SELECT waiters.name, ROUND(SUM ("menuOrders".quantity) / 7) 
+    FROM "menuOrders"
     JOIN ORDERS ON orders.id = "menuOrders"."orderId"
     JOIN WAITERS ON orders."waiterId" = waiters.id
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
@@ -160,7 +167,8 @@ router.get('/stockQueries', async (req, res, next) => {
     responseObject.menuItemsByOrderYAxis = menuItemsByOrderFormatted[1]
 
     const guestPerDay = await client.query(`SELECT
-    EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM (orders."numberOfGuests") AS "totalNumberOfGuests" FROM orders
+    EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM (orders."numberOfGuests") AS "totalNumberOfGuests" 
+    FROM orders
     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
     GROUP BY "dayOfWeek" ORDER BY "dayOfWeek" ASC;`)
     const guestPerDayFormatted = axisMapping(
