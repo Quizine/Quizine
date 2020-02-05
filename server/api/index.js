@@ -18,6 +18,7 @@ router.use('/waiters', require('./waiters'))
 router.use('/orders', require('./orders'))
 router.use('/menu', require('./menu'))
 router.use('/tables', require('./tables'))
+router.use('/analytics', require('./analytics'))
 
 router.use((req, res, next) => {
   const error = new Error('Not Found')

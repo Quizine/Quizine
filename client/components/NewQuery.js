@@ -1,19 +1,19 @@
 import React, {Component} from 'react'
-import NewQueryWaiters from './NewQueryWaiters'
-import NewQueryOrders from './NewQueryOrders'
-import NewQueryMenu from './NewQueryMenu'
+import NewQueryFilters from './NewQueryFilters'
 
 export class NewQuery extends Component {
   constructor() {
     super()
     this.state = {
-      selected: ''
+      tables: {},
+      selectedTable: ''
     }
     this.handleChange = this.handleChange.bind(this)
   }
+  //CDM to get all column names on store
 
   handleChange(event) {
-    this.setState({selected: event.target.value})
+    this.setState({selectedTable: event.target.value})
   }
 
   render() {
@@ -25,11 +25,12 @@ export class NewQuery extends Component {
           <option value="Waiters">Waiters</option>
           <option value="Orders">Orders</option>
         </select>
-        {this.state.selected ? (
+        {this.state.selectedTable ? (
           <div>
-            <NewQueryMenu selected={this.state.selected} />
-            <NewQueryWaiters selected={this.state.selected} />
-            <NewQueryOrders selected={this.state.selected} />
+            <NewQueryFilters
+              selectedTable={this.state.selectedTable}
+              columnNames={this.state.tables[this.state.selectedTable]}
+            />
           </div>
         ) : null}
       </div>
