@@ -1,12 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getMenuSalesNumbersChart} from '../../store/stockQueryReducer'
+import {getNumberOfOrdersVsHour} from '../../store/businessAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 
-class MenuSalesNumbersChart extends Component {
+class NumberOfOrdersVsHour extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
       selectedOption: 'month'
     }
@@ -14,37 +13,53 @@ class MenuSalesNumbersChart extends Component {
   }
 
   componentDidMount() {
-    this.props.loadMenuSalesNumbersChart(this.state.selectedOption)
+    this.props.loadNumberOfOrdersVsHour(this.state.selectedOption)
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
     if (
-      !Object.keys(this.props.menuSalesNumbersChart[event.target.value]).length
+      !Object.keys(this.props.numberOfOrdersVsHour[event.target.value]).length
     ) {
-      this.props.loadMenuSalesNumbersChart(event.target.value)
+      this.props.loadNumberOfOrdersVsHour(event.target.value)
     }
   }
 
   render() {
-    const labels = this.props.menuSalesNumbersChart.xAxis
-    const yAxis = this.props.menuSalesNumbersChart.yAxis
+    const labels = [
+      '11am',
+      '12pm',
+      '1pm',
+      '2pm',
+      '3pm',
+      '4pm',
+      '5pm',
+      '6pm',
+      '7pm',
+      '8pm',
+      '9pm',
+      '10pm'
+    ]
+    const arrPerc = this.props.numberOfOrdersVsHour[this.state.selectedOption]
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Total # of Sales By Item',
-          data: yAxis,
+          label: 'Number of Orders',
+          data: arrPerc,
           backgroundColor: 'yellow'
         }
       ]
     }
+
     return (
       <div className="peak-time-div">
         <select onChange={this.handleChange}>
-          <option value="month">Month</option>
           <option value="year">Year</option>
+          <option value="month" selected>
+            Month
+          </option>
           <option value="week">Week</option>
         </select>
         <div>
@@ -53,7 +68,7 @@ class MenuSalesNumbersChart extends Component {
             options={{
               title: {
                 display: true,
-                text: 'Total # of Sales By Item'
+                text: 'Number of Orders Per Hour'
               }
             }}
           />
@@ -65,18 +80,17 @@ class MenuSalesNumbersChart extends Component {
 
 const mapStateToProps = state => {
   return {
-    menuSalesNumbersChart: state.stockQueries.menuSalesNumbersChart
+    numberOfOrdersVsHour: state.businessAnalytics.numberOfOrdersVsHour
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadMenuSalesNumbersChart(timeInterval) {
-      dispatch(getMenuSalesNumbersChart(timeInterval))
-    }
+    loadnumberOfOrdersVsHour: timeInterval =>
+      dispatch(getNumberOfOrdersVsHour(timeInterval))
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  MenuSalesNumbersChart
+  NumberOfOrdersVsHour
 )

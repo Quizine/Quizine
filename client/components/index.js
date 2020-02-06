@@ -9,6 +9,8 @@ export {default as Summary} from './Summary'
 export {default as Sidebar} from './Sidebar'
 export {default as Navbar} from './Navbar'
 export {default as WelcomePage} from './WelcomePage'
-export {default as StockQueryAnalytics} from './StockQueryAnalytics'
 export {default as CustomizedQuery} from './CustomizedQuery/CustomizedQueryPage'
+export {
+  default as BusinessAnalytics
+} from './BusinessAnalytics/BusinessAnalyticsPage'
 export {Login, Signup} from './AuthForm'
