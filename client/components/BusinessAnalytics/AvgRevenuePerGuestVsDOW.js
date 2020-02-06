@@ -45,11 +45,9 @@ class AvgRevenuePerGuestVsDOW extends Component {
 
     return (
       <div className="peak-time-div">
-        <select onChange={this.handleChange}>
+        <select onChange={this.handleChange} defaultValue="month">
           <option value="year">Year</option>
-          <option value="month" selected>
-            Month
-          </option>
+          <option value="month">Month</option>
           <option value="week">Week</option>
         </select>
         <div>

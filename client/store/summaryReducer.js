@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {act} from 'react-test-renderer'
 
 /**
  * ACTION TYPES
@@ -6,6 +7,7 @@ import axios from 'axios'
 const GET_NUMBER_OF_WAITERS = 'GET_NUMBER_OF_WAITERS'
 const GET_PEAK_TIME_ORDERS = 'GET_PEAK_TIME_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
+const GET_CALENDAR_DATA = 'GET_CALENDAR_DATA'
 
 /**
  * INITIAL STATE
@@ -21,6 +23,11 @@ const initialState = {
     allPeriod: {},
     oneYear: {},
     twoYears: {}
+  },
+  calendarData: {
+    revenue: '',
+    listOfWaiters: [],
+    popularDish: ''
   }
 }
 
@@ -42,6 +49,13 @@ const gotRevenueVsTime = (chartData, yearQty) => ({
   type: GET_REVENUE_VS_TIME,
   chartData,
   yearQty
+})
+
+const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
+  type: GET_CALENDAR_DATA,
+  revenue,
+  listOfWaiters,
+  popularDish
 })
 
 export const getNumberOfWaiters = () => async dispatch => {
@@ -79,6 +93,23 @@ export const getRevenueVsTime = yearQty => async dispatch => {
   }
 }
 
+export const getCalendarData = (
+  revenue,
+  listOfWaiters,
+  popularDish,
+  date
+) => async dispatch => {
+  const payload = {params: {date}}
+  try {
+    const revenue = await axios.get('/api/summary/revenueByDay', payload)
+    const waiters = await axios.get('/api/summary/waitersOnADay', payload)
+    const dish = await axios.get('/api/summary/mostPopularDishOnADay', payload) //?
+    dispatch(gotCalendarData(revenue.data, waiters.data, dish.data))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -103,6 +134,15 @@ export default function(state = initialState, action) {
         revenueVsTime: {
           ...state.revenueVsTime,
           [`${action.yearQty}`]: action.chartData
+        }
+      }
+    case GET_CALENDAR_DATA:
+      return {
+        ...state,
+        calendarData: {
+          revenue: action.revenue,
+          listOfWaiters: action.listOfWaiters,
+          popularDish: action.popularDish
         }
       }
     default:
