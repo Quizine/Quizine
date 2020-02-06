@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getTipPercentageChart} from '../../store/stockQueryReducer'
+import {getMenuSalesNumbersChart} from '../../store/stockQueryReducer'
 import {Bar} from 'react-chartjs-2'
 
-class WaitersTipPercentGraph extends Component {
+class MenuSalesNumbersChart extends Component {
   constructor(props) {
     super(props)
 
@@ -14,27 +14,27 @@ class WaitersTipPercentGraph extends Component {
   }
 
   componentDidMount() {
-    this.props.loadtipPercentageChart(this.state.selectedOption)
+    this.props.loadMenuSalesNumbersChart(this.state.selectedOption)
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
     if (
-      !Object.keys(this.props.tipPercentageChart[event.target.value]).length
+      !Object.keys(this.props.menuSalesNumbersChart[event.target.value]).length
     ) {
-      this.props.loadtipPercentageChart(event.target.value)
+      this.props.loadMenuSalesNumbersChart(event.target.value)
     }
   }
 
   render() {
-    const labels = this.props.tipPercentageChart.xAxis
-    const yAxis = this.props.tipPercentageChart.yAxis
+    const labels = this.props.menuSalesNumbersChart.xAxis
+    const yAxis = this.props.menuSalesNumbersChart.yAxis
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Tip Percentage',
+          label: 'Total # of Sales By Item',
           data: yAxis,
           backgroundColor: 'yellow'
         }
@@ -53,7 +53,7 @@ class WaitersTipPercentGraph extends Component {
             options={{
               title: {
                 display: true,
-                text: 'Waiters Tip Percentage'
+                text: 'Total # of Sales By Item'
               }
             }}
           />
@@ -65,18 +65,18 @@ class WaitersTipPercentGraph extends Component {
 
 const mapStateToProps = state => {
   return {
-    tipPercentageChart: state.stockQueries.tipPercentageChart
+    menuSalesNumbersChart: state.stockQueries.menuSalesNumbersChart
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadtipPercentageChart(timeInterval) {
-      dispatch(getTipPercentageChart(timeInterval))
+    loadMenuSalesNumbersChart(timeInterval) {
+      dispatch(getMenuSalesNumbersChart(timeInterval))
     }
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  WaitersTipPercentGraph
+  MenuSalesNumbersChart
 )

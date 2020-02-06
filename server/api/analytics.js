@@ -89,3 +89,62 @@ router.get('/avgRevPerGuest', async (req, res, next) => {
     next(error)
   }
 })
+
+router.get('/graphs/tipPercentageByWaiters', async (req, res, next) => {
+  try {
+    const timeInterval = req.query.timeInterval
+    const tipPercentageByWaiters = await client.query(
+      `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
+      FROM ORDERS
+      JOIN WAITERS ON orders."waiterId" = waiters.id
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      GROUP BY waiters.name
+      ORDER BY "averageTipPercentage" DESC;`
+    )
+    const [xAxis, yAxis] = axisMapping(
+      tipPercentageByWaiters.rows,
+      tipPercentageByWaiters.fields[0].name,
+      tipPercentageByWaiters.fields[1].name
+    )
+    res.json({xAxis, yAxis})
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/graphs/menuSalesNumbers', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const timeInterval = req.query.timeInterval
+      const menuSalesNumbers = await client.query(`
+      SELECT menus."menuName" as name,
+      SUM("menuOrders" .quantity) as total
+      FROM "menuOrders"
+      JOIN menus on menus.id = "menuOrders"."menuId"
+      JOIN orders on orders.id = "menuOrders"."orderId"
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      GROUP BY name
+      ORDER BY total desc;
+      `)
+      const [xAxis, yAxis] = axisMapping(
+        menuSalesNumbers.rows,
+        menuSalesNumbers.fields[0].name,
+        menuSalesNumbers.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+function axisMapping(arr, xAxisName, yAxisName) {
+  const xAxis = []
+  const yAxis = []
+  arr.forEach(el => {
+    xAxis.push(el[xAxisName])
+    yAxis.push(+el[yAxisName])
+  })
+
+  return [xAxis, yAxis]
+}
