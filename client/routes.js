@@ -9,8 +9,8 @@ import {
   Summary,
   NewQuery,
   WelcomePage,
-  StockQueryAnalytics,
-  Sidebar
+  Sidebar,
+  BusinessAnalytics
 } from './components'
 import {me} from './store'
 /**
@@ -31,7 +31,7 @@ class Routes extends Component {
           <Route path="/home" component={UserHome} />
           <Route path="/newquery" component={NewQuery} />
           <Route path="/summary" component={Summary} />
-          <Route path="/stockQueries" component={StockQueryAnalytics} />
+          <Route path="/businessAnalytics" component={BusinessAnalytics} />
         </Switch>
       </div>
     ) : (

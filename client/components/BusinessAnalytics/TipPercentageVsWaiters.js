@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getAvgRevPerGuest} from '../../store/stockQueryReducer'
+import {getTipPercentageVsWaiters} from '../../store/businessAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 
-class AvgRevPerGuest extends Component {
+class TipPercentageVsWaiters extends Component {
   constructor(props) {
     super(props)
+
     this.state = {
       selectedOption: 'month'
     }
@@ -13,38 +14,37 @@ class AvgRevPerGuest extends Component {
   }
 
   componentDidMount() {
-    this.props.loadAvgRevPerGuest(this.state.selectedOption)
+    this.props.loadTipPercentageVsWaiters(this.state.selectedOption)
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (!Object.keys(this.props.avgRevPerGuest[event.target.value]).length) {
-      this.props.loadAvgRevPerGuest(event.target.value)
+    if (
+      !Object.keys(this.props.tipPercentageVsWaiters[event.target.value]).length
+    ) {
+      this.props.loadTipPercentageVsWaiters(event.target.value)
     }
   }
 
   render() {
-    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat']
-    const arrPerc = this.props.avgRevPerGuest[this.state.selectedOption]
+    const labels = this.props.tipPercentageVsWaiters.xAxis
+    const yAxis = this.props.tipPercentageVsWaiters.yAxis
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Average Revenue per Guest, $',
-          data: arrPerc,
+          label: 'Tip Percentage',
+          data: yAxis,
           backgroundColor: 'yellow'
         }
       ]
     }
-
     return (
       <div className="peak-time-div">
         <select onChange={this.handleChange}>
+          <option value="month">Month</option>
           <option value="year">Year</option>
-          <option value="month" selected>
-            Month
-          </option>
           <option value="week">Week</option>
         </select>
         <div>
@@ -53,7 +53,7 @@ class AvgRevPerGuest extends Component {
             options={{
               title: {
                 display: true,
-                text: 'Average Revenue Per Guest Per Day of Week'
+                text: 'Waiters Tip Percentage'
               }
             }}
           />
@@ -65,15 +65,18 @@ class AvgRevPerGuest extends Component {
 
 const mapStateToProps = state => {
   return {
-    avgRevPerGuest: state.stockQueries.avgRevPerGuest
+    tipPercentageVsWaiters: state.stockQueries.tipPercentageVsWaiters
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadAvgRevPerGuest: timeInterval =>
-      dispatch(getAvgRevPerGuest(timeInterval))
+    loadTipPercentageVsWaiters(timeInterval) {
+      dispatch(getTipPercentageVsWaiters(timeInterval))
+    }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AvgRevPerGuest)
+export default connect(mapStateToProps, mapDispatchToProps)(
+  TipPercentageVsWaiters
+)
