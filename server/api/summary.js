@@ -79,8 +79,8 @@ router.get('/revenueVsTime', async (req, res, next) => {
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
     const DOWAnalysisTable = await client.query(
-      `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM(orders."numberOfGuests") AS "numberOfGuests", ROUND((SUM(orders.total)::numeric)/100,2) AS "dayRevenue", SUM("summedMenuOrder"."summedQuantity")
-      FROM orders 
+      `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM(orders."numberOfGuests") AS "numberOfGuests", ROUND((SUM(orders.total)::numeric)/100000,2) AS "dayRevenue", SUM("summedMenuOrder"."summedQuantity")
+      FROM orders
       JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId" FROM "menuOrders" GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
       ON orders.id = "summedMenuOrder"."orderId"
       WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
