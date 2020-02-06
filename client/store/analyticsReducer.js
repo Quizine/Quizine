@@ -86,7 +86,10 @@ export default function(state = initialState, action) {
         tableFields: filterFieldsFunction(action.tableFields)
       }
     case GET_NEW_QUERY:
-      return {}
+      return {
+        ...state,
+        newQuery: action.newQuery
+      }
     default:
       return state
   }

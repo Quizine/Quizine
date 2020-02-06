@@ -32,17 +32,14 @@ router.get('/', async (req, res, next) => {
 
 router.get('/newQuery', async (req, res, next) => {
   try {
-    console.log('what is this --->', req.query)
     const {timeInterval, tableName, columnName} = req.query
-    console.log(
-      'sql code ------->',
-      `SELECT "${columnName}" FROM ${tableName} WHERE ${tableName}."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'`
-    )
     const newQuery = await client.query(
-      `SELECT "${columnName}" FROM ${tableName} WHERE ${tableName}."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'`
+      `SELECT "${columnName}" 
+      FROM ${tableName} 
+      WHERE ${tableName}."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'`
     )
-    console.log('query ------->', newQuery)
-    res.json(newQuery)
+
+    res.json(newQuery.rows)
   } catch (error) {
     next(error)
   }
