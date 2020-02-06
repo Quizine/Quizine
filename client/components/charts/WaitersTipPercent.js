@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getPeakTimeOrders} from '../../store/summaryReducer'
+import {getTipPercentageChart} from '../../store/stockQueryReducer'
 import {Bar} from 'react-chartjs-2'
 
-class PeakTimeGraph extends Component {
+class WaitersTipPercentGraph extends Component {
   constructor(props) {
     super(props)
 
@@ -14,39 +14,28 @@ class PeakTimeGraph extends Component {
   }
 
   componentDidMount() {
-    this.props.loadPeakTimeOrders(this.state.selectedOption)
+    this.props.loadtipPercentageChart(this.state.selectedOption)
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (!Object.keys(this.props.peakTimeOrders[event.target.value]).length) {
-      this.props.loadPeakTimeOrders(event.target.value)
+    if (
+      !Object.keys(this.props.tipPercentageChart[event.target.value]).length
+    ) {
+      this.props.loadtipPercentageChart(event.target.value)
     }
   }
 
   render() {
-    const labels = [
-      '11am',
-      '12pm',
-      '1pm',
-      '2pm',
-      '3pm',
-      '4pm',
-      '5pm',
-      '6pm',
-      '7pm',
-      '8pm',
-      '9pm',
-      '10pm'
-    ]
-    const arrPerc = this.props.peakTimeOrders[this.state.selectedOption]
+    const labels = this.props.tipPercentageChart.xAxis
+    const yAxis = this.props.tipPercentageChart.yAxis
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Percentage',
-          data: arrPerc,
+          label: 'Tip Percentage',
+          data: yAxis,
           backgroundColor: 'yellow'
         }
       ]
@@ -64,7 +53,7 @@ class PeakTimeGraph extends Component {
             options={{
               title: {
                 display: true,
-                text: 'Peak Times'
+                text: 'Waiters Tip Percentage'
               }
             }}
           />
@@ -76,15 +65,18 @@ class PeakTimeGraph extends Component {
 
 const mapStateToProps = state => {
   return {
-    peakTimeOrders: state.summary.peakTimeOrders
+    tipPercentageChart: state.stockQueries.tipPercentageChart
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadPeakTimeOrders: timeInterval =>
-      dispatch(getPeakTimeOrders(timeInterval))
+    loadtipPercentageChart(timeInterval) {
+      dispatch(getTipPercentageChart(timeInterval))
+    }
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PeakTimeGraph)
+export default connect(mapStateToProps, mapDispatchToProps)(
+  WaitersTipPercentGraph
+)

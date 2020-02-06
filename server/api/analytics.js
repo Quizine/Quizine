@@ -47,3 +47,36 @@ router.get('/newQuery', async (req, res, next) => {
     next(error)
   }
 })
+
+router.get('/graphs/tipPercentageByWaiters', async (req, res, next) => {
+  try {
+    const timeInterval = req.query.timeInterval
+    const tipPercentageByWaiters = await client.query(
+      `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
+      FROM ORDERS
+      JOIN WAITERS ON orders."waiterId" = waiters.id
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      GROUP BY waiters.name
+      ORDER BY "averageTipPercentage" DESC;`
+    )
+    const [xAxis, yAxis] = axisMapping(
+      tipPercentageByWaiters.rows,
+      tipPercentageByWaiters.fields[0].name,
+      tipPercentageByWaiters.fields[1].name
+    )
+    res.json({xAxis, yAxis})
+  } catch (error) {
+    next(error)
+  }
+})
+
+function axisMapping(arr, xAxisName, yAxisName) {
+  const xAxis = []
+  const yAxis = []
+  arr.forEach(el => {
+    xAxis.push(el[xAxisName])
+    yAxis.push(+el[yAxisName])
+  })
+
+  return [xAxis, yAxis]
+}
