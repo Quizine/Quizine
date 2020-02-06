@@ -11,7 +11,7 @@ const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
  * INITIAL STATE
  */
 const initialState = {
-  summary: {},
+  summary: {}, //?????????
   peakTimeOrders: {
     year: [],
     month: [],

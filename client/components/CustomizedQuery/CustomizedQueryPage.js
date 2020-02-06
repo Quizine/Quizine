@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
-import NewQueryFilters from './NewQueryFilters'
-import NumOrdersPerHourChart from './charts/NumOfOrdersPerHour'
-import AvgRevPerGuest from './charts/AvgRevPerGuest'
+import NewQueryFilters from './CustomizedQueryFilters'
+import NumOrdersPerHourChart from '../BusinessAnalytics/NumOfOrdersPerHour'
+import AvgRevPerGuest from '../BusinessAnalytics/AvgRevPerGuest'
 import {connect} from 'react-redux'
-import {getTableFields} from '../store/analyticsReducer'
+import {getTableFields} from '../../store/businessAnalyticsReducer'
 
 export class NewQuery extends Component {
   constructor() {
