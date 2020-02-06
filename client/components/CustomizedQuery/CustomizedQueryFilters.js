@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getNewQuery} from '../store/analyticsReducer'
+import {getNewQuery} from '../store/businessAnalyticsReducer'
 // import {getWaiterFields, getWaiters} from '../store/waiterReducer'
 
 class NewQueryFilters extends Component {

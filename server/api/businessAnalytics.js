@@ -6,111 +6,105 @@ client.connect()
 
 module.exports = router
 
-router.get('/summary/graphs/numberOfGuestsByHour', async (req, res, next) => {
+router.get('/numberOfOrdersPerHour', async (req, res, next) => {
   try {
     const interval = req.query.interval
-    const numberOfGuestsByHour = await client.query(
-      `
-    SELECT
-  EXTRACT(hour from orders."timeOfPurchase") AS hours,
-  SUM(orders."numberOfGuests"),
-  ROUND( 100.0 * (
-  	SUM(orders."numberOfGuests")::DECIMAL / (
-  		SELECT SUM(orders."numberOfGuests")
-  		FROM orders
-  		WHERE orders."timeOfPurchase" >= NOW() - INTERVAL '1 ${interval}'
-  	)), 1) AS percentage
-FROM ORDERS
-WHERE orders."timeOfPurchase" >= NOW() - INTERVAL '1 ${interval}'
-GROUP BY hours
-ORDER BY hours;
-      `
-    )
-    const percentageArr = numberOfGuestsByHour.rows.map(el =>
-      Number(el.percentage)
-    )
-    res.json(percentageArr)
+    if (req.user.id) {
+      // ADD TO EVERY QUERY AND ADD WHERE restaurantId.....  <-------------------------------
+      const numberOfOrdersPerHour = await client.query(
+        `SELECT EXTRACT(hour FROM "timeOfPurchase") AS hour,
+        COUNT(*) AS "numberOfOrders"
+        FROM orders
+        WHERE "timeOfPurchase" >= NOW() - interval '1 ${interval}'
+        WHERE "restaurantId" = ${req.user.restaurantId}
+        GROUP BY hour
+        ORDER BY hour
+        ASC;`
+      )
+      const numberOfOrdersArr = numberOfOrdersPerHour.rows.map(el =>
+        Number(el.numberOfOrders)
+      )
+      res.json(numberOfOrdersArr)
+    }
   } catch (error) {
     next(error)
   }
 })
 
-router.get('/summary/graphs/revenueVsTime', async (req, res, next) => {
+router.get('/avgRevPerGuest', async (req, res, next) => {
   try {
-    const year = req.query.year
-    const revenueVsTime = await client.query(`
-    select
-	to_char("timeOfPurchase",'Mon') AS mon,
-	date_trunc('month', orders."timeOfPurchase" ) as m,
-	EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-	SUM("total") AS "monthlyRevenue"
-	from orders
-	WHERE orders."timeOfPurchase" >= NOW() - interval '${year} year'
-	group by mon, m, yyyy
-	order by m
-    `)
-    const allDateRevenue = {month: [], revenue: []}
-    revenueVsTime.rows.forEach(row => {
-      allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-      allDateRevenue.revenue.push(financial(Number(row.monthlyRevenue) / 100))
-    })
-    console.log(allDateRevenue)
-    res.json(allDateRevenue)
-  } catch (error) {
-    next(error)
-  }
-})
-
-router.get('/summary', async (req, res, next) => {
-  try {
-    const responseObject = {} //<------- MAKE SURE MATCHES RESTAURANT ID
     const interval = req.query.interval
-    const revenue = await client.query(`
-    SELECT
-    SUM (total)
-    FROM orders
-    WHERE "timeOfPurchase" > now() - interval '1 year'`) //make time dynamic  <------
-    responseObject.revenue = parseInt(revenue.rows[0].sum)
-
-    const waiterCount = await client.query(`
-    SELECT
-    COUNT(*)
-    FROM waiters
-    WHERE "updatedAt" > now() - interval '1 month' `)
-    responseObject.waiterCount = parseInt(waiterCount.rows[0].count)
-
-    // const numberOfGuestsByHour = await client.query(`
-    // SELECT
-    // EXTRACT(hour from orders."timeOfPurchase") AS hours,
-    // ROUND( AVG (orders."numberOfGuests")) AS numberOfGuests
-    // FROM ORDERS
-    // WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
-    // GROUP BY hours ORDER BY hours;
-    // `)
-    // responseObject.numberOfGuestsByHour = numberOfGuestsByHour.rows
-    res.json(responseObject)
+    if (req.user.id) {
+      const avgRevPerGuest = await client.query(
+        `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day, 
+        ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
+        FROM orders
+        WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
+        WHERE "restaurantId" = ${req.user.restaurantId}
+        GROUP BY day
+        ORDER BY day ASC;`
+      )
+      const avgRevPerGuestArr = avgRevPerGuest.rows.map(el =>
+        Number(el.revenue_per_guest)
+      )
+      res.json(avgRevPerGuestArr)
+    }
   } catch (error) {
     next(error)
   }
 })
 
-// router.get('/fields', async (req, res, next) => {
-//   try {
-//     const allFields = await client.query(
-//       `SELECT table_name
-//         FROM information_schema.tables
-//         WHERE table_type='BASE TABLE'
-//         AND table_schema='public'
-//         AND table_name !='Sessions'
-//         AND table_name !='users'
-//         AND table_name !='menuOrders'
-//         AND table_name !='restaurants'`
-//     )
-//     res.json(allFields.rows)
-//   } catch (error) {
-//     next(error)
-//   }
-// })
+router.get('/graphs/tipPercentageByWaiters', async (req, res, next) => {
+  try {
+    const timeInterval = req.query.timeInterval
+    if (req.user.id) {
+      const tipPercentageByWaiters = await client.query(
+        `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
+      FROM ORDERS
+      JOIN WAITERS ON orders."waiterId" = waiters.id
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      WHERE "restaurantId" = ${req.user.restaurantId}
+      GROUP BY waiters.name
+      ORDER BY "averageTipPercentage" DESC;`
+      )
+      const [xAxis, yAxis] = axisMapping(
+        tipPercentageByWaiters.rows,
+        tipPercentageByWaiters.fields[0].name,
+        tipPercentageByWaiters.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/graphs/menuSalesNumbers', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const timeInterval = req.query.timeInterval
+      const menuSalesNumbers = await client.query(`
+      SELECT menus."menuName" as name,
+      SUM("menuOrders" .quantity) as total
+      FROM "menuOrders"
+      JOIN menus on menus.id = "menuOrders"."menuId"
+      JOIN orders on orders.id = "menuOrders"."orderId"
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      WHERE "restaurantId" = ${req.user.restaurantId}
+      GROUP BY name
+      ORDER BY total desc;
+      `)
+      const [xAxis, yAxis] = axisMapping(
+        menuSalesNumbers.rows,
+        menuSalesNumbers.fields[0].name,
+        menuSalesNumbers.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.get('/stockQueries', async (req, res, next) => {
   try {
