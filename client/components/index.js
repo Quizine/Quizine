@@ -10,5 +10,7 @@ export {default as NewQuery} from './NewQuery'
 export {default as Sidebar} from './Sidebar'
 export {default as Navbar} from './Navbar'
 export {default as WelcomePage} from './WelcomePage'
-export {default as StockQueryAnalytics} from './StockQueryAnalytics'
+export {
+  default as BusinessAnalytics
+} from './BusinessAnalytics/BusinessAnalyticsPage'
 export {Login, Signup} from './AuthForm'

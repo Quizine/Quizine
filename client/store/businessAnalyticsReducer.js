@@ -3,32 +3,39 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
-const GET_NUM_ORDERS_PER_HOUR_RESULTS = 'GET_NUM_ORDERS_PER_HOUR_RESULTS'
-const GET_AVG_REVENUE_PER_GUEST = 'GET_AVG_REVENUE_PER_GUEST'
-const GET_TIP_PERCENTAGE_CHART = 'GET_TIP_PERCENTAGE_CHART'
-const GET_MENU_SALES_NUMBERS_CHART = 'GET_MENU_SALES_NUMBERS_CHART'
+const GET_NUM_ORDERS_VS_HOUR = 'GET_NUM_ORDERS_VS_HOUR'
+const GET_AVG_REVENUE_GUEST_VS_DOW = 'GET_AVG_REVENUE_GUEST_VS_DOW'
+const GET_TIP_PERCENTAGE_VS_WAITERS = 'GET_TIP_PERCENTAGE_VS_WAITERS'
+const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS =
+  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS'
 
 /**
  * INITIAL STATE
  */
 const initialState = {
-  numOrdersPerHour: {
+  numberOfOrdersVsHour: {
     year: [],
     month: [],
     week: []
   },
-  tipPercentageChart: {
-    xAxis: [],
-    yAxis: []
-  },
-  avgRevPerGuest: {
+  avgRevenuePerGuestVsDOW: {
     year: [],
     month: [],
     week: []
   },
-  menuSalesNumbersChart: {
+  tipPercentageVsWaiters: {
     xAxis: [],
-    yAxis: []
+    yAxis: [],
+    year: {},
+    month: {},
+    week: {}
+  },
+  menuSalesNumbersVsMenuItems: {
+    xAxis: [],
+    yAxis: [],
+    year: {},
+    month: {},
+    week: {}
   }
 }
 
@@ -36,71 +43,83 @@ const initialState = {
  * ACTION CREATORS
  */
 
-const gotNumOrdersPerHour = (results, timeInterval) => ({
-  type: GET_NUM_ORDERS_PER_HOUR_RESULTS,
+const gotNumberOfOrdersVsHour = (results, timeInterval) => ({
+  type: GET_NUM_ORDERS_VS_HOUR,
   results,
   timeInterval
 })
-const gotAvgRevPerGuest = (results, timeInterval) => ({
-  type: GET_AVG_REVENUE_PER_GUEST,
+const gotAvgRevenuePerGuestVsDOW = (results, timeInterval) => ({
+  type: GET_AVG_REVENUE_GUEST_VS_DOW,
   results,
   timeInterval
 })
 
-const gotTipPercentageChart = chartResults => ({
-  type: GET_TIP_PERCENTAGE_CHART,
-  chartResults
+const gotTipPercentageVsWaiters = (results, timeInterval) => ({
+  type: GET_TIP_PERCENTAGE_VS_WAITERS,
+  results,
+  timeInterval
 })
-const gotMenuSalesNumbersChart = chartResults => ({
-  type: GET_MENU_SALES_NUMBERS_CHART,
-  chartResults
+const gotMenuSalesNumbersVsMenuItems = (results, timeInterval) => ({
+  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS,
+  results,
+  timeInterval
 })
 
 /**
  * THUNK CREATORS
  */
 
-export const getNumOrdersPerHour = timeInterval => async dispatch => {
+export const getNumberOfOrdersVsHour = timeInterval => async dispatch => {
   try {
-    const {data} = await axios.get('/api/analytics/numberOfOrdersPerHour', {
-      params: {interval: timeInterval}
-    })
-    dispatch(gotNumOrdersPerHour(data, timeInterval))
+    const {data} = await axios.get(
+      '/api/businessAnalytics/numberOfOrdersVsHour',
+      {
+        params: {interval: timeInterval}
+      }
+    )
+    dispatch(gotNumberOfOrdersVsHour(data, timeInterval))
   } catch (err) {
     console.error(err)
   }
 }
-export const getTipPercentageChart = timeInterval => async dispatch => {
+
+export const getAvgRevenuePerGuestVsDOW = timeInterval => async dispatch => {
+  try {
+    const {data} = await axios.get(
+      '/api/businessAnalytics/avgRevenuePerGuestVsDOW',
+      {
+        params: {interval: timeInterval}
+      }
+    )
+    dispatch(gotAvgRevenuePerGuestVsDOW(data, timeInterval))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getTipPercentageVsWaiters = timeInterval => async dispatch => {
   try {
     const res = await axios.get(
-      '/api/analytics/graphs/tipPercentageByWaiters',
+      '/api/businessAnalytics/tipPercentageVsWaiters',
       {
         params: {timeInterval}
       }
     )
-    dispatch(gotTipPercentageChart(res.data, timeInterval))
+    dispatch(gotTipPercentageVsWaiters(res.data, timeInterval))
   } catch (err) {
     console.error(err)
   }
 }
 
-export const getAvgRevPerGuest = timeInterval => async dispatch => {
+export const getMenuSalesNumbersVsMenuItems = timeInterval => async dispatch => {
   try {
-    const {data} = await axios.get('/api/analytics/avgRevPerGuest', {
-      params: {interval: timeInterval}
-    })
-    dispatch(gotAvgRevPerGuest(data, timeInterval))
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export const getMenuSalesNumbersChart = timeInterval => async dispatch => {
-  try {
-    const res = await axios.get('/api/analytics/graphs/menuSalesNumbers', {
-      params: {timeInterval}
-    })
-    dispatch(gotMenuSalesNumbersChart(res.data, timeInterval))
+    const res = await axios.get(
+      '/api/businessAnalytics/menuSalesNumbersVsMenuItems',
+      {
+        params: {timeInterval}
+      }
+    )
+    dispatch(gotMenuSalesNumbersVsMenuItems(res.data, timeInterval))
   } catch (err) {
     console.error(err)
   }
@@ -111,40 +130,40 @@ export const getMenuSalesNumbersChart = timeInterval => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_NUM_ORDERS_PER_HOUR_RESULTS:
+    case GET_NUM_ORDERS_VS_HOUR:
       return {
         ...state,
-        numOrdersPerHour: {
-          ...state.numOrdersPerHour,
+        numberOfOrdersVsHour: {
+          ...state.numberOfOrdersVsHour,
           [`${action.timeInterval}`]: action.results
         }
       }
-    case GET_AVG_REVENUE_PER_GUEST:
+    case GET_AVG_REVENUE_GUEST_VS_DOW:
       return {
         ...state,
-        avgRevPerGuest: {
-          ...state.avgRevPerGuest,
+        avgRevenuePerGuestVsDOW: {
+          ...state.avgRevenuePerGuestVsDOW,
           [`${action.timeInterval}`]: action.results
         }
       }
-    case GET_TIP_PERCENTAGE_CHART:
+    case GET_TIP_PERCENTAGE_VS_WAITERS:
       return {
         ...state,
-        tipPercentageChart: {
-          ...state.tipPercentageChart,
-          xAxis: action.chartResults.xAxis,
-          yAxis: action.chartResults.yAxis,
-          [`${action.timeInterval}`]: action.chartResults
+        tipPercentageVsWaiters: {
+          ...state.tipPercentageVsWaiters,
+          xAxis: action.results.xAxis,
+          yAxis: action.results.yAxis,
+          [`${action.timeInterval}`]: action.results
         }
       }
-    case GET_MENU_SALES_NUMBERS_CHART:
+    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS:
       return {
         ...state,
-        menuSalesNumbersChart: {
-          ...state.menuSalesNumbersChart,
-          xAxis: action.chartResults.xAxis,
-          yAxis: action.chartResults.yAxis,
-          [`${action.timeInterval}`]: action.chartResults
+        menuSalesNumbersVsMenuItems: {
+          ...state.menuSalesNumbersVsMenuItems,
+          xAxis: action.results.xAxis,
+          yAxis: action.results.yAxis,
+          [`${action.timeInterval}`]: action.results
         }
       }
     default:
