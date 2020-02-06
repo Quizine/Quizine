@@ -54,15 +54,14 @@ router.get('/revenueVsTime', async (req, res, next) => {
   try {
     const year = req.query.year
     const revenueVsTime = await client.query(`
-    select
-	to_char("timeOfPurchase",'Mon') AS mon,
-	date_trunc('month', orders."timeOfPurchase" ) as m,
-	EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-	SUM("total") AS "monthlyRevenue"
-	from orders
-	WHERE orders."timeOfPurchase" >= NOW() - interval '${year} year'
-	group by mon, m, yyyy
-	order by m
+    select to_char("timeOfPurchase",'Mon') AS mon,
+    date_trunc('month', orders."timeOfPurchase" ) as m,
+    EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+    SUM("total") AS "monthlyRevenue"
+    from orders
+    WHERE orders."timeOfPurchase" >= NOW() - interval '${year} year'
+    group by mon, m, yyyy
+    order by m
     `)
     const allDateRevenue = {month: [], revenue: []}
     revenueVsTime.rows.forEach(row => {
