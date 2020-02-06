@@ -6,7 +6,66 @@ client.connect()
 
 module.exports = router
 
-//ADD "AND restauranId" condition
+//ADD "AND restauranId" condition (later)
+
+//REVENUE PER DAY FOR CALENDAR
+router.get('/revenueByDay', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const date = req.query.date
+      const revenueByDay = await client.query(`
+      SELECT
+      SUM(orders.total )
+      FROM orders
+      WHERE orders."timeOfPurchase" ::date = '${date}';
+      `)
+      res.json(revenueByDay.rows[0].sum) //RETURNS JUST THE #
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+//--list of waiters on specific day:
+router.get('/waitersOnADay', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const date = req.query.date
+      const waitersOnADay = await client.query(`
+      select waiters."name"
+      from waiters
+      join orders on orders."waiterId" = waiters.id
+      where orders."timeOfPurchase" ::date = '${date}';
+      `)
+      res.json(waitersOnADay.rows) //RETURNS AN ARRAY OF OBJS WITH NAMES
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+//--most popular dish on a specific day: **still need by the date...
+router.get('/mostPopularDishOnADay', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const date = req.query.date
+      const mostPopularDishOnADay = await client.query(`
+      SELECT menus."menuName" as name,
+      sum("menuOrders" .quantity) as total
+      from "menuOrders"
+      join menus on menus.id = "menuOrders"."menuId"
+      join orders on orders.id = "menuOrders"."orderId" 
+      where orders."timeOfPurchase" ::date = '${date}'
+      and
+      menus."beverageType" isnull
+      group by name
+      order by total desc
+      limit 1;
+      `)
+      res.json(mostPopularDishOnADay.rows[0].name)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.get('/numberOfWaiters', async (req, res, next) => {
   try {
