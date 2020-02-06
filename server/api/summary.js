@@ -6,6 +6,8 @@ client.connect()
 
 module.exports = router
 
+//ADD "AND restauranId" condition
+
 router.get('/numberOfWaiters', async (req, res, next) => {
   try {
     const waiterCount = await client.query(`
@@ -73,3 +75,37 @@ router.get('/revenueVsTime', async (req, res, next) => {
     next(error)
   }
 })
+
+router.get('/DOWAnalysisTable', async (req, res, next) => {
+  try {
+    const DOWAnalysisTable = await client.query(
+      `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM(orders."numberOfGuests") AS "numberOfGuests", ROUND((SUM(orders.total)::numeric)/100,2) AS "dayRevenue", SUM("summedMenuOrder"."summedQuantity")
+      FROM orders 
+      JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId" FROM "menuOrders" GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
+      ON orders.id = "summedMenuOrder"."orderId"
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
+      GROUP BY "dayOfWeek"
+      ORDER by "dayOfWeek" ASC;
+        `
+    )
+    res.json(tableFormatting(DOWAnalysisTable.rows))
+  } catch (error) {
+    next(error)
+  }
+})
+
+function tableFormatting(array) {
+  let DOWconversion = {
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday'
+  }
+  array.forEach(element => {
+    element.dayOfWeek = DOWconversion[element.dayOfWeek]
+  })
+  return array
+}

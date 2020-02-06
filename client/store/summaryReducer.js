@@ -6,6 +6,7 @@ import axios from 'axios'
 const GET_NUMBER_OF_WAITERS = 'GET_NUMBER_OF_WAITERS'
 const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
+const GET_DOW_ANALYSIS_TABLE = 'GET_DOW_ANALYSIS_TABLE'
 
 /**
  * INITIAL STATE
@@ -21,7 +22,8 @@ const initialState = {
     allPeriod: {},
     oneYear: {},
     twoYears: {}
-  }
+  },
+  DOWAnalysisTable: []
 }
 
 /**
@@ -42,6 +44,11 @@ const gotRevenueVsTime = (chartData, yearQty) => ({
   type: GET_REVENUE_VS_TIME,
   chartData,
   yearQty
+})
+const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
+  type: GET_DOW_ANALYSIS_TABLE,
+  DOWresults,
+  timeInterval
 })
 
 export const getNumberOfWaiters = () => async dispatch => {
@@ -79,6 +86,15 @@ export const getRevenueVsTime = yearQty => async dispatch => {
   }
 }
 
+export const getDOWAnalysisTable = () => async dispatch => {
+  try {
+    const {data} = await axios.get('/api/summary/DOWAnalysisTable')
+    dispatch(gotDOWAnalysisTable(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -104,6 +120,11 @@ export default function(state = initialState, action) {
           ...state.revenueVsTime,
           [`${action.yearQty}`]: action.chartData
         }
+      }
+    case GET_DOW_ANALYSIS_TABLE:
+      return {
+        ...state,
+        DOWAnalysisTable: action.DOWresults
       }
     default:
       return state
