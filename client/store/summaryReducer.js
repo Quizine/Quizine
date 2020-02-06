@@ -4,7 +4,7 @@ import axios from 'axios'
  * ACTION TYPES
  */
 const GET_NUMBER_OF_WAITERS = 'GET_NUMBER_OF_WAITERS'
-const GET_PEAK_TIME_ORDERS = 'GET_PEAK_TIME_ORDERS'
+const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
 
 /**
@@ -34,7 +34,7 @@ const gotNumberOfWaiters = numOfWaiters => ({
 })
 
 const gotPeakTimeOrders = (orders, timeInterval) => ({
-  type: GET_PEAK_TIME_ORDERS,
+  type: GET_PEAK_TIME_VS_ORDERS,
   orders,
   timeInterval
 })
@@ -89,7 +89,7 @@ export default function(state = initialState, action) {
         ...state,
         numberOfWaiters: action.numOfWaiters
       }
-    case GET_PEAK_TIME_ORDERS:
+    case GET_PEAK_TIME_VS_ORDERS:
       return {
         ...state,
         peakTimeOrdersVsTime: {

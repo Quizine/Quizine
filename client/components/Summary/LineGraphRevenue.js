@@ -11,6 +11,7 @@ class LineGraphRevenue extends Component {
       selectedOption: 'oneYear'
     }
     this.handleChange = this.handleChange.bind(this)
+    this.getTotalRevenue = this.getTotalRevenue.bind(this)
   }
 
   componentDidMount() {
@@ -23,11 +24,12 @@ class LineGraphRevenue extends Component {
       this.props.loadRevenueVsTime(event.target.value)
     }
   }
+  getTotalRevenue(arr) {
+    return arr.reduce((acc, currentVal) => acc + currentVal, 0)
+  }
 
   render() {
     const {month, revenue} = this.props.lineChartData[this.state.selectedOption]
-    console.log(month)
-
     const chartData = {
       labels: month,
       datasets: [
@@ -43,23 +45,28 @@ class LineGraphRevenue extends Component {
       ]
     }
     return (
-      <div className="rev-time-div">
-        <select onChange={this.handleChange}>
-          <option value="oneYear">Last Year</option>
-          <option value="twoYears">Last 2 Years</option>
-          <option value="allPeriod">All History</option>
-        </select>
-        <div>
-          <Line
-            data={chartData}
-            options={{
-              title: {
-                display: true,
-                text: 'REVENUE vs TIME'
-              }
-            }}
-          />
-        </div>
+      <div>
+        {revenue ? (
+          <div className="rev-time-div">
+            <select onChange={this.handleChange}>
+              <option value="oneYear">Last Year</option>
+              <option value="twoYears">Last 2 Years</option>
+              <option value="allPeriod">All History</option>
+            </select>
+            <p>{this.getTotalRevenue(revenue).toFixed(0)}</p>
+            <div>
+              <Line
+                data={chartData}
+                options={{
+                  title: {
+                    display: true,
+                    text: 'REVENUE vs TIME'
+                  }
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
     )
   }
