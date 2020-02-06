@@ -5,6 +5,7 @@ import axios from 'axios'
  */
 const GET_STOCK_QUERY_RESULTS = 'GET_STOCK_QUERY_RESULTS'
 const GET_TIP_PERCENTAGE_CHART = 'GET_TIP_PERCENTAGE_CHART'
+const GET_MENU_SALES_NUMBERS_CHART = 'GET_MENU_SALES_NUMBERS_CHART'
 
 /**
  * INITIAL STATE
@@ -12,6 +13,13 @@ const GET_TIP_PERCENTAGE_CHART = 'GET_TIP_PERCENTAGE_CHART'
 const initialState = {
   stockQueries: {},
   tipPercentageChart: {
+    xAxis: [],
+    yAxis: [],
+    year: [],
+    month: [],
+    week: []
+  },
+  menuSalesNumbersChart: {
     xAxis: [],
     yAxis: [],
     year: [],
@@ -30,6 +38,10 @@ const gotStockQueryResults = queryResults => ({
 
 const gotTipPercentageChart = chartResults => ({
   type: GET_TIP_PERCENTAGE_CHART,
+  chartResults
+})
+const gotMenuSalesNumbersChart = chartResults => ({
+  type: GET_MENU_SALES_NUMBERS_CHART,
   chartResults
 })
 
@@ -60,6 +72,17 @@ export const getTipPercentageChart = timeInterval => async dispatch => {
   }
 }
 
+export const getMenuSalesNumbersChart = timeInterval => async dispatch => {
+  try {
+    const res = await axios.get('/api/analytics/graphs/menuSalesNumbers', {
+      params: {timeInterval}
+    })
+    dispatch(gotMenuSalesNumbersChart(res.data, timeInterval))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -75,6 +98,16 @@ export default function(state = initialState, action) {
         ...state,
         tipPercentageChart: {
           ...state.tipPercentageChart,
+          xAxis: action.chartResults.xAxis,
+          yAxis: action.chartResults.yAxis,
+          [`${action.timeInterval}`]: action.chartResults
+        }
+      }
+    case GET_MENU_SALES_NUMBERS_CHART:
+      return {
+        ...state,
+        menuSalesNumbersChart: {
+          ...state.menuSalesNumbersChart,
           xAxis: action.chartResults.xAxis,
           yAxis: action.chartResults.yAxis,
           [`${action.timeInterval}`]: action.chartResults

@@ -70,6 +70,32 @@ router.get('/graphs/tipPercentageByWaiters', async (req, res, next) => {
   }
 })
 
+router.get('/graphs/menuSalesNumbers', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const timeInterval = req.query.timeInterval
+      const menuSalesNumbers = await client.query(`
+      SELECT menus."menuName" as name,
+      SUM("menuOrders" .quantity) as total
+      FROM "menuOrders"
+      JOIN menus on menus.id = "menuOrders"."menuId"
+      JOIN orders on orders.id = "menuOrders"."orderId"
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      GROUP BY name, orders."timeOfPurchase"
+      ORDER BY total desc;
+      `)
+      const [xAxis, yAxis] = axisMapping(
+        menuSalesNumbers.rows,
+        menuSalesNumbers.fields[0].name,
+        menuSalesNumbers.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 function axisMapping(arr, xAxisName, yAxisName) {
   const xAxis = []
   const yAxis = []
