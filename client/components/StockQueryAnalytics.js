@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {getStockQueryResults} from '../store/stockQueryReducer'
+import WaitersTipPercent from './charts/WaitersTipPercent'
 
 export class StockQueryAnalytics extends Component {
   componentDidMount() {
@@ -9,18 +10,16 @@ export class StockQueryAnalytics extends Component {
   }
 
   render() {
-    const stockQueries = this.props.stockQueries
     return (
       <div>
-        {stockQueries ? (
-          <div>
-            <h2>Welcome, !</h2>
-            <p>Quick summary:</p>
-            <Link to="/newquery">
-              <button type="submit">NEW QUERY</button>
-            </Link>
-          </div>
-        ) : null}
+        <div>
+          <h2>Welcome, !</h2>
+          <p>Quick business analytics:</p>
+          <WaitersTipPercent />
+          <Link to="/newquery">
+            <button type="submit">NEW QUERY</button>
+          </Link>
+        </div>
       </div>
     )
   }
