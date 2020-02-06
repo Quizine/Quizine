@@ -6,10 +6,36 @@ client.connect()
 
 module.exports = router
 
+// --average number of guests served by waiter per order within a specific time frame - AV
+router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const timeInterval = req.query.timeInterval
+      const avgNumberOfGuestsVsWaitersPerOrder = await client.query(`
+      SELECT waiters."name",
+      ROUND(AVG(orders."numberOfGuests" ), 2) AS performance
+      FROM waiters
+      JOIN orders ON orders."waiterId" = waiters.id
+      WHERE orders."timeOfPurchase" >= NOW() - INTERVAL '1 ${timeInterval}'
+      GROUP BY waiters."name"
+      ORDER BY performance DESC;
+      `)
+      const [xAxis, yAxis] = axisMapping(
+        avgNumberOfGuestsVsWaitersPerOrder.rows,
+        avgNumberOfGuestsVsWaitersPerOrder.fields[0].name,
+        avgNumberOfGuestsVsWaitersPerOrder.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.get('/numberOfOrdersVsHour', async (req, res, next) => {
   try {
-    const timeInterval = req.query.timeInterval
     if (req.user.id) {
+      const timeInterval = req.query.timeInterval
       const numberOfOrdersPerHour = await client.query(
         `SELECT EXTRACT(hour FROM "timeOfPurchase") AS hour,
         COUNT(*) AS "numberOfOrders"
@@ -32,8 +58,8 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
 
 router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
-    const timeInterval = req.query.timeInterval
     if (req.user.id) {
+      const timeInterval = req.query.timeInterval
       const avgRevPerGuest = await client.query(
         `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
         ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
@@ -55,8 +81,8 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
 
 router.get('/tipPercentageVsWaiters', async (req, res, next) => {
   try {
-    const timeInterval = req.query.timeInterval
     if (req.user.id) {
+      const timeInterval = req.query.timeInterval
       const tipPercentageByWaiters = await client.query(
         `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
       FROM ORDERS
