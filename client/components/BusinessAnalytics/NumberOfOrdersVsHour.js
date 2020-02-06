@@ -86,7 +86,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadnumberOfOrdersVsHour: timeInterval =>
+    loadNumberOfOrdersVsHour: timeInterval =>
       dispatch(getNumberOfOrdersVsHour(timeInterval))
   }
 }

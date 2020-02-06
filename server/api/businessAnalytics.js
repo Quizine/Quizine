@@ -8,14 +8,14 @@ module.exports = router
 
 router.get('/numberOfOrdersVsHour', async (req, res, next) => {
   try {
-    const interval = req.query.interval
+    const timeInterval = req.query.timeInterval
     if (req.user.id) {
       const numberOfOrdersPerHour = await client.query(
         `SELECT EXTRACT(hour FROM "timeOfPurchase") AS hour,
         COUNT(*) AS "numberOfOrders"
         FROM orders
-        WHERE "timeOfPurchase" >= NOW() - interval '1 ${interval}'
-        WHERE "restaurantId" = ${req.user.restaurantId}
+        WHERE "timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+        AND orders."restaurantId" = ${req.user.restaurantId}
         GROUP BY hour
         ORDER BY hour
         ASC;`
@@ -32,14 +32,14 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
 
 router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
-    const interval = req.query.interval
+    const timeInterval = req.query.timeInterval
     if (req.user.id) {
       const avgRevPerGuest = await client.query(
         `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
         ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
         FROM orders
-        WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
-        WHERE "restaurantId" = ${req.user.restaurantId}
+        WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+        AND orders."restaurantId" = ${req.user.restaurantId}
         GROUP BY day
         ORDER BY day ASC;`
       )
@@ -62,7 +62,7 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
       FROM ORDERS
       JOIN WAITERS ON orders."waiterId" = waiters.id
       WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-      WHERE "restaurantId" = ${req.user.restaurantId}
+      AND waiters."restaurantId" = ${req.user.restaurantId}
       GROUP BY waiters.name
       ORDER BY "averageTipPercentage" DESC;`
       )
@@ -89,7 +89,7 @@ router.get('/menuSalesNumbersVsMenuItems', async (req, res, next) => {
       JOIN menus on menus.id = "menuOrders"."menuId"
       JOIN orders on orders.id = "menuOrders"."orderId"
       WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-      WHERE "restaurantId" = ${req.user.restaurantId}
+      AND orders."restaurantId" = ${req.user.restaurantId}
       GROUP BY name
       ORDER BY total desc;
       `)
