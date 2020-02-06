@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getAvgNumberOfGuestsVsWaiters} from '../../store/businessAnalyticsReducer'
+import {getAvgNumberOfGuestsVsWaitersPerOrder} from '../../store/businessAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 
-class AvgNumberOfGuestsVsWaiters extends Component {
+class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
   constructor(props) {
     super(props)
 
@@ -14,28 +14,29 @@ class AvgNumberOfGuestsVsWaiters extends Component {
   }
 
   componentDidMount() {
-    this.props.loadAvgNumberOfGuestsVsWaiters(this.state.selectedOption)
+    this.props.loadAvgNumberOfGuestsVsWaitersPerOrder(this.state.selectedOption)
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
     if (
-      !Object.keys(this.props.avgNumberOfGuestsVsWaiters[event.target.value])
-        .length
+      !Object.keys(
+        this.props.avgNumberOfGuestsVsWaitersPerOrder[event.target.value]
+      ).length
     ) {
-      this.props.loadAvgNumberOfGuestsVsWaiters(event.target.value)
+      this.props.loadAvgNumberOfGuestsVsWaitersPerOrder(event.target.value)
     }
   }
 
   render() {
-    const labels = this.props.avgNumberOfGuestsVsWaiters.xAxis
-    const yAxis = this.props.avgNumberOfGuestsVsWaiters.yAxis
+    const labels = this.props.avgNumberOfGuestsVsWaitersPerOrder.xAxis
+    const yAxis = this.props.avgNumberOfGuestsVsWaitersPerOrder.yAxis
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Performance',
+          label: 'AVG # of Guests Served',
           data: yAxis,
           backgroundColor: 'yellow'
         }
@@ -54,7 +55,7 @@ class AvgNumberOfGuestsVsWaiters extends Component {
             options={{
               title: {
                 display: true,
-                text: 'Average Number of Guests Served by Each Waiter'
+                text: 'Average Number of Guests Served by Waiter per Order'
               }
             }}
           />
@@ -66,18 +67,18 @@ class AvgNumberOfGuestsVsWaiters extends Component {
 
 const mapStateToProps = state => {
   return {
-    avgNumberOfGuestsVsWaiters:
-      state.businessAnalytics.avgNumberOfGuestsVsWaiters
+    avgNumberOfGuestsVsWaitersPerOrder:
+      state.businessAnalytics.avgNumberOfGuestsVsWaitersPerOrder
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
-    loadAvgNumberOfGuestsVsWaiters(timeInterval) {
-      dispatch(getAvgNumberOfGuestsVsWaiters(timeInterval))
+    loadAvgNumberOfGuestsVsWaitersPerOrder(timeInterval) {
+      dispatch(getAvgNumberOfGuestsVsWaitersPerOrder(timeInterval))
     }
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  AvgNumberOfGuestsVsWaiters
+  AvgNumberOfGuestsVsWaitersPerOrder
 )

@@ -6,12 +6,12 @@ client.connect()
 
 module.exports = router
 
-// --average number of guests served by waiter within a specific time frame - AV
-router.get('/avgNumberOfGuestsVsWaiters', async (req, res, next) => {
+// --average number of guests served by waiter per order within a specific time frame - AV
+router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
   try {
     if (req.user.id) {
       const timeInterval = req.query.timeInterval
-      const avgNumberOfGuestsVsWaiters = await client.query(`
+      const avgNumberOfGuestsVsWaitersPerOrder = await client.query(`
       SELECT waiters."name",
       ROUND(AVG(orders."numberOfGuests" ), 2) AS performance
       FROM waiters
@@ -21,9 +21,9 @@ router.get('/avgNumberOfGuestsVsWaiters', async (req, res, next) => {
       ORDER BY performance DESC;
       `)
       const [xAxis, yAxis] = axisMapping(
-        avgNumberOfGuestsVsWaiters.rows,
-        avgNumberOfGuestsVsWaiters.fields[0].name,
-        avgNumberOfGuestsVsWaiters.fields[1].name
+        avgNumberOfGuestsVsWaitersPerOrder.rows,
+        avgNumberOfGuestsVsWaitersPerOrder.fields[0].name,
+        avgNumberOfGuestsVsWaitersPerOrder.fields[1].name
       )
       res.json({xAxis, yAxis})
     }

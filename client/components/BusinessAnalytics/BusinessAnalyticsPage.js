@@ -4,7 +4,7 @@ import AvgRevenuePerGuestVsDOW from './AvgRevenuePerGuestVsDOW'
 import MenuSalesNumbersVsMenuItems from './MenuSalesNumbersVsMenuItems'
 import NumberOfOrdersVsHour from './NumberOfOrdersVsHour'
 import TipPercentageVsWaiters from './TipPercentageVsWaiters'
-import AvgNumberOfGuestsVsWaiters from './AvgNumberOfGuestsVsWaiters'
+import AvgNumberOfGuestsVsWaiters from './AvgNumberOfGuestsVsWaitersPerOrder'
 
 export default class BusinessAnalyticsPage extends Component {
   render() {
