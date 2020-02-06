@@ -38,7 +38,7 @@ class NewQueryFilters extends Component {
     const columnNames = this.props.columnNames
 
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={() => this.handleSubmit(event)}>
         <select onChange={() => this.handleSelectedColumnChange(event)}>
           <option>Please Select</option>
           {columnNames.map((columnName, idx) => {

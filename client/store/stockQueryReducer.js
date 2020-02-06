@@ -4,6 +4,8 @@ import axios from 'axios'
  * ACTION TYPES
  */
 const GET_STOCK_QUERY_RESULTS = 'GET_STOCK_QUERY_RESULTS'
+const GET_NUM_ORDERS_PER_HOUR_RESULTS = 'GET_NUM_ORDERS_PER_HOUR_RESULTS'
+const GET_AVG_REVENUE_PER_GUEST = 'GET_AVG_REVENUE_PER_GUEST'
 const GET_TIP_PERCENTAGE_CHART = 'GET_TIP_PERCENTAGE_CHART'
 const GET_MENU_SALES_NUMBERS_CHART = 'GET_MENU_SALES_NUMBERS_CHART'
 
@@ -12,19 +14,23 @@ const GET_MENU_SALES_NUMBERS_CHART = 'GET_MENU_SALES_NUMBERS_CHART'
  */
 const initialState = {
   stockQueries: {},
+  numOrdersPerHour: {
+    year: [],
+    month: [],
+    week: []
+  },
   tipPercentageChart: {
     xAxis: [],
-    yAxis: [],
+    yAxis: []
+  },
+  avgRevPerGuest: {
     year: [],
     month: [],
     week: []
   },
   menuSalesNumbersChart: {
     xAxis: [],
-    yAxis: [],
-    year: [],
-    month: [],
-    week: []
+    yAxis: []
   }
 }
 
@@ -34,6 +40,16 @@ const initialState = {
 const gotStockQueryResults = queryResults => ({
   type: GET_STOCK_QUERY_RESULTS,
   queryResults
+})
+const gotNumOrdersPerHour = (results, timeInterval) => ({
+  type: GET_NUM_ORDERS_PER_HOUR_RESULTS,
+  results,
+  timeInterval
+})
+const gotAvgRevPerGuest = (results, timeInterval) => ({
+  type: GET_AVG_REVENUE_PER_GUEST,
+  results,
+  timeInterval
 })
 
 const gotTipPercentageChart = chartResults => ({
@@ -58,6 +74,16 @@ export const getStockQueryResults = () => async dispatch => {
   }
 }
 
+export const getNumOrdersPerHour = timeInterval => async dispatch => {
+  try {
+    const {data} = await axios.get('/api/analytics/numberOfOrdersPerHour', {
+      params: {interval: timeInterval}
+    })
+    dispatch(gotNumOrdersPerHour(data, timeInterval))
+  } catch (err) {
+    console.error(err)
+  }
+}
 export const getTipPercentageChart = timeInterval => async dispatch => {
   try {
     const res = await axios.get(
@@ -67,6 +93,17 @@ export const getTipPercentageChart = timeInterval => async dispatch => {
       }
     )
     dispatch(gotTipPercentageChart(res.data, timeInterval))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getAvgRevPerGuest = timeInterval => async dispatch => {
+  try {
+    const {data} = await axios.get('/api/analytics/avgRevPerGuest', {
+      params: {interval: timeInterval}
+    })
+    dispatch(gotAvgRevPerGuest(data, timeInterval))
   } catch (err) {
     console.error(err)
   }
@@ -92,6 +129,22 @@ export default function(state = initialState, action) {
       return {
         ...state,
         stockQueries: action.queryResults
+      }
+    case GET_NUM_ORDERS_PER_HOUR_RESULTS:
+      return {
+        ...state,
+        numOrdersPerHour: {
+          ...state.numOrdersPerHour,
+          [`${action.timeInterval}`]: action.results
+        }
+      }
+    case GET_AVG_REVENUE_PER_GUEST:
+      return {
+        ...state,
+        avgRevPerGuest: {
+          ...state.avgRevPerGuest,
+          [`${action.timeInterval}`]: action.results
+        }
       }
     case GET_TIP_PERCENTAGE_CHART:
       return {

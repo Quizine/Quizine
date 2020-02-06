@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import NewQueryFilters from './NewQueryFilters'
+import NumOrdersPerHourChart from './charts/NumOfOrdersPerHour'
+import AvgRevPerGuest from './charts/AvgRevPerGuest'
 import {connect} from 'react-redux'
 import {getTableFields} from '../store/analyticsReducer'
 
@@ -21,6 +23,7 @@ export class NewQuery extends Component {
 
   render() {
     const tableFields = this.props.tableFields
+
     return (
       <div>
         <select onChange={() => this.handleChange(event)}>
@@ -29,14 +32,19 @@ export class NewQuery extends Component {
           <option value="waiters">Waiters</option>
           <option value="orders">Orders</option>
         </select>
-        {this.state.selectedTable ? (
-          <div>
-            <NewQueryFilters
-              selectedTable={this.state.selectedTable}
-              columnNames={tableFields[this.state.selectedTable]}
-            />
-          </div>
-        ) : null}
+
+        <div>
+          {this.state.selectedTable ? (
+            <div>
+              <NewQueryFilters
+                selectedTable={this.state.selectedTable}
+                columnNames={tableFields[this.state.selectedTable]}
+              />
+            </div>
+          ) : null}
+        </div>
+        <NumOrdersPerHourChart />
+        <AvgRevPerGuest />
       </div>
     )
   }
