@@ -76,7 +76,7 @@ class PeakTimeGraph extends Component {
 
 const mapStateToProps = state => {
   return {
-    peakTimeOrders: state.summary.peakTimeOrders
+    peakTimeOrders: state.summary.peakTimeOrdersVsTime
   }
 }
 

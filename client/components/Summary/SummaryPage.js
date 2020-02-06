@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import PeakTimeGraph from './charts/PeakTimeGraph'
-import LineGraphRevenue from './charts/LineGraphRevenue'
-import {getSummary} from '../store/summaryReducer'
+import PeakTimeGraph from './PeakTimeGraph'
+import LineGraphRevenue from './LineGraphRevenue'
+import {getSummary} from '../../store/summaryReducer'
 
 export class Summary extends Component {
   render() {
-    console.log(this.props.summary)
+    console.log(this.props.summary) // ???????
     return (
       <div className="summary-cont">
         <h2>BUSINESS SUMMARY</h2>
@@ -25,7 +25,7 @@ export class Summary extends Component {
 //test
 const mapState = state => {
   return {
-    summary: state.summary.summary
+    summary: state.summary.summary // ???????
   }
 }
 

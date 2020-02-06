@@ -3,7 +3,6 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
-const GET_SUMMARY = 'GET_SUMMARY'
 const GET_PEAK_TIME_ORDERS = 'GET_PEAK_TIME_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
 
@@ -11,8 +10,7 @@ const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
  * INITIAL STATE
  */
 const initialState = {
-  summary: {}, //?????????
-  peakTimeOrders: {
+  peakTimeOrdersVsTime: {
     year: [],
     month: [],
     week: []
@@ -27,7 +25,6 @@ const initialState = {
 /**
  * ACTION CREATORS
  */
-const gotSummary = summaryObject => ({type: GET_SUMMARY, summaryObject})
 const gotPeakTimeOrders = (orders, timeInterval) => ({
   type: GET_PEAK_TIME_ORDERS,
   orders,
@@ -38,29 +35,12 @@ const gotRevenueVsTime = (chartData, yearQty) => ({
   chartData,
   yearQty
 })
-/**
- * THUNK CREATORS
- */
-
-// NOT USED FOR NOW
-
-// export const getSummary = () => async dispatch => {
-//   try {
-//     const res = await axios.get('/api/tables/summary')
-//     dispatch(gotSummary(res.data))
-//   } catch (err) {
-//     console.error(err)
-//   }
-// }
 
 export const getPeakTimeOrders = timeInterval => async dispatch => {
   try {
-    const {data} = await axios.get(
-      '/api/tables/summary/graphs/numberOfGuestsByHour',
-      {
-        params: {interval: timeInterval}
-      }
-    )
+    const {data} = await axios.get('/api/summary/numberOfGuestsVsHour', {
+      params: {interval: timeInterval}
+    })
     dispatch(gotPeakTimeOrders(data, timeInterval))
   } catch (err) {
     console.error(err)
@@ -73,7 +53,7 @@ export const getRevenueVsTime = yearQty => async dispatch => {
   else if (yearQty === 'twoYears') sendYear = '2'
   else sendYear = '3'
   try {
-    const {data} = await axios.get('/api/tables/summary/graphs/revenueVsTime', {
+    const {data} = await axios.get('/api/summary/revenueVsTime', {
       params: {year: sendYear}
     })
     dispatch(gotRevenueVsTime(data, yearQty))
@@ -87,13 +67,11 @@ export const getRevenueVsTime = yearQty => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_SUMMARY:
-      return {...state, summary: action.summaryObject}
     case GET_PEAK_TIME_ORDERS:
       return {
         ...state,
-        peakTimeOrders: {
-          ...state.peakTimeOrders,
+        peakTimeOrdersVsTime: {
+          ...state.peakTimeOrdersVsTime,
           [`${action.timeInterval}`]: action.orders
         }
       }
