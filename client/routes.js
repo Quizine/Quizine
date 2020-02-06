@@ -7,7 +7,7 @@ import {
   Signup,
   UserHome,
   Summary,
-  NewQuery,
+  CustomizedQuery,
   WelcomePage,
   Sidebar,
   BusinessAnalytics
@@ -29,7 +29,7 @@ class Routes extends Component {
         <Sidebar />
         <Switch>
           <Route path="/home" component={UserHome} />
-          <Route path="/newquery" component={NewQuery} />
+          <Route path="/customizedQuery" component={CustomizedQuery} />
           <Route path="/summary" component={Summary} />
           <Route path="/businessAnalytics" component={BusinessAnalytics} />
         </Switch>

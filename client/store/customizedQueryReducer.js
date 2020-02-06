@@ -32,7 +32,7 @@ const gotNewQuery = newQuery => ({
  */
 export const getTableFields = () => async dispatch => {
   try {
-    const res = await axios.get('/api/analytics')
+    const res = await axios.get('/api/customizedQuery/fields')
     dispatch(gotTableFields(res.data))
   } catch (err) {
     console.error(err)
@@ -46,7 +46,7 @@ export const getNewQuery = (
 ) => async dispatch => {
   try {
     console.log('parameters ------->', tableName, columnName, timeInterval)
-    const res = await axios.get('/api/analytics/newQuery', {
+    const res = await axios.get('/api/customizedQuery/', {
       params: {
         timeInterval,
         tableName,

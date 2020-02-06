@@ -6,10 +6,10 @@
 // export {default as Navbar} from './navbar'
 export {default as UserHome} from './user-home'
 export {default as Summary} from './Summary'
-export {default as NewQuery} from './NewQuery'
 export {default as Sidebar} from './Sidebar'
 export {default as Navbar} from './Navbar'
 export {default as WelcomePage} from './WelcomePage'
+export {default as CustomizedQuery} from './CustomizedQuery/CustomizedQueryPage'
 export {
   default as BusinessAnalytics
 } from './BusinessAnalytics/BusinessAnalyticsPage'
