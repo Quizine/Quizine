@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
 import PeakTimeGraph from './PeakTimeGraph'
 import LineGraphRevenue from './LineGraphRevenue'
-import {getSummary} from '../../store/summaryReducer'
+import NumberOfWaiters from './NumberOfWaiters'
 
 export class Summary extends Component {
   render() {
@@ -12,6 +11,7 @@ export class Summary extends Component {
         <h2>BUSINESS SUMMARY</h2>
         <div className="summary-data">
           <PeakTimeGraph />
+          <NumberOfWaiters />
           <LineGraphRevenue />
         </div>
       </div>
@@ -19,20 +19,4 @@ export class Summary extends Component {
   }
 }
 
-/**
- * CONTAINER
- */
-//test
-const mapState = state => {
-  return {
-    summary: state.summary.summary // ???????
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    getSummary: () => dispatch(getSummary())
-  }
-}
-
-export default connect(mapState, mapDispatchToProps)(Summary)
+export default Summary

@@ -6,7 +6,7 @@ client.connect()
 
 module.exports = router
 
-router.get('/', async (req, res, next) => {
+router.get('/numberOfWaiters', async (req, res, next) => {
   try {
     const waiterCount = await client.query(`
       SELECT
@@ -14,6 +14,7 @@ router.get('/', async (req, res, next) => {
       FROM waiters `)
     const numOfWaiters = Number(waiterCount.rows[0].count)
     // probably issues
+    console.log(numOfWaiters)
     res.json(numOfWaiters)
   } catch (error) {
     next(error)
