@@ -81,7 +81,7 @@ router.get('/graphs/menuSalesNumbers', async (req, res, next) => {
       JOIN menus on menus.id = "menuOrders"."menuId"
       JOIN orders on orders.id = "menuOrders"."orderId"
       WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-      GROUP BY name, orders."timeOfPurchase"
+      GROUP BY name
       ORDER BY total desc;
       `)
       const [xAxis, yAxis] = axisMapping(
