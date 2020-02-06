@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getNewQuery} from '../store/businessAnalyticsReducer'
-// import {getWaiterFields, getWaiters} from '../store/waiterReducer'
+import {getNewQuery} from '../../store/customizedQueryReducer'
 
 class NewQueryFilters extends Component {
   constructor() {
@@ -34,7 +33,6 @@ class NewQueryFilters extends Component {
   }
 
   render() {
-    const selectedTable = this.props.selectedTable
     const columnNames = this.props.columnNames
 
     return (
