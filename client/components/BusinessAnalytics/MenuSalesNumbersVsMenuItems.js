@@ -73,7 +73,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadMenuSalesNumbersChart(timeInterval) {
+    loadMenuSalesNumbersVsMenuItems(timeInterval) {
       dispatch(getMenuSalesNumbersVsMenuItems(timeInterval))
     }
   }

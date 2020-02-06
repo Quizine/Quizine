@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 import NewQueryFilters from './CustomizedQueryFilters'
-import NumOrdersPerHourChart from '../BusinessAnalytics/NumOfOrdersPerHour'
-import AvgRevPerGuest from '../BusinessAnalytics/AvgRevPerGuest'
 import {connect} from 'react-redux'
 import {getTableFields} from '../../store/customizedQueryReducer'
 
@@ -43,8 +41,6 @@ export class NewQuery extends Component {
             </div>
           ) : null}
         </div>
-        <NumOrdersPerHourChart />
-        <AvgRevPerGuest />
       </div>
     )
   }

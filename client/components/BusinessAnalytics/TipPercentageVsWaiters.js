@@ -65,7 +65,7 @@ class TipPercentageVsWaiters extends Component {
 
 const mapStateToProps = state => {
   return {
-    tipPercentageVsWaiters: state.stockQueries.tipPercentageVsWaiters
+    tipPercentageVsWaiters: state.businessAnalytics.tipPercentageVsWaiters
   }
 }
 

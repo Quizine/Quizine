@@ -74,7 +74,7 @@ export const getNumberOfOrdersVsHour = timeInterval => async dispatch => {
     const {data} = await axios.get(
       '/api/businessAnalytics/numberOfOrdersVsHour',
       {
-        params: {interval: timeInterval}
+        params: {timeInterval}
       }
     )
     dispatch(gotNumberOfOrdersVsHour(data, timeInterval))
@@ -88,7 +88,7 @@ export const getAvgRevenuePerGuestVsDOW = timeInterval => async dispatch => {
     const {data} = await axios.get(
       '/api/businessAnalytics/avgRevenuePerGuestVsDOW',
       {
-        params: {interval: timeInterval}
+        params: {timeInterval}
       }
     )
     dispatch(gotAvgRevenuePerGuestVsDOW(data, timeInterval))
