@@ -11,15 +11,19 @@ class SummaryPage extends Component {
   }
   render() {
     return (
-      <div className="summary-cont">
-        <h2>BUSINESS SUMMARY</h2>
-        <div className="summary-data">
-          <PeakTimeGraph />
-          <LineGraphRevenue />
-        </div>
-        <div>
-          <EnhancedTable />
-        </div>
+      <div>
+        {this.props.DOWAnalysisTable ? (
+          <div className="summary-cont">
+            <h2>BUSINESS SUMMARY</h2>
+            <div className="summary-data">
+              <PeakTimeGraph />
+              <LineGraphRevenue />
+            </div>
+            <div>
+              <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
+            </div>
+          </div>
+        ) : null}
       </div>
     )
   }
