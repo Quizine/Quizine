@@ -74,7 +74,7 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
                 </select>
               </div>
             }
-            title="Average Number og Guests Served by Waiter per Order"
+            title="Waiter-Client Engagement (%)"
           />
           <Divider />
 
