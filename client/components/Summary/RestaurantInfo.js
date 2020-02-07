@@ -1,41 +1,9 @@
-// import React, {Component} from 'react'
-// import {connect} from 'react-redux'
-// import {getNumberOfWaiters} from '../../store/summaryReducer'
-
-// export class NumberOfWaiters extends Component {
-//   componentDidMount() {
-//     this.props.loadNumOfWaiters()
-//   }
-
-//   render() {
-//     return (
-//       <div>
-//         <h2>You have currently {this.props.numOfWaiters} in your restaurant</h2>
-//       </div>
-//     )
-//   }
-// }
-
-// const mapStateToProps = state => {
-//   return {
-//     numOfWaiters: state.summary.numberOfWaiters
-//   }
-// }
-
-// const MapDispatchToProps = dispatch => {
-//   return {
-//     loadNumOfWaiters: () => dispatch(getNumberOfWaiters())
-//   }
-// }
-
-// export default connect(mapStateToProps, MapDispatchToProps)(NumberOfWaiters)
-
 import React from 'react'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
 import {Card, CardContent, Grid, Typography, Avatar} from '@material-ui/core'
-import PeopleIcon from '@material-ui/icons/PeopleOutlined'
+import HomeIcon from '@material-ui/icons/Home'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: theme.palette.primary.main,
     height: 50,
     width: 50
   },
@@ -64,15 +32,15 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center'
   },
   differenceIcon: {
-    color: theme.palette.success.dark
+    color: theme.palette.error.dark
   },
   differenceValue: {
-    color: theme.palette.success.dark,
+    color: theme.palette.error.dark,
     marginRight: theme.spacing(1)
   }
 }))
 
-const NumberOfWaiters = props => {
+const RestaurantInfo = props => {
   const {className, ...rest} = props
 
   const classes = useStyles()
@@ -88,19 +56,19 @@ const NumberOfWaiters = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL STAFF NUMBER
+              YOUR RESTAURANT
             </Typography>
-            <Typography variant="h5">100</Typography>
+            <Typography variant="h5">$24,000</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <PeopleIcon className={classes.icon} />
+              <HomeIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
         <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
-            currently working
+            for the last year
           </Typography>
         </div>
       </CardContent>
@@ -108,4 +76,4 @@ const NumberOfWaiters = props => {
   )
 }
 
-export default NumberOfWaiters
+export default RestaurantInfo
