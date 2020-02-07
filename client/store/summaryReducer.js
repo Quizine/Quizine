@@ -10,7 +10,7 @@ const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
 const GET_CALENDAR_DATA = 'GET_CALENDAR_DATA'
 const GET_DOW_ANALYSIS_TABLE = 'GET_DOW_ANALYSIS_TABLE'
-
+const GET_YELP_RATING = 'GET_YELP_RATING'
 /**
  * INITIAL STATE
  */
@@ -32,7 +32,8 @@ const initialState = {
     listOfWaiters: [],
     popularDish: ''
   },
-  DOWAnalysisTable: []
+  DOWAnalysisTable: [],
+  yelpRating: 0
 }
 
 /**
@@ -70,6 +71,11 @@ const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
   revenue,
   listOfWaiters,
   popularDish
+})
+
+const gotYelpRating = yelpRating => ({
+  type: GET_YELP_RATING,
+  yelpRating
 })
 
 export const getRestaurantInfo = () => async dispatch => {
@@ -138,6 +144,53 @@ export const getDOWAnalysisTable = () => async dispatch => {
   }
 }
 
+export const getYelpRating = (restaurantName, location) => async dispatch => {
+  // let Promise = require("bluebird");
+  try {
+    let clientId, apiKey
+    if (!process.env.YELP_CLIENT_ID || !process.env.YELP_API_KEY) {
+      console.log('Google client ID / secret not found. Skipping Google OAuth.')
+    } else {
+      clientId = process.env.YELP_CLIENT_ID
+      apiKey = process.env.YELP_API_KEY
+    }
+    console.log('where is this:', location)
+    const {data} = await axios.get(
+      `${'http://http://localhost:8080/summary/'}https://api.yelp.com/v3/businesses/search`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`
+        },
+        params: {
+          term: 'pastis-new-york-3'
+        }
+      }
+    )
+    console.log('is this returning: ', data)
+  } catch (error) {
+    console.error(error)
+  }
+
+  // const params = {location};
+  // const urlProxy = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search';
+  // Promise.props({
+  //   local: axios({
+  //     url: urlProxy,
+  //     params: params,
+  //     json: true,
+  //     method: 'GET',
+  //     withCredentials: true,
+  //     headers: {
+  //                 'user-key': apiKey,
+  //                 'Accept': 'application/json',
+  //                 'Content-Type': 'application/json',
+  //                 'Origin': 'http://localhost:8080/summary',
+  //                 // 'Access-Control-Allow-Headers': '*',
+  //                 'Access-Control-Allow-Origin': 'http://localhost:8080/summary',
+  //             },
+  //   })}).then(data => dispatch(gotYelpRating(data.businesses[0].rating)))
+}
+
 /**
  * REDUCER
  */
@@ -182,6 +235,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         DOWAnalysisTable: action.DOWresults
+      }
+    case GET_YELP_RATING:
+      return {
+        ...state,
+        yelpRating: action.yelpRating
       }
     default:
       return state

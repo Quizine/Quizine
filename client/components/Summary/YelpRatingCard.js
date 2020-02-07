@@ -58,7 +58,7 @@ const YelpRating = props => {
             >
               YELP RATING
             </Typography>
-            <Typography variant="h5">4/5</Typography>
+            <Typography variant="h5">{props.yelpRating}/5</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
