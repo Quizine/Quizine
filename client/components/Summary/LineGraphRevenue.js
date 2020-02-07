@@ -52,11 +52,11 @@ class LineGraphRevenue extends Component {
     }
     return (
       <div>
-        <div className="rev-time-div">
+        <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
             <CardHeader
               action={
-                <select onChange={this.handleChange}>
+                <select onChange={this.handleChange} className="select-css">
                   <option value="oneYear">Last Year</option>
                   <option value="twoYears">Last 2 Years</option>
                   <option value="allPeriod">All History</option>
@@ -79,9 +79,7 @@ class LineGraphRevenue extends Component {
                         {
                           display: true,
                           ticks: {
-                            suggestedMin: 45000, // minimum will be 0, unless there is a lower value.
-                            // OR //
-                            // beginAtZero: true, // minimum value will be 0.
+                            suggestedMin: 45000,
                             suggestedMax: 145000
                           }
                         }
@@ -91,12 +89,6 @@ class LineGraphRevenue extends Component {
                 />
               </div>
             </CardContent>
-            <Divider />
-            <CardActions className="classes.actions">
-              <Button color="primary" size="small" variant="text">
-                {/* Overview <ArrowRightIcon /> */}
-              </Button>
-            </CardActions>
           </Card>
         </div>
       </div>
