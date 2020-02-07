@@ -6,10 +6,12 @@ import axios from 'axios'
 const GET_NUM_ORDERS_VS_HOUR = 'GET_NUM_ORDERS_VS_HOUR'
 const GET_AVG_REVENUE_GUEST_VS_DOW = 'GET_AVG_REVENUE_GUEST_VS_DOW'
 const GET_TIP_PERCENTAGE_VS_WAITERS = 'GET_TIP_PERCENTAGE_VS_WAITERS'
-const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS =
-  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS'
 const GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER =
   'GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER'
+const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5 =
+  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5'
+const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5 =
+  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5'
 /**
  * INITIAL STATE
  */
@@ -31,7 +33,14 @@ const initialState = {
     month: {},
     week: {}
   },
-  menuSalesNumbersVsMenuItems: {
+  menuSalesNumbersVsMenuItemsTop5: {
+    xAxis: [],
+    yAxis: [],
+    year: {},
+    month: {},
+    week: {}
+  },
+  menuSalesNumbersVsMenuItemsBottom5: {
     xAxis: [],
     yAxis: [],
     year: {},
@@ -67,8 +76,13 @@ const gotTipPercentageVsWaiters = (results, timeInterval) => ({
   results,
   timeInterval
 })
-const gotMenuSalesNumbersVsMenuItems = (results, timeInterval) => ({
-  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS,
+const gotMenuSalesNumbersVsMenuItemsTop5 = (results, timeInterval) => ({
+  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5,
+  results,
+  timeInterval
+})
+const gotMenuSalesNumbersVsMenuItemsBottom5 = (results, timeInterval) => ({
+  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5,
   results,
   timeInterval
 })
@@ -125,15 +139,28 @@ export const getTipPercentageVsWaiters = timeInterval => async dispatch => {
   }
 }
 
-export const getMenuSalesNumbersVsMenuItems = timeInterval => async dispatch => {
+export const getMenuSalesNumbersVsMenuItemsTop5 = timeInterval => async dispatch => {
   try {
     const res = await axios.get(
-      '/api/businessAnalytics/menuSalesNumbersVsMenuItems',
+      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTop5',
       {
         params: {timeInterval}
       }
     )
-    dispatch(gotMenuSalesNumbersVsMenuItems(res.data, timeInterval))
+    dispatch(gotMenuSalesNumbersVsMenuItemsTop5(res.data, timeInterval))
+  } catch (err) {
+    console.error(err)
+  }
+}
+export const getMenuSalesNumbersVsMenuItemsBottom5 = timeInterval => async dispatch => {
+  try {
+    const res = await axios.get(
+      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsBottom5',
+      {
+        params: {timeInterval}
+      }
+    )
+    dispatch(gotMenuSalesNumbersVsMenuItemsBottom5(res.data, timeInterval))
   } catch (err) {
     console.error(err)
   }
@@ -183,11 +210,21 @@ export default function(state = initialState, action) {
           [`${action.timeInterval}`]: action.results
         }
       }
-    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS:
+    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5:
       return {
         ...state,
-        menuSalesNumbersVsMenuItems: {
-          ...state.menuSalesNumbersVsMenuItems,
+        menuSalesNumbersVsMenuItemsTop5: {
+          ...state.menuSalesNumbersVsMenuItemsTop5,
+          xAxis: action.results.xAxis,
+          yAxis: action.results.yAxis,
+          [`${action.timeInterval}`]: action.results
+        }
+      }
+    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5:
+      return {
+        ...state,
+        menuSalesNumbersVsMenuItemsBottom5: {
+          ...state.menuSalesNumbersVsMenuItemsBottom5,
           xAxis: action.results.xAxis,
           yAxis: action.results.yAxis,
           [`${action.timeInterval}`]: action.results
