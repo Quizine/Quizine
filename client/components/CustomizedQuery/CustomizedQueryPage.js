@@ -48,7 +48,7 @@ export class NewQuery extends Component {
 
 const mapStateToProps = state => {
   return {
-    tableFields: state.analytics.tableFields
+    tableFields: state.customizedQuery.tableFields
   }
 }
 

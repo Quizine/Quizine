@@ -1,53 +1,34 @@
 import React from 'react'
-
-import {Button} from '@material-ui/core'
 import {withRouter} from 'react-router-dom'
+import DashboardIcon from '@material-ui/icons/Dashboard'
+import FunctionsIcon from '@material-ui/icons/Functions'
+import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined'
+import SidebarNav from './SidebarNav'
+import UserProfile from './UserProfile'
 
-const Sidebar = props => {
+const pages = [
+  {
+    title: 'SUMMARY',
+    href: '/summary',
+    icon: <DashboardIcon />
+  },
+  {
+    title: 'BUSINESS ANALYTICS',
+    href: '/businessanalytics',
+    icon: <InsertChartOutlinedIcon />
+  },
+  {
+    title: 'CUSTOM ANALYTICS',
+    href: '/customizedQuery',
+    icon: <FunctionsIcon />
+  }
+]
+
+const Sidebar = () => {
   return (
     <div className="sidebar-container">
-      <div className="sidebar-btn">
-        {' '}
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          onClick={e => {
-            e.preventDefault()
-            props.history.push('/summary')
-          }}
-        >
-          Summary
-        </Button>
-      </div>
-      <div className="sidebar-btn">
-        {' '}
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          onClick={e => {
-            e.preventDefault()
-            props.history.push('/businessanalytics')
-          }}
-        >
-          BUSINESS ANALYTICS
-        </Button>
-      </div>
-      <div className="sidebar-btn">
-        {' '}
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          onClick={e => {
-            e.preventDefault()
-            props.history.push('/stockQueries')
-          }}
-        >
-          CUSTOM ANALYTICS
-        </Button>
-      </div>
+      <UserProfile />
+      <SidebarNav pages={pages} />
     </div>
   )
 }

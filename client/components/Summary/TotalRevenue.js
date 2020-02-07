@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
 import {Card, CardContent, Grid, Typography, Avatar} from '@material-ui/core'
-import MoneyIcon from '@material-ui/icons/Money'
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,7 +62,7 @@ const TotalRevenue = props => {
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <MoneyIcon className={classes.icon} />
+              <MonetizationOnIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
