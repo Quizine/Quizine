@@ -48,7 +48,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
       labels: labels,
       datasets: [
         {
-          label: 'Average Revenue per Guest, $',
+          label: 'Average Revenue per Guest',
           data: arrPerc,
           backgroundColor: '#24497A'
         }
@@ -67,7 +67,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
               </select>
               // <DropdownComponent handleChangeData={this.handleChange} />
             }
-            title="Average Revenue per Guest"
+            title="Guest Expenditure ($)"
           />
           <Divider />
 
@@ -78,7 +78,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
                 options={{
                   title: {
                     display: false,
-                    text: 'Average Revenue Per Guest'
+                    text: 'Average Revenue Per Guest ($)'
                   },
                   scales: {
                     yAxes: [

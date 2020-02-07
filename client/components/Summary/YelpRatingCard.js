@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
 import {Card, CardContent, Grid, Typography, Avatar} from '@material-ui/core'
 import StarIcon from '@material-ui/icons/Star'
+import Rating from '@material-ui/lab/Rating'
+import Box from '@material-ui/core/Box'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,7 +60,12 @@ const YelpRating = props => {
             >
               YELP RATING
             </Typography>
-            <Typography variant="h5">4/5</Typography>
+            <Box component="fieldset" mb={3} borderColor="transparent">
+              <Typography variant="h6">
+                {props.yelpRating.toFixed(1)}/5.0
+              </Typography>
+              <Rating name="yelp-rating" value={props.yelpRating} />
+            </Box>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -66,11 +73,11 @@ const YelpRating = props => {
             </Avatar>
           </Grid>
         </Grid>
-        <div className={classes.difference}>
+        {/* <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
             current rating
           </Typography>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   )

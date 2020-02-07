@@ -9,7 +9,7 @@ export class CalendarContainer extends Component {
     super(props)
 
     this.state = {
-      date: new Date(2020, 0, 29, 0, 0, 0, 0)
+      date: new Date()
     }
   }
   componentDidMount() {

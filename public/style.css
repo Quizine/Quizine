@@ -38,6 +38,10 @@ form div {
   text-align: center;
 }
 
+.routes-cont {
+  background-color: rgb(239, 239, 239);
+}
+
 /* -----------SIDEBAR COMPONENT--------------------- */
 
 .sidebar-container {
@@ -107,7 +111,7 @@ form div {
   max-width: 90vw;
   margin: 1em;
   padding: 1em;
-  background-color: #ffffff;
+  background-color: rgb(239, 239, 239);
 }
 
 .calendar-stats-cont {
@@ -368,35 +372,39 @@ form div {
 /* ------CARD CONTAINER ---------- */
 .card-container {
   display: flex;
+  justify-content: center;
   max-width: 90vw;
   margin: 1em;
   padding: 1em;
-  background-color: #ffffff;
+  background-color: rgb(239, 239, 239);
 }
 
 /* ------SUMMARY PAGE CHART CONTAINER ---------- */
 .summary-chart-container {
   display: flex;
+  justify-content: center;
   max-width: 90vw;
   margin: 1em;
   padding: 1em;
-  background-color: #ffffff;
+  background-color: rgb(239, 239, 239);
 }
 
 /* ------SUMMARY PAGE CHART CONTAINER ---------- */
 .summary-chart-container {
   display: flex;
+  justify-content: center;
   max-width: 90vw;
   margin: 1em;
   padding: 1em;
-  background-color: #ffffff;
+  background-color: rgb(239, 239, 239);
 }
 
 /* ------SUMMARY TABLE CONTAINER ---------- */
 .summary-table-container {
   display: flex;
+  justify-content: center;
   max-width: 90vw;
-  margin: 6em;
+  margin: 2em;
   padding: 1em;
-  background-color: #ffffff;
+  background-color: rgb(239, 239, 239);
 }
