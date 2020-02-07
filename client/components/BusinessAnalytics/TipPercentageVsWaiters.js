@@ -70,7 +70,7 @@ class TipPercentageVsWaiters extends Component {
                 </select>
               </div>
             }
-            title="Number Of Orders per Hour"
+            title="Waiter Performance (%)"
           />
           <Divider />
 
