@@ -58,6 +58,16 @@ class AvgRevenuePerGuestVsDOW extends Component {
               title: {
                 display: true,
                 text: 'Average Revenue Per Guest Per Day of Week'
+              },
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
+                      suggestedMax: 100
+                    }
+                  }
+                ]
               }
             }}
           />

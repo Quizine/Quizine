@@ -83,6 +83,19 @@ class PeakTimeGraph extends Component {
                   title: {
                     display: true,
                     text: 'Peak Times'
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        display: true,
+                        ticks: {
+                          suggestedMin: 35000, // minimum will be 0, unless there is a lower value.
+                          // OR //
+                          beginAtZero: true, // minimum value will be 0.
+                          suggestedMax: 125000
+                        }
+                      }
+                    ]
                   }
                 }}
               />
