@@ -39,9 +39,6 @@ class SummaryPage extends Component {
     console.log('staff number in comp----->', this.props.numberOfWaiters)
     return (
       <div>
-        <div>
-          <CalendarContainer />
-        </div>
         {this.props.DOWAnalysisTable &&
         this.props.restaurantInfo[0] &&
         this.props.revenueVsTime.oneYear.revenue &&

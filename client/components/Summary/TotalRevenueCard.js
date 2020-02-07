@@ -58,7 +58,7 @@ const TotalRevenue = props => {
             >
               TOTAL REVENUE
             </Typography>
-            <Typography variant="h5">$ {props.totalRevenue}</Typography>
+            <Typography variant="h5">$ {props.totalRevenue} K</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
