@@ -17,6 +17,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
   }
 
   handleChange(event) {
+    console.log(`in the working`, this.props)
     this.setState({selectedOption: event.target.value})
     if (
       !Object.keys(this.props.avgRevenuePerGuestVsDOW[event.target.value])

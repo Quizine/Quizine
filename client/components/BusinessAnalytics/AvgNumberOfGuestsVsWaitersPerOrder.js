@@ -29,8 +29,12 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
   }
 
   render() {
-    const labels = this.props.avgNumberOfGuestsVsWaitersPerOrder.xAxis
-    const yAxis = this.props.avgNumberOfGuestsVsWaitersPerOrder.yAxis
+    const labels = this.props.avgNumberOfGuestsVsWaitersPerOrder[
+      this.state.selectedOption
+    ].xAxis
+    const yAxis = this.props.avgNumberOfGuestsVsWaitersPerOrder[
+      this.state.selectedOption
+    ].yAxis
 
     const chartData = {
       labels: labels,
