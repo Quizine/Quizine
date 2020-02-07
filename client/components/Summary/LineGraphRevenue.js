@@ -51,42 +51,53 @@ class LineGraphRevenue extends Component {
     }
     return (
       <div>
-        {revenue ? (
-          <div className="rev-time-div">
-            <Card className={clsx('classes.root, className')}>
-              <CardHeader
-                action={
-                  <select onChange={this.handleChange}>
-                    <option value="oneYear">Last Year</option>
-                    <option value="twoYears">Last 2 Years</option>
-                    <option value="allPeriod">All History</option>
-                  </select>
-                }
-                title="Revenue per Month ($)"
-              />
-              <Divider />
-              <CardContent>
-                <div className="classes.chartContainer">
-                  <Line
-                    data={chartData}
-                    options={{
-                      title: {
-                        display: true
-                        // text: 'REVENUE vs TIME'
-                      }
-                    }}
-                  />
-                </div>
-              </CardContent>
-              <Divider />
-              <CardActions className="classes.actions">
-                <Button color="primary" size="small" variant="text">
-                  {/* Overview <ArrowRightIcon /> */}
-                </Button>
-              </CardActions>
-            </Card>
-          </div>
-        ) : null}
+        <div className="rev-time-div">
+          <Card className={clsx('classes.root, className')}>
+            <CardHeader
+              action={
+                <select onChange={this.handleChange}>
+                  <option value="oneYear">Last Year</option>
+                  <option value="twoYears">Last 2 Years</option>
+                  <option value="allPeriod">All History</option>
+                </select>
+              }
+              title="Revenue per Month ($)"
+            />
+            <Divider />
+            <CardContent>
+              <div className="classes.chartContainer">
+                <Line
+                  data={chartData}
+                  options={{
+                    title: {
+                      display: true,
+                      text: 'REVENUE vs TIME'
+                    },
+                    scales: {
+                      yAxes: [
+                        {
+                          display: true,
+                          ticks: {
+                            suggestedMin: 45000, // minimum will be 0, unless there is a lower value.
+                            // OR //
+                            // beginAtZero: true, // minimum value will be 0.
+                            suggestedMax: 145000
+                          }
+                        }
+                      ]
+                    }
+                  }}
+                />
+              </div>
+            </CardContent>
+            <Divider />
+            <CardActions className="classes.actions">
+              <Button color="primary" size="small" variant="text">
+                {/* Overview <ArrowRightIcon /> */}
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
       </div>
     )
   }

@@ -9,7 +9,7 @@ export class CalenderStats extends Component {
     return (
       <div className="calendar-stats-cont">
         <div className="waiters-list">
-          <h2>Waiters on duty:</h2>
+          <h2>Waiters on Duty:</h2>
           <ul className="waiters-list-li">
             {listOfWaiters.map((el, idx) => {
               return <li key={idx}>{el.name}</li>
@@ -18,11 +18,11 @@ export class CalenderStats extends Component {
         </div>
         <div className="dish-rev">
           <div>
-            <h2>{`Revenue on ${this.props.currentDate.toDateString()}`}</h2>
+            <h2>{`Revenue on ${this.props.currentDate.toDateString()}:`}</h2>
             <h1>{`$ ${convertToDollar(Number(revenue))}`}</h1>
           </div>
           <div>
-            <h2>Most popular dish of the day:</h2>
+            <h2>Most Popular Dish of the Day:</h2>
             <h1>{popularDish.toUpperCase()}</h1>
           </div>
         </div>
