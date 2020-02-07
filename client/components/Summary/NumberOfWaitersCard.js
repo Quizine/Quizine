@@ -55,7 +55,7 @@ const NumberOfWaiters = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL STAFF NUMBER
+              TOTAL WAITING STAFF
             </Typography>
             <Typography variant="h5">{props.numberOfWaiters}</Typography>
           </Grid>
@@ -67,7 +67,7 @@ const NumberOfWaiters = props => {
         </Grid>
         <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
-            currently working
+            currently on payroll
           </Typography>
         </div>
       </CardContent>

@@ -72,7 +72,7 @@ class PeakTimeGraph extends Component {
                 <option value="week">Week</option>
               </select>
             }
-            title="Peak Time"
+            title="Orders per Hour (%)"
           />
           <Divider />
           <CardContent>

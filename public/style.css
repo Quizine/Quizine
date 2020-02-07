@@ -47,7 +47,8 @@ form div {
   position: sticky;
   /* width: 15em; */
   width: 10vw;
-  height: 90vh;
+  /* height: 100%; */
+  height: 165vh;
   /* margin-top: 3em; */
   background-color: #94b5e3;
 }
@@ -368,6 +369,33 @@ form div {
   display: flex;
   max-width: 90vw;
   margin: 1em;
+  padding: 1em;
+  background-color: #ffffff;
+}
+
+/* ------SUMMARY PAGE CHART CONTAINER ---------- */
+.summary-chart-container {
+  display: flex;
+  max-width: 90vw;
+  margin: 1em;
+  padding: 1em;
+  background-color: #ffffff;
+}
+
+/* ------SUMMARY PAGE CHART CONTAINER ---------- */
+.summary-chart-container {
+  display: flex;
+  max-width: 90vw;
+  margin: 1em;
+  padding: 1em;
+  background-color: #ffffff;
+}
+
+/* ------SUMMARY TABLE CONTAINER ---------- */
+.summary-table-container {
+  display: flex;
+  max-width: 90vw;
+  margin: 6em;
   padding: 1em;
   background-color: #ffffff;
 }
