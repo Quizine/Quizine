@@ -62,7 +62,7 @@ class LineGraphRevenue extends Component {
                     <option value="allPeriod">All History</option>
                   </select>
                 }
-                title="Peak Time"
+                title="Revenue per Month ($)"
               />
               <Divider />
               <CardContent>
@@ -71,8 +71,8 @@ class LineGraphRevenue extends Component {
                     data={chartData}
                     options={{
                       title: {
-                        display: true,
-                        text: 'REVENUE vs TIME'
+                        display: true
+                        // text: 'REVENUE vs TIME'
                       }
                     }}
                   />

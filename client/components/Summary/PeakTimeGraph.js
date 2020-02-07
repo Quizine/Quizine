@@ -72,7 +72,7 @@ class PeakTimeGraph extends Component {
                 <option value="week">Week</option>
               </select>
             }
-            title="Peak Time"
+            title="Orders per Hour (%)"
           />
           <Divider />
           <CardContent>
@@ -81,8 +81,8 @@ class PeakTimeGraph extends Component {
                 data={chartData}
                 options={{
                   title: {
-                    display: true,
-                    text: 'Peak Times'
+                    display: true
+                    // text: 'Peak Times'
                   },
                   scales: {
                     yAxes: [

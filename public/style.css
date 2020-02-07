@@ -279,3 +279,12 @@ form div {
   padding: 1em;
   background-color: #ffffff;
 }
+
+/* ------SUMMARY PAGE CHART CONTAINER ---------- */
+.summary-chart-container {
+  display: flex;
+  max-width: 90vw;
+  margin: 1em;
+  padding: 1em;
+  background-color: #ffffff;
+}

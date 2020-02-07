@@ -36,7 +36,6 @@ class SummaryPage extends Component {
   }
 
   render() {
-    console.log('staff number in comp----->', this.props.numberOfWaiters)
     return (
       <div>
         {this.props.DOWAnalysisTable &&
@@ -61,24 +60,22 @@ class SummaryPage extends Component {
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <YelpRating />
               </Grid>
-              <div>
-                <CalendarContainer />
-              </div>
-              <Grid item lg={8} md={12} xl={9} xs={12}>
-                <LineGraphRevenue />
-              </Grid>
-              <Grid item lg={4} md={6} xl={3} xs={12}>
-                <PeakTimeGraph />
-              </Grid>
-              <Grid item lg={4} md={6} xl={3} xs={12}>
-                {/* <LatestProducts /> */}
-              </Grid>
-              <Grid item lg={8} md={12} xl={9} xs={12}>
-                <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
-              </Grid>
             </Grid>
           </div>
         ) : null}
+        <div>
+          <CalendarContainer />
+        </div>
+        <div className="summary-chart-container">
+          <LineGraphRevenue />
+          <PeakTimeGraph />
+        </div>
+        <Grid item lg={4} md={6} xl={3} xs={12}>
+          {/* <LatestProducts /> */}
+        </Grid>
+        <Grid item lg={8} md={12} xl={9} xs={12}>
+          <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
+        </Grid>
       </div>
     )
   }
