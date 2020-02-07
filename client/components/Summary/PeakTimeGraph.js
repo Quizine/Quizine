@@ -62,8 +62,8 @@ class PeakTimeGraph extends Component {
     }
     return (
       <div className="peak-time-div">
-        <div />
         <Card className={clsx('classes.root, className')}>
+
           <CardHeader
             action={
               <select onChange={this.handleChange}>

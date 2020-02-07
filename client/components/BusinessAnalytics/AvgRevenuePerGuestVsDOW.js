@@ -2,6 +2,18 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getAvgRevenuePerGuestVsDOW} from '../../store/businessAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
+import clsx from 'clsx'
+import PropTypes from 'prop-types'
+import {makeStyles} from '@material-ui/styles'
+import DropdownComponent from './DropdownComponent'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Divider,
+  Button
+} from '@material-ui/core'
 
 class AvgRevenuePerGuestVsDOW extends Component {
   constructor(props) {
@@ -17,7 +29,6 @@ class AvgRevenuePerGuestVsDOW extends Component {
   }
 
   handleChange(event) {
-    console.log(`in the working`, this.props)
     this.setState({selectedOption: event.target.value})
     if (
       !Object.keys(this.props.avgRevenuePerGuestVsDOW[event.target.value])
@@ -46,33 +57,67 @@ class AvgRevenuePerGuestVsDOW extends Component {
 
     return (
       <div className="peak-time-div">
-        <select onChange={this.handleChange} defaultValue="month">
-          <option value="year">Year</option>
-          <option value="month">Month</option>
-          <option value="week">Week</option>
-        </select>
-        <div>
-          <Bar
-            data={chartData}
-            options={{
-              title: {
-                display: true,
-                text: 'Average Revenue Per Guest Per Day of Week'
-              },
-              scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                      suggestedMax: 100
-                    }
-                  }
-                ]
-              }
-            }}
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader
+            action={
+              <select onChange={this.handleChange} className="select-css">
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+                <option value="week">Week</option>
+              </select>
+              // <DropdownComponent handleChangeData={this.handleChange} />
+            }
+            title="Average Revenue Per Guest Per Week Day"
           />
-        </div>
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Bar
+                data={chartData}
+                options={{
+                  title: {
+                    display: false,
+                    text: 'Average Revenue Per Guest'
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          beginAtZero: true,
+                          suggestedMax: 100
+                        }
+                      }
+                    ]
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      // <div className="peak-time-div">
+      //   <div className="chart-header">
+      //     <select onChange={this.handleChange} defaultValue="month">
+      //       <option value="year">Year</option>
+      //       <option value="month">Month</option>
+      //       <option value="week">Week</option>
+      //     </select>
+      //     <h3>Average Revenue Per Guest Per Day of Week</h3>
+      //   </div>
+      //   <div>
+      //     <Bar
+      //       data={chartData}
+      //       options={{
+      //         title: {
+      //           display: false,
+      //           text: 'Average Revenue Per Guest Per Day of Week'
+      //         }
+      //       }}
+      //     />
+      //   </div>
+      // </div>
     )
   }
 }
