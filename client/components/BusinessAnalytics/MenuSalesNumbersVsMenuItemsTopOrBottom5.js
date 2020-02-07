@@ -1,16 +1,20 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getMenuSalesNumbersVsMenuItemsBottom5} from '../../store/businessAnalyticsReducer'
+import {getMenuSalesNumbersVsMenuItemsTopOrBottom5} from '../../store/businessAnalyticsReducer'
 import {Pie} from 'react-chartjs-2'
+import {Button} from '@material-ui/core'
+import _ from 'lodash'
 
-class MenuSalesNumbersVsMenuItemsBottom5 extends Component {
+class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedOption: 'month'
+      selectedOption: 'month',
+      top: true
     }
     this.handleChange = this.handleChange.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   componentDidMount() {
@@ -19,24 +23,30 @@ class MenuSalesNumbersVsMenuItemsBottom5 extends Component {
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (
-      !Object.keys(
-        this.props.menuSalesNumbersVsMenuItemsBottom5[event.target.value]
-      ).length
-    ) {
+    if (!Object.keys(this.props.topAndBottom5[event.target.value]).length) {
       this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)
     }
   }
 
+  handleClick(event, value) {
+    event.preventDefault()
+    this.setState({top: value})
+  }
+
   render() {
-    const labels = this.props.menuSalesNumbersVsMenuItemsBottom5.xAxis
-    const yAxis = this.props.menuSalesNumbersVsMenuItemsBottom5.yAxis
+    const labelsNotModified = this.state.top
+      ? this.props.topAndBottom5.xAxisTop
+      : this.props.topAndBottom5.xAxisBottom
+    const labels = modifyArrOfStrings(labelsNotModified)
+    const yAxis = this.state.top
+      ? this.props.topAndBottom5.yAxisTop
+      : this.props.topAndBottom5.yAxisBottom
+    const labelText = this.state.top ? 'Top' : 'Bottom'
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Bottom 5 Menu Items',
           data: yAxis,
           backgroundColor: randomColor(yAxis.length)
         }
@@ -49,13 +59,27 @@ class MenuSalesNumbersVsMenuItemsBottom5 extends Component {
           <option value="year">Year</option>
           <option value="week">Week</option>
         </select>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => this.handleClick(event, true)}
+        >
+          TOP 5
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => this.handleClick(event, false)}
+        >
+          BOTTOM 5
+        </Button>
         <div>
           <Pie
             data={chartData}
             options={{
               title: {
                 display: true,
-                text: 'Bottom 5 Menu Items'
+                text: `${labelText} 5 Menu Items`
               }
             }}
           />
@@ -67,22 +91,26 @@ class MenuSalesNumbersVsMenuItemsBottom5 extends Component {
 
 const mapStateToProps = state => {
   return {
-    menuSalesNumbersVsMenuItemsBottom5:
-      state.businessAnalytics.menuSalesNumbersVsMenuItemsBottom5
+    topAndBottom5:
+      state.businessAnalytics.menuSalesNumbersVsMenuItemsTopOrBottom5
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     loadMenuSalesNumbersVsMenuItems(timeInterval) {
-      dispatch(getMenuSalesNumbersVsMenuItemsBottom5(timeInterval))
+      dispatch(getMenuSalesNumbersVsMenuItemsTopOrBottom5(timeInterval))
     }
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  MenuSalesNumbersVsMenuItemsBottom5
+  MenuSalesNumbersVsMenuItemsTopOrBottom5
 )
+
+function modifyArrOfStrings(arr) {
+  return arr.map(str => _.startCase(str))
+}
 
 //RANDOM COLOR GENERATOR, takes the length of an array
 function randomColor(length) {

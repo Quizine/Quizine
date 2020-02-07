@@ -8,10 +8,8 @@ const GET_AVG_REVENUE_GUEST_VS_DOW = 'GET_AVG_REVENUE_GUEST_VS_DOW'
 const GET_TIP_PERCENTAGE_VS_WAITERS = 'GET_TIP_PERCENTAGE_VS_WAITERS'
 const GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER =
   'GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER'
-const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5 =
-  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5'
-const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5 =
-  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5'
+const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5 =
+  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5'
 /**
  * INITIAL STATE
  */
@@ -33,16 +31,11 @@ const initialState = {
     month: {},
     week: {}
   },
-  menuSalesNumbersVsMenuItemsTop5: {
-    xAxis: [],
-    yAxis: [],
-    year: {},
-    month: {},
-    week: {}
-  },
-  menuSalesNumbersVsMenuItemsBottom5: {
-    xAxis: [],
-    yAxis: [],
+  menuSalesNumbersVsMenuItemsTopOrBottom5: {
+    xAxisTop: [],
+    yAxisTop: [],
+    xAxisBottom: [],
+    yAxisBottom: [],
     year: {},
     month: {},
     week: {}
@@ -76,14 +69,14 @@ const gotTipPercentageVsWaiters = (results, timeInterval) => ({
   results,
   timeInterval
 })
-const gotMenuSalesNumbersVsMenuItemsTop5 = (results, timeInterval) => ({
-  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5,
-  results,
+const gotMenuSalesNumbersVsMenuItemsTopOrBottom5 = (
+  top5,
+  bottom5,
   timeInterval
-})
-const gotMenuSalesNumbersVsMenuItemsBottom5 = (results, timeInterval) => ({
-  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5,
-  results,
+) => ({
+  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5,
+  top5,
+  bottom5,
   timeInterval
 })
 
@@ -139,32 +132,32 @@ export const getTipPercentageVsWaiters = timeInterval => async dispatch => {
   }
 }
 
-export const getMenuSalesNumbersVsMenuItemsTop5 = timeInterval => async dispatch => {
+export const getMenuSalesNumbersVsMenuItemsTopOrBottom5 = timeInterval => async dispatch => {
   try {
-    const res = await axios.get(
+    const top = await axios.get(
       '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTop5',
       {
-        params: {timeInterval}
+        params: {timeInterval, topOrBottom: 'desc'}
       }
     )
-    dispatch(gotMenuSalesNumbersVsMenuItemsTop5(res.data, timeInterval))
-  } catch (err) {
-    console.error(err)
-  }
-}
-export const getMenuSalesNumbersVsMenuItemsBottom5 = timeInterval => async dispatch => {
-  try {
-    const res = await axios.get(
-      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsBottom5',
+    const bottom = await axios.get(
+      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTop5',
       {
-        params: {timeInterval}
+        params: {timeInterval, topOrBottom: 'asc'}
       }
     )
-    dispatch(gotMenuSalesNumbersVsMenuItemsBottom5(res.data, timeInterval))
+    dispatch(
+      gotMenuSalesNumbersVsMenuItemsTopOrBottom5(
+        top.data,
+        bottom.data,
+        timeInterval
+      )
+    )
   } catch (err) {
     console.error(err)
   }
 }
+
 export const getAvgNumberOfGuestsVsWaitersPerOrder = timeInterval => async dispatch => {
   try {
     const res = await axios.get(
@@ -210,23 +203,15 @@ export default function(state = initialState, action) {
           [`${action.timeInterval}`]: action.results
         }
       }
-    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_5:
+    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5:
       return {
         ...state,
-        menuSalesNumbersVsMenuItemsTop5: {
-          ...state.menuSalesNumbersVsMenuItemsTop5,
-          xAxis: action.results.xAxis,
-          yAxis: action.results.yAxis,
-          [`${action.timeInterval}`]: action.results
-        }
-      }
-    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_BOTTOM_5:
-      return {
-        ...state,
-        menuSalesNumbersVsMenuItemsBottom5: {
-          ...state.menuSalesNumbersVsMenuItemsBottom5,
-          xAxis: action.results.xAxis,
-          yAxis: action.results.yAxis,
+        menuSalesNumbersVsMenuItemsTopOrBottom5: {
+          ...state.menuSalesNumbersVsMenuItemsTopOrBottom5,
+          xAxisTop: action.top5.xAxis,
+          yAxisTop: action.top5.yAxis,
+          xAxisBottom: action.bottom5.xAxis,
+          yAxisBottom: action.bottom5.yAxis,
           [`${action.timeInterval}`]: action.results
         }
       }
