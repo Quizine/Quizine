@@ -8,6 +8,20 @@ module.exports = router
 
 //ADD "AND restauranId" condition
 
+router.get('/restaurantInfo', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const restaurantInfo = await client.query(`
+      SELECT "restaurantName", "location"
+      FROM restaurants
+      WHERE restaurants.id = ${req.user.restaurantId}`)
+      res.json(restaurantInfo.rows)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.get('/numberOfWaiters', async (req, res, next) => {
   try {
     const waiterCount = await client.query(`
