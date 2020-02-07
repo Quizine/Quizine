@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import PeakTimeGraph from './PeakTimeGraph'
 import LineGraphRevenue from './LineGraphRevenue'
 import EnhancedTable from './DOWAnalysisTable'
+import CalendarContainer from './Calendar/Calendar'
 import {
   getDOWAnalysisTable,
   getRestaurantInfo
@@ -28,6 +29,9 @@ class SummaryPage extends Component {
     // const classes = useStyles();
     return (
       <div>
+        <div>
+          <CalendarContainer />
+        </div>
         {this.props.DOWAnalysisTable && this.props.restaurantInfo[0] ? (
           <div className="{padding: theme.spacing(4)}">
             <Grid container spacing={4}>

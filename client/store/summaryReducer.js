@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {act} from 'react-test-renderer'
 
 /**
  * ACTION TYPES
@@ -7,6 +8,7 @@ const GET_RESTAURANT_INFO = 'GET_RESTAURANT_INFO'
 const GET_NUMBER_OF_WAITERS = 'GET_NUMBER_OF_WAITERS'
 const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
+const GET_CALENDAR_DATA = 'GET_CALENDAR_DATA'
 const GET_DOW_ANALYSIS_TABLE = 'GET_DOW_ANALYSIS_TABLE'
 
 /**
@@ -24,6 +26,11 @@ const initialState = {
     allPeriod: {},
     oneYear: {},
     twoYears: {}
+  },
+  calendarData: {
+    revenue: '',
+    listOfWaiters: [],
+    popularDish: ''
   },
   DOWAnalysisTable: []
 }
@@ -56,6 +63,14 @@ const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
   type: GET_DOW_ANALYSIS_TABLE,
   DOWresults,
   timeInterval
+})
+
+
+const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
+  type: GET_CALENDAR_DATA,
+  revenue,
+  listOfWaiters,
+  popularDish
 })
 
 export const getRestaurantInfo = () => async dispatch => {
@@ -102,6 +117,18 @@ export const getRevenueVsTime = yearQty => async dispatch => {
   }
 }
 
+export const getCalendarData = date => async dispatch => {
+  const payload = {params: {date}}
+  try {
+    const revenue = await axios.get('/api/summary/revenueByDay', payload)
+    const waiters = await axios.get('/api/summary/waitersOnADay', payload)
+    const dish = await axios.get('/api/summary/mostPopularDishOnADay', payload)
+    dispatch(gotCalendarData(revenue.data, waiters.data, dish.data))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export const getDOWAnalysisTable = () => async dispatch => {
   try {
     const {data} = await axios.get('/api/summary/DOWAnalysisTable')
@@ -140,6 +167,15 @@ export default function(state = initialState, action) {
         revenueVsTime: {
           ...state.revenueVsTime,
           [`${action.yearQty}`]: action.chartData
+        }
+      }
+    case GET_CALENDAR_DATA:
+      return {
+        ...state,
+        calendarData: {
+          revenue: action.revenue,
+          listOfWaiters: action.listOfWaiters,
+          popularDish: action.popularDish
         }
       }
     case GET_DOW_ANALYSIS_TABLE:
