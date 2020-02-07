@@ -1,12 +1,10 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {withRouter} from 'react-router-dom'
-import {connect} from 'react-redux'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import FunctionsIcon from '@material-ui/icons/Functions'
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined'
 import SidebarNav from './SidebarNav'
 import UserProfile from './UserProfile'
-import {me} from '../store/userReducer'
 
 const pages = [
   {
@@ -17,7 +15,12 @@ const pages = [
   {
     title: 'BUSINESS ANALYTICS',
     href: '/businessanalytics',
-    icon: <InsertChartOutlinedIcon />
+    icon: <InsertChartOutlinedIcon />,
+    subPage: {
+      title: 'HOME',
+      href: '/home',
+      icon: <InsertChartOutlinedIcon />
+    }
   },
   {
     title: 'CUSTOM ANALYTICS',
