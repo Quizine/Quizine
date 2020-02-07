@@ -4,6 +4,7 @@ import {act} from 'react-test-renderer'
 /**
  * ACTION TYPES
  */
+const GET_RESTAURANT_INFO = 'GET_RESTAURANT_INFO'
 const GET_NUMBER_OF_WAITERS = 'GET_NUMBER_OF_WAITERS'
 const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
@@ -14,6 +15,7 @@ const GET_DOW_ANALYSIS_TABLE = 'GET_DOW_ANALYSIS_TABLE'
  * INITIAL STATE
  */
 const initialState = {
+  restaurantInfo: {},
   numberOfWaiters: '',
   peakTimeOrdersVsTime: {
     year: [],
@@ -37,6 +39,11 @@ const initialState = {
  * ACTION CREATORS
  */
 
+const gotRestaurantInfo = restaurantInfo => ({
+  type: GET_RESTAURANT_INFO,
+  restaurantInfo
+})
+
 const gotNumberOfWaiters = numOfWaiters => ({
   type: GET_NUMBER_OF_WAITERS,
   numOfWaiters
@@ -58,12 +65,22 @@ const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
   timeInterval
 })
 
+
 const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
   type: GET_CALENDAR_DATA,
   revenue,
   listOfWaiters,
   popularDish
 })
+
+export const getRestaurantInfo = () => async dispatch => {
+  try {
+    const {data} = await axios.get('/api/summary/restaurantInfo')
+    dispatch(gotRestaurantInfo(data))
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 export const getNumberOfWaiters = () => async dispatch => {
   try {
@@ -126,6 +143,11 @@ export const getDOWAnalysisTable = () => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_RESTAURANT_INFO:
+      return {
+        ...state,
+        restaurantInfo: action.restaurantInfo
+      }
     case GET_NUMBER_OF_WAITERS:
       return {
         ...state,
