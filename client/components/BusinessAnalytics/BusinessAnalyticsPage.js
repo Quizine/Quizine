@@ -12,8 +12,6 @@ export default class BusinessAnalyticsPage extends Component {
     return (
       <div>
         <div>
-          <h2>Welcome, !</h2>
-          <p>Quick business analytics:</p>
           <AvgRevenuePerGuestVsDOW />
           <MenuSalesNumbersVsMenuItemsTop5 />
           <MenuSalesNumbersVsMenuItemsBottom5 />

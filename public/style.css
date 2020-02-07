@@ -45,6 +45,7 @@ form div {
   flex-direction: column;
   justify-content: flex-start;
   position: sticky;
+  /* width: 15em; */
   width: 10vw;
   height: 90vh;
   /* margin-top: 3em; */
