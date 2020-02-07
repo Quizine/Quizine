@@ -1,6 +1,5 @@
 import React from 'react'
 import clsx from 'clsx'
-import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
 import {Card, CardContent, Grid, Typography, Avatar} from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home'
@@ -58,7 +57,9 @@ const RestaurantInfo = props => {
             >
               YOUR RESTAURANT
             </Typography>
-            <Typography variant="h5">$24,000</Typography>
+            <Typography variant="h5">
+              {props.restaurantInfo.restaurantName}
+            </Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -68,7 +69,7 @@ const RestaurantInfo = props => {
         </Grid>
         <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
-            for the last year
+            {props.restaurantInfo.location}
           </Typography>
         </div>
       </CardContent>
