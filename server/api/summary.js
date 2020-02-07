@@ -31,7 +31,8 @@ router.get('/waitersOnADay', async (req, res, next) => {
     if (req.user.id) {
       const date = req.query.date
       const waitersOnADay = await client.query(`
-      select waiters."name"
+      select 
+      distinct waiters."name"
       from waiters
       join orders on orders."waiterId" = waiters.id
       where orders."timeOfPurchase" ::date = '${date}';
