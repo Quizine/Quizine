@@ -27,8 +27,10 @@ class TipPercentageVsWaiters extends Component {
   }
 
   render() {
-    const labels = this.props.tipPercentageVsWaiters.xAxis
-    const yAxis = this.props.tipPercentageVsWaiters.yAxis
+    const labels = this.props.tipPercentageVsWaiters[this.state.selectedOption]
+      .xAxis
+    const yAxis = this.props.tipPercentageVsWaiters[this.state.selectedOption]
+      .yAxis
 
     const chartData = {
       labels: labels,
@@ -42,7 +44,7 @@ class TipPercentageVsWaiters extends Component {
     }
     return (
       <div className="peak-time-div">
-        <select onChange={this.handleChange}>
+        <select onChange={this.handleChange} defaultValue="month">
           <option value="month">Month</option>
           <option value="year">Year</option>
           <option value="week">Week</option>
