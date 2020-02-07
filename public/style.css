@@ -90,10 +90,60 @@ form div {
 /* ------CALENDAR CONTAINER ---------- */
 .calendar-container {
   display: flex;
+  max-width: 90vw;
+  margin: 1em;
+  padding: 1em;
+  background-color: #206491;
 }
 
 .calendar-stats-cont {
   display: flex;
+  margin-left: 2em;
+  height: 100%;
+}
+
+.waiters-list {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  width: 25vw;
+  background-color: #94b5e3;
+  border-radius: 10px;
+}
+
+.waiters-list h2 {
+  margin: 0;
+  padding: 0.5em;
+  text-align: center;
+}
+
+.waiters-list-li {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  margin: 0;
+  padding: 1em;
+}
+
+.waiters-list-li li {
+  width: 120px;
+  padding: 0.15em;
+}
+
+.dish-rev {
+  background-color: #94b5e3;
+  display: flex;
+  flex-direction: column;
+  margin-left: 2em;
+  align-items: center;
+  width: 30vw;
+  border-radius: 10px;
+}
+
+.dish-rev h1 {
+  color: #3b79cc;
+  margin: 0.5em;
+  text-align: center;
 }
 
 /* ----------------CALENDAR----------------- */

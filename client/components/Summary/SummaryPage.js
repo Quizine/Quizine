@@ -4,6 +4,7 @@ import PeakTimeGraph from './PeakTimeGraph'
 import LineGraphRevenue from './LineGraphRevenue'
 import EnhancedTable from './DOWAnalysisTable'
 import {getDOWAnalysisTable} from '../../store/summaryReducer'
+import CalendarContainer from './Calendar/Calendar'
 
 class SummaryPage extends Component {
   componentDidMount() {
@@ -12,6 +13,9 @@ class SummaryPage extends Component {
   render() {
     return (
       <div>
+        <div>
+          <CalendarContainer />
+        </div>
         {this.props.DOWAnalysisTable ? (
           <div className="summary-cont">
             <h2>BUSINESS SUMMARY</h2>

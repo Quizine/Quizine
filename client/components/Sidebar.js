@@ -28,7 +28,7 @@ const Sidebar = props => {
           fullWidth
           onClick={e => {
             e.preventDefault()
-            props.history.push('/newquery')
+            props.history.push('/businessanalytics')
           }}
         >
           BUSINESS ANALYTICS
@@ -45,7 +45,7 @@ const Sidebar = props => {
             props.history.push('/stockQueries')
           }}
         >
-          QUERIES
+          CUSTOM ANALYTICS
         </Button>
       </div>
     </div>

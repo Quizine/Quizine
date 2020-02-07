@@ -100,17 +100,12 @@ export const getRevenueVsTime = yearQty => async dispatch => {
   }
 }
 
-export const getCalendarData = (
-  revenue,
-  listOfWaiters,
-  popularDish,
-  date
-) => async dispatch => {
+export const getCalendarData = date => async dispatch => {
   const payload = {params: {date}}
   try {
     const revenue = await axios.get('/api/summary/revenueByDay', payload)
     const waiters = await axios.get('/api/summary/waitersOnADay', payload)
-    const dish = await axios.get('/api/summary/mostPopularDishOnADay', payload) //?
+    const dish = await axios.get('/api/summary/mostPopularDishOnADay', payload)
     dispatch(gotCalendarData(revenue.data, waiters.data, dish.data))
   } catch (error) {
     console.error(error)

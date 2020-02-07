@@ -4,16 +4,12 @@ import AvgRevenuePerGuestVsDOW from './AvgRevenuePerGuestVsDOW'
 import MenuSalesNumbersVsMenuItems from './MenuSalesNumbersVsMenuItems'
 import NumberOfOrdersVsHour from './NumberOfOrdersVsHour'
 import TipPercentageVsWaiters from './TipPercentageVsWaiters'
-import CalendarContainer from './Calendar'
 import AvgNumberOfGuestsVsWaitersPerOrder from './AvgNumberOfGuestsVsWaitersPerOrder'
 
 export default class BusinessAnalyticsPage extends Component {
   render() {
     return (
       <div>
-        <div>
-          <CalendarContainer />
-        </div>
         <div>
           <h2>Welcome, !</h2>
           <p>Quick business analytics:</p>
