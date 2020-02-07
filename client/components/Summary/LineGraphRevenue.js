@@ -73,6 +73,19 @@ class LineGraphRevenue extends Component {
                       title: {
                         display: true,
                         text: 'REVENUE vs TIME'
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            display: true,
+                            ticks: {
+                              suggestedMin: 45000, // minimum will be 0, unless there is a lower value.
+                              // OR //
+                              // beginAtZero: true, // minimum value will be 0.
+                              suggestedMax: 145000
+                            }
+                          }
+                        ]
                       }
                     }}
                   />
