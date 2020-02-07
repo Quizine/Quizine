@@ -50,7 +50,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
         {
           label: 'Average Revenue per Guest, $',
           data: arrPerc,
-          backgroundColor: 'yellow'
+          backgroundColor: '#24497A'
         }
       ]
     }
@@ -67,7 +67,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
               </select>
               // <DropdownComponent handleChangeData={this.handleChange} />
             }
-            title="Average Revenue Per Guest Per Week Day"
+            title="Average Revenue per Guest"
           />
           <Divider />
 
@@ -84,8 +84,8 @@ class AvgRevenuePerGuestVsDOW extends Component {
                     yAxes: [
                       {
                         ticks: {
-                          beginAtZero: true,
-                          suggestedMax: 100
+                          suggestedMax: 75,
+                          suggestedMin: 45
                         }
                       }
                     ]
