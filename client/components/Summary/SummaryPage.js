@@ -6,44 +6,60 @@ import EnhancedTable from './DOWAnalysisTable'
 import CalendarContainer from './Calendar/Calendar'
 import {
   getDOWAnalysisTable,
-  getRestaurantInfo
+  getRestaurantInfo,
+  getRevenueVsTime,
+  getNumberOfWaiters
 } from '../../store/summaryReducer'
 import TotalRevenue from './TotalRevenueCard'
 import NumberOfWaiters from './NumberOfWaitersCard'
 import RestaurantInfo from './RestaurantInfoCard'
 import YelpRating from './YelpRatingCard'
-import {makeStyles} from '@material-ui/styles'
 import {Grid} from '@material-ui/core'
 
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     padding: theme.spacing(4)
-//   }
-// }));
-
 class SummaryPage extends Component {
+  constructor(props) {
+    super(props)
+    this.getTotalRevenue = this.getTotalRevenue.bind(this)
+  }
+
   componentDidMount() {
     this.props.loadDOWAnalysisTable()
     this.props.loadRestaurantInfo()
+    this.props.loadRevenueVsTime()
+    this.props.loadNumberOfWaiters()
   }
+
+  getTotalRevenue(arr) {
+    return (
+      arr.reduce((acc, currentVal) => acc + currentVal, 0) / 1000
+    ).toFixed(2)
+  }
+
   render() {
-    // const classes = useStyles();
+    console.log('staff number in comp----->', this.props.numberOfWaiters)
     return (
       <div>
         <div>
           <CalendarContainer />
         </div>
-        {this.props.DOWAnalysisTable && this.props.restaurantInfo[0] ? (
+        {this.props.DOWAnalysisTable &&
+        this.props.restaurantInfo[0] &&
+        this.props.revenueVsTime.oneYear.revenue &&
+        this.props.numberOfWaiters ? (
           <div className="{padding: theme.spacing(4)}">
             <Grid container spacing={4}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <RestaurantInfo />
+                <RestaurantInfo restaurantInfo={this.props.restaurantInfo[0]} />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <TotalRevenue />
+                <TotalRevenue
+                  totalRevenue={this.getTotalRevenue(
+                    this.props.revenueVsTime.oneYear.revenue
+                  )}
+                />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <NumberOfWaiters />
+                <NumberOfWaiters numberOfWaiters={this.props.numberOfWaiters} />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <YelpRating />
@@ -62,18 +78,7 @@ class SummaryPage extends Component {
               </Grid>
             </Grid>
           </div>
-        ) : // <div className="summary-cont">
-        /* <h2>BUSINESS SUMMARY</h2>
-            <h3>{this.props.restaurantInfo[0].restaurantName}</h3>
-            <h3>{this.props.restaurantInfo[0].location}</h3> */
-        //       <div className="summary-data">
-
-        //       </div>
-        //       <div>
-
-        //       </div>
-        //     </div>
-        null}
+        ) : null}
       </div>
     )
   }
@@ -86,14 +91,18 @@ class SummaryPage extends Component {
 const mapStateToProps = state => {
   return {
     DOWAnalysisTable: state.summary.DOWAnalysisTable,
-    restaurantInfo: state.summary.restaurantInfo
+    restaurantInfo: state.summary.restaurantInfo,
+    revenueVsTime: state.summary.revenueVsTime,
+    numberOfWaiters: state.summary.numberOfWaiters
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     loadDOWAnalysisTable: () => dispatch(getDOWAnalysisTable()),
-    loadRestaurantInfo: () => dispatch(getRestaurantInfo())
+    loadRestaurantInfo: () => dispatch(getRestaurantInfo()),
+    loadRevenueVsTime: () => dispatch(getRevenueVsTime('oneYear')),
+    loadNumberOfWaiters: () => dispatch(getNumberOfWaiters())
   }
 }
 

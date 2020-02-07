@@ -65,7 +65,6 @@ const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
   timeInterval
 })
 
-
 const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
   type: GET_CALENDAR_DATA,
   revenue,
@@ -85,6 +84,7 @@ export const getRestaurantInfo = () => async dispatch => {
 export const getNumberOfWaiters = () => async dispatch => {
   try {
     const {data} = await axios.get('/api/summary/numberOfWaiters')
+    console.log('staff----->', data)
     dispatch(gotNumberOfWaiters(data))
   } catch (error) {
     console.error(error)
