@@ -85,9 +85,9 @@ form div {
 /* -------------CHART ARRANGEMENT----- */
 .peak-time-div {
   height: 35vh;
-  width: 40vw;
-  margin: 1em;
+  width: 35vw;
   margin: 2em;
+  margin-bottom: 4em;
 }
 
 .chart-header {
@@ -95,6 +95,7 @@ form div {
 }
 
 .bus-charts-cont {
+  height: 100vh;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;

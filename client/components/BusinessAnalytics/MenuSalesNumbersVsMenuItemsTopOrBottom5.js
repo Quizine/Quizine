@@ -32,7 +32,6 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
   }
 
   handleChange(event) {
-    console.log(`here is this.props`, this.props)
     this.setState({selectedOption: event.target.value})
     if (!Object.keys(this.props.topAndBottom5[event.target.value]).length) {
       this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)

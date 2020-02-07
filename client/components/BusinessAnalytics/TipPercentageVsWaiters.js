@@ -2,6 +2,17 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getTipPercentageVsWaiters} from '../../store/businessAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
+import clsx from 'clsx'
+import PropTypes from 'prop-types'
+import {makeStyles} from '@material-ui/styles'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Divider,
+  Button
+} from '@material-ui/core'
 
 class TipPercentageVsWaiters extends Component {
   constructor(props) {
@@ -44,36 +55,82 @@ class TipPercentageVsWaiters extends Component {
     }
     return (
       <div className="peak-time-div">
-        <select onChange={this.handleChange} defaultValue="month">
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-          <option value="week">Week</option>
-        </select>
-        <div>
-          <Bar
-            data={chartData}
-            options={{
-              title: {
-                display: true,
-                text: 'Waiters Tip Percentage'
-              },
-              scales: {
-                yAxes: [
-                  {
-                    display: true,
-                    ticks: {
-                      suggestedMin: 0, // minimum will be 0, unless there is a lower value.
-                      // OR //
-                      beginAtZero: true, // minimum value will be 0.
-                      suggestedMax: 30
-                    }
-                  }
-                ]
-              }
-            }}
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader
+            action={
+              <div className="month-button">
+                <select
+                  onChange={this.handleChange}
+                  className="select-css"
+                  defaultValue="month"
+                >
+                  <option value="month">Month</option>
+                  <option value="year">Year</option>
+                  <option value="week">Week</option>
+                </select>
+              </div>
+            }
+            title="Number Of Orders per Hour"
           />
-        </div>
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Bar
+                data={chartData}
+                options={{
+                  title: {
+                    display: false,
+                    text: 'Waiters Tip Percentage'
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        display: true,
+                        ticks: {
+                          suggestedMin: 5,
+                          suggestedMax: 25
+                        }
+                      }
+                    ]
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      // <div className="peak-time-div">
+      //   <select onChange={this.handleChange} defaultValue="month">
+      //     <option value="month">Month</option>
+      //     <option value="year">Year</option>
+      //     <option value="week">Week</option>
+      //   </select>
+      //   <div>
+      //     <Bar
+      //       data={chartData}
+      //       options={{
+      //         title: {
+      //           display: true,
+      //           text: 'Waiters Tip Percentage'
+      //         },
+      //         scales: {
+      //           yAxes: [
+      //             {
+      //               display: true,
+      //               ticks: {
+      //                 suggestedMin: 5, // minimum will be 0, unless there is a lower value.
+      //                 // OR //
+      //                 suggestedMax: 25
+      //               }
+      //             }
+      //           ]
+      //         }
+      //       }}
+      //     />
+      //   </div>
+      // </div>
     )
   }
 }
