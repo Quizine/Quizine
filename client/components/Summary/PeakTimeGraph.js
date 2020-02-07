@@ -66,7 +66,6 @@ class PeakTimeGraph extends Component {
     }
     return (
       <div className="peak-time-div">
-        <div />
         <Card
           // {...rest}
           className={clsx('classes.root, className')}

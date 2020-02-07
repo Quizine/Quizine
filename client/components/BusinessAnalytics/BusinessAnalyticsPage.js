@@ -12,13 +12,13 @@ export default class BusinessAnalyticsPage extends Component {
       <div>
         <div>
           <AvgRevenuePerGuestVsDOW />
-          <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
+          {/* <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
           <NumberOfOrdersVsHour />
           <TipPercentageVsWaiters />
           <AvgNumberOfGuestsVsWaitersPerOrder />
           <Link to="/newquery">
             <button type="submit">NEW QUERY</button>
-          </Link>
+          </Link> */}
         </div>
       </div>
     )

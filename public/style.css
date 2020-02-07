@@ -56,13 +56,6 @@ form div {
   padding: 1em 0 0 0;
 }
 
-.peak-time-div {
-  height: 330px;
-  width: 40vw;
-  margin: 1em;
-  background-color: #94b5e3;
-}
-
 .rev-time-div {
   height: 300px;
   width: 40vw;
@@ -85,6 +78,18 @@ form div {
 }
 
 .summary-data {
+  display: flex;
+}
+
+/* -------------CHART ARRANGEMENT----- */
+.peak-time-div {
+  height: 35vh;
+  width: 40vw;
+  margin: 1em;
+  margin: 2em;
+}
+
+.chart-header {
   display: flex;
 }
 

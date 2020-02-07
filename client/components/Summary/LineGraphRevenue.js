@@ -30,6 +30,7 @@ class LineGraphRevenue extends Component {
   }
 
   handleChange(event) {
+    event.preventDefault()
     this.setState({selectedOption: event.target.value})
     if (!Object.keys(this.props.lineChartData[event.target.value]).length) {
       this.props.loadRevenueVsTime(event.target.value)
