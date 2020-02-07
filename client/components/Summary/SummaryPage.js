@@ -30,11 +30,8 @@ class SummaryPage extends Component {
     // const classes = useStyles();
     return (
       <div>
-        <div>
-          <CalendarContainer />
-        </div>
         {this.props.DOWAnalysisTable && this.props.restaurantInfo[0] ? (
-          <div className="{padding: theme.spacing(4)}">
+          <div className="card-container">
             <Grid container spacing={4}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <RestaurantInfo />
@@ -48,6 +45,9 @@ class SummaryPage extends Component {
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <YelpRating />
               </Grid>
+              <div>
+                <CalendarContainer />
+              </div>
               <Grid item lg={8} md={12} xl={9} xs={12}>
                 <LineGraphRevenue />
               </Grid>
