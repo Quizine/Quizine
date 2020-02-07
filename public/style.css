@@ -48,7 +48,7 @@ form div {
   width: 10vw;
   height: 90vh;
   /* margin-top: 3em; */
-  background-color: rgb(228, 229, 238);
+  background-color: #94b5e3;
 }
 
 .sidebar-btn {
@@ -56,17 +56,17 @@ form div {
 }
 
 .peak-time-div {
-  height: 300px;
+  height: 330px;
   width: 40vw;
   margin: 1em;
-  background-color: rgb(228, 229, 238);
+  background-color: #94b5e3;
 }
 
 .rev-time-div {
   height: 300px;
   width: 40vw;
   margin: 1em;
-  background-color: rgb(228, 229, 238);
+  background-color: #94b5e3;
 }
 
 .welcome-page {
