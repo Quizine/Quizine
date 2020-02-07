@@ -8,9 +8,10 @@ import {
   getDOWAnalysisTable,
   getRestaurantInfo
 } from '../../store/summaryReducer'
-import TotalRevenue from './TotalRevenue'
-import NumberOfWaiters from './NumberOfWaiters'
-import RestaurantInfo from './RestaurantInfo'
+import TotalRevenue from './TotalRevenueCard'
+import NumberOfWaiters from './NumberOfWaitersCard'
+import RestaurantInfo from './RestaurantInfoCard'
+import YelpRating from './YelpRatingCard'
 import {makeStyles} from '@material-ui/styles'
 import {Grid} from '@material-ui/core'
 
@@ -45,7 +46,7 @@ class SummaryPage extends Component {
                 <NumberOfWaiters />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                {/* <TotalProfit /> */}
+                <YelpRating />
               </Grid>
               <Grid item lg={8} md={12} xl={9} xs={12}>
                 <LineGraphRevenue />
