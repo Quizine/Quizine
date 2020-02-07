@@ -10,10 +10,10 @@ export default class BusinessAnalyticsPage extends Component {
   render() {
     return (
       <div>
-        <div>
+        <div className="bus-charts-cont">
           <AvgRevenuePerGuestVsDOW />
-          {/* <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
-          <NumberOfOrdersVsHour />
+          <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
+          {/* <NumberOfOrdersVsHour />
           <TipPercentageVsWaiters />
           <AvgNumberOfGuestsVsWaitersPerOrder />
           <Link to="/newquery">

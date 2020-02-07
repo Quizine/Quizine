@@ -5,6 +5,7 @@ import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
+import DropdownComponent from './DropdownComponent'
 import {
   Card,
   CardHeader,
@@ -55,17 +56,18 @@ class AvgRevenuePerGuestVsDOW extends Component {
     }
 
     return (
-      <div>
+      <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             action={
-              <select onChange={this.handleChange}>
+              <select onChange={this.handleChange} className="select-css">
                 <option value="month">Month</option>
                 <option value="year">Year</option>
                 <option value="week">Week</option>
               </select>
+              // <DropdownComponent handleChangeData={this.handleChange} />
             }
-            title="Average Revenue Per Guest Per Day of Week"
+            title="Average Revenue Per Guest Per Week Day"
           />
           <Divider />
 

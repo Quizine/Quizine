@@ -2,8 +2,18 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getMenuSalesNumbersVsMenuItemsTopOrBottom5} from '../../store/businessAnalyticsReducer'
 import {Pie} from 'react-chartjs-2'
-import {Button} from '@material-ui/core'
 import _ from 'lodash'
+import clsx from 'clsx'
+import PropTypes from 'prop-types'
+import {makeStyles} from '@material-ui/styles'
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Divider,
+  Button
+} from '@material-ui/core'
 
 class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
   constructor(props) {
@@ -54,37 +64,85 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
     }
     return (
       <div className="peak-time-div">
-        <select onChange={this.handleChange}>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-          <option value="week">Week</option>
-        </select>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => this.handleClick(event, true)}
-        >
-          TOP 5
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => this.handleClick(event, false)}
-        >
-          BOTTOM 5
-        </Button>
-        <div>
-          <Pie
-            data={chartData}
-            options={{
-              title: {
-                display: true,
-                text: `${labelText} 5 Menu Items`
-              }
-            }}
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader
+            action={
+              <div className="month-button">
+                <select onChange={this.handleChange} className="select-css">
+                  <option value="month">Month</option>
+                  <option value="year">Year</option>
+                  <option value="week">Week</option>
+                </select>
+                <button
+                  type="button"
+                  className="button1"
+                  onClick={() => this.handleClick(event, false)}
+                >
+                  Top 5
+                </button>
+                <button
+                  type="button"
+                  className="button1"
+                  onClick={() => this.handleClick(event, false)}
+                >
+                  Bottom 5
+                </button>
+              </div>
+
+              // <DropdownComponent handleChangeData={this.handleChange} />
+            }
+            title={`${labelText} 5 Menu Items`}
           />
-        </div>
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Pie
+                data={chartData}
+                options={{
+                  title: {
+                    display: true,
+                    text: `${labelText} 5 Menu Items`
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      // <div className="peak-time-div">
+      //   <select onChange={this.handleChange}>
+      //     <option value="month">Month</option>
+      //     <option value="year">Year</option>
+      //     <option value="week">Week</option>
+      //   </select>
+      //   <Button
+      //     variant="contained"
+      //     color="primary"
+      //     onClick={() => this.handleClick(event, true)}
+      //   >
+      //     TOP 5
+      //   </Button>
+      //   <Button
+      //     variant="contained"
+      //     color="primary"
+      //     onClick={() => this.handleClick(event, false)}
+      //   >
+      //     BOTTOM 5
+      //   </Button>
+      //   <div>
+      //     <Pie
+      //       data={chartData}
+      //       options={{
+      //         title: {
+      //           display: true,
+      //           text: `${labelText} 5 Menu Items`
+      //         }
+      //       }}
+      //     />
+      //   </div>
+      // </div>
     )
   }
 }
