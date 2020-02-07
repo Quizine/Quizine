@@ -8,7 +8,8 @@ import {
   getDOWAnalysisTable,
   getRestaurantInfo,
   getRevenueVsTime,
-  getNumberOfWaiters
+  getNumberOfWaiters,
+  getYelpRating
 } from '../../store/summaryReducer'
 import TotalRevenue from './TotalRevenueCard'
 import NumberOfWaiters from './NumberOfWaitersCard'
@@ -22,11 +23,15 @@ class SummaryPage extends Component {
     this.getTotalRevenue = this.getTotalRevenue.bind(this)
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.props.loadDOWAnalysisTable()
-    this.props.loadRestaurantInfo()
     this.props.loadRevenueVsTime()
     this.props.loadNumberOfWaiters()
+    await this.props.loadRestaurantInfo()
+    this.props.loadYelpRating(
+      this.props.restaurantInfo[0].restaurantName,
+      this.props.restaurantInfo[0].location
+    )
   }
 
   getTotalRevenue(arr) {
@@ -36,7 +41,6 @@ class SummaryPage extends Component {
   }
 
   render() {
-    console.log('staff number in comp----->', this.props.numberOfWaiters)
     return (
       <div>
         {this.props.DOWAnalysisTable &&
@@ -59,7 +63,7 @@ class SummaryPage extends Component {
                 <NumberOfWaiters numberOfWaiters={this.props.numberOfWaiters} />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <YelpRating />
+                <YelpRating yelpRating={this.props.yelpRating} />
               </Grid>
               <div>
                 <CalendarContainer />
@@ -93,7 +97,8 @@ const mapStateToProps = state => {
     DOWAnalysisTable: state.summary.DOWAnalysisTable,
     restaurantInfo: state.summary.restaurantInfo,
     revenueVsTime: state.summary.revenueVsTime,
-    numberOfWaiters: state.summary.numberOfWaiters
+    numberOfWaiters: state.summary.numberOfWaiters,
+    yelpRating: state.summary.yelpRating
   }
 }
 
@@ -102,7 +107,9 @@ const mapDispatchToProps = dispatch => {
     loadDOWAnalysisTable: () => dispatch(getDOWAnalysisTable()),
     loadRestaurantInfo: () => dispatch(getRestaurantInfo()),
     loadRevenueVsTime: () => dispatch(getRevenueVsTime('oneYear')),
-    loadNumberOfWaiters: () => dispatch(getNumberOfWaiters())
+    loadNumberOfWaiters: () => dispatch(getNumberOfWaiters()),
+    loadYelpRating: (restaurantName, location) =>
+      dispatch(getYelpRating(restaurantName, location))
   }
 }
 
