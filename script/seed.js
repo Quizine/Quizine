@@ -31,14 +31,20 @@ let userArray = [
     lastName: 'Lilson',
     email: 'nathan@email.com',
     password: '123',
-    restaurantId: 1
+    restaurantId: 1,
+    title: 'Restaurant Manager',
+    imgUrl:
+      'https://www.acitydiscount.com/images/mkt/content/282/Restaurant-manager-holding-hands-boh-kitchen-1.jpg'
   },
   {
-    firstName: 'Stanley',
+    firstName: 'Anna',
     lastName: 'Verrier',
-    email: 'stanley@email.com',
+    email: 'anna@email.com',
     password: '123',
-    restaurantId: 1
+    restaurantId: 1,
+    title: 'Restaurant Owner',
+    imgUrl:
+      'https://hiring-assets.careerbuilder.com/media/attachments/careerbuilder-ar_post-2372.jpg?1465925468'
   }
 ]
 

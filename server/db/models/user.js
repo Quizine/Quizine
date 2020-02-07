@@ -19,6 +19,14 @@ const User = db.define('user', {
       isEmail: true
     }
   },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  imgUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   admin: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
