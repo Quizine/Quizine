@@ -1,21 +1,48 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
 import PeakTimeGraph from './PeakTimeGraph'
 import LineGraphRevenue from './LineGraphRevenue'
-import NumberOfWaiters from './NumberOfWaiters'
+import EnhancedTable from './DOWAnalysisTable'
+import {getDOWAnalysisTable} from '../../store/summaryReducer'
 
-export class Summary extends Component {
+class SummaryPage extends Component {
+  componentDidMount() {
+    this.props.loadDOWAnalysisTable()
+  }
   render() {
     return (
-      <div className="summary-cont">
-        <h2>BUSINESS SUMMARY</h2>
-        <div className="summary-data">
-          <PeakTimeGraph />
-          <NumberOfWaiters />
-          <LineGraphRevenue />
-        </div>
+      <div>
+        {this.props.DOWAnalysisTable ? (
+          <div className="summary-cont">
+            <h2>BUSINESS SUMMARY</h2>
+            <div className="summary-data">
+              <PeakTimeGraph />
+              <LineGraphRevenue />
+            </div>
+            <div>
+              <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
+            </div>
+          </div>
+        ) : null}
       </div>
     )
   }
 }
 
-export default Summary
+/**
+ * CONTAINER
+ */
+
+const mapStateToProps = state => {
+  return {
+    DOWAnalysisTable: state.summary.DOWAnalysisTable
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loadDOWAnalysisTable: () => dispatch(getDOWAnalysisTable())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SummaryPage)

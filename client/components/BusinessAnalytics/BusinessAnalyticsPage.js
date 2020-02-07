@@ -5,6 +5,7 @@ import MenuSalesNumbersVsMenuItems from './MenuSalesNumbersVsMenuItems'
 import NumberOfOrdersVsHour from './NumberOfOrdersVsHour'
 import TipPercentageVsWaiters from './TipPercentageVsWaiters'
 import CalendarContainer from './Calendar'
+import AvgNumberOfGuestsVsWaitersPerOrder from './AvgNumberOfGuestsVsWaitersPerOrder'
 
 export default class BusinessAnalyticsPage extends Component {
   render() {
@@ -20,6 +21,7 @@ export default class BusinessAnalyticsPage extends Component {
           <MenuSalesNumbersVsMenuItems />
           <NumberOfOrdersVsHour />
           <TipPercentageVsWaiters />
+          <AvgNumberOfGuestsVsWaitersPerOrder />
           <Link to="/newquery">
             <button type="submit">NEW QUERY</button>
           </Link>

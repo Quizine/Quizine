@@ -5,9 +5,10 @@ import {act} from 'react-test-renderer'
  * ACTION TYPES
  */
 const GET_NUMBER_OF_WAITERS = 'GET_NUMBER_OF_WAITERS'
-const GET_PEAK_TIME_ORDERS = 'GET_PEAK_TIME_ORDERS'
+const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
 const GET_CALENDAR_DATA = 'GET_CALENDAR_DATA'
+const GET_DOW_ANALYSIS_TABLE = 'GET_DOW_ANALYSIS_TABLE'
 
 /**
  * INITIAL STATE
@@ -28,7 +29,8 @@ const initialState = {
     revenue: '',
     listOfWaiters: [],
     popularDish: ''
-  }
+  },
+  DOWAnalysisTable: []
 }
 
 /**
@@ -41,7 +43,7 @@ const gotNumberOfWaiters = numOfWaiters => ({
 })
 
 const gotPeakTimeOrders = (orders, timeInterval) => ({
-  type: GET_PEAK_TIME_ORDERS,
+  type: GET_PEAK_TIME_VS_ORDERS,
   orders,
   timeInterval
 })
@@ -49,6 +51,11 @@ const gotRevenueVsTime = (chartData, yearQty) => ({
   type: GET_REVENUE_VS_TIME,
   chartData,
   yearQty
+})
+const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
+  type: GET_DOW_ANALYSIS_TABLE,
+  DOWresults,
+  timeInterval
 })
 
 const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
@@ -110,6 +117,15 @@ export const getCalendarData = (
   }
 }
 
+export const getDOWAnalysisTable = () => async dispatch => {
+  try {
+    const {data} = await axios.get('/api/summary/DOWAnalysisTable')
+    dispatch(gotDOWAnalysisTable(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -120,7 +136,7 @@ export default function(state = initialState, action) {
         ...state,
         numberOfWaiters: action.numOfWaiters
       }
-    case GET_PEAK_TIME_ORDERS:
+    case GET_PEAK_TIME_VS_ORDERS:
       return {
         ...state,
         peakTimeOrdersVsTime: {
@@ -144,6 +160,11 @@ export default function(state = initialState, action) {
           listOfWaiters: action.listOfWaiters,
           popularDish: action.popularDish
         }
+      }
+    case GET_DOW_ANALYSIS_TABLE:
+      return {
+        ...state,
+        DOWAnalysisTable: action.DOWresults
       }
     default:
       return state
