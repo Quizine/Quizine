@@ -65,7 +65,7 @@ class PeakTimeGraph extends Component {
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             action={
-              <select onChange={this.handleChange}>
+              <select onChange={this.handleChange} className="select-css">
                 <option value="month">Month</option>
                 <option value="year">Year</option>
                 <option value="week">Week</option>
@@ -87,12 +87,6 @@ class PeakTimeGraph extends Component {
               />
             </div>
           </CardContent>
-          <Divider />
-          <CardActions className="classes.actions">
-            <Button color="primary" size="small" variant="text">
-              {/* Overview <ArrowRightIcon /> */}
-            </Button>
-          </CardActions>
         </Card>
       </div>
     )

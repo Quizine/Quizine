@@ -1,5 +1,5 @@
 import React from 'react'
-import {Navbar, Sidebar} from './components'
+import {Navbar} from './components'
 import Routes from './routes'
 import {connect} from 'react-redux'
 
