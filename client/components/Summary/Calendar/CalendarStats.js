@@ -5,7 +5,7 @@ export class CalenderStats extends Component {
   render() {
     const {revenue, listOfWaiters, popularDish} = this.props.calendarData
     console.log('STATS', revenue, listOfWaiters, popularDish)
-
+    console.log(`this.props: `, this.props)
     return (
       <div className="calendar-stats-cont">
         <div className="waiters-list">
@@ -18,7 +18,7 @@ export class CalenderStats extends Component {
         </div>
         <div className="dish-rev">
           <div>
-            <h2>Revenue of the day: </h2>
+            <h2>{`Revenue on ${this.props.currentDate.toDateString()}`}</h2>
             <h1>{`$ ${convertToDollar(Number(revenue))}`}</h1>
           </div>
           <div>

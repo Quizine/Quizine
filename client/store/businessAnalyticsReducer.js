@@ -135,13 +135,13 @@ export const getTipPercentageVsWaiters = timeInterval => async dispatch => {
 export const getMenuSalesNumbersVsMenuItemsTopOrBottom5 = timeInterval => async dispatch => {
   try {
     const top = await axios.get(
-      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTop5',
+      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTopOrBottom5',
       {
         params: {timeInterval, topOrBottom: 'desc'}
       }
     )
     const bottom = await axios.get(
-      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTop5',
+      '/api/businessAnalytics/menuSalesNumbersVsMenuItemsTopOrBottom5',
       {
         params: {timeInterval, topOrBottom: 'asc'}
       }

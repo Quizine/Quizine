@@ -32,7 +32,7 @@ export class CalendarContainer extends Component {
           />
         </div>
         <div>
-          <CalendarStats />
+          <CalendarStats currentDate={this.state.date} />
         </div>
       </div>
     )
