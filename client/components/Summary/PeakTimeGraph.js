@@ -3,8 +3,6 @@ import {connect} from 'react-redux'
 import {getPeakTimeOrders} from '../../store/summaryReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
-import PropTypes from 'prop-types'
-import {makeStyles} from '@material-ui/styles'
 import {
   Card,
   CardHeader,
@@ -13,8 +11,6 @@ import {
   Divider,
   Button
 } from '@material-ui/core'
-// import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-// import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
 class PeakTimeGraph extends Component {
   constructor(props) {
@@ -66,18 +62,10 @@ class PeakTimeGraph extends Component {
     }
     return (
       <div className="peak-time-div">
-        <Card
-          // {...rest}
-          className={clsx('classes.root, className')}
-        >
+        <Card className={clsx('classes.root, className')}>
+
           <CardHeader
             action={
-              // <Button
-              //   size="small"
-              //   variant="text"
-              // >
-              //   Last 7 days <ArrowDropDownIcon />
-              // </Button>
               <select onChange={this.handleChange}>
                 <option value="month">Month</option>
                 <option value="year">Year</option>
@@ -126,26 +114,3 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeakTimeGraph)
-
-// import { data, options } from './chart';
-
-// const useStyles = makeStyles(() => ({
-//   root: {},
-//   chartContainer: {
-//     height: 400,
-//     position: 'relative'
-//   },
-//   actions: {
-//     justifyContent: 'flex-end'
-//   }
-// }));
-
-// const LatestSales = props => {
-//   const { className, ...rest } = props;
-
-//   const classes = useStyles();
-
-//   return (
-
-//   );
-// };

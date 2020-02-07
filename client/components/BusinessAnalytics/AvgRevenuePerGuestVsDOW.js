@@ -79,6 +79,16 @@ class AvgRevenuePerGuestVsDOW extends Component {
                   title: {
                     display: false,
                     text: 'Average Revenue Per Guest'
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          beginAtZero: true,
+                          suggestedMax: 100
+                        }
+                      }
+                    ]
                   }
                 }}
               />

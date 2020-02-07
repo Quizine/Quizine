@@ -1,9 +1,8 @@
 import React from 'react'
 import clsx from 'clsx'
-import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
 import {Card, CardContent, Grid, Typography, Avatar} from '@material-ui/core'
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+import HomeIcon from '@material-ui/icons/Home'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.error.main,
+    backgroundColor: theme.palette.primary.main,
     height: 50,
     width: 50
   },
@@ -40,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const TotalRevenue = props => {
+const RestaurantInfo = props => {
   const {className, ...rest} = props
 
   const classes = useStyles()
@@ -56,19 +55,21 @@ const TotalRevenue = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL REVENUE
+              YOUR RESTAURANT
             </Typography>
-            <Typography variant="h5">$24,000</Typography>
+            <Typography variant="h5">
+              {props.restaurantInfo.restaurantName}
+            </Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <MonetizationOnIcon className={classes.icon} />
+              <HomeIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
         <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
-            for the last year
+            {props.restaurantInfo.location}
           </Typography>
         </div>
       </CardContent>
@@ -76,4 +77,4 @@ const TotalRevenue = props => {
   )
 }
 
-export default TotalRevenue
+export default RestaurantInfo

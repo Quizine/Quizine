@@ -16,9 +16,6 @@ import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
-import Checkbox from '@material-ui/core/Checkbox'
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 
@@ -76,15 +73,7 @@ const headCells = [
 ]
 
 function EnhancedTableHead(props) {
-  const {
-    classes,
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort
-  } = props
+  const {classes, order, orderBy, onRequestSort} = props
   const createSortHandler = property => event => {
     onRequestSort(event, property)
   }
@@ -206,7 +195,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable(props) {
   const rows = props.DOWAnalysisTable
-  console.log('rows ------>', rows)
   const classes = useStyles()
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
@@ -344,15 +332,3 @@ export default function EnhancedTable(props) {
     </div>
   )
 }
-
-// const mapStateToProps = state => {
-//     return {lineChartData: state.summary.revenueVsTime}
-//   }
-
-//   const mapDispatchToProps = dispatch => {
-//     return {
-//       loadRevenueVsTime: timeInterval => dispatch(getRevenueVsTime(timeInterval))
-//     }
-//   }
-
-//   export default connect(mapStateToProps, mapDispatchToProps)(LineGraphRevenue)

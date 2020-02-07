@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
 import {Card, CardContent, Grid, Typography, Avatar} from '@material-ui/core'
-import HomeIcon from '@material-ui/icons/Home'
+import StarIcon from '@material-ui/icons/Star'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.warning.light,
     height: 50,
     width: 50
   },
@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const RestaurantInfo = props => {
+const YelpRating = props => {
   const {className, ...rest} = props
 
   const classes = useStyles()
@@ -56,19 +56,19 @@ const RestaurantInfo = props => {
               gutterBottom
               variant="body2"
             >
-              YOUR RESTAURANT
+              YELP RATING
             </Typography>
-            <Typography variant="h5">$24,000</Typography>
+            <Typography variant="h5">4/5</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <HomeIcon className={classes.icon} />
+              <StarIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
         <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
-            for the last year
+            current rating
           </Typography>
         </div>
       </CardContent>
@@ -76,4 +76,4 @@ const RestaurantInfo = props => {
   )
 }
 
-export default RestaurantInfo
+export default YelpRating

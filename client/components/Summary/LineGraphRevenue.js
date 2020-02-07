@@ -3,8 +3,6 @@ import {connect} from 'react-redux'
 import {Line} from 'react-chartjs-2'
 import {getRevenueVsTime} from '../../store/summaryReducer'
 import clsx from 'clsx'
-import PropTypes from 'prop-types'
-import {makeStyles} from '@material-ui/styles'
 import {
   Card,
   CardHeader,
@@ -22,7 +20,6 @@ class LineGraphRevenue extends Component {
       selectedOption: 'oneYear'
     }
     this.handleChange = this.handleChange.bind(this)
-    this.getTotalRevenue = this.getTotalRevenue.bind(this)
   }
 
   componentDidMount() {
@@ -35,9 +32,6 @@ class LineGraphRevenue extends Component {
     if (!Object.keys(this.props.lineChartData[event.target.value]).length) {
       this.props.loadRevenueVsTime(event.target.value)
     }
-  }
-  getTotalRevenue(arr) {
-    return arr.reduce((acc, currentVal) => acc + currentVal, 0)
   }
 
   render() {
@@ -60,20 +54,9 @@ class LineGraphRevenue extends Component {
       <div>
         {revenue ? (
           <div className="rev-time-div">
-            <p>{this.getTotalRevenue(revenue).toFixed(0)}</p>
-            <div />
-            <Card
-              // {...rest}
-              className={clsx('classes.root, className')}
-            >
+            <Card className={clsx('classes.root, className')}>
               <CardHeader
                 action={
-                  // <Button
-                  //   size="small"
-                  //   variant="text"
-                  // >
-                  //   Last 7 days <ArrowDropDownIcon />
-                  // </Button>
                   <select onChange={this.handleChange}>
                     <option value="oneYear">Last Year</option>
                     <option value="twoYears">Last 2 Years</option>
@@ -91,6 +74,19 @@ class LineGraphRevenue extends Component {
                       title: {
                         display: true,
                         text: 'REVENUE vs TIME'
+                      },
+                      scales: {
+                        yAxes: [
+                          {
+                            display: true,
+                            ticks: {
+                              suggestedMin: 45000, // minimum will be 0, unless there is a lower value.
+                              // OR //
+                              // beginAtZero: true, // minimum value will be 0.
+                              suggestedMax: 145000
+                            }
+                          }
+                        ]
                       }
                     }}
                   />
