@@ -147,26 +147,24 @@ export const getDOWAnalysisTable = () => async dispatch => {
 export const getYelpRating = (restaurantName, location) => async dispatch => {
   // let Promise = require("bluebird");
   try {
-    let clientId, apiKey
-    if (!process.env.YELP_CLIENT_ID || !process.env.YELP_API_KEY) {
-      console.log('Google client ID / secret not found. Skipping Google OAuth.')
-    } else {
-      clientId = process.env.YELP_CLIENT_ID
-      apiKey = process.env.YELP_API_KEY
+    if (!process.env.REACT_APP_API_KEY) {
+      console.log('YELP API KEY NOT FOUND')
+      require('../../secrets')
     }
-    console.log('where is this:', location)
+    const apiKey = process.env.REACT_APP_API_KEY
     const {data} = await axios.get(
-      `${'http://http://localhost:8080/summary/'}https://api.yelp.com/v3/businesses/search`,
+      `${'https://cors-anywhere.herokuapp.com/'}https://api.yelp.com/v3/businesses/search`,
       {
         headers: {
           Authorization: `Bearer ${apiKey}`
         },
         params: {
-          term: 'pastis-new-york-3'
+          location,
+          term: restaurantName
         }
       }
     )
-    console.log('is this returning: ', data)
+    dispatch(gotYelpRating(data.businesses[0].rating))
   } catch (error) {
     console.error(error)
   }
