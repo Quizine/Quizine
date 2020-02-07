@@ -45,8 +45,8 @@ class PeakTimeGraph extends Component {
       '6pm',
       '7pm',
       '8pm',
-      '9pm',
-      '10pm'
+      '9pm'
+      // '10pm' NO ORDERS AT 10PM IN CURRENT DB
     ]
     const arrPerc = this.props.peakTimeOrders[this.state.selectedOption]
 
@@ -63,7 +63,6 @@ class PeakTimeGraph extends Component {
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
-
           <CardHeader
             action={
               <select onChange={this.handleChange}>
