@@ -21,7 +21,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     textTransform: 'none',
     letterSpacing: 0,
-    width: '100%',
+    width: 150,
+    // width: '100%',
     fontWeight: theme.typography.fontWeightMedium
   },
   icon: {

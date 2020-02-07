@@ -46,7 +46,7 @@ class SummaryPage extends Component {
         this.props.restaurantInfo[0] &&
         this.props.revenueVsTime.oneYear.revenue &&
         this.props.numberOfWaiters ? (
-          <div className="{padding: theme.spacing(4)}">
+          <div className="card-container">
             <Grid container spacing={4}>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <RestaurantInfo restaurantInfo={this.props.restaurantInfo[0]} />
@@ -64,6 +64,9 @@ class SummaryPage extends Component {
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <YelpRating />
               </Grid>
+              <div>
+                <CalendarContainer />
+              </div>
               <Grid item lg={8} md={12} xl={9} xs={12}>
                 <LineGraphRevenue />
               </Grid>
