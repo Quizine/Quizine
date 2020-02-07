@@ -94,7 +94,7 @@ form div {
   max-width: 90vw;
   margin: 1em;
   padding: 1em;
-  background-color: #206491;
+  background-color: #ffffff;
 }
 
 .calendar-stats-cont {
@@ -269,4 +269,13 @@ form div {
 
 .react-calendar--selectRange .react-calendar__tile--hover {
   background-color: #e6e6e6;
+}
+
+/* ------CARD CONTAINER ---------- */
+.card-container {
+  display: flex;
+  max-width: 90vw;
+  margin: 1em;
+  padding: 1em;
+  background-color: #ffffff;
 }
