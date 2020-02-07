@@ -104,7 +104,8 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
   }
 })
 
-router.get('/menuSalesNumbersVsMenuItems', async (req, res, next) => {
+//TOP 5 MENU ITEMS FOR PIE GRAPH
+router.get('/menuSalesNumbersVsMenuItemsTop5', async (req, res, next) => {
   try {
     if (req.user.id) {
       const timeInterval = req.query.timeInterval
@@ -117,7 +118,36 @@ router.get('/menuSalesNumbersVsMenuItems', async (req, res, next) => {
       WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
       AND orders."restaurantId" = ${req.user.restaurantId}
       GROUP BY name
-      ORDER BY total desc;
+      ORDER BY total desc
+      limit 5;
+      `)
+      const [xAxis, yAxis] = axisMapping(
+        menuSalesNumbers.rows,
+        menuSalesNumbers.fields[0].name,
+        menuSalesNumbers.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+//BOTTOM 5 MENU ITEMS FOR PIE GRAPH
+router.get('/menuSalesNumbersVsMenuItemsBottom5', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const timeInterval = req.query.timeInterval
+      const menuSalesNumbers = await client.query(`
+      SELECT menus."menuName" as name,
+      SUM("menuOrders" .quantity) as total
+      FROM "menuOrders"
+      JOIN menus on menus.id = "menuOrders"."menuId"
+      JOIN orders on orders.id = "menuOrders"."orderId"
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
+      AND orders."restaurantId" = ${req.user.restaurantId}
+      GROUP BY name
+      ORDER BY total asc
+      limit 5;
       `)
       const [xAxis, yAxis] = axisMapping(
         menuSalesNumbers.rows,
