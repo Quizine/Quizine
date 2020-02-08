@@ -16,8 +16,8 @@ export class CalendarContainer extends Component {
     this.props.loadCalendarData(convertJsDate(this.state.date))
   }
 
-  onChange = async date => {
-    await this.setState({date})
+  onChange = date => {
+    this.setState({date})
     this.props.loadCalendarData(convertJsDate(this.state.date))
   }
 
@@ -29,6 +29,7 @@ export class CalendarContainer extends Component {
             className="reactCalendar"
             onChange={this.onChange}
             value={this.state.date}
+            maxDate={new Date()}
           />
         </div>
         <div>

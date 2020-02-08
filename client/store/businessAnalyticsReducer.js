@@ -32,10 +32,6 @@ const initialState = {
     week: {}
   },
   menuSalesNumbersVsMenuItemsTopOrBottom5: {
-    xAxisTop: [],
-    yAxisTop: [],
-    xAxisBottom: [],
-    yAxisBottom: [],
     year: {},
     month: {},
     week: {}
@@ -208,11 +204,10 @@ export default function(state = initialState, action) {
         ...state,
         menuSalesNumbersVsMenuItemsTopOrBottom5: {
           ...state.menuSalesNumbersVsMenuItemsTopOrBottom5,
-          xAxisTop: action.top5.xAxis,
-          yAxisTop: action.top5.yAxis,
-          xAxisBottom: action.bottom5.xAxis,
-          yAxisBottom: action.bottom5.yAxis,
-          [`${action.timeInterval}`]: action.results
+          [`${action.timeInterval}`]: {
+            top5: action.top5,
+            bottom5: action.bottom5
+          }
         }
       }
     case GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER:

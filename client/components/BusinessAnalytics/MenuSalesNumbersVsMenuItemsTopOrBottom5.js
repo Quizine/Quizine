@@ -4,16 +4,7 @@ import {getMenuSalesNumbersVsMenuItemsTopOrBottom5} from '../../store/businessAn
 import {Pie} from 'react-chartjs-2'
 import _ from 'lodash'
 import clsx from 'clsx'
-import PropTypes from 'prop-types'
-import {makeStyles} from '@material-ui/styles'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Divider,
-  Button
-} from '@material-ui/core'
+import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
 class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
   constructor(props) {
@@ -33,7 +24,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (!Object.keys(this.props.topAndBottom5[event.target.value]).length) {
+    if (!Object.hasOwnProperty('top5')) {
       this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)
     }
   }
@@ -44,21 +35,31 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
   }
 
   render() {
-    const labelsNotModified = this.state.top
-      ? this.props.topAndBottom5.xAxisTop
-      : this.props.topAndBottom5.xAxisBottom
-    const labels = modifyArrOfStrings(labelsNotModified)
-    const yAxis = this.state.top
-      ? this.props.topAndBottom5.yAxisTop
-      : this.props.topAndBottom5.yAxisBottom
+    const currTimeOption = this.state.selectedOption
+    const topOrBottom = this.state.top ? 'top5' : 'bottom5'
+    let labels = []
+    let yAxis = []
     const labelText = this.state.top ? 'Top' : 'Bottom'
+
+    if (this.props.topAndBottom5[currTimeOption][topOrBottom]) {
+      labels = modifyArrOfStrings(
+        this.props.topAndBottom5[currTimeOption][topOrBottom].xAxis
+      )
+      yAxis = this.props.topAndBottom5[currTimeOption][topOrBottom].yAxis
+    }
 
     const chartData = {
       labels: labels,
       datasets: [
         {
           data: yAxis,
-          backgroundColor: randomColor(yAxis.length)
+          backgroundColor: [
+            '#b2b2b2',
+            '#ecade6',
+            '#aa57d0',
+            '#3e4cbd',
+            '#474747'
+          ]
         }
       ]
     }
@@ -76,7 +77,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
                 <button
                   type="button"
                   className="button1"
-                  onClick={() => this.handleClick(event, false)}
+                  onClick={() => this.handleClick(event, true)}
                 >
                   Top 5
                 </button>
@@ -88,8 +89,6 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
                   Bottom 5
                 </button>
               </div>
-
-              // <DropdownComponent handleChangeData={this.handleChange} />
             }
             title={`${labelText} 5 Menu Items`}
           />
@@ -101,7 +100,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
                 data={chartData}
                 options={{
                   title: {
-                    display: true,
+                    display: false,
                     text: `${labelText} 5 Menu Items`
                   }
                 }}
@@ -110,39 +109,6 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
           </CardContent>
         </Card>
       </div>
-
-      // <div className="peak-time-div">
-      //   <select onChange={this.handleChange}>
-      //     <option value="month">Month</option>
-      //     <option value="year">Year</option>
-      //     <option value="week">Week</option>
-      //   </select>
-      //   <Button
-      //     variant="contained"
-      //     color="primary"
-      //     onClick={() => this.handleClick(event, true)}
-      //   >
-      //     TOP 5
-      //   </Button>
-      //   <Button
-      //     variant="contained"
-      //     color="primary"
-      //     onClick={() => this.handleClick(event, false)}
-      //   >
-      //     BOTTOM 5
-      //   </Button>
-      //   <div>
-      //     <Pie
-      //       data={chartData}
-      //       options={{
-      //         title: {
-      //           display: true,
-      //           text: `${labelText} 5 Menu Items`
-      //         }
-      //       }}
-      //     />
-      //   </div>
-      // </div>
     )
   }
 }
@@ -168,65 +134,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 
 function modifyArrOfStrings(arr) {
   return arr.map(str => _.startCase(str))
-}
-
-//RANDOM COLOR GENERATOR, takes the length of an array
-function randomColor(length) {
-  let colorArray = [
-    '#FF6633',
-    '#FFB399',
-    '#FF33FF',
-    '#FFFF99',
-    '#00B3E6',
-    '#E6B333',
-    '#3366E6',
-    '#999966',
-    '#99FF99',
-    '#B34D4D',
-    '#80B300',
-    '#809900',
-    '#E6B3B3',
-    '#6680B3',
-    '#66991A',
-    '#FF99E6',
-    '#CCFF1A',
-    '#FF1A66',
-    '#E6331A',
-    '#33FFCC',
-    '#66994D',
-    '#B366CC',
-    '#4D8000',
-    '#B33300',
-    '#CC80CC',
-    '#66664D',
-    '#991AFF',
-    '#E666FF',
-    '#4DB3FF',
-    '#1AB399',
-    '#E666B3',
-    '#33991A',
-    '#CC9999',
-    '#B3B31A',
-    '#00E680',
-    '#4D8066',
-    '#809980',
-    '#E6FF80',
-    '#1AFF33',
-    '#999933',
-    '#FF3380',
-    '#CCCC00',
-    '#66E64D',
-    '#4D80CC',
-    '#9900B3',
-    '#E64D66',
-    '#4DB380',
-    '#FF4D4D',
-    '#99E6E6',
-    '#6666FF'
-  ]
-  let newArr = []
-  for (let i = 0; i < length; i++) {
-    newArr.push(colorArray[i])
-  }
-  return newArr
 }
