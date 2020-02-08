@@ -1,44 +1,63 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getNewQuery} from '../../store/customizedQueryReducer'
+import CustomizedQueryWhere from './CustomizedQueryWhere'
+import {
+  getDataType,
+  getValueOptionsForString
+} from '../../store/customizedQueryReducer'
 
 class CustomizedQuerySelect extends Component {
   constructor() {
     super()
     this.state = {
-      timeInterval: '',
       selectedColumn: ''
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
-    // this.handleTimeIntervalChange = this.handleTimeIntervalChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-  }
-  handleSubmit(event) {
-    event.preventDefault()
-    this.props.getQuery(this.state.selectedColumn)
   }
 
-  handleSelectedColumnChange(event) {
-    this.props.value = event.target.value
+  async handleSelectedColumnChange(event) {
+    this.setState({selectedColumn: event.target.value})
+    await this.props.loadDataType(this.props.selectedTable, event.target.value)
+    if (
+      this.props.dataType !== 'timestamp with time zone' &&
+      this.props.dataType !== 'integer'
+    ) {
+      await this.props.loadValueOptionsForString(
+        this.props.selectedTable,
+        event.target.value
+      )
+    }
   }
 
   render() {
+    const selectedTable = this.props.selectedTable
     const columnNames = this.props.columnNames
+    const selectedColumn = this.state.selectedColumn
+    const valueOptionsForString = this.props.valueOptionsForString
     return (
-      <form onSubmit={() => this.handleSubmit(event)}>
-        <select onChange={() => this.handleSelectedColumnChange(event)}>
-          <option>Please Select</option>
-          {columnNames.map((columnName, idx) => {
-            return (
-              <option key={idx} value={columnName.column_name}>
-                {formatColumnName(columnName.column_name)}
-              </option>
-            )
-          })}
-        </select>
-
-        {/* <button type="submit">submit</button> */}
-      </form>
+      <div>
+        <div>
+          <select onChange={() => this.handleSelectedColumnChange(event)}>
+            <option>Please Select</option>
+            {columnNames.map((columnName, idx) => {
+              return (
+                <option key={idx} value={columnName.column_name}>
+                  {formatColumnName(columnName.column_name)}
+                </option>
+              )
+            })}
+          </select>
+        </div>
+        {selectedColumn ? (
+          <div>
+            <CustomizedQueryWhere
+              selectedTable={selectedTable}
+              selectedColumn={selectedColumn}
+              valueOptionsForString={valueOptionsForString}
+            />
+          </div>
+        ) : null}
+      </div>
     )
   }
 }
@@ -52,20 +71,22 @@ function formatColumnName(name) {
 /**
  * CONTAINER
  */
-
-const mapDispatchToProps = dispatch => {
-  return {}
+const mapStateToProps = state => {
+  return {
+    dataType: state.customizedQuery.dataType,
+    valueOptionsForString: state.customizedQuery.valueOptionsForString
+  }
 }
 
-export default connect(null, mapDispatchToProps)(CustomizedQuerySelect)
+const mapDispatchToProps = dispatch => {
+  return {
+    loadDataType: (tableName, columnName) =>
+      dispatch(getDataType(tableName, columnName)),
+    loadValueOptionsForString: (tableName, columnName) =>
+      dispatch(getValueOptionsForString(tableName, columnName))
+  }
+}
 
-// handleTimeIntervalChange(event) {
-//   this.setState({timeInterval: event.target.value})
-// }
-
-/* <select onChange={() => this.handleTimeIntervalChange(event)}>
-  <option>Please Select</option>
-  <option value="year">Year</option>
-  <option value="month">Month</option>
-  <option value="day">Day</option>
-</select> */
+export default connect(mapStateToProps, mapDispatchToProps)(
+  CustomizedQuerySelect
+)

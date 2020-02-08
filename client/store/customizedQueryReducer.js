@@ -4,14 +4,16 @@ import axios from 'axios'
  * ACTION TYPES
  */
 const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
-const GET_CUSTOMIZED_QUERY = 'GET_CUSTOMIZED_QUERY'
+const GET_DATA_TYPE = 'GET_TABLE_TYPE'
+const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 
 /**
  * INITIAL STATE
  */
 const initialState = {
-  tableFields: {},
-  customizedQuery: []
+  tableFields: [],
+  dataType: '',
+  valueOptionsForString: []
 }
 
 /**
@@ -22,9 +24,14 @@ const gotTableFields = tableFields => ({
   tableFields
 })
 
-const gotCustomizedQuery = newQuery => ({
-  type: GET_CUSTOMIZED_QUERY,
-  newQuery
+const gotDataType = dataType => ({
+  type: GET_DATA_TYPE,
+  dataType
+})
+
+const gotValueOptionsForString = valueOptionsForString => ({
+  type: GET_VALUE_OPTIONS_FOR_STRING,
+  valueOptionsForString
 })
 
 /**
@@ -39,20 +46,26 @@ export const getTableFields = tableName => async dispatch => {
   }
 }
 
-export const getCustomizedQuery = (
+export const getDataType = (tableName, columnName) => async dispatch => {
+  try {
+    const res = await axios.get(
+      `/api/customizedQuery/${tableName}/${columnName}`
+    )
+    dispatch(gotDataType(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getValueOptionsForString = (
   tableName,
-  columnName,
-  timeInterval
+  columnName
 ) => async dispatch => {
   try {
-    const res = await axios.get('/api/customizedQuery/', {
-      params: {
-        timeInterval,
-        tableName,
-        columnName
-      }
-    })
-    dispatch(gotCustomizedQuery(res.data))
+    const res = await axios.get(
+      `/api/customizedQuery/${tableName}/${columnName}/string`
+    )
+    dispatch(gotValueOptionsForString(res.data))
   } catch (err) {
     console.error(err)
   }
@@ -68,10 +81,15 @@ export default function(state = initialState, action) {
         ...state,
         tableFields: action.tableFields
       }
-    case GET_CUSTOMIZED_QUERY:
+    case GET_DATA_TYPE:
       return {
         ...state,
-        newQuery: action.customizedQuery
+        dataType: action.dataType
+      }
+    case GET_VALUE_OPTIONS_FOR_STRING:
+      return {
+        ...state,
+        valueOptionsForString: action.valueOptionsForString
       }
     default:
       return state

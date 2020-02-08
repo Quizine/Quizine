@@ -1,28 +1,23 @@
 import React, {Component} from 'react'
-import CustomizedQuerySelect from './CustomizedQuerySelect'
 import {connect} from 'react-redux'
 import {getTableFields} from '../../store/customizedQueryReducer'
+import CustomizedQuerySelect from './CustomizedQuerySelect'
 
 export class CustomizedQuery extends Component {
   constructor() {
     super()
     this.state = {
+      selectedTable: '',
       count: [1]
     }
     this.handleChange = this.handleChange.bind(this)
-    this.handleForLoop = this.handleForLoop.bind(this)
-  }
-
-  handleForLoop(number, input) {
-    let resultArr = []
-    for (let i = 1; i <= number; i++) {
-      resultArr.push(input)
-    }
-    return resultArr
+    this.handleAddClick = this.handleAddClick.bind(this)
+    this.handleRemoveClick = this.handleRemoveClick.bind(this)
   }
 
   handleChange(event) {
     this.props.loadTableFields(event.target.value)
+    this.setState({selectedTable: event.target.value})
   }
 
   handleAddClick() {
@@ -35,9 +30,8 @@ export class CustomizedQuery extends Component {
     this.setState({count: updatedState})
   }
   render() {
+    const selectedTable = this.state.selectedTable
     const selectedColumns = this.props.tableFields
-
-    console.log('STATE', this.state.count)
     return (
       <div>
         <select onChange={() => this.handleChange(event)}>
@@ -46,17 +40,18 @@ export class CustomizedQuery extends Component {
           <option value="waiters">Waiters</option>
           <option value="orders">Orders</option>
         </select>
-
         <div>
           {selectedColumns.length ? (
             <div>
               <div>
                 {this.state.count.map((element, index) => {
                   return (
-                    <CustomizedQuerySelect
-                      key={index}
-                      columnNames={selectedColumns}
-                    />
+                    <div key={index}>
+                      <CustomizedQuerySelect
+                        selectedTable={selectedTable}
+                        columnNames={selectedColumns}
+                      />
+                    </div>
                   )
                 })}
               </div>
