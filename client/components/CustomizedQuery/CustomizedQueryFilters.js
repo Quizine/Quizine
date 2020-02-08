@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getNewQuery} from '../../store/customizedQueryReducer'
 
-class NewQueryFilters extends Component {
+class CustomizedQueryFilters extends Component {
   constructor() {
     super()
     this.state = {
@@ -10,31 +10,20 @@ class NewQueryFilters extends Component {
       selectedColumn: ''
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
-    this.handleTimeIntervalChange = this.handleTimeIntervalChange.bind(this)
+    // this.handleTimeIntervalChange = this.handleTimeIntervalChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   handleSubmit(event) {
     event.preventDefault()
-    console.log('state ------>', this.state)
-    console.log('props -----> ', this.props)
-    this.props.getQuery(
-      this.props.selectedTable,
-      this.state.selectedColumn,
-      this.state.timeInterval
-    )
+    this.props.getQuery(this.state.selectedColumn)
   }
 
   handleSelectedColumnChange(event) {
-    this.setState({selectedColumn: event.target.value})
-  }
-
-  handleTimeIntervalChange(event) {
-    this.setState({timeInterval: event.target.value})
+    this.props.value = event.target.value
   }
 
   render() {
     const columnNames = this.props.columnNames
-
     return (
       <form onSubmit={() => this.handleSubmit(event)}>
         <select onChange={() => this.handleSelectedColumnChange(event)}>
@@ -47,12 +36,7 @@ class NewQueryFilters extends Component {
             )
           })}
         </select>
-        <select onChange={() => this.handleTimeIntervalChange(event)}>
-          <option>Please Select</option>
-          <option value="year">Year</option>
-          <option value="month">Month</option>
-          <option value="day">Day</option>
-        </select>
+
         <button type="submit">submit</button>
       </form>
     )
@@ -76,4 +60,15 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(NewQueryFilters)
+export default connect(null, mapDispatchToProps)(CustomizedQueryFilters)
+
+// handleTimeIntervalChange(event) {
+//   this.setState({timeInterval: event.target.value})
+// }
+
+/* <select onChange={() => this.handleTimeIntervalChange(event)}>
+  <option>Please Select</option>
+  <option value="year">Year</option>
+  <option value="month">Month</option>
+  <option value="day">Day</option>
+</select> */

@@ -1,26 +1,20 @@
 import React, {Component} from 'react'
-import NewQueryFilters from './CustomizedQueryFilters'
+import CustomizedQueryFilters from './CustomizedQueryFilters'
 import {connect} from 'react-redux'
 import {getTableFields} from '../../store/customizedQueryReducer'
 
-export class NewQuery extends Component {
+export class CustomizedQuery extends Component {
   constructor() {
     super()
-    this.state = {
-      selectedTable: ''
-    }
     this.handleChange = this.handleChange.bind(this)
   }
-  //CDM to get all column names on store
-  componentDidMount() {
-    this.props.loadTableFields()
-  }
+
   handleChange(event) {
-    this.setState({selectedTable: event.target.value})
+    this.props.loadTableFields(event.target.value)
   }
 
   render() {
-    const tableFields = this.props.tableFields
+    const selectedColumns = this.props.tableFields
 
     return (
       <div>
@@ -32,12 +26,9 @@ export class NewQuery extends Component {
         </select>
 
         <div>
-          {this.state.selectedTable ? (
+          {selectedColumns.length ? (
             <div>
-              <NewQueryFilters
-                selectedTable={this.state.selectedTable}
-                columnNames={tableFields[this.state.selectedTable]}
-              />
+              <CustomizedQueryFilters columnNames={selectedColumns} />
             </div>
           ) : null}
         </div>
@@ -54,9 +45,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadTableFields: () => {
-      dispatch(getTableFields())
+    loadTableFields: tableName => {
+      dispatch(getTableFields(tableName))
     }
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(NewQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQuery)

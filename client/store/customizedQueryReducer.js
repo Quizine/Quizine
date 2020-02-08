@@ -4,14 +4,14 @@ import axios from 'axios'
  * ACTION TYPES
  */
 const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
-const GET_NEW_QUERY = 'GET_NEW_QUERY'
+const GET_CUSTOMIZED_QUERY = 'GET_CUSTOMIZED_QUERY'
 
 /**
  * INITIAL STATE
  */
 const initialState = {
   tableFields: {},
-  newQuery: []
+  customizedQuery: []
 }
 
 /**
@@ -22,30 +22,29 @@ const gotTableFields = tableFields => ({
   tableFields
 })
 
-const gotNewQuery = newQuery => ({
-  type: GET_NEW_QUERY,
+const gotCustomizedQuery = newQuery => ({
+  type: GET_CUSTOMIZED_QUERY,
   newQuery
 })
 
 /**
  * THUNK CREATORS
  */
-export const getTableFields = () => async dispatch => {
+export const getTableFields = tableName => async dispatch => {
   try {
-    const res = await axios.get('/api/customizedQuery/fields')
+    const res = await axios.get(`/api/customizedQuery/${tableName}`)
     dispatch(gotTableFields(res.data))
   } catch (err) {
     console.error(err)
   }
 }
 
-export const getNewQuery = (
+export const getCustomizedQuery = (
   tableName,
   columnName,
   timeInterval
 ) => async dispatch => {
   try {
-    console.log('parameters ------->', tableName, columnName, timeInterval)
     const res = await axios.get('/api/customizedQuery/', {
       params: {
         timeInterval,
@@ -53,26 +52,10 @@ export const getNewQuery = (
         columnName
       }
     })
-    dispatch(gotNewQuery(res.data))
+    dispatch(gotCustomizedQuery(res.data))
   } catch (err) {
     console.error(err)
   }
-}
-
-const filterFieldsFunction = function(obj) {
-  let filteredObj = {}
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      filteredObj[key] = obj[key].filter(
-        element =>
-          element.column_name !== 'id' &&
-          element.column_name !== 'createdAt' &&
-          element.column_name !== 'updatedAt' &&
-          !element.column_name.includes('Id')
-      )
-    }
-  }
-  return filteredObj
 }
 
 /**
@@ -83,12 +66,12 @@ export default function(state = initialState, action) {
     case GET_TABLE_FIELDS:
       return {
         ...state,
-        tableFields: filterFieldsFunction(action.tableFields)
+        tableFields: action.tableFields
       }
-    case GET_NEW_QUERY:
+    case GET_CUSTOMIZED_QUERY:
       return {
         ...state,
-        newQuery: action.newQuery
+        newQuery: action.customizedQuery
       }
     default:
       return state
