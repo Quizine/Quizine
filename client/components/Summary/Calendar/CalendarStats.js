@@ -4,8 +4,6 @@ import {connect} from 'react-redux'
 export class CalenderStats extends Component {
   render() {
     const {revenue, listOfWaiters, popularDish} = this.props.calendarData
-    console.log('STATS', revenue, listOfWaiters, popularDish)
-    console.log(`this.props: `, this.props)
     return (
       <div className="calendar-stats-cont">
         <div className="waiters-list">
