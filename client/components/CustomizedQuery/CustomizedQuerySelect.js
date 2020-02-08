@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getNewQuery} from '../../store/customizedQueryReducer'
 
-class CustomizedQueryFilters extends Component {
+class CustomizedQuerySelect extends Component {
   constructor() {
     super()
     this.state = {
@@ -37,7 +37,7 @@ class CustomizedQueryFilters extends Component {
           })}
         </select>
 
-        <button type="submit">submit</button>
+        {/* <button type="submit">submit</button> */}
       </form>
     )
   }
@@ -54,13 +54,10 @@ function formatColumnName(name) {
  */
 
 const mapDispatchToProps = dispatch => {
-  return {
-    getQuery: (tableName, columnName, timeInterval) =>
-      dispatch(getNewQuery(tableName, columnName, timeInterval))
-  }
+  return {}
 }
 
-export default connect(null, mapDispatchToProps)(CustomizedQueryFilters)
+export default connect(null, mapDispatchToProps)(CustomizedQuerySelect)
 
 // handleTimeIntervalChange(event) {
 //   this.setState({timeInterval: event.target.value})

@@ -1,21 +1,43 @@
 import React, {Component} from 'react'
-import CustomizedQueryFilters from './CustomizedQueryFilters'
+import CustomizedQuerySelect from './CustomizedQuerySelect'
 import {connect} from 'react-redux'
 import {getTableFields} from '../../store/customizedQueryReducer'
 
 export class CustomizedQuery extends Component {
   constructor() {
     super()
+    this.state = {
+      count: [1]
+    }
     this.handleChange = this.handleChange.bind(this)
+    this.handleForLoop = this.handleForLoop.bind(this)
+  }
+
+  handleForLoop(number, input) {
+    let resultArr = []
+    for (let i = 1; i <= number; i++) {
+      resultArr.push(input)
+    }
+    return resultArr
   }
 
   handleChange(event) {
     this.props.loadTableFields(event.target.value)
   }
 
+  handleAddClick() {
+    this.setState({count: [...this.state.count, 1]})
+  }
+
+  handleRemoveClick() {
+    let updatedState = [...this.state.count]
+    updatedState.pop()
+    this.setState({count: updatedState})
+  }
   render() {
     const selectedColumns = this.props.tableFields
 
+    console.log('STATE', this.state.count)
     return (
       <div>
         <select onChange={() => this.handleChange(event)}>
@@ -28,7 +50,26 @@ export class CustomizedQuery extends Component {
         <div>
           {selectedColumns.length ? (
             <div>
-              <CustomizedQueryFilters columnNames={selectedColumns} />
+              <div>
+                {this.state.count.map((element, index) => {
+                  return (
+                    <CustomizedQuerySelect
+                      key={index}
+                      columnNames={selectedColumns}
+                    />
+                  )
+                })}
+              </div>
+              {this.state.count.length < selectedColumns.length ? (
+                <button type="button" onClick={() => this.handleAddClick()}>
+                  Add
+                </button>
+              ) : null}
+              {this.state.count.length ? (
+                <button type="button" onClick={() => this.handleRemoveClick()}>
+                  Remove
+                </button>
+              ) : null}
             </div>
           ) : null}
         </div>
