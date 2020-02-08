@@ -35,3 +35,55 @@ router.get('/:tableName', async (req, res, next) => {
     next(error)
   }
 })
+
+router.get('/:tableName/:columnName', async (req, res, next) => {
+  try {
+    const datatypeQuery = await client.query(`
+    SELECT data_type from information_schema.columns
+    WHERE table_name = '${req.params.tableName}'
+    AND column_name = '${req.params.columnName}';`)
+    const datatype = datatypeQuery.rows[0].data_type
+    res.json(datatype)
+  } catch (error) {
+    next(error)
+  }
+})
+
+// router.get('/:tableName/:columnName/timestamp', async (req, res, next) => {
+//   try {
+//     const datatypeQuery = await client.query(`
+//     SELECT data_type from information_schema.columns
+//     WHERE table_name = '${req.params.tableName}'
+//     AND column_name = '${req.params.columnName}';`)
+//     const datatype = datatypeQuery.rows[0].data_type
+//     res.json(datatype)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
+
+// router.get('/:tableName/:columnName/integer', async (req, res, next) => {
+//   try {
+//     const datatypeQuery = await client.query(`
+//     SELECT data_type from information_schema.columns
+//     WHERE table_name = '${req.params.tableName}'
+//     AND column_name = '${req.params.columnName}';`)
+//     const datatype = datatypeQuery.rows[0].data_type
+//     res.json(datatype)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
+
+router.get('/:tableName/:columnName/string', async (req, res, next) => {
+  try {
+    const valueOptions = await client.query(`
+    SELECT DISTINCT "${req.params.columnName}" AS aliasname from ${
+      req.params.tableName
+    }
+    WHERE "${req.params.columnName}" IS NOT NULL;`)
+    res.json(valueOptions.rows)
+  } catch (error) {
+    next(error)
+  }
+})
