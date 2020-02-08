@@ -6,8 +6,6 @@ client.connect()
 
 module.exports = router
 
-//ADD "AND restauranId" condition (later)
-
 //REVENUE PER DAY FOR CALENDAR
 router.get('/revenueByDay', async (req, res, next) => {
   try {
@@ -15,9 +13,10 @@ router.get('/revenueByDay', async (req, res, next) => {
       const text = `SELECT
       SUM(orders.total )
       FROM orders
-      WHERE orders."timeOfPurchase" ::date = $1;`
+      WHERE orders."timeOfPurchase" ::date = $1
+      AND orders."restaurantId" = $2;`
       const date = req.query.date
-      const values = [date]
+      const values = [date, req.user.restaurantId]
       const revenueByDay = await client.query(text, values)
       res.json(revenueByDay.rows[0].sum) //RETURNS JUST THE #
     }
@@ -34,9 +33,10 @@ router.get('/waitersOnADay', async (req, res, next) => {
       DISTINCT waiters."name"
       FROM waiters
       JOIN orders on orders."waiterId" = waiters.id
-      WHERE orders."timeOfPurchase" ::date = $1;`
+      WHERE orders."timeOfPurchase" ::date = $1
+      AND orders."restaurantId" = $2;`
       const date = req.query.date
-      const values = [date]
+      const values = [date, req.user.restaurantId]
       const waitersOnADay = await client.query(text, values)
       res.json(waitersOnADay.rows) //RETURNS AN ARRAY OF OBJS WITH NAMES
     }
@@ -55,14 +55,15 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
       JOIN menus on menus.id = "menuOrders"."menuId"
       JOIN orders on orders.id = "menuOrders"."orderId" 
       WHERE orders."timeOfPurchase" ::date = $1
-      AND
-      menus."beverageType" isnull
+      AND menus."beverageType" isnull
+      AND orders."restaurantId" = $2
+
       GROUP BY name
       ORDER BY total desc
       limit 1;
       `
       const date = req.query.date
-      const values = [date]
+      const values = [date, req.user.restaurantId]
       const mostPopularDishOnADay = await client.query(text, values)
       res.json(mostPopularDishOnADay.rows[0].name)
     }
@@ -94,8 +95,10 @@ router.get('/numberOfWaiters', async (req, res, next) => {
       const text = `
       SELECT
       COUNT(*)
-      FROM waiters; `
-      const waiterCount = await client.query(text)
+      FROM waiters
+      WHERE waiters."restaurantId" = $1;`
+      const values = [req.user.restaurantId]
+      const waiterCount = await client.query(text, values)
       const numOfWaiters = Number(waiterCount.rows[0].count)
       res.json(numOfWaiters)
     }
@@ -115,13 +118,15 @@ router.get('/numberOfGuestsVsHour', async (req, res, next) => {
         SELECT SUM(orders."numberOfGuests")
         FROM orders
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        AND orders."restaurantId" = $2
       )), 1) AS percentage
   FROM ORDERS
   WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+  AND orders."restaurantId" = $2
   GROUP BY hours
   ORDER BY hours;`
       const interval = 1 + ' ' + req.query.interval
-      const values = [interval]
+      const values = [interval, req.user.restaurantId]
       const numberOfGuestsVsHour = await client.query(text, values)
       const percentageArr = numberOfGuestsVsHour.rows.map(el =>
         Number(el.percentage)
@@ -137,18 +142,19 @@ router.get('/revenueVsTime', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
-      select to_char("timeOfPurchase",'Mon') AS mon,
-      date_trunc('month', orders."timeOfPurchase" ) as m,
+      SELECT to_char("timeOfPurchase",'Mon') AS mon,
+      DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
       EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
       SUM("total") AS "monthlyRevenue"
-      from orders
+      FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-      group by mon, m, yyyy
-      order by m;
+      AND orders."restaurantId" = $2
+      GROUP BY mon, m, yyyy
+      ORDER BY m;
       `
       const year = req.query.year
       const interval = year + ' year'
-      const values = [interval]
+      const values = [interval, req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
       const allDateRevenue = {month: [], revenue: []}
       revenueVsTime.rows.forEach(row => {
@@ -165,15 +171,22 @@ router.get('/revenueVsTime', async (req, res, next) => {
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM(orders."numberOfGuests") AS "numberOfGuests", ROUND((SUM(orders.total)::numeric)/100000,2) AS "dayRevenue", SUM("summedMenuOrder"."summedQuantity")
-      FROM orders
-      JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId" FROM "menuOrders" GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
-      ON orders.id = "summedMenuOrder"."orderId"
-      WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
-      GROUP BY "dayOfWeek"
-      ORDER by "dayOfWeek" ASC;
+      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", 
+      SUM(orders."numberOfGuests") AS "numberOfGuests", 
+      ROUND((SUM(orders.total)::numeric)/100000,2) AS "dayRevenue", 
+      SUM("summedMenuOrder"."summedQuantity")
+            FROM orders
+            JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId"
+            FROM "menuOrders"
+            GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
+            ON orders.id = "summedMenuOrder"."orderId"
+            WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
+            AND orders."restaurantId" = $1
+            GROUP BY "dayOfWeek"
+            ORDER by "dayOfWeek" ASC;
         `
-      const DOWAnalysisTable = await client.query(text)
+      const values = [req.user.restaurantId]
+      const DOWAnalysisTable = await client.query(text, values)
       res.json(tableFormatting(DOWAnalysisTable.rows))
     }
   } catch (error) {

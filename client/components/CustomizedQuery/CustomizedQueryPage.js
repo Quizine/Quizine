@@ -1,21 +1,37 @@
 import React, {Component} from 'react'
-import CustomizedQueryFilters from './CustomizedQueryFilters'
 import {connect} from 'react-redux'
 import {getTableFields} from '../../store/customizedQueryReducer'
+import CustomizedQuerySelect from './CustomizedQuerySelect'
 
 export class CustomizedQuery extends Component {
   constructor() {
     super()
+    this.state = {
+      selectedTable: '',
+      count: [1]
+    }
     this.handleChange = this.handleChange.bind(this)
+    this.handleAddClick = this.handleAddClick.bind(this)
+    this.handleRemoveClick = this.handleRemoveClick.bind(this)
   }
 
   handleChange(event) {
     this.props.loadTableFields(event.target.value)
+    this.setState({selectedTable: event.target.value})
   }
 
-  render() {
-    const selectedColumns = this.props.tableFields
+  handleAddClick() {
+    this.setState({count: [...this.state.count, 1]})
+  }
 
+  handleRemoveClick() {
+    let updatedState = [...this.state.count]
+    updatedState.pop()
+    this.setState({count: updatedState})
+  }
+  render() {
+    const selectedTable = this.state.selectedTable
+    const selectedColumns = this.props.tableFields
     return (
       <div>
         <select onChange={() => this.handleChange(event)}>
@@ -24,11 +40,31 @@ export class CustomizedQuery extends Component {
           <option value="waiters">Waiters</option>
           <option value="orders">Orders</option>
         </select>
-
         <div>
           {selectedColumns.length ? (
             <div>
-              <CustomizedQueryFilters columnNames={selectedColumns} />
+              <div>
+                {this.state.count.map((element, index) => {
+                  return (
+                    <div key={index}>
+                      <CustomizedQuerySelect
+                        selectedTable={selectedTable}
+                        columnNames={selectedColumns}
+                      />
+                    </div>
+                  )
+                })}
+              </div>
+              {this.state.count.length < selectedColumns.length ? (
+                <button type="button" onClick={() => this.handleAddClick()}>
+                  Add
+                </button>
+              ) : null}
+              {this.state.count.length ? (
+                <button type="button" onClick={() => this.handleRemoveClick()}>
+                  Remove
+                </button>
+              ) : null}
             </div>
           ) : null}
         </div>
