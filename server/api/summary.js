@@ -105,27 +105,29 @@ router.get('/numberOfWaiters', async (req, res, next) => {
 })
 router.get('/numberOfGuestsVsHour', async (req, res, next) => {
   try {
-    const text = `
-    SELECT
-  EXTRACT(hour from orders."timeOfPurchase") AS hours,
-  SUM(orders."numberOfGuests"),
-  ROUND( 100.0 * (
-  	SUM(orders."numberOfGuests")::DECIMAL / (
-  		SELECT SUM(orders."numberOfGuests")
-  		FROM orders
-      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-  	)), 1) AS percentage
-FROM ORDERS
-WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-GROUP BY hours
-ORDER BY hours;`
-    const interval = 1 + ' ' + req.query.interval
-    const values = [interval]
-    const numberOfGuestsVsHour = await client.query(text, values)
-    const percentageArr = numberOfGuestsVsHour.rows.map(el =>
-      Number(el.percentage)
-    )
-    res.json(percentageArr)
+    if (req.user.id) {
+      const text = `
+      SELECT
+    EXTRACT(hour from orders."timeOfPurchase") AS hours,
+    SUM(orders."numberOfGuests"),
+    ROUND( 100.0 * (
+      SUM(orders."numberOfGuests")::DECIMAL / (
+        SELECT SUM(orders."numberOfGuests")
+        FROM orders
+        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      )), 1) AS percentage
+  FROM ORDERS
+  WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+  GROUP BY hours
+  ORDER BY hours;`
+      const interval = 1 + ' ' + req.query.interval
+      const values = [interval]
+      const numberOfGuestsVsHour = await client.query(text, values)
+      const percentageArr = numberOfGuestsVsHour.rows.map(el =>
+        Number(el.percentage)
+      )
+      res.json(percentageArr)
+    }
   } catch (error) {
     next(error)
   }
@@ -133,26 +135,28 @@ ORDER BY hours;`
 
 router.get('/revenueVsTime', async (req, res, next) => {
   try {
-    const text = `
-    select to_char("timeOfPurchase",'Mon') AS mon,
-    date_trunc('month', orders."timeOfPurchase" ) as m,
-    EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-    SUM("total") AS "monthlyRevenue"
-    from orders
-    WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-    group by mon, m, yyyy
-    order by m;
-    `
-    const year = req.query.year
-    const interval = year + ' year'
-    const values = [interval]
-    const revenueVsTime = await client.query(text, values)
-    const allDateRevenue = {month: [], revenue: []}
-    revenueVsTime.rows.forEach(row => {
-      allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-      allDateRevenue.revenue.push(Number(row.monthlyRevenue) / 100)
-    })
-    res.json(allDateRevenue)
+    if (req.user.id) {
+      const text = `
+      select to_char("timeOfPurchase",'Mon') AS mon,
+      date_trunc('month', orders."timeOfPurchase" ) as m,
+      EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+      SUM("total") AS "monthlyRevenue"
+      from orders
+      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      group by mon, m, yyyy
+      order by m;
+      `
+      const year = req.query.year
+      const interval = year + ' year'
+      const values = [interval]
+      const revenueVsTime = await client.query(text, values)
+      const allDateRevenue = {month: [], revenue: []}
+      revenueVsTime.rows.forEach(row => {
+        allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
+        allDateRevenue.revenue.push(Number(row.monthlyRevenue) / 100)
+      })
+      res.json(allDateRevenue)
+    }
   } catch (error) {
     next(error)
   }
@@ -160,16 +164,18 @@ router.get('/revenueVsTime', async (req, res, next) => {
 
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
-    const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM(orders."numberOfGuests") AS "numberOfGuests", ROUND((SUM(orders.total)::numeric)/100000,2) AS "dayRevenue", SUM("summedMenuOrder"."summedQuantity")
-    FROM orders
-    JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId" FROM "menuOrders" GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
-    ON orders.id = "summedMenuOrder"."orderId"
-    WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
-    GROUP BY "dayOfWeek"
-    ORDER by "dayOfWeek" ASC;
-      `
-    const DOWAnalysisTable = await client.query(text)
-    res.json(tableFormatting(DOWAnalysisTable.rows))
+    if (req.user.id) {
+      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", SUM(orders."numberOfGuests") AS "numberOfGuests", ROUND((SUM(orders.total)::numeric)/100000,2) AS "dayRevenue", SUM("summedMenuOrder"."summedQuantity")
+      FROM orders
+      JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId" FROM "menuOrders" GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
+      ON orders.id = "summedMenuOrder"."orderId"
+      WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
+      GROUP BY "dayOfWeek"
+      ORDER by "dayOfWeek" ASC;
+        `
+      const DOWAnalysisTable = await client.query(text)
+      res.json(tableFormatting(DOWAnalysisTable.rows))
+    }
   } catch (error) {
     next(error)
   }

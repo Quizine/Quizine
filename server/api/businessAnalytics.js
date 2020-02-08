@@ -5,21 +5,26 @@ const client = new pg.Client(config)
 client.connect()
 
 module.exports = router
-
 // --average number of guests served by waiter per order within a specific time frame - AV
 router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const timeInterval = req.query.timeInterval
-      const avgNumberOfGuestsVsWaitersPerOrder = await client.query(`
+      const text = `
       SELECT waiters."name",
       ROUND(AVG(orders."numberOfGuests" ), 2) AS performance
       FROM waiters
       JOIN orders ON orders."waiterId" = waiters.id
-      WHERE orders."timeOfPurchase" >= NOW() - INTERVAL '1 ${timeInterval}'
+      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+
       GROUP BY waiters."name"
       ORDER BY performance DESC;
-      `)
+      `
+      const timeInterval = '1 ' + req.query.timeInterval
+      const values = [timeInterval]
+      const avgNumberOfGuestsVsWaitersPerOrder = await client.query(
+        text,
+        values
+      )
       const [xAxis, yAxis] = axisMapping(
         avgNumberOfGuestsVsWaitersPerOrder.rows,
         avgNumberOfGuestsVsWaitersPerOrder.fields[0].name,
@@ -35,17 +40,17 @@ router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
 router.get('/numberOfOrdersVsHour', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const timeInterval = req.query.timeInterval
-      const numberOfOrdersPerHour = await client.query(
-        `SELECT EXTRACT(hour FROM "timeOfPurchase") AS hour,
-        COUNT(*) AS "numberOfOrders"
-        FROM orders
-        WHERE "timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-        AND orders."restaurantId" = ${req.user.restaurantId}
-        GROUP BY hour
-        ORDER BY hour
-        ASC;`
-      )
+      const text = `SELECT EXTRACT(hour FROM "timeOfPurchase") AS hour,
+      COUNT(*) AS "numberOfOrders"
+      FROM orders
+      WHERE "timeOfPurchase" >= NOW() - $1::interval
+      AND orders."restaurantId" = $2
+      GROUP BY hour
+      ORDER BY hour
+      ASC;`
+      const timeInterval = '1 ' + req.query.timeInterval
+      const values = [timeInterval, req.user.restaurantId]
+      const numberOfOrdersPerHour = await client.query(text, values)
       const numberOfOrdersArr = numberOfOrdersPerHour.rows.map(el =>
         Number(el.numberOfOrders)
       )
@@ -59,16 +64,16 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
 router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const timeInterval = req.query.timeInterval
-      const avgRevPerGuest = await client.query(
-        `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
-        ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
-        FROM orders
-        WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-        AND orders."restaurantId" = ${req.user.restaurantId}
-        GROUP BY day
-        ORDER BY day ASC;`
-      )
+      const text = `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
+      ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
+      FROM orders
+      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      AND orders."restaurantId" = ${req.user.restaurantId}
+      GROUP BY day
+      ORDER BY day ASC;`
+      const timeInterval = '1 ' + req.query.timeInterval
+      const values = [timeInterval]
+      const avgRevPerGuest = await client.query(text, values)
       const avgRevPerGuestArr = avgRevPerGuest.rows.map(el =>
         Number(el.revenue_per_guest)
       )
@@ -82,16 +87,16 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
 router.get('/tipPercentageVsWaiters', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const timeInterval = req.query.timeInterval
-      const tipPercentageByWaiters = await client.query(
-        `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
+      const text = `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
       FROM ORDERS
       JOIN WAITERS ON orders."waiterId" = waiters.id
-      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-      AND waiters."restaurantId" = ${req.user.restaurantId}
+      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      AND waiters."restaurantId" = $2
       GROUP BY waiters.name
       ORDER BY "averageTipPercentage" DESC;`
-      )
+      const timeInterval = '1 ' + req.query.timeInterval
+      const values = [timeInterval, req.user.restaurantId]
+      const tipPercentageByWaiters = await client.query(text, values)
       const [xAxis, yAxis] = axisMapping(
         tipPercentageByWaiters.rows,
         tipPercentageByWaiters.fields[0].name,
@@ -110,20 +115,39 @@ router.get(
   async (req, res, next) => {
     try {
       if (req.user.id) {
-        const timeInterval = req.query.timeInterval
+        let text
         const topOrBottom = req.query.topOrBottom
-        const menuSalesNumbers = await client.query(`
-      SELECT menus."menuName" as name,
-      SUM("menuOrders" .quantity) as total
-      FROM "menuOrders"
-      JOIN menus on menus.id = "menuOrders"."menuId"
-      JOIN orders on orders.id = "menuOrders"."orderId"
-      WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'
-      AND orders."restaurantId" = ${req.user.restaurantId}
-      GROUP BY name
-      ORDER BY total ${topOrBottom}
-      LIMIT 5;
-      `)
+        if (req.query.topOrBottom === 'asc') {
+          text = `
+          SELECT menus."menuName" as name,
+          SUM("menuOrders" .quantity) as total
+          FROM "menuOrders"
+          JOIN menus on menus.id = "menuOrders"."menuId"
+          JOIN orders on orders.id = "menuOrders"."orderId"
+          WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+          AND orders."restaurantId" = $2
+          GROUP BY name
+          ORDER BY total ${topOrBottom}
+          LIMIT 5;
+          `
+        } else if (req.query.topOrBottom === 'desc') {
+          text = `
+          SELECT menus."menuName" as name,
+          SUM("menuOrders" .quantity) as total
+          FROM "menuOrders"
+          JOIN menus on menus.id = "menuOrders"."menuId"
+          JOIN orders on orders.id = "menuOrders"."orderId"
+          WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+          AND orders."restaurantId" = $2
+          GROUP BY name
+          ORDER BY total ${topOrBottom}
+          LIMIT 5;
+          `
+        }
+        const timeInterval = '1 ' + req.query.timeInterval
+        const restaurantId = req.user.restaurantId
+        const values = [timeInterval, restaurantId]
+        const menuSalesNumbers = await client.query(text, values)
         const [xAxis, yAxis] = axisMapping(
           menuSalesNumbers.rows,
           menuSalesNumbers.fields[0].name,
