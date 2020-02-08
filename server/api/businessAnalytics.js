@@ -127,7 +127,7 @@ router.get(
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
           GROUP BY name
-          ORDER BY total ${topOrBottom}
+          ORDER BY total ASC
           LIMIT 5;
           `
         } else if (topOrBottom === 'desc') {
@@ -140,7 +140,7 @@ router.get(
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
           GROUP BY name
-          ORDER BY total ${topOrBottom}
+          ORDER BY total DESC
           LIMIT 5;
           `
         }
