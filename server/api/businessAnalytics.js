@@ -3,8 +3,8 @@ const pg = require('pg')
 const config = 'postgres://yourname:yourpassword@localhost:5432/nestegg'
 const client = new pg.Client(config)
 client.connect()
-
 module.exports = router
+
 // --average number of guests served by waiter per order within a specific time frame - AV
 router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
   try {
@@ -15,12 +15,12 @@ router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
       FROM waiters
       JOIN orders ON orders."waiterId" = waiters.id
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-
+      AND orders."restaurantId" = $2
       GROUP BY waiters."name"
       ORDER BY performance DESC;
       `
       const timeInterval = '1 ' + req.query.timeInterval
-      const values = [timeInterval]
+      const values = [timeInterval, req.user.restaurantId]
       const avgNumberOfGuestsVsWaitersPerOrder = await client.query(
         text,
         values
