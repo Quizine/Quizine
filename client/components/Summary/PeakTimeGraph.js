@@ -17,7 +17,7 @@ class PeakTimeGraph extends Component {
     super(props)
 
     this.state = {
-      selectedOption: 'month'
+      selectedOption: 'year'
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -66,12 +66,12 @@ class PeakTimeGraph extends Component {
           <CardHeader
             action={
               <select onChange={this.handleChange} className="select-css">
-                <option value="month">Month</option>
                 <option value="year">Year</option>
+                <option value="month">Month</option>
                 <option value="week">Week</option>
               </select>
             }
-            title="Orders per Hour (%)"
+            title="Guests by the Hour (%)"
           />
           <Divider />
           <CardContent>
