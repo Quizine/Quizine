@@ -68,11 +68,11 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
       ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
       FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-      AND orders."restaurantId" = ${req.user.restaurantId}
+      AND orders."restaurantId" = $2
       GROUP BY day
       ORDER BY day ASC;`
       const timeInterval = '1 ' + req.query.timeInterval
-      const values = [timeInterval]
+      const values = [timeInterval, req.user.restaurantId]
       const avgRevPerGuest = await client.query(text, values)
       const avgRevPerGuestArr = avgRevPerGuest.rows.map(el =>
         Number(el.revenue_per_guest)
@@ -117,7 +117,7 @@ router.get(
       if (req.user.id) {
         let text
         const topOrBottom = req.query.topOrBottom
-        if (req.query.topOrBottom === 'asc') {
+        if (topOrBottom === 'asc') {
           text = `
           SELECT menus."menuName" as name,
           SUM("menuOrders" .quantity) as total
@@ -130,7 +130,7 @@ router.get(
           ORDER BY total ${topOrBottom}
           LIMIT 5;
           `
-        } else if (req.query.topOrBottom === 'desc') {
+        } else if (topOrBottom === 'desc') {
           text = `
           SELECT menus."menuName" as name,
           SUM("menuOrders" .quantity) as total
@@ -147,6 +147,8 @@ router.get(
         const timeInterval = '1 ' + req.query.timeInterval
         const restaurantId = req.user.restaurantId
         const values = [timeInterval, restaurantId]
+        //TEXT WILL BE UNDEFINED SHOULD TOP OR BOTTOM BE ANYTHING OTHER THAN ASC OR DESC
+        //SO ESSENTIALLY SANITIZING THE DATA
         const menuSalesNumbers = await client.query(text, values)
         const [xAxis, yAxis] = axisMapping(
           menuSalesNumbers.rows,
