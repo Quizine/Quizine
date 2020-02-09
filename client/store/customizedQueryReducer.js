@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {func} from 'prop-types'
 
 /**
  * ACTION TYPES
@@ -7,6 +8,7 @@ const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
+const UPDATE_CUSTOM_QUERY = 'UPDATE_CUSTOM_QUERY'
 
 /**
  * INITIAL STATE
@@ -15,7 +17,8 @@ const initialState = {
   tableFields: [],
   dataType: '',
   valueOptionsForString: [],
-  joinTables: []
+  joinTables: [],
+  customQuery: []
 }
 
 /**
@@ -41,6 +44,10 @@ const gotJoinTables = joinTables => ({
   joinTables
 })
 
+export const updateCustomQuery = queryObject => ({
+  type: UPDATE_CUSTOM_QUERY,
+  queryObject
+})
 /**
  * THUNK CREATORS
  */
@@ -114,7 +121,51 @@ export default function(state = initialState, action) {
         ...state,
         joinTables: action.joinTables
       }
+    case UPDATE_CUSTOM_QUERY:
+      return {
+        ...state,
+        customQuery: updateQueryFunc(state.customQuery, action.queryObject)
+      }
     default:
       return state
   }
+}
+
+function updateQueryFunc(customQuery, queryObject) {
+  let isUpdated = false
+  let updatedQuery = customQuery.map(element => {
+    let updatedElement = {}
+    if (element.tableName === queryObject.tableName) {
+      updatedElement.tableName = queryObject.tableName
+      for (let key in element) {
+        if (element.hasOwnProperty(key)) {
+          if (key !== 'tableName') {
+            updatedElement[key] = [...element[key]]
+          }
+        }
+      }
+      updatedElement[queryObject.columnName] = [...queryObject.where]
+      isUpdated = true
+    } else {
+      updatedElement.tableName = element.tableName
+      for (let key in element) {
+        if (element.hasOwnProperty(key)) {
+          if (key === 'tableName') {
+            updatedElement[key] = element[key]
+          } else {
+            updatedElement[key] = [...element[key]]
+          }
+        }
+      }
+    }
+    return updatedElement
+  })
+  if (!isUpdated) {
+    let newElement = {
+      tableName: queryObject.tableName,
+      [queryObject.columnName]: [...queryObject.where]
+    }
+    updatedQuery = [...updatedQuery, newElement]
+  }
+  return updatedQuery
 }
