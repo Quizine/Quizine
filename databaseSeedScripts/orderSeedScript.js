@@ -332,7 +332,7 @@ let randomizeMenuOrder = function(mealType, isFood, type) {
       }
     }
   }
-  selectedMenu = pickMenuItem(selectedList)
+  const selectedMenu = pickMenuItem(selectedList)
 
   return selectedMenu.id
 }

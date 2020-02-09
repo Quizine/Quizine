@@ -1,32 +1,40 @@
-/* global describe beforeEach it */
+var expect = require('chai').expect
+var app = require('../index')
+var request = require('supertest')
 
-const {expect} = require('chai')
-const request = require('supertest')
-const db = require('../db')
-const app = require('../index')
-const User = db.model('user')
+//THIS IS HOW WE'LL SOLVE THE PASSPORT PROBLEMS
+//https://www.npmjs.com/package/chai-passport-strategy
 
-describe('User routes', () => {
-  beforeEach(() => {
-    return db.sync({force: true})
+//let's set up the data we need to pass to the login method
+const userCredentials = {
+  email: 'nathan@email.com',
+  password: '123'
+} //now let's login the user before we run any tests
+var authenticatedUser = request.agent(app)
+before(function(done) {
+  authenticatedUser
+    .post('/login')
+    .send(userCredentials)
+    .end(function(err, response) {
+      expect(response.statusCode).to.equal(200)
+      expect('Location', '/home')
+      done(err)
+    })
+})
+
+describe('FE GET businessAnalytics', function(done) {
+  it('should return a 200 response if the user is logged in', function(done) {
+    authenticatedUser.get('/businessAnalytics').expect(200, done)
   })
+})
 
-  describe('/api/users/', () => {
-    const codysEmail = 'cody@puppybook.com'
-
-    beforeEach(() => {
-      return User.create({
-        email: codysEmail
-      })
-    })
-
-    it('GET /api/users', async () => {
-      const res = await request(app)
-        .get('/api/users')
-        .expect(200)
-
-      expect(res.body).to.be.an('array')
-      expect(res.body[0].email).to.be.equal(codysEmail)
-    })
-  }) // end describe('/api/users')
-}) // end describe('User routes')
+// describe('BE /avgNumberOfGuestsVsWaitersPerOrder', function(done) {
+//   it('should return an object', function(done) {
+//     authenticatedUser
+//       .get('/api/businessAnalytics/avgNumberOfGuestsVsWaitersPerOrder')
+//       .query({
+//         timeInterval: 'month'
+//       })
+//       .expect(200, done)
+//   })
+// })
