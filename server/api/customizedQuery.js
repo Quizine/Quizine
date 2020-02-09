@@ -146,3 +146,74 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 //menus ----> menuOrders table ----> foreign keys (orderId and menuId)
 
 //waiters
+
+// query = [
+//   {tableName: 'menu',
+//   menuName: [lobster, coke], //this case would be a select all
+//    foodType: [dinner, lunch]
+//   }
+//   ,
+//   {tableName: waiters,
+//   age: [>, 25]
+//   }
+// ]
+
+// const query = [
+//   {tableName: 'menu', menuName: ['lobster'], foodType: ['dinner']},
+//   {tableName: 'orders', total: [500], subtotal: [450]}
+// ]
+
+// select "menuName","mealType"
+// from menus
+// where "menuName" = 'lobster'
+// and "mealType"  = 'dinner';
+
+router.get('/customQuery', async (req, res, next) => {
+  try {
+    const test = query
+    const text = translateQuery(test)
+    const queryResults = await client.query(text)
+    res.json(queryResults)
+  } catch (error) {
+    next(error)
+  }
+})
+
+// const query = [
+//   {tableName: 'menu',
+//   menuName: ['lobster'],
+//    foodType: ['dinner']
+//   }
+// ]
+// select "menuName","mealType"
+// from menus
+// where "menuName" = 'lobster'
+// and "mealType"  = 'dinner';
+
+// const query = [
+//   {tableName: 'menu',
+//   menuName: ['lobster'],
+//    foodType: ['dinner']
+//   }
+// ]
+
+const query = [{tableName: 'menu', menuName: ['lobster'], foodType: ['dinner']}]
+
+//CUSTOM QUERYING HELPER FUNCTIONS
+function translateQuery(queryArr) {
+  const select = []
+  const from = []
+  const join = []
+  const where = []
+  queryArr.forEach(queryObj => {
+    const tableName = queryObj.tableName
+    if (from.length < 1) from.push(tableName)
+    else join.push(tableName)
+    for (let key in queryObj) {
+      if (key !== 'tableName') {
+        select.push(key)
+        queryObj.key.forEach(whereItem => where.push(whereItem))
+      }
+    }
+  })
+}
