@@ -65,7 +65,6 @@ class AvgRevenuePerGuestVsDOW extends Component {
                 <option value="year">Year</option>
                 <option value="week">Week</option>
               </select>
-              // <DropdownComponent handleChangeData={this.handleChange} />
             }
             title="Guest Expenditure ($)"
           />
@@ -96,28 +95,6 @@ class AvgRevenuePerGuestVsDOW extends Component {
           </CardContent>
         </Card>
       </div>
-
-      // <div className="peak-time-div">
-      //   <div className="chart-header">
-      //     <select onChange={this.handleChange} defaultValue="month">
-      //       <option value="year">Year</option>
-      //       <option value="month">Month</option>
-      //       <option value="week">Week</option>
-      //     </select>
-      //     <h3>Average Revenue Per Guest Per Day of Week</h3>
-      //   </div>
-      //   <div>
-      //     <Bar
-      //       data={chartData}
-      //       options={{
-      //         title: {
-      //           display: false,
-      //           text: 'Average Revenue Per Guest Per Day of Week'
-      //         }
-      //       }}
-      //     />
-      //   </div>
-      // </div>
     )
   }
 }

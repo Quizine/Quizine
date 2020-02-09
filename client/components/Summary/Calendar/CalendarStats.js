@@ -16,7 +16,12 @@ export class CalenderStats extends Component {
         </div>
         <div className="dish-rev">
           <div>
-            <h2>{`Revenue on ${this.props.currentDate.toDateString()}:`}</h2>
+            <h2>
+              Revenue on
+              <span color="black">
+                <i>{` ${this.props.currentDate.toDateString()}`}:</i>
+              </span>
+            </h2>
             <h1>{`$ ${convertToDollar(Number(revenue))}`}</h1>
           </div>
           <div>

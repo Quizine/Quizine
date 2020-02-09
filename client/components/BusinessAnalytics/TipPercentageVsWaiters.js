@@ -49,7 +49,7 @@ class TipPercentageVsWaiters extends Component {
         {
           label: 'Tip Percentage',
           data: yAxis,
-          backgroundColor: 'yellow'
+          backgroundColor: 'green'
         }
       ]
     }

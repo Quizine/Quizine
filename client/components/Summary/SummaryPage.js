@@ -42,7 +42,7 @@ class SummaryPage extends Component {
 
   render() {
     return (
-      <div>
+      <div className="summary-page-container">
         {this.props.DOWAnalysisTable &&
         this.props.restaurantInfo[0] &&
         this.props.revenueVsTime.oneYear.revenue &&
@@ -91,12 +91,19 @@ class SummaryPage extends Component {
  */
 
 const mapStateToProps = state => {
+  const {
+    DOWAnalysisTable,
+    restaurantInfo,
+    revenueVsTime,
+    numberOfWaiters,
+    yelpRating
+  } = state.summary
   return {
-    DOWAnalysisTable: state.summary.DOWAnalysisTable,
-    restaurantInfo: state.summary.restaurantInfo,
-    revenueVsTime: state.summary.revenueVsTime,
-    numberOfWaiters: state.summary.numberOfWaiters,
-    yelpRating: state.summary.yelpRating
+    DOWAnalysisTable,
+    restaurantInfo,
+    revenueVsTime,
+    numberOfWaiters,
+    yelpRating
   }
 }
 

@@ -33,7 +33,7 @@ export class CustomizedQuery extends Component {
     const selectedTable = this.state.selectedTable
     const selectedColumns = this.props.tableFields
     return (
-      <div>
+      <div className="custom-analytics-container">
         <select onChange={() => this.handleChange(event)}>
           <option>Please Select</option>
           <option value="menus">Menu</option>

@@ -5,6 +5,7 @@ import FunctionsIcon from '@material-ui/icons/Functions'
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined'
 import SidebarNav from './SidebarNav'
 import UserProfile from './UserProfile'
+import {Divider} from '@material-ui/core'
 
 const pages = [
   {

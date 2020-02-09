@@ -47,11 +47,12 @@ form div {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  position: sticky;
   min-width: 150px;
   max-width: 150px;
   min-height: 100vh;
   height: auto;
+  box-shadow: 4px 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   background: linear-gradient(#94b5e3, rgb(37, 89, 156));
 }
 
@@ -73,11 +74,8 @@ form div {
 }
 
 /* ------SUMMARY-------- */
-.summary-cont {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100vw;
+.summary-page-container {
+  margin-left: 150px;
 }
 
 .summary-data {
@@ -86,10 +84,10 @@ form div {
 
 /* -------------CHART ARRANGEMENT----- */
 .peak-time-div {
-  height: 35vh;
-  width: 35vw;
-  margin: 2em;
-  margin-bottom: 4em;
+  min-height: 300px;
+  min-width: 450px;
+  width: 550px;
+  margin: 1em;
 }
 
 .chart-header {
@@ -97,6 +95,8 @@ form div {
 }
 
 .bus-charts-cont {
+  margin-left: 150px;
+  min-height: 100vh;
   height: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -107,9 +107,14 @@ form div {
 .calendar-container {
   display: flex;
   max-width: 90vw;
-  margin: 1em;
   padding: 1em;
   background-color: rgb(239, 239, 239);
+}
+
+.calendar-itself {
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .calendar-stats-cont {
@@ -123,11 +128,14 @@ form div {
   flex-direction: column;
   align-content: flex-start;
   width: 25vw;
-  background-color: #94b5e3;
-  border-radius: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .waiters-list h2 {
+  color: #767c83;
   margin: 0;
   padding: 0.5em;
   text-align: center;
@@ -136,9 +144,10 @@ form div {
 .waiters-list-li {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
   list-style-type: none;
   margin: 0;
-  padding: 1em;
+  padding: 5px;
 }
 
 .waiters-list-li li {
@@ -147,77 +156,67 @@ form div {
 }
 
 .dish-rev {
-  background-color: #94b5e3;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding: 5px;
+  padding-top: 10px;
   margin-left: 2em;
   align-items: center;
   width: 30vw;
-  border-radius: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .dish-rev h1 {
-  color: #3b79cc;
+  color: #24497a;
   margin: 0.5em;
   text-align: center;
 }
+.dish-rev h2 {
+  color: #767c83;
+  /* margin: 0.5em; */
+  /* text-align: center; */
+}
+
+.dish-rev span {
+  color: black;
+}
+
+/* ---------custom analytics--------- */
+.custom-analytics-container {
+  margin-left: 150px;
+  background-color: rgb(239, 239, 239);
+  min-height: 100vh;
+}
 
 /* --------select--------- */
-.month-button {
-  position: relative;
-  /*Don't really need this just for demo styling*/
-
-  float: left;
-  min-width: 200px;
-  margin: 50px 33%;
-}
-
-/* IE11 hide native button (thanks Matt!) */
-select::-ms-expand {
-  display: none;
-}
-
-.month-button:after {
-  content: '<>';
-  font: 17px 'Consolas', monospace;
-  color: #333;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  transform: rotate(90deg);
-  right: 11px;
-  /*Adjust for position however you want*/
-
-  top: 18px;
-  padding: 0 0 2px;
-  border-bottom: 1px solid #999;
-  /*left line */
-
-  position: absolute;
-  pointer-events: none;
-}
-
-.month-button select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  /* Add some styling */
-
+.select-css {
   display: block;
-  width: 100%;
-  max-width: 320px;
-  height: 50px;
-  float: right;
-  margin: 5px 0px;
-  padding: 0px 24px;
-  font-size: 16px;
-  line-height: 1.75;
-  color: #333;
-  background-color: #ffffff;
-  background-image: none;
-  border: 1px solid #cccccc;
-  -ms-word-break: normal;
-  word-break: normal;
+  font-size: 10px;
+  font-family: sans-serif;
+  font-weight: 500;
+  color: rgb(0, 0, 0);
+  line-height: 1.1;
+  padding: 0.6em 1.4em 0.5em 0.8em;
+  width: 8em;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+    linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+  background-repeat: no-repeat, repeat;
+  background-position: right 0.7em top 50%, 0 0;
+  background-size: 0.65em auto, 100%;
 }
 
 /* -----BUTTON------- */
@@ -279,8 +278,7 @@ select::-ms-expand {
   width: 350px;
   max-width: 100%;
   background: white;
-  border: 1px solid #a0a096;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Roboto', sans-serif;
   line-height: 1.125em;
 }
 
@@ -315,7 +313,8 @@ select::-ms-expand {
 
 .react-calendar__navigation button:enabled:hover,
 .react-calendar__navigation button:enabled:focus {
-  background-color: #e6e6e6;
+  background-color: #24497a;
+  color: white;
 }
 
 .react-calendar__navigation button[disabled] {
@@ -376,22 +375,22 @@ select::-ms-expand {
 }
 
 .react-calendar__tile--hasActive {
-  background: #76baff;
+  background: #24497a;
 }
 
 .react-calendar__tile--hasActive:enabled:hover,
 .react-calendar__tile--hasActive:enabled:focus {
-  background: #a9d4ff;
+  background: #24497a;
 }
 
 .react-calendar__tile--active {
-  background: #006edc;
+  background: #24497a;
   color: white;
 }
 
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
-  background: #1087ff;
+  background: #24497a;
 }
 
 .react-calendar--selectRange .react-calendar__tile--hover {
@@ -403,7 +402,7 @@ select::-ms-expand {
   display: flex;
   justify-content: center;
   max-width: 90vw;
-  margin: 1em;
+  margin-left: 1em;
   padding: 1em;
   background-color: rgb(239, 239, 239);
 }
@@ -413,17 +412,7 @@ select::-ms-expand {
   display: flex;
   justify-content: center;
   max-width: 90vw;
-  margin: 1em;
-  padding: 1em;
-  background-color: rgb(239, 239, 239);
-}
-
-/* ------SUMMARY PAGE CHART CONTAINER ---------- */
-.summary-chart-container {
-  display: flex;
-  justify-content: center;
-  max-width: 90vw;
-  margin: 1em;
+  margin-left: 1em;
   padding: 1em;
   background-color: rgb(239, 239, 239);
 }
@@ -433,7 +422,7 @@ select::-ms-expand {
   display: flex;
   justify-content: center;
   max-width: 90vw;
-  margin: 2em;
+  margin-left: 1em;
   padding: 1em;
   background-color: rgb(239, 239, 239);
 }
