@@ -3,17 +3,7 @@ import {connect} from 'react-redux'
 import {getAvgRevenuePerGuestVsDOW} from '../../store/businessAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
-import PropTypes from 'prop-types'
-import {makeStyles} from '@material-ui/styles'
-import DropdownComponent from './DropdownComponent'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Divider,
-  Button
-} from '@material-ui/core'
+import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
 class AvgRevenuePerGuestVsDOW extends Component {
   constructor(props) {
