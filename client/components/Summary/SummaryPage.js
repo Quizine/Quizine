@@ -15,7 +15,7 @@ import TotalRevenue from './TotalRevenueCard'
 import NumberOfWaiters from './NumberOfWaitersCard'
 import RestaurantInfo from './RestaurantInfoCard'
 import YelpRating from './YelpRatingCard'
-import {Grid} from '@material-ui/core'
+import {Grid, Divider} from '@material-ui/core'
 
 class SummaryPage extends Component {
   constructor(props) {
@@ -68,12 +68,15 @@ class SummaryPage extends Component {
             </Grid>
           </div>
         ) : null}
+        <Divider />
         <div>
           <CalendarContainer />
+          <Divider />
         </div>
         <div className="summary-chart-container">
           <LineGraphRevenue />
           <PeakTimeGraph />
+          <Divider />
         </div>
         <div className="summary-table-container">
           <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />

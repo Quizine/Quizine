@@ -28,10 +28,10 @@ const Navbar = ({handleClick, isLoggedIn}) => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Nest Egg
+            Quizine / ARQME
           </Typography>
           {isLoggedIn ? (
             <div>

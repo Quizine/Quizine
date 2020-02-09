@@ -32,8 +32,10 @@ const pages = [
 const Sidebar = () => {
   return (
     <div className="sidebar-container">
-      <UserProfile />
-      <SidebarNav pages={pages} />
+      <div className="sidebar-nav-cont">
+        <UserProfile />
+        <SidebarNav pages={pages} />
+      </div>
     </div>
   )
 }
