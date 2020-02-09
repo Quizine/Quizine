@@ -9,7 +9,9 @@ export {default as Summary} from './Summary/SummaryPage'
 export {default as Sidebar} from './Sidebar'
 export {default as Navbar} from './Navbar'
 export {default as WelcomePage} from './WelcomePage'
-export {default as CustomizedQuery} from './CustomizedQuery/CustomizedQueryPage'
+export {
+  default as CustomizedQueryContainer
+} from './CustomizedQuery/CustomizedQueryContainer'
 export {
   default as BusinessAnalytics
 } from './BusinessAnalytics/BusinessAnalyticsPage'
