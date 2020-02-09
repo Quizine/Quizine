@@ -7,6 +7,7 @@ const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
+const UPDATE_CUSTOM_QUERY = 'UPDATE_CUSTOM_QUERY'
 
 /**
  * INITIAL STATE
@@ -15,8 +16,20 @@ const initialState = {
   tableFields: [],
   dataType: '',
   valueOptionsForString: [],
-  joinTables: []
+  joinTables: [],
+  customQuery: []
 }
+
+// query = [
+//   {tableName: 'menu',
+//   menuName: [lobster, coke],
+//    foodType: [dinner, lunch]
+//   }
+//   ,
+//   {tableName: waiters,
+//   age: [>, 25]
+//   }
+// ]
 
 /**
  * ACTION CREATORS
@@ -40,6 +53,17 @@ const gotJoinTables = joinTables => ({
   type: GET_JOIN_TABLES,
   joinTables
 })
+
+export const updateCustomQuery = queryObject => ({
+  type: UPDATE_CUSTOM_QUERY,
+  queryObject
+})
+
+// queryObj = {
+//   tableName:...,
+//   columName: ...,
+//   where:...
+// }
 
 /**
  * THUNK CREATORS
@@ -113,6 +137,14 @@ export default function(state = initialState, action) {
       return {
         ...state,
         joinTables: action.joinTables
+      }
+    case UPDATE_CUSTOM_QUERY:
+      return {
+        ...state,
+        customQuery: [
+          ...state.customQuery,
+          updateCustomQueryObject(action.queryObject)
+        ]
       }
     default:
       return state
