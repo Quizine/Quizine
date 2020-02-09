@@ -205,6 +205,7 @@ function translateQuery(queryArr) {
   const from = []
   const join = []
   const where = []
+  const and = []
   queryArr.forEach(queryObj => {
     const tableName = queryObj.tableName
     if (from.length < 1) from.push(tableName)
@@ -212,8 +213,96 @@ function translateQuery(queryArr) {
     for (let key in queryObj) {
       if (key !== 'tableName') {
         select.push(key)
-        queryObj.key.forEach(whereItem => where.push(whereItem))
+        queryObj[key].forEach(whereItem => {
+          if (where.length < 1) where.push(whereItem)
+          else and.push(whereItem)
+        })
       }
     }
   })
+
+  //   selects [ 'menuName', 'foodType' ]
+  // froms [ 'menu' ]
+  // join []
+  // where [ 'lobster', 'dinner' ]
+
+  // var a = "[{'column1':'value0','column2':'value1','column3':'value2'}]";
+  // var b = a.replace(/'/g, '"');
+  // console.log(b);
+
+  // const selectString = select.join(",")
+  // const fromString = from.join('')
+  // const joinString = join.join('')
+  // const whereString = where.join('')
+  // const andString = and.join('')
+
+  // console.log(`select`, selectString)
+  // console.log(`from`, fromString)
+  // console.log(`join`, joinString)
+  // console.log(`where`, whereString)
+  // console.log('and', andString)
+
+  // select menuName,mealType
+  // from menu
+  // join
+  // where lobster
+  // and dinner
+
+  let queryString
+  if (join.length && and.length) {
+    queryString = `
+select ${select.join(',')}
+from ${from.join('')}
+join ${join.join('')}
+where ${where.join('')}
+and ${and.join('')}
+`
+  } else if (!and.length && join.length) {
+    // select "menuName","mealType"
+    //   from menus
+    //   where menuName,mealType'lobster'
+    //   and dinner
+
+    // select "menuName","mealType"
+    // from "menus"
+    // where "menuName" = 'lobster'
+    // and "mealType"  = 'dinner';
+    // else if (!join.length && and.length){
+    //   queryString =
+    //   `
+    //   select ${select.map(item => `"${item}"`)}
+    //   from ${from.join('')}
+    //   where "${select[0]}" = '${where[0]}'
+    //   and ${select.map((item, index) => {
+    //     if (index !== 0){
+    //       return (`and "${item}" = '${where[index]}`)
+    //     }
+    //   })
+    //   ` + ';'
+    // }
+
+    queryString = `
+select ${select.join(',')}
+from ${from.join('')}
+join ${join.join('')}
+where ${where.join('')}
+`
+  } else if (!and.length && !join.length) {
+    queryString = `
+  select ${select.map(item => `"${item}"`)}
+  from ${from.join('')}
+  where "${select[0]}" = '${where[0]}' 
+  ;`
+  }
+
+  return queryString
 }
+
+// const query = [
+//   {
+//     tableName: 'menus',
+//     menuName: ['lobster']
+//   }
+// ]
+console.log('wow:', [].join(''))
+console.log(translateQuery(query))
