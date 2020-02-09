@@ -59,11 +59,13 @@ export const updateCustomQuery = queryObject => ({
   queryObject
 })
 
+
 // queryObj = {
 //   tableName:...,
 //   columName: ...,
 //   where:...
 // }
+
 
 /**
  * THUNK CREATORS
@@ -141,12 +143,49 @@ export default function(state = initialState, action) {
     case UPDATE_CUSTOM_QUERY:
       return {
         ...state,
-        customQuery: [
-          ...state.customQuery,
-          updateCustomQueryObject(action.queryObject)
-        ]
+        customQuery: updateQueryFunc(state.customQuery, action.queryObject)
+
       }
     default:
       return state
   }
+}
+
+function updateQueryFunc(customQuery, queryObject) {
+  let isUpdated = false
+  let updatedQuery = customQuery.map(element => {
+    let updatedElement = {}
+    if (element.tableName === queryObject.tableName) {
+      updatedElement.tableName = queryObject.tableName
+      for (let key in element) {
+        if (element.hasOwnProperty(key)) {
+          if (key !== 'tableName') {
+            updatedElement[key] = [...element[key]]
+          }
+        }
+      }
+      updatedElement[queryObject.columnName] = [...queryObject.where]
+      isUpdated = true
+    } else {
+      updatedElement.tableName = element.tableName
+      for (let key in element) {
+        if (element.hasOwnProperty(key)) {
+          if (key === 'tableName') {
+            updatedElement[key] = element[key]
+          } else {
+            updatedElement[key] = [...element[key]]
+          }
+        }
+      }
+    }
+    return updatedElement
+  })
+  if (!isUpdated) {
+    let newElement = {
+      tableName: queryObject.tableName,
+      [queryObject.columnName]: [...queryObject.where]
+    }
+    updatedQuery = [...updatedQuery, newElement]
+  }
+  return updatedQuery
 }
