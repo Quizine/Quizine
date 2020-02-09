@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import {Menu} from '@material-ui/core'
+import {getAvgNumberOfGuestsVsWaitersPerOrder} from '../../store/businessAnalyticsReducer'
 
 export default class CustomizedQuerySelect extends Component {
   constructor() {
@@ -18,16 +20,19 @@ export default class CustomizedQuerySelect extends Component {
     return (
       <div>
         {valueOptionsForString.length ? (
-          <select onChange={() => this.handleValueOptionChange(event)}>
-            <option defaultValue>Please Select</option>
-            {valueOptionsForString.map((valueOptionName, idx) => {
-              return (
-                <option key={idx} value={valueOptionName.aliasname}>
-                  {formatValueOptionName(valueOptionName.aliasname)}
-                </option>
-              )
-            })}
-          </select>
+          <div>
+            <h3>WHERE:</h3>
+            <select onChange={() => this.handleValueOptionChange(event)}>
+              <option defaultValue>Please Select</option>
+              {valueOptionsForString.map((valueOptionName, idx) => {
+                return (
+                  <option key={idx} value={valueOptionName.aliasname}>
+                    {formatValueOptionName(valueOptionName.aliasname)}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
         ) : null}
       </div>
     )

@@ -20,6 +20,17 @@ const initialState = {
   customQuery: []
 }
 
+// query = [
+//   {tableName: 'menu',
+//   menuName: [lobster, coke],
+//    foodType: [dinner, lunch]
+//   }
+//   ,
+//   {tableName: waiters,
+//   age: [>, 25]
+//   }
+// ]
+
 /**
  * ACTION CREATORS
  */
@@ -47,6 +58,15 @@ export const updateCustomQuery = queryObject => ({
   type: UPDATE_CUSTOM_QUERY,
   queryObject
 })
+
+
+// queryObj = {
+//   tableName:...,
+//   columName: ...,
+//   where:...
+// }
+
+
 /**
  * THUNK CREATORS
  */
@@ -124,6 +144,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         customQuery: updateQueryFunc(state.customQuery, action.queryObject)
+
       }
     default:
       return state

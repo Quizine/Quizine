@@ -31,6 +31,7 @@ class CustomizedQuerySelect extends Component {
 
   render() {
     console.log('STATE', this.state)
+    console.log('PROPS', this.props)
     const selectedTable = this.props.selectedTable
     const columnNames = this.props.columnNames
     const selectedColumn = this.state.selectedColumn
@@ -38,7 +39,9 @@ class CustomizedQuerySelect extends Component {
     return (
       <div>
         <div>
+          <h3>COLUMN:</h3>
           <select onChange={() => this.handleSelectedColumnChange(event)}>
+            {/* <select> */}
             <option>Please Select</option>
             {columnNames.map((columnName, idx) => {
               return (
