@@ -12,8 +12,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     minHeight: 'fit-content',
+    maxWidth: 150,
     paddingTop: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
+    marginTop: 15
   },
   avatar: {
     width: 75,

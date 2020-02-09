@@ -25,11 +25,11 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.main
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: theme.spacing(1)
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
+    margin: theme.spacing(0, 2, 0)
   }
 }))
 
@@ -37,57 +37,80 @@ const AuthForm = ({name, displayName, handleSubmit, error}) => {
   const classes = useStyles()
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          {displayName}
-        </Typography>
-        <form
-          onSubmit={handleSubmit}
-          name={name}
-          className={classes.form}
-          noValidate
-        >
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
+    <div>
+      <div>
+        <div className="context">
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                {displayName}
+              </Typography>
+              <form
+                onSubmit={handleSubmit}
+                name={name}
+                className={classes.form}
+                noValidate
+              >
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            {displayName}
-          </Button>
-          {error && error.response && <div> {error.response.data} </div>}
-        </form>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  classes={{submit: 'my-class'}}
+                >
+                  {displayName}
+                </Button>
+                {error && error.response && <div> {error.response.data} </div>}
+              </form>
+            </div>
+          </Container>
+        </div>
+
+        <div className="area">
+          <ul className="circles">
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            {/* <img src="https://png-images.ru/wp-content/uploads/2015/10/10/10908/png/wineglass_PNG2912.png" /> */}
+          </ul>
+        </div>
       </div>
-    </Container>
+    </div>
   )
 }
 

@@ -24,7 +24,7 @@ export class CalendarContainer extends Component {
   render() {
     return (
       <div className="calendar-container">
-        <div>
+        <div className="calendar-itself">
           <Calendar
             className="reactCalendar"
             onChange={this.onChange}

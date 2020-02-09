@@ -4,9 +4,26 @@ export class WelcomePage extends Component {
   render() {
     return (
       <div className="welcome-page">
-        <h1>Welcome to Nest Egg</h1>
-        <h2>Where your restaurants become profitable</h2>
-        <img src="https://cdn2.iconfinder.com/data/icons/money-flow-5/512/Money_Egg_-512.png" />
+        <div className="context">
+          <h1>Welcome to Quizine / ArqME</h1>
+          <h2>Where your restaurants become profitable</h2>
+          <h2>BLAH _ BLAH _ BLAH </h2>
+        </div>
+
+        <div className="area">
+          <ul className="circles">
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+          </ul>
+        </div>
       </div>
     )
   }

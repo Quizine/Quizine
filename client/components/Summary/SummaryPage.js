@@ -15,7 +15,7 @@ import TotalRevenue from './TotalRevenueCard'
 import NumberOfWaiters from './NumberOfWaitersCard'
 import RestaurantInfo from './RestaurantInfoCard'
 import YelpRating from './YelpRatingCard'
-import {Grid} from '@material-ui/core'
+import {Grid, Divider} from '@material-ui/core'
 
 class SummaryPage extends Component {
   constructor(props) {
@@ -42,7 +42,7 @@ class SummaryPage extends Component {
 
   render() {
     return (
-      <div>
+      <div className="summary-page-container">
         {this.props.DOWAnalysisTable &&
         this.props.restaurantInfo[0] &&
         this.props.revenueVsTime.oneYear.revenue &&
@@ -68,12 +68,15 @@ class SummaryPage extends Component {
             </Grid>
           </div>
         ) : null}
+        <Divider />
         <div>
           <CalendarContainer />
+          <Divider />
         </div>
         <div className="summary-chart-container">
           <LineGraphRevenue />
           <PeakTimeGraph />
+          <Divider />
         </div>
         <div className="summary-table-container">
           <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
@@ -88,12 +91,19 @@ class SummaryPage extends Component {
  */
 
 const mapStateToProps = state => {
+  const {
+    DOWAnalysisTable,
+    restaurantInfo,
+    revenueVsTime,
+    numberOfWaiters,
+    yelpRating
+  } = state.summary
   return {
-    DOWAnalysisTable: state.summary.DOWAnalysisTable,
-    restaurantInfo: state.summary.restaurantInfo,
-    revenueVsTime: state.summary.revenueVsTime,
-    numberOfWaiters: state.summary.numberOfWaiters,
-    yelpRating: state.summary.yelpRating
+    DOWAnalysisTable,
+    restaurantInfo,
+    revenueVsTime,
+    numberOfWaiters,
+    yelpRating
   }
 }
 
