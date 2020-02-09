@@ -1,19 +1,21 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getTableFields} from '../../store/customizedQueryReducer'
+import {getTableFields, getJoinTables} from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
-import CustomizedQueryJoin from './CustomizedQueryJoin'
 
-export class CustomizedQuery extends Component {
+export class CustomizedQueryJoin extends Component {
   constructor() {
     super()
     this.state = {
-      selectedTable: '',
+      selectedJoinTable: '',
       count: [1]
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleAddClick = this.handleAddClick.bind(this)
     this.handleRemoveClick = this.handleRemoveClick.bind(this)
+  }
+  componentDidMount() {
+    this.props.loadJoinTables(this.props.selectedTable)
   }
 
   handleChange(event) {
@@ -31,20 +33,26 @@ export class CustomizedQuery extends Component {
     this.setState({count: updatedState})
   }
   render() {
-    const selectedTable = this.state.selectedTable
+    const selectedJoinTable = this.state.selectedJoinTable
     const selectedColumns = this.props.tableFields
+    const joinTables = this.props.joinTables
     return (
       <div className="custom-analytics-container">
-        <select onChange={() => this.handleChange(event)}>
-          <option>Please Select</option>
-          <option value="menus">Menu</option>
-          <option value="waiters">Waiters</option>
-          <option value="orders">Orders</option>
-        </select>
+        {joinTables ? (
+          <div>
+            <select onChange={() => this.handleChange(event)}>
+              <option>Please Select</option>
+              {joinTables.map((table, index) => {
+                return (
+                  <option key={index} value={table.foreign_table_name}>
+                    {table.foreign_table_name}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+        ) : null}
         <div>
-          {selectedTable ? (
-            <CustomizedQueryJoin selectedTable={selectedTable} />
-          ) : null}
           {selectedColumns.length ? (
             <div>
               <div>
@@ -52,7 +60,7 @@ export class CustomizedQuery extends Component {
                   return (
                     <div key={index}>
                       <CustomizedQuerySelect
-                        selectedTable={selectedTable}
+                        selectedJoinTable={selectedJoinTable}
                         columnNames={selectedColumns}
                       />
                     </div>
@@ -79,7 +87,8 @@ export class CustomizedQuery extends Component {
 
 const mapStateToProps = state => {
   return {
-    tableFields: state.customizedQuery.tableFields
+    tableFields: state.customizedQuery.tableFields,
+    joinTables: state.customizedQuery.joinTables
   }
 }
 
@@ -87,7 +96,10 @@ const mapDispatchToProps = dispatch => {
   return {
     loadTableFields: tableName => {
       dispatch(getTableFields(tableName))
+    },
+    loadJoinTables: tableName => {
+      dispatch(getJoinTables(tableName))
     }
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQueryJoin)
