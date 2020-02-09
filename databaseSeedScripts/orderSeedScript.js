@@ -296,12 +296,12 @@ const selectRandomServer = function() {
 let randomizeTime = function(mealType) {
   let meanTimeOfDay
   if (mealType === 'lunch') {
-    meanTimeOfDay = 12.5
+    meanTimeOfDay = 13
   } else if (mealType === 'dinner') {
     meanTimeOfDay = 19
   }
 
-  let variance = 1
+  let variance = 1.2
   let time = meanTimeOfDay + variance * normalDistributionFunc()
   let openingTime = 11
   let closingTime = 22
@@ -372,25 +372,44 @@ let randomizeSinglePersonPurchase = function(orderHour) {
 }
 
 const generatePurchase = function() {
+  let purchaseData = {}
+
+  let earliestDate = new Date(2018, 0, 1)
+  let latestDate = new Date(2020, 11, 1)
+
+  let dateOfPurchase = new Date(
+    +earliestDate + Math.random() * (latestDate - earliestDate)
+  )
+
+  while (
+    [0, 6].indexOf(dateOfPurchase.getDay()) === -1 &&
+    Math.random() < 0.4
+  ) {
+    dateOfPurchase = new Date(
+      +earliestDate + Math.random() * (latestDate - earliestDate)
+    )
+  }
+
+  dateOfPurchase = new Date(dateOfPurchase.toDateString())
+
+  let dayOfWeekOfOrder = dateOfPurchase.getDay()
+
   let meal
   let mealRandomNumber = Math.random()
-  if (mealRandomNumber < 0.4) {
+  let lunchProportion
+  if (dayOfWeekOfOrder === 0 || dayOfWeekOfOrder === 6) {
+    lunchProportion = 0.42
+  } else {
+    lunchProportion = 0.26
+  }
+
+  if (mealRandomNumber < lunchProportion) {
     meal = 'lunch'
   } else {
     meal = 'dinner'
   }
 
   let hour = randomizeTime(meal)
-
-  let purchaseData = {}
-
-  let earliestDate = new Date(2018, 0, 1)
-  let latestDate = new Date(2020, 1, 20)
-
-  let dateOfPurchase = new Date(
-    +earliestDate + Math.random() * (latestDate - earliestDate)
-  )
-  dateOfPurchase = new Date(dateOfPurchase.toDateString())
 
   dateOfPurchase.setHours(hour)
   dateOfPurchase.setMinutes((hour % 1) * 60)

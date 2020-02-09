@@ -30,6 +30,7 @@ class CustomizedQuerySelect extends Component {
   }
 
   render() {
+    console.log('STATE', this.state)
     const selectedTable = this.props.selectedTable
     const columnNames = this.props.columnNames
     const selectedColumn = this.state.selectedColumn
@@ -90,3 +91,36 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQuerySelect
 )
+
+// render() {
+//   const selectedTable = this.props.selectedTable
+//   const columnNames = this.props.columnNames
+//   const selectedColumn = this.state.selectedColumn
+//   const valueOptionsForString = this.props.valueOptionsForString
+//   return (
+//     <div>
+//       <div>
+//         <select onChange={() => this.handleSelectedColumnChange(event)}>
+//           <option>Please Select</option>
+//           {columnNames.map((columnName, idx) => {
+//             return (
+//               <option key={idx} value={columnName.column_name}>
+//                 {formatColumnName(columnName.column_name)}
+//               </option>
+//             )
+//           })}
+//         </select>
+//       </div>
+//       {selectedColumn ? (
+//         <div>
+//           <CustomizedQueryWhere
+//             selectedTable={selectedTable}
+//             selectedColumn={selectedColumn}
+//             valueOptionsForString={valueOptionsForString}
+//           />
+//         </div>
+//       ) : null}
+//     </div>
+//   )
+// }
+// }
