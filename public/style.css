@@ -58,6 +58,7 @@ form div {
 
 .sidebar-nav-cont {
   position: fixed;
+  max-width: 150px;
 }
 
 .rev-time-div {
