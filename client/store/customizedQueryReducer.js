@@ -6,6 +6,7 @@ import axios from 'axios'
 const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
+const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
 
 /**
  * INITIAL STATE
@@ -13,7 +14,8 @@ const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 const initialState = {
   tableFields: [],
   dataType: '',
-  valueOptionsForString: []
+  valueOptionsForString: [],
+  joinTables: []
 }
 
 /**
@@ -32,6 +34,11 @@ const gotDataType = dataType => ({
 const gotValueOptionsForString = valueOptionsForString => ({
   type: GET_VALUE_OPTIONS_FOR_STRING,
   valueOptionsForString
+})
+
+const gotJoinTables = joinTables => ({
+  type: GET_JOIN_TABLES,
+  joinTables
 })
 
 /**
@@ -71,6 +78,17 @@ export const getValueOptionsForString = (
   }
 }
 
+export const getJoinTables = tableName => async dispatch => {
+  try {
+    const res = await axios.get(
+      `/api/customizedQuery/${tableName}/foreignTableNames`
+    )
+    dispatch(gotJoinTables(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -90,6 +108,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         valueOptionsForString: action.valueOptionsForString
+      }
+    case GET_JOIN_TABLES:
+      return {
+        ...state,
+        joinTables: action.joinTables
       }
     default:
       return state

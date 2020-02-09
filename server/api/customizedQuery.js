@@ -36,6 +36,58 @@ router.get('/:tableName', async (req, res, next) => {
   }
 })
 
+router.get('/:tableName/foreignTableNames', async (req, res, next) => {
+  try {
+    const foreignTableNamesFromFK = await client.query(`
+    SELECT
+    tc.table_schema,
+    tc.constraint_name,
+    tc.table_name,
+    kcu.column_name,
+    ccu.table_schema AS foreign_table_schema,
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name
+    FROM information_schema.table_constraints AS tc
+    JOIN information_schema.key_column_usage AS kcu
+    ON tc.constraint_name = kcu.constraint_name
+    AND tc.table_schema = kcu.table_schema
+    JOIN information_schema.constraint_column_usage AS ccu
+    ON ccu.constraint_name = tc.constraint_name
+    AND ccu.table_schema = tc.table_schema
+    WHERE tc.constraint_type = 'FOREIGN KEY'
+    AND tc.table_name='${req.params.tableName}'
+    AND ccu.table_name <> 'restaurants';`)
+    if (req.params.tableName === 'orders' || req.params.tableName === 'menus') {
+      const foreignTableNameFromMenuOrders = await client.query(`
+      SELECT
+      tc.table_schema,
+      tc.constraint_name,
+      tc.table_name,
+      kcu.column_name,
+      ccu.table_schema AS foreign_table_schema,
+      ccu.table_name AS foreign_table_name,
+      ccu.column_name AS foreign_column_name
+      FROM information_schema.table_constraints AS tc
+      JOIN information_schema.key_column_usage AS kcu
+      ON tc.constraint_name = kcu.constraint_name
+      AND tc.table_schema = kcu.table_schema
+      JOIN information_schema.constraint_column_usage AS ccu
+      ON ccu.constraint_name = tc.constraint_name
+      AND ccu.table_schema = tc.table_schema
+      WHERE tc.constraint_type = 'FOREIGN KEY'
+      AND tc.table_name='menuOrders'
+      AND ccu.table_name <> '${req.params.tableName}';`)
+      res.json(
+        foreignTableNamesFromFK.rows.concat(foreignTableNameFromMenuOrders.rows)
+      )
+    } else {
+      res.json(foreignTableNamesFromFK.rows)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.get('/:tableName/:columnName', async (req, res, next) => {
   try {
     const datatypeQuery = await client.query(`
@@ -87,3 +139,10 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
     next(error)
   }
 })
+
+// orders ----> need foreign key "waiters" also need to exclude 'restaraurants'
+// orders ----> need "menuOrders" table -------> foreign keys (orderId nad menuId)
+
+//menus ----> menuOrders table ----> foreign keys (orderId and menuId)
+
+//waiters
