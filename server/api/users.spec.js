@@ -21,12 +21,6 @@ before(function(done) {
 
 describe('GET businessAnalytics', function(done) {
   it('should return a 200 response if the user is logged in', function(done) {
-    authenticatedUser
-      .get('/businessAnalytics')
-      .expect(200, done)
-      .end(function(err, response) {
-        expect(response.statusCode).to.equal(200)
-        done(err)
-      })
+    authenticatedUser.get('/businessAnalytics').expect(200, done)
   })
 })
