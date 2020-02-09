@@ -159,7 +159,11 @@ function updateQueryFunc(customQuery, queryObject) {
         for (let key in element) {
           if (element.hasOwnProperty(key)) {
             if (key !== 'tableName') {
-              updatedElement[key] = [...element[key]]
+              if (Array.isArray(element[key])) {
+                updatedElement[key] = [...element[key]]
+              } else {
+                updatedElement[key] = element[key]
+              }
             }
           }
         }
@@ -171,9 +175,11 @@ function updateQueryFunc(customQuery, queryObject) {
           if (element.hasOwnProperty(key)) {
             if (key === 'tableName') {
               updatedElement[key] = element[key]
-            } else {
-              updatedElement[key] = [...element[key]]
-            }
+            } else if (Array.isArray(element[key])) {
+                updatedElement[key] = [...element[key]]
+              } else {
+                updatedElement[key] = element[key]
+              }
           }
         }
       }
@@ -181,8 +187,10 @@ function updateQueryFunc(customQuery, queryObject) {
     })
     if (!isUpdated) {
       let newElement = {
-        tableName: queryObject.tableName,
-        [queryObject.columnName]: [...queryObject.where]
+        tableName: queryObject.tableName
+      }
+      if (queryObject.where) {
+        newElement[queryObject.columnName] = [...queryObject.where]
       }
       updatedQuery = [...updatedQuery, newElement]
     }
