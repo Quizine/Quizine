@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 /* eslint-disable complexity */
 const router = require('express').Router()
 const pg = require('pg')
@@ -183,15 +184,6 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 // from menus
 // where "menuName" = 'lobster'
 // and "mealType" = 'dinner';
-const query = [
-  {
-    menus: [
-      {mealType: ['dinner']},
-      {menuName: ['lobster']},
-      {mealType: ['dinner']}
-    ]
-  }
-]
 
 const internalObj = {
   type: 'select',
@@ -201,63 +193,87 @@ const internalObj = {
   condition: {menuName: 'lobster', mealType: 'dinner'}
 }
 
+// {menuName: ['lobster',b,c,d,e], foodType: [a,b,c]} object.keys.length
+
+const query = [
+  {
+    menus: [{mealType: ['dinner', 'lunch']}, {menuName: ['lobster']}],
+    orders: []
+  },
+  {}
+]
+
 //CUSTOM QUERYING HELPER FUNCTIONS
-function translateQuery(queryArr) {
-  const baseSelect = []
-  const select = []
-  const from = [] //WILL ONLY HAVE ONE ITEM IN IT
-  const join = []
-  const where = [] //WILL ONLY HAVE ONE ITEM IN IT
-  const and = []
-  queryArr.forEach(queryObj => {
-    for (const table in queryObj) {
-      if (queryObj.hasOwnProperty(table)) {
-        if (from.length < 1) from.push(table)
-        else join.push(table)
-        const columnNameAndSelectValues = queryObj[table]
-        columnNameAndSelectValues.forEach((item, index) => {
-          for (const column in item) {
-            if (item.hasOwnProperty(column)) {
-              if (index === 0) baseSelect.push(column)
-              else select.push(column)
-              const whereItemArr = item[column]
-              whereItemArr.forEach(whereItem => {
-                if (where.length < 1) where.push(whereItem)
-                else and.push(whereItem)
-              })
-            }
-          }
-        })
+function translateQuery(customQueryArr) {
+  const translatedQuery = {}
+  const type = 'select'
+  let baseTable = ''
+  const columns = []
+  const joinTables = [] //each table needs to be an object
+  const conditions = {} //each condition will be key value pairs
+  customQueryArr.forEach((tableObj, idx) => {
+    const currentTableName = Object.keys(tableObj)[0] //getting tableName
+    if (idx === 0) {
+      baseTable = currentTableName
+    } else {
+      joinTables.push(currentTableName)
+    }
+    tableObj[currentTableName].forEach(columnObj => {
+      const currentColumnName = Object.keys(columnObj)[0]
+      columns.push(currentColumnName)
+      conditions[currentColumnName] = []
+      columnObj[currentColumnName].forEach(condition => {
+        conditions[currentColumnName].push(condition)
+      })
+    })
+  })
+  const transformedJoinTables = {}
+  if (joinTables.length) {
+    joinTables.forEach((tableName, idx) => {
+      if (idx === 0) {
+        transformedJoinTables[tableName] = {
+          on: {[`${tableName}.id`]: `${baseTable}.${tableName}Id`}
+        }
+      } else {
+        transformedJoinTables[tableName] = {
+          on: {[`${tableName}.id`]: `${joinTables[idx - 1]}.${tableName}Id`}
+        }
+      }
+    })
+  }
+  let transformedConditions = {}
+  if (Object.keys(conditions).length > 1) {
+    transformedConditions.$and = []
+    for (let columnName in conditions) {
+      if (conditions.hasOwnProperty(columnName)) {
+        const orCondition = []
+        if (conditions[columnName].length > 1) {
+          conditions[columnName].forEach(condition => {
+            orCondition.push({columnName: condition})
+          })
+          transformedConditions.$and.push({$or: orCondition})
+        } else {
+          transformedConditions.$and.push({
+            [columnName]: conditions[columnName]
+          })
+        }
       }
     }
-  })
-
-  //HACK FOR "AND":
-  // eslint-disable-next-line no-extend-native
-  Array.prototype.customMap = function(cb) {
-    const newArr = []
-    for (let i = 1; i < this.length; i++) {
-      newArr.push(cb(this[i], i, this))
+  } else {
+    const columnName = Object.keys(conditions)[0]
+    if (conditions[columnName].length > 1) {
+      transformedConditions.$or = []
+      conditions[columnName].forEach(condition => {
+        transformedConditions.$or.push({[columnName]: condition})
+      })
+    } else {
+      transformedConditions = conditions
     }
-    return newArr
   }
-
-  let queryString
-  if (join.length && and.length) {
-    queryString = ``
-  } else if (!and.length && join.length) {
-    queryString = ``
-  } else if (!join.length && and.length && select.length) {
-    queryString = `
-      SELECT ${baseSelect.join('')}, ${select.map(item => `"${item}"`)}
-      FROM ${from.join('')}
-      WHERE "${baseSelect.join('')}" = '${where[0]}'
-      AND ${select.join(`and ${and.map(item => item)}`)}
-      ;`
-  } else if (!and.length && !join.length) {
-    queryString = `select ${select.map(item => `"${item}"`)}from ${from.join(
-      ''
-    )} where "${select[0]}" = '${where[0]}';`
-  }
-  return queryString
+  translatedQuery.type = type
+  translatedQuery.fields = columns
+  translatedQuery.table = baseTable
+  translatedQuery.join = transformedJoinTables //one more transformation
+  translatedQuery.condition = transformedConditions //one more transformation
+  return translateQuery
 }
