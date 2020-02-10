@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
   getTableFields,
-  updateCustomQuery,
+  addTable,
   getTableNames
 } from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
@@ -31,9 +31,7 @@ export class CustomizedQueryTable extends Component {
       selectedTable: event.target.value
     })
 
-    this.props.updateCustomQuery({
-      tableName: event.target.value
-    })
+    this.props.updateCustomQuery(event.target.value)
   }
 
   handleAddClick() {
@@ -71,7 +69,9 @@ export class CustomizedQueryTable extends Component {
           {customQuery && customQuery.length ? (
             <div>
               <CustomizedQuerySelect
-                selectedTable={customQuery[customQuery.length - 1].tableName}
+                selectedTable={
+                  Object.keys(customQuery[customQuery.length - 1])[0]
+                }
               />
             </div>
           ) : null}
@@ -103,7 +103,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(getTableFields(tableName))
     },
     updateCustomQuery: queryObject => {
-      dispatch(updateCustomQuery(queryObject))
+      dispatch(addTable(queryObject))
     }
   }
 }

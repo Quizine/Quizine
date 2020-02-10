@@ -17,8 +17,8 @@ const ADD_OPTION = 'ADD_OPTION'
  * INITIAL STATE
  */
 const initialState = {
-  dataType: '',
-  valueOptionsForString: [],
+  // dataType: '',
+  // valueOptionsForString: [],
   joinTables: [],
   metaData: [],
   customQuery: []
@@ -49,14 +49,22 @@ const gotTableFields = (tableName, tableFields) => ({
   tableFields
 })
 
-const gotDataType = dataType => ({
+const gotDataType = (tableName, columnName, dataType) => ({
   type: GET_DATA_TYPE,
+  tableName,
+  columnName,
   dataType
 })
 
-const gotValueOptionsForString = valueOptionsForString => ({
+const gotValueOptionsForString = (
+  tableName,
+  columnName,
+  valueOptionsArray
+) => ({
   type: GET_VALUE_OPTIONS_FOR_STRING,
-  valueOptionsForString
+  tableName,
+  columnName,
+  valueOptionsArray
 })
 
 const gotJoinTables = joinTables => ({
@@ -114,7 +122,7 @@ export const getTableNames = () => async dispatch => {
 export const getTableFields = tableName => async dispatch => {
   try {
     const res = await axios.get(`/api/customizedQuery/${tableName}`)
-    dispatch(gotTableFields(res.data))
+    dispatch(gotTableFields(tableName, res.data))
   } catch (err) {
     console.error(err)
   }
@@ -125,7 +133,7 @@ export const getDataType = (tableName, columnName) => async dispatch => {
     const res = await axios.get(
       `/api/customizedQuery/${tableName}/${columnName}`
     )
-    dispatch(gotDataType(res.data))
+    dispatch(gotDataType(tableName, columnName, res.data))
   } catch (err) {
     console.error(err)
   }
@@ -139,7 +147,7 @@ export const getValueOptionsForString = (
     const res = await axios.get(
       `/api/customizedQuery/${tableName}/${columnName}/string`
     )
-    dispatch(gotValueOptionsForString(res.data))
+    dispatch(gotValueOptionsForString(tableName, columnName, res.data))
   } catch (err) {
     console.error(err)
   }
@@ -168,8 +176,32 @@ export default function(state = initialState, action) {
       }
     case GET_TABLE_FIELDS:
       return {
-        ...state
-        // metaData: [...state.metaData, metaData[action.tableName]: ]
+        ...state,
+        metaData: mapColumnsToMetaData(
+          state.metaData,
+          action.tableName,
+          action.tableFields
+        )
+      }
+    case GET_DATA_TYPE:
+      return {
+        ...state,
+        metaData: mapDataTypeToMetaData(
+          state.metaData,
+          action.tableName,
+          action.columnName,
+          action.dataType
+        )
+      }
+    case GET_VALUE_OPTIONS_FOR_STRING:
+      return {
+        ...state,
+        metaData: mapStringOptionsToMetaData(
+          state.metaData,
+          action.tableName,
+          action.columnName,
+          action.valueOptionsArray
+        )
       }
     case ADD_TABLE:
       return {
@@ -195,143 +227,24 @@ export default function(state = initialState, action) {
           action.option
         )
       }
-    case GET_DATA_TYPE:
-      return {
-        ...state,
-        dataType: action.dataType
-      }
-    case GET_VALUE_OPTIONS_FOR_STRING:
-      return {
-        ...state,
-        valueOptionsForString: action.valueOptionsForString
-      }
+
     case GET_JOIN_TABLES:
       return {
         ...state,
         joinTables: action.joinTables
-      }
-    case UPDATE_CUSTOM_QUERY:
-      return {
-        ...state,
-        customQuery: updateQueryFunc(state.customQuery, action.queryObject)
       }
     default:
       return state
   }
 }
 
-// function updateQueryFunc(customQuery, queryObject) {
-//   let isUpdated = false
-//   let updatedQuery = []
-//   if (customQuery.length) {
-//     updatedQuery = customQuery.map(element => {
-//       let updatedElement = {}
-//       if (element.tableName === queryObject.tableName) {
-//         updatedElement.tableName = queryObject.tableName
-//         for (let key in element) {
-//           if (element.hasOwnProperty(key)) {
-//             if (key !== 'tableName') {
-//               if (Array.isArray(element[key])) {
-//                 updatedElement[key] = [...element[key]]
-//               } else {
-//                 updatedElement[key] = element[key]
-//               }
-//             }
-//           }
-//         }
-//         updatedElement[queryObject.columnName] = [...queryObject.where]
-//         isUpdated = true
-//       } else {
-//         updatedElement.tableName = element.tableName
-//         for (let key in element) {
-//           if (element.hasOwnProperty(key)) {
-//             if (key === 'tableName') {
-//               updatedElement[key] = element[key]
-//             } else if (Array.isArray(element[key])) {
-//               updatedElement[key] = [...element[key]]
-//             } else {
-//               updatedElement[key] = element[key]
-//             }
-//           }
-// function updateQueryFunc(customQuery, queryObject) {
-//   let isUpdated = false
-//   let updatedQuery = []
-//   if (customQuery.length) {
-//     updatedQuery = customQuery.map(element => {
-//       let updatedElement = {}
-//       if (element.tableName === queryObject.tableName) {
-//         updatedElement.tableName = queryObject.tableName
-//         for (let key in element) {
-//           if (element.hasOwnProperty(key)) {
-//             if (key !== 'tableName') {
-//               if (Array.isArray(element[key])) {
-//                 updatedElement[key] = [...element[key]]
-//               } else {
-//                 updatedElement[key] = element[key]
-//               }
-//             }
-//           }
-//         }
-//         updatedElement[queryObject.columnName] = [...queryObject.where]
-//         isUpdated = true
-//       } else {
-//         updatedElement.tableName = element.tableName
-//         for (let key in element) {
-//           if (element.hasOwnProperty(key)) {
-//             if (key === 'tableName') {
-//               updatedElement[key] = element[key]
-//             } else if (Array.isArray(element[key])) {
-//                 updatedElement[key] = [...element[key]]
-//               } else {
-//                 updatedElement[key] = element[key]
-//               }
-//           }
-//         }
-//       }
-//       return updatedElement
-//     })
-//     if (!isUpdated) {
-//       let newElement = {
-//         tableName: queryObject.tableName
-//       }
-//       if (queryObject.where) {
-//         newElement[queryObject.columnName] = [...queryObject.where]
-//       }
-//       updatedQuery = [...updatedQuery, newElement]
-//     }
-//   } else {
-//     updatedQuery = [{tableName: queryObject.tableName, [queryObject.columnName]: [queryObject.where]}]
-//   }
-//   return updatedQuery
-// }
-
-/**
- * REDUCER
- */
-// export default function(state = initialState, action) {
-//   switch (action.type) {
-//     case SELECT_TABLE:
-//       return {
-//         ...state,
-//         customQuery: addTableFunc(state.customQuery, action.tableName)
-//       }
-//     case SELECT_COLUMN:
-//       return {
-//         ...state,
-//         customQuery: addColumnFunc(state.customQuery, action.tableName, action.columnName)
-//       }
-//     case SELECT_OPTION:
-//       return {
-//         ...state,
-//         customQuery: addOptionFunc(state.customQuery, action.tableName, action.columnName, action.option)
-//       }
-//     default:
-//       return state
-//   }
-// }
-
 function addTableFunc(customQuery, tableName) {
-  const updatedQuery = [...customQuery, {[tableName]: []}]
+  let updatedQuery
+  if (customQuery.length) {
+    updatedQuery = [...customQuery, {[tableName]: []}]
+  } else {
+    updatedQuery = [{[tableName]: []}]
+  }
   return updatedQuery
 }
 
@@ -339,11 +252,13 @@ function addColumnFunc(customQuery, tableName, columnName) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
     if (tableName === existingTableName) {
-      const updatedColumnList = [
-        ...table[existingTableName],
-        {[columnName]: []}
-      ]
-      table = updatedColumnList
+      let updatedColumnList
+      if (table[existingTableName].length) {
+        updatedColumnList = [...table[existingTableName], {[columnName]: []}]
+      } else {
+        updatedColumnList = [{[columnName]: []}]
+      }
+      table[existingTableName] = updatedColumnList
     }
     return table
   })
@@ -357,12 +272,17 @@ function addOptionFunc(customQuery, tableName, columnName, option) {
       const updatedColumnList = table[existingTableName].map(column => {
         const existingColumnName = Object.keys(column)[0]
         if (columnName === existingColumnName) {
-          const updatedOptionList = [...column[existingColumnName], option]
-          column = updatedOptionList
+          let updatedOptionList
+          if (column[existingColumnName].length) {
+            updatedOptionList = [...column[existingColumnName], option]
+          } else {
+            updatedOptionList = [option]
+          }
+          column[existingColumnName] = updatedOptionList
         }
         return column
       })
-      table = updatedColumnList
+      table[existingTableName] = updatedColumnList
     }
     return table
   })
@@ -377,12 +297,59 @@ function mapTablesToMetaData(tableNameArray) {
 }
 
 function mapColumnsToMetaData(array, tableName, columnsArray) {
-  let tableObject = array.filter(
-    element => Object.keys(element)[0] === tableName
-  )[0]
   let updatedColumnNames = columnsArray.map(element => {
     const keyName = element.column_name
-    return {[keyName]: []}
+    return {[keyName]: {dataType: '', options: []}}
   })
-  return [...tableObject[tableName], ...updatedColumnNames]
+  let metaData = array.map(element => {
+    if (Object.keys(element)[0] === tableName) {
+      element[tableName] = updatedColumnNames
+    }
+    return element
+  })
+
+  return metaData
+}
+
+function mapDataTypeToMetaData(array, tableName, columnName, dataType) {
+  let metaData = array.map(element => {
+    if (Object.keys(element)[0] === tableName) {
+      element[tableName].map(columnElement => {
+        if (Object.keys(columnElement)[0] === columnName) {
+          columnElement[columnName].dataType = dataType
+        }
+        return columnElement
+      })
+    }
+    return element
+  })
+  return metaData
+}
+
+function mapStringOptionsToMetaData(
+  array,
+  tableName,
+  columnName,
+  valueOptionsArray
+) {
+  let updatedValueOptions = valueOptionsArray.map(element => {
+    return element.aliasname
+  })
+  let metaData = array.map(element => {
+    if (Object.keys(element)[0] === tableName) {
+      element[tableName].map(columnElement => {
+        if (Object.keys(columnElement)[0] === columnName) {
+          if (
+            columnElement[columnName].dataType !== 'timestamp with time zone' ||
+            columnElement[columnName].dataType !== 'integer'
+          ) {
+            columnElement[columnName].options = updatedValueOptions
+          }
+        }
+        return columnElement
+      })
+    }
+    return element
+  })
+  return metaData
 }
