@@ -3,6 +3,7 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
+const GET_TABLE_NAMES = 'GET_TABLE_NAMES'
 const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
@@ -16,10 +17,10 @@ const ADD_OPTION = 'ADD_OPTION'
  * INITIAL STATE
  */
 const initialState = {
-  tableFields: [],
-  dataType: '',
-  valueOptionsForString: [],
+  // dataType: '',
+  // valueOptionsForString: [],
   joinTables: [],
+  metaData: [],
   customQuery: []
 }
 
@@ -37,19 +38,33 @@ const initialState = {
 /**
  * ACTION CREATORS
  */
-const gotTableFields = tableFields => ({
+const gotTableNames = tableNames => ({
+  type: GET_TABLE_NAMES,
+  tableNames
+})
+
+const gotTableFields = (tableName, tableFields) => ({
   type: GET_TABLE_FIELDS,
+  tableName,
   tableFields
 })
 
-const gotDataType = dataType => ({
+const gotDataType = (tableName, columnName, dataType) => ({
   type: GET_DATA_TYPE,
+  tableName,
+  columnName,
   dataType
 })
 
-const gotValueOptionsForString = valueOptionsForString => ({
+const gotValueOptionsForString = (
+  tableName,
+  columnName,
+  valueOptionsArray
+) => ({
   type: GET_VALUE_OPTIONS_FOR_STRING,
-  valueOptionsForString
+  tableName,
+  columnName,
+  valueOptionsArray
 })
 
 const gotJoinTables = joinTables => ({
@@ -95,10 +110,19 @@ export const updateCustomQuery = queryObject => ({
 /**
  * THUNK CREATORS
  */
+export const getTableNames = () => async dispatch => {
+  try {
+    const res = await axios.get(`/api/customizedQuery`)
+    dispatch(gotTableNames(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const getTableFields = tableName => async dispatch => {
   try {
     const res = await axios.get(`/api/customizedQuery/${tableName}`)
-    dispatch(gotTableFields(res.data))
+    dispatch(gotTableFields(tableName, res.data))
   } catch (err) {
     console.error(err)
   }
@@ -109,7 +133,7 @@ export const getDataType = (tableName, columnName) => async dispatch => {
     const res = await axios.get(
       `/api/customizedQuery/${tableName}/${columnName}`
     )
-    dispatch(gotDataType(res.data))
+    dispatch(gotDataType(tableName, columnName, res.data))
   } catch (err) {
     console.error(err)
   }
@@ -123,7 +147,7 @@ export const getValueOptionsForString = (
     const res = await axios.get(
       `/api/customizedQuery/${tableName}/${columnName}/string`
     )
-    dispatch(gotValueOptionsForString(res.data))
+    dispatch(gotValueOptionsForString(tableName, columnName, res.data))
   } catch (err) {
     console.error(err)
   }
@@ -145,6 +169,40 @@ export const getJoinTables = tableName => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_TABLE_NAMES:
+      return {
+        ...state,
+        metaData: [...state.metaData, ...mapTablesToMetaData(action.tableNames)]
+      }
+    case GET_TABLE_FIELDS:
+      return {
+        ...state,
+        metaData: mapColumnsToMetaData(
+          state.metaData,
+          action.tableName,
+          action.tableFields
+        )
+      }
+    case GET_DATA_TYPE:
+      return {
+        ...state,
+        metaData: mapDataTypeToMetaData(
+          state.metaData,
+          action.tableName,
+          action.columnName,
+          action.dataType
+        )
+      }
+    case GET_VALUE_OPTIONS_FOR_STRING:
+      return {
+        ...state,
+        metaData: mapStringOptionsToMetaData(
+          state.metaData,
+          action.tableName,
+          action.columnName,
+          action.valueOptionsArray
+        )
+      }
     case ADD_TABLE:
       return {
         ...state,
@@ -169,21 +227,7 @@ export default function(state = initialState, action) {
           action.option
         )
       }
-    case GET_TABLE_FIELDS:
-      return {
-        ...state,
-        tableFields: action.tableFields
-      }
-    case GET_DATA_TYPE:
-      return {
-        ...state,
-        dataType: action.dataType
-      }
-    case GET_VALUE_OPTIONS_FOR_STRING:
-      return {
-        ...state,
-        valueOptionsForString: action.valueOptionsForString
-      }
+
     case GET_JOIN_TABLES:
       return {
         ...state,
@@ -243,4 +287,69 @@ function addOptionFunc(customQuery, tableName, columnName, option) {
     return table
   })
   return updatedQuery
+}
+
+function mapTablesToMetaData(tableNameArray) {
+  return tableNameArray.map(element => {
+    const keyName = element.table_name
+    return {[keyName]: []}
+  })
+}
+
+function mapColumnsToMetaData(array, tableName, columnsArray) {
+  let updatedColumnNames = columnsArray.map(element => {
+    const keyName = element.column_name
+    return {[keyName]: {dataType: '', options: []}}
+  })
+  let metaData = array.map(element => {
+    if (Object.keys(element)[0] === tableName) {
+      element[tableName] = updatedColumnNames
+    }
+    return element
+  })
+
+  return metaData
+}
+
+function mapDataTypeToMetaData(array, tableName, columnName, dataType) {
+  let metaData = array.map(element => {
+    if (Object.keys(element)[0] === tableName) {
+      element[tableName].map(columnElement => {
+        if (Object.keys(columnElement)[0] === columnName) {
+          columnElement[columnName].dataType = dataType
+        }
+        return columnElement
+      })
+    }
+    return element
+  })
+  return metaData
+}
+
+function mapStringOptionsToMetaData(
+  array,
+  tableName,
+  columnName,
+  valueOptionsArray
+) {
+  let updatedValueOptions = valueOptionsArray.map(element => {
+    return element.aliasname
+  })
+  let metaData = array.map(element => {
+    if (Object.keys(element)[0] === tableName) {
+      element[tableName].map(columnElement => {
+        if (Object.keys(columnElement)[0] === columnName) {
+          if (
+            columnElement[columnName].dataType !== 'timestamp with time zone' ||
+            columnElement[columnName].dataType !== 'integer'
+          ) {
+            columnElement[columnName].options = updatedValueOptions
+          }
+        }
+        return columnElement
+      })
+    }
+    return element
+  })
+  return metaData
 }
