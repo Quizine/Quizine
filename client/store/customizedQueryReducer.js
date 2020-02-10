@@ -8,6 +8,9 @@ const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
 const UPDATE_CUSTOM_QUERY = 'UPDATE_CUSTOM_QUERY'
+const ADD_TABLE = 'ADD_TABLE'
+const ADD_COLUMN = 'ADD_COLUMN'
+const ADD_OPTION = 'ADD_OPTION'
 
 /**
  * INITIAL STATE
@@ -53,6 +56,30 @@ const gotJoinTables = joinTables => ({
   type: GET_JOIN_TABLES,
   joinTables
 })
+
+export const addTable = tableName => {
+  return {
+    type: ADD_TABLE,
+    tableName
+  }
+}
+
+export const addColumn = (tableName, columnName) => {
+  return {
+    type: ADD_COLUMN,
+    tableName,
+    columnName
+  }
+}
+
+export const addOption = (tableName, columnName, option) => {
+  return {
+    type: ADD_OPTION,
+    tableName,
+    columnName,
+    option
+  }
+}
 
 export const updateCustomQuery = queryObject => ({
   type: UPDATE_CUSTOM_QUERY,
@@ -118,6 +145,30 @@ export const getJoinTables = tableName => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case ADD_TABLE:
+      return {
+        ...state,
+        customQuery: addTableFunc(state.customQuery, action.tableName)
+      }
+    case ADD_COLUMN:
+      return {
+        ...state,
+        customQuery: addColumnFunc(
+          state.customQuery,
+          action.tableName,
+          action.columnName
+        )
+      }
+    case ADD_OPTION:
+      return {
+        ...state,
+        customQuery: addOptionFunc(
+          state.customQuery,
+          action.tableName,
+          action.columnName,
+          action.option
+        )
+      }
     case GET_TABLE_FIELDS:
       return {
         ...state,
@@ -148,54 +199,118 @@ export default function(state = initialState, action) {
   }
 }
 
-function updateQueryFunc(customQuery, queryObject) {
-  let isUpdated = false
-  let updatedQuery = []
-  if (customQuery.length) {
-    updatedQuery = customQuery.map(element => {
-      let updatedElement = {}
-      if (element.tableName === queryObject.tableName) {
-        updatedElement.tableName = queryObject.tableName
-        for (let key in element) {
-          if (element.hasOwnProperty(key)) {
-            if (key !== 'tableName') {
-              if (Array.isArray(element[key])) {
-                updatedElement[key] = [...element[key]]
-              } else {
-                updatedElement[key] = element[key]
-              }
-            }
-          }
-        }
-        updatedElement[queryObject.columnName] = [...queryObject.where]
-        isUpdated = true
-      } else {
-        updatedElement.tableName = element.tableName
-        for (let key in element) {
-          if (element.hasOwnProperty(key)) {
-            if (key === 'tableName') {
-              updatedElement[key] = element[key]
-            } else if (Array.isArray(element[key])) {
-                updatedElement[key] = [...element[key]]
-              } else {
-                updatedElement[key] = element[key]
-              }
-          }
-        }
-      }
-      return updatedElement
-    })
-    if (!isUpdated) {
-      let newElement = {
-        tableName: queryObject.tableName
-      }
-      if (queryObject.where) {
-        newElement[queryObject.columnName] = [...queryObject.where]
-      }
-      updatedQuery = [...updatedQuery, newElement]
+// function updateQueryFunc(customQuery, queryObject) {
+//   let isUpdated = false
+//   let updatedQuery = []
+//   if (customQuery.length) {
+//     updatedQuery = customQuery.map(element => {
+//       let updatedElement = {}
+//       if (element.tableName === queryObject.tableName) {
+//         updatedElement.tableName = queryObject.tableName
+//         for (let key in element) {
+//           if (element.hasOwnProperty(key)) {
+//             if (key !== 'tableName') {
+//               if (Array.isArray(element[key])) {
+//                 updatedElement[key] = [...element[key]]
+//               } else {
+//                 updatedElement[key] = element[key]
+//               }
+//             }
+//           }
+//         }
+//         updatedElement[queryObject.columnName] = [...queryObject.where]
+//         isUpdated = true
+//       } else {
+//         updatedElement.tableName = element.tableName
+//         for (let key in element) {
+//           if (element.hasOwnProperty(key)) {
+//             if (key === 'tableName') {
+//               updatedElement[key] = element[key]
+//             } else if (Array.isArray(element[key])) {
+//                 updatedElement[key] = [...element[key]]
+//               } else {
+//                 updatedElement[key] = element[key]
+//               }
+//           }
+//         }
+//       }
+//       return updatedElement
+//     })
+//     if (!isUpdated) {
+//       let newElement = {
+//         tableName: queryObject.tableName
+//       }
+//       if (queryObject.where) {
+//         newElement[queryObject.columnName] = [...queryObject.where]
+//       }
+//       updatedQuery = [...updatedQuery, newElement]
+//     }
+//   } else {
+//     updatedQuery = [{tableName: queryObject.tableName, [queryObject.columnName]: [queryObject.where]}]
+//   }
+//   return updatedQuery
+// }
+
+/**
+ * REDUCER
+ */
+// export default function(state = initialState, action) {
+//   switch (action.type) {
+//     case SELECT_TABLE:
+//       return {
+//         ...state,
+//         customQuery: addTableFunc(state.customQuery, action.tableName)
+//       }
+//     case SELECT_COLUMN:
+//       return {
+//         ...state,
+//         customQuery: addColumnFunc(state.customQuery, action.tableName, action.columnName)
+//       }
+//     case SELECT_OPTION:
+//       return {
+//         ...state,
+//         customQuery: addOptionFunc(state.customQuery, action.tableName, action.columnName, action.option)
+//       }
+//     default:
+//       return state
+//   }
+// }
+
+function addTableFunc(customQuery, tableName) {
+  const updatedQuery = [...customQuery, {[tableName]: []}]
+  return updatedQuery
+}
+
+function addColumnFunc(customQuery, tableName, columnName) {
+  const updatedQuery = customQuery.map(table => {
+    const existingTableName = Object.keys(table)[0]
+    if (tableName === existingTableName) {
+      const updatedColumnList = [
+        ...table[existingTableName],
+        {[columnName]: []}
+      ]
+      table = updatedColumnList
     }
-  } else {
-    updatedQuery = [{tableName: queryObject.tableName}]
-  }
+    return table
+  })
+  return updatedQuery
+}
+
+function addOptionFunc(customQuery, tableName, columnName, option) {
+  const updatedQuery = customQuery.map(table => {
+    const existingTableName = Object.keys(table)[0]
+    if (tableName === existingTableName) {
+      const updatedColumnList = table[existingTableName].map(column => {
+        const existingColumnName = Object.keys(column)[0]
+        if (columnName === existingColumnName) {
+          const updatedOptionList = [...column[existingColumnName], option]
+          column = updatedOptionList
+        }
+        return column
+      })
+      table = updatedColumnList
+    }
+    return table
+  })
   return updatedQuery
 }
