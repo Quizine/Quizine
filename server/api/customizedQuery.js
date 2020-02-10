@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 const router = require('express').Router()
 const pg = require('pg')
 const config = 'postgres://yourname:yourpassword@localhost:5432/nestegg'
@@ -5,6 +6,22 @@ const client = new pg.Client(config)
 client.connect()
 
 module.exports = router
+
+//MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
+router.get('/customQuery', async (req, res, next) => {
+  try {
+    const queryV1 = [{tableName: 'menus', menuName: ['lobster']}]
+    const queryV2 = [
+      {tableName: 'menus', menuName: ['lobster'], mealType: ['dinner']}
+    ]
+    const text = translateQuery(queryV2)
+    console.log(`here is the text:`, text)
+    const queryResults = await client.query(text)
+    res.json(queryResults)
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.get('/', async (req, res, next) => {
   try {
@@ -139,10 +156,76 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
     next(error)
   }
 })
-
 // orders ----> need foreign key "waiters" also need to exclude 'restaraurants'
 // orders ----> need "menuOrders" table -------> foreign keys (orderId nad menuId)
-
 //menus ----> menuOrders table ----> foreign keys (orderId and menuId)
 
-//waiters
+// query = [
+// {tableName: 'menu',
+// menuName: [lobster, coke], //this case would be a select all
+//  foodType: [dinner, lunch]
+// }
+//   ,
+//   {tableName: waiters,
+//   age: [>, 25]
+//   }
+// ]
+
+// const query = [{tableName: 'menus', menuName: ['lobster']}] //V1
+// const query = [{tableName: 'menus', menuName: ['lobster'], mealType: ['dinner']}] //V2
+
+//CUSTOM QUERYING HELPER FUNCTIONS
+function translateQuery(queryArr) {
+  const select = []
+  const from = []
+  const join = []
+  const where = []
+  const and = []
+  queryArr.forEach(queryObj => {
+    const tableName = queryObj.tableName
+    if (from.length < 1) from.push(tableName)
+    else join.push(tableName)
+    for (let key in queryObj) {
+      if (key !== 'tableName') {
+        select.push(key)
+        queryObj[key].forEach(whereItem => {
+          if (where.length < 1) where.push(whereItem)
+          else and.push(whereItem)
+        })
+      }
+    }
+  })
+
+  //HACK FOR "AND":
+  // eslint-disable-next-line no-extend-native
+  Array.prototype.customMap = function(cb) {
+    const newArr = []
+    for (let i = 1; i < this.length; i++) {
+      newArr.push(cb(this[i], i, this))
+    }
+    return newArr
+  }
+
+  let queryString
+  if (join.length && and.length) {
+    queryString = ``
+  } else if (!and.length && join.length) {
+    queryString = ``
+  } else if (!join.length && and.length) {
+    queryString = `
+      SELECT ${select.map(item => `"${item}"`)}
+      FROM ${from.join('')}
+      WHERE "${select[0]}" = '${where[0]}'
+      AND ${select.customMap((item, index) => {
+        if (index !== 0) {
+          return `"${item}" = '${and[index - 1]}'`
+        }
+      })}
+      ;`
+  } else if (!and.length && !join.length) {
+    queryString = `select ${select.map(item => `"${item}"`)}from ${from.join(
+      ''
+    )} where "${select[0]}" = '${where[0]}';`
+  }
+  return queryString
+}
