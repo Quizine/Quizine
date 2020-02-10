@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const pg = require('pg')
-const config = 'postgres://yourname:yourpassword@localhost:5432/nestegg'
+const config =
+  process.env.DATABASE_URL ||
+  'postgres://yourname:yourpassword@localhost:5432/nestegg'
 const client = new pg.Client(config)
 client.connect()
 
