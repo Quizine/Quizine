@@ -4,19 +4,25 @@ const pg = require('pg')
 const config = 'postgres://yourname:yourpassword@localhost:5432/nestegg'
 const client = new pg.Client(config)
 client.connect()
-
+const jsonSql = require('json-sql')('postgresql')
+jsonSql.configure({
+  valuesPrefix: '$',
+  namedValues: false
+})
 module.exports = router
 
 //MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
 router.get('/customQuery', async (req, res, next) => {
   try {
-    const queryV1 = [{tableName: 'menus', menuName: ['lobster']}]
-    const queryV2 = [
-      {tableName: 'menus', menuName: ['lobster'], mealType: ['dinner']}
-    ]
-    const text = translateQuery(queryV2)
-    console.log(`here is the text:`, text)
-    const queryResults = await client.query(text)
+    const sql = jsonSql.build({
+      type: 'select',
+      fields: ['menuName', 'mealType'],
+      table: 'menus',
+      join: [],
+      condition: {menuName: 'lobster', mealType: 'dinner'}
+    })
+
+    const queryResults = await client.query(sql.query, sql.getValuesArray())
     res.json(queryResults)
   } catch (error) {
     next(error)
@@ -171,26 +177,56 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 //   }
 // ]
 
-// const query = [{tableName: 'menus', menuName: ['lobster']}] //V1
-// const query = [{tableName: 'menus', menuName: ['lobster'], mealType: ['dinner']}] //V2
+// {'foodType': []} means select * foodTypes
+
+// select "menuName", "mealType"
+// from menus
+// where "menuName" = 'lobster'
+// and "mealType" = 'dinner';
+const query = [
+  {
+    menus: [
+      {mealType: ['dinner']},
+      {menuName: ['lobster']},
+      {mealType: ['dinner']}
+    ]
+  }
+]
+
+const internalObj = {
+  type: 'select',
+  fields: ['menuName', 'mealType'],
+  table: 'menus',
+  join: [],
+  condition: {menuName: 'lobster', mealType: 'dinner'}
+}
 
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(queryArr) {
+  const baseSelect = []
   const select = []
-  const from = []
+  const from = [] //WILL ONLY HAVE ONE ITEM IN IT
   const join = []
-  const where = []
+  const where = [] //WILL ONLY HAVE ONE ITEM IN IT
   const and = []
   queryArr.forEach(queryObj => {
-    const tableName = queryObj.tableName
-    if (from.length < 1) from.push(tableName)
-    else join.push(tableName)
-    for (let key in queryObj) {
-      if (key !== 'tableName') {
-        select.push(key)
-        queryObj[key].forEach(whereItem => {
-          if (where.length < 1) where.push(whereItem)
-          else and.push(whereItem)
+    for (const table in queryObj) {
+      if (queryObj.hasOwnProperty(table)) {
+        if (from.length < 1) from.push(table)
+        else join.push(table)
+        const columnNameAndSelectValues = queryObj[table]
+        columnNameAndSelectValues.forEach((item, index) => {
+          for (const column in item) {
+            if (item.hasOwnProperty(column)) {
+              if (index === 0) baseSelect.push(column)
+              else select.push(column)
+              const whereItemArr = item[column]
+              whereItemArr.forEach(whereItem => {
+                if (where.length < 1) where.push(whereItem)
+                else and.push(whereItem)
+              })
+            }
+          }
         })
       }
     }
@@ -211,16 +247,12 @@ function translateQuery(queryArr) {
     queryString = ``
   } else if (!and.length && join.length) {
     queryString = ``
-  } else if (!join.length && and.length) {
+  } else if (!join.length && and.length && select.length) {
     queryString = `
-      SELECT ${select.map(item => `"${item}"`)}
+      SELECT ${baseSelect.join('')}, ${select.map(item => `"${item}"`)}
       FROM ${from.join('')}
-      WHERE "${select[0]}" = '${where[0]}'
-      AND ${select.customMap((item, index) => {
-        if (index !== 0) {
-          return `"${item}" = '${and[index - 1]}'`
-        }
-      })}
+      WHERE "${baseSelect.join('')}" = '${where[0]}'
+      AND ${select.join(`and ${and.map(item => item)}`)}
       ;`
   } else if (!and.length && !join.length) {
     queryString = `select ${select.map(item => `"${item}"`)}from ${from.join(
