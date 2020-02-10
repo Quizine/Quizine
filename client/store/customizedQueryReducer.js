@@ -189,95 +189,18 @@ export default function(state = initialState, action) {
         ...state,
         joinTables: action.joinTables
       }
-    case UPDATE_CUSTOM_QUERY:
-      return {
-        ...state,
-        customQuery: updateQueryFunc(state.customQuery, action.queryObject)
-      }
     default:
       return state
   }
 }
 
-// function updateQueryFunc(customQuery, queryObject) {
-//   let isUpdated = false
-//   let updatedQuery = []
-//   if (customQuery.length) {
-//     updatedQuery = customQuery.map(element => {
-//       let updatedElement = {}
-//       if (element.tableName === queryObject.tableName) {
-//         updatedElement.tableName = queryObject.tableName
-//         for (let key in element) {
-//           if (element.hasOwnProperty(key)) {
-//             if (key !== 'tableName') {
-//               if (Array.isArray(element[key])) {
-//                 updatedElement[key] = [...element[key]]
-//               } else {
-//                 updatedElement[key] = element[key]
-//               }
-//             }
-//           }
-//         }
-//         updatedElement[queryObject.columnName] = [...queryObject.where]
-//         isUpdated = true
-//       } else {
-//         updatedElement.tableName = element.tableName
-//         for (let key in element) {
-//           if (element.hasOwnProperty(key)) {
-//             if (key === 'tableName') {
-//               updatedElement[key] = element[key]
-//             } else if (Array.isArray(element[key])) {
-//                 updatedElement[key] = [...element[key]]
-//               } else {
-//                 updatedElement[key] = element[key]
-//               }
-//           }
-//         }
-//       }
-//       return updatedElement
-//     })
-//     if (!isUpdated) {
-//       let newElement = {
-//         tableName: queryObject.tableName
-//       }
-//       if (queryObject.where) {
-//         newElement[queryObject.columnName] = [...queryObject.where]
-//       }
-//       updatedQuery = [...updatedQuery, newElement]
-//     }
-//   } else {
-//     updatedQuery = [{tableName: queryObject.tableName, [queryObject.columnName]: [queryObject.where]}]
-//   }
-//   return updatedQuery
-// }
-
-/**
- * REDUCER
- */
-// export default function(state = initialState, action) {
-//   switch (action.type) {
-//     case SELECT_TABLE:
-//       return {
-//         ...state,
-//         customQuery: addTableFunc(state.customQuery, action.tableName)
-//       }
-//     case SELECT_COLUMN:
-//       return {
-//         ...state,
-//         customQuery: addColumnFunc(state.customQuery, action.tableName, action.columnName)
-//       }
-//     case SELECT_OPTION:
-//       return {
-//         ...state,
-//         customQuery: addOptionFunc(state.customQuery, action.tableName, action.columnName, action.option)
-//       }
-//     default:
-//       return state
-//   }
-// }
-
 function addTableFunc(customQuery, tableName) {
-  const updatedQuery = [...customQuery, {[tableName]: []}]
+  let updatedQuery
+  if (customQuery.length) {
+    updatedQuery = [...customQuery, {[tableName]: []}]
+  } else {
+    updatedQuery = [{[tableName]: []}]
+  }
   return updatedQuery
 }
 
@@ -285,11 +208,13 @@ function addColumnFunc(customQuery, tableName, columnName) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
     if (tableName === existingTableName) {
-      const updatedColumnList = [
-        ...table[existingTableName],
-        {[columnName]: []}
-      ]
-      table = updatedColumnList
+      let updatedColumnList
+      if (table[existingTableName].length) {
+        updatedColumnList = [...table[existingTableName], {[columnName]: []}]
+      } else {
+        updatedColumnList = [{[columnName]: []}]
+      }
+      table[existingTableName] = updatedColumnList
     }
     return table
   })
@@ -303,12 +228,17 @@ function addOptionFunc(customQuery, tableName, columnName, option) {
       const updatedColumnList = table[existingTableName].map(column => {
         const existingColumnName = Object.keys(column)[0]
         if (columnName === existingColumnName) {
-          const updatedOptionList = [...column[existingColumnName], option]
-          column = updatedOptionList
+          let updatedOptionList
+          if (column[existingColumnName].length) {
+            updatedOptionList = [...column[existingColumnName], option]
+          } else {
+            updatedOptionList = [option]
+          }
+          column[existingColumnName] = updatedOptionList
         }
         return column
       })
-      table = updatedColumnList
+      table[existingTableName] = updatedColumnList
     }
     return table
   })
