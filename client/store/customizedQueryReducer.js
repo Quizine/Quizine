@@ -3,6 +3,7 @@ import axios from 'axios'
 /**
  * ACTION TYPES
  */
+const GET_TABLE_NAMES = 'GET_TABLE_NAMES'
 const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
@@ -13,10 +14,10 @@ const UPDATE_CUSTOM_QUERY = 'UPDATE_CUSTOM_QUERY'
  * INITIAL STATE
  */
 const initialState = {
-  tableFields: [],
   dataType: '',
   valueOptionsForString: [],
   joinTables: [],
+  metaData: [],
   customQuery: []
 }
 
@@ -34,6 +35,11 @@ const initialState = {
 /**
  * ACTION CREATORS
  */
+const gotTableNames = tableNames => ({
+  type: GET_TABLE_NAMES,
+  tableNames
+})
+
 const gotTableFields = tableFields => ({
   type: GET_TABLE_FIELDS,
   tableFields
@@ -68,6 +74,15 @@ export const updateCustomQuery = queryObject => ({
 /**
  * THUNK CREATORS
  */
+export const getTableNames = () => async dispatch => {
+  try {
+    const res = await axios.get(`/api/customizedQuery`)
+    dispatch(gotTableNames(res.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const getTableFields = tableName => async dispatch => {
   try {
     const res = await axios.get(`/api/customizedQuery/${tableName}`)
@@ -118,6 +133,11 @@ export const getJoinTables = tableName => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_TABLE_NAMES:
+      return {
+        ...state,
+        metaData: [...state.metaData, ...mapTablesToMetaData(action.tableNames)]
+      }
     case GET_TABLE_FIELDS:
       return {
         ...state,
@@ -198,4 +218,11 @@ function updateQueryFunc(customQuery, queryObject) {
     updatedQuery = [{tableName: queryObject.tableName}]
   }
   return updatedQuery
+}
+
+function mapTablesToMetaData(tableNameArray) {
+  return tableNameArray.map(element => {
+    const keyName = element.table_name
+    return {[keyName]: []}
+  })
 }

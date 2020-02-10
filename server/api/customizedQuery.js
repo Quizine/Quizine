@@ -25,14 +25,17 @@ router.get('/customQuery', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
   try {
-    const {timeInterval, tableName, columnName} = req.query
-    const newQuery = await client.query(
-      `SELECT "${columnName}"
-        FROM ${tableName}
-        WHERE ${tableName}."timeOfPurchase" >= NOW() - interval '1 ${timeInterval}'`
-    )
+    const tableNames = await client.query(`
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_type='BASE TABLE'
+    AND table_schema='public'
+    AND table_name !='Sessions' 
+    AND table_name !='users'
+    AND table_name !='menuOrders'
+    AND table_name !='restaurants';`)
 
-    res.json(newQuery.rows)
+    res.json(tableNames.rows)
   } catch (error) {
     next(error)
   }
