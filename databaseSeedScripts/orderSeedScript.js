@@ -452,7 +452,7 @@ const generatePurchase = function() {
 }
 
 let purchaseList = []
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 100; i++) {
   let potentialPurchase = generatePurchase()
   potentialPurchase.id = i + 1
   potentialPurchase.restaurantId = 1
