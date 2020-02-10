@@ -18,13 +18,16 @@ class CustomizedQuerySelect extends Component {
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
   }
   componentDidMount() {
-    console.log('**********************IN CDM')
     this.props.loadTableFields(this.props.selectedTable)
   }
 
   handleSelectedColumnChange(event) {
     this.setState({selectedColumn: event.target.value})
     this.props.loadDataType(this.props.selectedTable, event.target.value)
+    this.props.loadValueOptionsForString(
+      this.props.selectedTable,
+      event.target.value
+    )
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ADD TO CODE ONCE HELPER FUNCTION IN REDUVER IS FIXED
     // this.props.updateCustomQuery({
@@ -67,7 +70,6 @@ class CustomizedQuerySelect extends Component {
             <CustomizedQueryWhere
               selectedTable={selectedTable}
               selectedColumn={selectedColumn}
-              // valueOptionsForString={valueOptionsForString}
             />
           </div>
         ) : null}
@@ -88,7 +90,6 @@ function formatColumnName(name) {
 const mapStateToProps = state => {
   return {
     metaData: state.customizedQuery.metaData,
-    // dataType: state.customizedQuery.dataType,
     valueOptionsForString: state.customizedQuery.valueOptionsForString,
     tableFields: state.customizedQuery.tableFields,
     customQuery: state.customizedQuery.customQuery

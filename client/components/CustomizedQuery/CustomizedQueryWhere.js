@@ -11,14 +11,6 @@ class CustomizedQueryWhere extends Component {
     this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
   }
 
-  componentDidMount() {
-    console.log('IN CDM!!!!!!!!!!!!!!!!!')
-    this.props.loadValueOptionsForString(
-      this.props.selectedTable,
-      this.props.selectedColumn
-    )
-  }
-
   handleValueOptionChange(event) {
     this.setState({selectedValueOption: event.target.value})
   }
@@ -33,6 +25,7 @@ class CustomizedQueryWhere extends Component {
       selectedColumn,
       metaData
     )
+    console.log('valueOptionsForString', valueOptionsForString)
     return (
       <div>
         {valueOptionsForString.length ? (
@@ -40,13 +33,14 @@ class CustomizedQueryWhere extends Component {
             <h3>WHERE:</h3>
             <select onChange={() => this.handleValueOptionChange(event)}>
               <option defaultValue>Please Select</option>
-              {valueOptionsForString.map((valueOptionName, idx) => {
-                return (
-                  <option key={idx} value={valueOptionName}>
-                    {formatValueOptionName(valueOptionName)}
-                  </option>
-                )
-              })}
+              {valueOptionsForString.length &&
+                valueOptionsForString.map((valueOptionName, idx) => {
+                  return (
+                    <option key={idx} value={valueOptionName}>
+                      {formatValueOptionName(valueOptionName)}
+                    </option>
+                  )
+                })}
             </select>
           </div>
         ) : null}
