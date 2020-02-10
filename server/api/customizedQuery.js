@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 const router = require('express').Router()
 const pg = require('pg')
 const config = 'postgres://yourname:yourpassword@localhost:5432/nestegg'
@@ -5,6 +6,19 @@ const client = new pg.Client(config)
 client.connect()
 
 module.exports = router
+
+//MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
+router.get('/customQuery', async (req, res, next) => {
+  try {
+    const query = [{tableName: 'menus', menuName: ['lobster']}]
+    const text = translateQuery(query)
+    console.log(`here is the text:`, text)
+    const queryResults = await client.query(text)
+    res.json(queryResults)
+  } catch (error) {
+    next(error)
+  }
+})
 
 router.get('/', async (req, res, next) => {
   try {
@@ -141,63 +155,21 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 })
 // orders ----> need foreign key "waiters" also need to exclude 'restaraurants'
 // orders ----> need "menuOrders" table -------> foreign keys (orderId nad menuId)
-
-router.get('/customQuery', async (req, res, next) => {
-  try {
-    const query = [{tableName: 'menus', menuName: ['lobster']}]
-    const text = translateQuery(query)
-    console.log(`here is the text:`, text)
-    const queryResults = await client.query(text)
-    res.json(queryResults)
-  } catch (error) {
-    next(error)
-  }
-})
-
 //menus ----> menuOrders table ----> foreign keys (orderId and menuId)
 
-//waiters
-
 // query = [
-//   {tableName: 'menu',
-//   menuName: [lobster, coke], //this case would be a select all
-//    foodType: [dinner, lunch]
-//   }
+// {tableName: 'menu',
+// menuName: [lobster, coke], //this case would be a select all
+//  foodType: [dinner, lunch]
+// }
 //   ,
 //   {tableName: waiters,
 //   age: [>, 25]
 //   }
 // ]
 
-// const query = [
-//   {tableName: 'menu', menuName: ['lobster'], foodType: ['dinner']},
-//   {tableName: 'orders', total: [500], subtotal: [450]}
-// ]
-
-// select "menuName","mealType"
-// from menus
-// where "menuName" = 'lobster'
-// and "mealType"  = 'dinner';
-
-// const query = [
-//   {tableName: 'menu',
-//   menuName: ['lobster'],
-//    foodType: ['dinner']
-//   }
-// ]
-// select "menuName","mealType"
-// from menus
-// where "menuName" = 'lobster'
-// and "mealType"  = 'dinner';
-
-// const query = [
-//   {tableName: 'menu',
-//   menuName: ['lobster'],
-//    foodType: ['dinner']
-//   }
-// ]
-
-//const query = [{tableName: 'menu', menuName: ['lobster'], foodType: ['dinner']}]
+// const query = [{tableName: 'menus', menuName: ['lobster']}] //V1
+// const query = [{tableName: 'menus', menuName: ['lobster'], foodType: ['dinner']}] //V2
 
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(queryArr) {
@@ -221,64 +193,32 @@ function translateQuery(queryArr) {
     }
   })
 
-  //   selects [ 'menuName', 'foodType' ]
-  // froms [ 'menu' ]
-  // join []
-  // where [ 'lobster', 'dinner' ]
-
-  // var a = "[{'column1':'value0','column2':'value1','column3':'value2'}]";
-  // var b = a.replace(/'/g, '"');
-  // console.log(b);
-
-  // const selectString = select.join(",")
-  // const fromString = from.join('')
-  // const joinString = join.join('')
-  // const whereString = where.join('')
-  // const andString = and.join('')
-
-  // console.log(`select`, selectString)
-  // console.log(`from`, fromString)
-  // console.log(`join`, joinString)
-  // console.log(`where`, whereString)
-  // console.log('and', andString)
-
-  // select menuName,mealType
-  // from menu
-  // join
-  // where lobster
-  // and dinner
+  //HACK FOR "AND":
+  // eslint-disable-next-line no-extend-native
+  Array.prototype.customMap = function(cb) {
+    const newArr = []
+    for (let i = 1; i < this.length; i++) {
+      newArr.push(cb(this[i], i, this))
+    }
+    return newArr
+  }
 
   let queryString
   if (join.length && and.length) {
-    queryString = `
-select ${select.join(',')}
-from ${from.join('')}
-join ${join.join('')}
-where ${where.join('')}
-and ${and.join('')}
-`
+    queryString = ``
   } else if (!and.length && join.length) {
-    // select "menuName","mealType"
-    //   from menus
-    //   where menuName,mealType'lobster'
-    //   and dinner
-    // select "menuName","mealType"
-    // from "menus"
-    // where "menuName" = 'lobster'
-    // and "mealType"  = 'dinner';
-    // else if (!join.length && and.length){
-    //   queryString =
-    //   `
-    //   select ${select.map(item => `"${item}"`)}
-    //   from ${from.join('')}
-    //   where "${select[0]}" = '${where[0]}'
-    //   and ${select.map((item, index) => {
-    //     if (index !== 0){
-    //       return (`and "${item}" = '${where[index]}`)
-    //     }
-    //   })
-    //   ` + ';'
-    // }
+    queryString = ``
+  } else if (!join.length && and.length) {
+    queryString = `
+      SELECT ${select.map(item => `"${item}"`)}
+      FROM ${from.join('')}
+      WHERE "${select[0]}" = '${where[0]}'
+      AND "${select.customMap((item, index) => {
+        if (index !== 0) {
+          return `${item} = '${where[index]}'`
+        }
+      })}"
+      ;`
   } else if (!and.length && !join.length) {
     queryString = `select ${select.map(item => `"${item}"`)}from ${from.join(
       ''
