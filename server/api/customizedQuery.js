@@ -139,9 +139,20 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
     next(error)
   }
 })
-
 // orders ----> need foreign key "waiters" also need to exclude 'restaraurants'
 // orders ----> need "menuOrders" table -------> foreign keys (orderId nad menuId)
+
+router.get('/customQuery', async (req, res, next) => {
+  try {
+    const query = [{tableName: 'menus', menuName: ['lobster']}]
+    const text = translateQuery(query)
+    console.log(`here is the text:`, text)
+    const queryResults = await client.query(text)
+    res.json(queryResults)
+  } catch (error) {
+    next(error)
+  }
+})
 
 //menus ----> menuOrders table ----> foreign keys (orderId and menuId)
 
@@ -168,17 +179,6 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 // where "menuName" = 'lobster'
 // and "mealType"  = 'dinner';
 
-router.get('/customQuery', async (req, res, next) => {
-  try {
-    const test = query
-    const text = translateQuery(test)
-    const queryResults = await client.query(text)
-    res.json(queryResults)
-  } catch (error) {
-    next(error)
-  }
-})
-
 // const query = [
 //   {tableName: 'menu',
 //   menuName: ['lobster'],
@@ -197,7 +197,7 @@ router.get('/customQuery', async (req, res, next) => {
 //   }
 // ]
 
-const query = [{tableName: 'menu', menuName: ['lobster'], foodType: ['dinner']}]
+//const query = [{tableName: 'menu', menuName: ['lobster'], foodType: ['dinner']}]
 
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(queryArr) {
@@ -262,7 +262,6 @@ and ${and.join('')}
     //   from menus
     //   where menuName,mealType'lobster'
     //   and dinner
-
     // select "menuName","mealType"
     // from "menus"
     // where "menuName" = 'lobster'
@@ -280,19 +279,10 @@ and ${and.join('')}
     //   })
     //   ` + ';'
     // }
-
-    queryString = `
-select ${select.join(',')}
-from ${from.join('')}
-join ${join.join('')}
-where ${where.join('')}
-`
   } else if (!and.length && !join.length) {
-    queryString = `
-  select ${select.map(item => `"${item}"`)}
-  from ${from.join('')}
-  where "${select[0]}" = '${where[0]}' 
-  ;`
+    queryString = `select ${select.map(item => `"${item}"`)}from ${from.join(
+      ''
+    )} where "${select[0]}" = '${where[0]}';`
   }
 
   return queryString
@@ -304,5 +294,4 @@ where ${where.join('')}
 //     menuName: ['lobster']
 //   }
 // ]
-console.log('wow:', [].join(''))
-console.log(translateQuery(query))
+// console.log(translateQuery(query))
