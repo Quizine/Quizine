@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getTableFields} from '../../store/customizedQueryReducer'
+import {
+  getTableFields,
+  updateCustomQuery
+} from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
-import {updateCustomQuery} from '../../store/customizedQueryReducer'
 
 export class CustomizedQueryTable extends Component {
   constructor() {
@@ -18,8 +20,14 @@ export class CustomizedQueryTable extends Component {
 
   handleChange(event) {
     this.props.loadTableFields(event.target.value)
-    this.setState({selectedTable: event.target.value})
-    this.props.updateCustomQuery({tableName: event.target.value})
+
+    this.setState({
+      selectedTable: event.target.value
+    })
+
+    this.props.updateCustomQuery({
+      tableName: event.target.value
+    })
   }
 
   handleAddClick() {
@@ -32,8 +40,13 @@ export class CustomizedQueryTable extends Component {
     this.setState({count: updatedState})
   }
   render() {
+    console.log('TABLE PROPS', this.props)
+    console.log('TABLE STATE', this.state)
+    const customQuery = this.props.customQuery
     const selectedTable = this.state.selectedTable
     const selectedColumns = this.props.tableFields
+    // const menus = 'menus'
+    // const waiters = 'waiters'
     return (
       <div className="custom-analytics-container">
         <select onChange={() => this.handleChange(event)}>
@@ -43,35 +56,16 @@ export class CustomizedQueryTable extends Component {
           <option value="orders">Orders</option>
         </select>
         <div>
-          {/* {selectedTable ? (
-            <CustomizedQueryJoin selectedTable={selectedTable} />
-          ) : null} */}
-          {selectedColumns.length ? (
+          {customQuery && customQuery.length ? (
             <div>
-              <div>
-                {this.state.count.map((element, index) => {
-                  return (
-                    <div key={index}>
-                      <CustomizedQuerySelect
-                        selectedTable={selectedTable}
-                        columnNames={selectedColumns}
-                      />
-                    </div>
-                  )
-                })}
-              </div>
-              {this.state.count.length < selectedColumns.length ? (
-                <button type="button" onClick={() => this.handleAddClick()}>
-                  Add
-                </button>
-              ) : null}
-              {this.state.count.length ? (
-                <button type="button" onClick={() => this.handleRemoveClick()}>
-                  Remove
-                </button>
-              ) : null}
+              <CustomizedQuerySelect
+                selectedTable={customQuery[customQuery.length - 1].tableName}
+              />
             </div>
           ) : null}
+          {/* <CustomizedQuerySelect selectedTable={menus} />
+          <CustomizedQuerySelect selectedTable={waiters} />
+          <CustomizedQuerySelect selectedTable={menus} /> */}
         </div>
       </div>
     )
@@ -80,7 +74,8 @@ export class CustomizedQueryTable extends Component {
 
 const mapStateToProps = state => {
   return {
-    tableFields: state.customizedQuery.tableFields
+    tableFields: state.customizedQuery.tableFields,
+    customQuery: state.customizedQuery.customQuery
   }
 }
 

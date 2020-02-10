@@ -176,10 +176,10 @@ function updateQueryFunc(customQuery, queryObject) {
             if (key === 'tableName') {
               updatedElement[key] = element[key]
             } else if (Array.isArray(element[key])) {
-                updatedElement[key] = [...element[key]]
-              } else {
-                updatedElement[key] = element[key]
-              }
+              updatedElement[key] = [...element[key]]
+            } else {
+              updatedElement[key] = element[key]
+            }
           }
         }
       }

@@ -3,7 +3,9 @@ import {connect} from 'react-redux'
 import CustomizedQueryWhere from './CustomizedQueryWhere'
 import {
   getDataType,
-  getValueOptionsForString
+  getValueOptionsForString,
+  getTableFields,
+  updateCustomQuery
 } from '../../store/customizedQueryReducer'
 
 class CustomizedQuerySelect extends Component {
@@ -11,8 +13,13 @@ class CustomizedQuerySelect extends Component {
     super()
     this.state = {
       selectedColumn: ''
+      // columnNamesObject: {}
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
+  }
+  componentDidMount() {
+    console.log('**********************IN CDM')
+    this.props.loadTableFields(this.props.selectedTable)
   }
 
   async handleSelectedColumnChange(event) {
@@ -27,14 +34,19 @@ class CustomizedQuerySelect extends Component {
         event.target.value
       )
     }
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ADD TO CODE ONCE HELPER FUNCTION IN REDUVER IS FIXED
+    // this.props.updateCustomQuery({
+    //   tableName: this.props.selectedTable,
+    //   columnName: event.target.value
+    // })
   }
 
   render() {
     console.log('STATE', this.state)
     console.log('PROPS', this.props)
     const selectedTable = this.props.selectedTable
-    const columnNames = this.props.columnNames
-    const selectedColumn = this.state.selectedColumn
+    const columnNames = this.props.tableFields
+    const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
     const valueOptionsForString = this.props.valueOptionsForString
     return (
       <div>
@@ -78,7 +90,9 @@ function formatColumnName(name) {
 const mapStateToProps = state => {
   return {
     dataType: state.customizedQuery.dataType,
-    valueOptionsForString: state.customizedQuery.valueOptionsForString
+    valueOptionsForString: state.customizedQuery.valueOptionsForString,
+    tableFields: state.customizedQuery.tableFields,
+    customQuery: state.customizedQuery.customQuery
   }
 }
 
@@ -87,7 +101,13 @@ const mapDispatchToProps = dispatch => {
     loadDataType: (tableName, columnName) =>
       dispatch(getDataType(tableName, columnName)),
     loadValueOptionsForString: (tableName, columnName) =>
-      dispatch(getValueOptionsForString(tableName, columnName))
+      dispatch(getValueOptionsForString(tableName, columnName)),
+    loadTableFields: tableName => {
+      dispatch(getTableFields(tableName))
+    },
+    updateCustomQuery: queryObject => {
+      dispatch(updateCustomQuery(queryObject))
+    }
   }
 }
 

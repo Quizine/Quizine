@@ -31,7 +31,7 @@ const Navbar = ({handleClick, isLoggedIn}) => {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Quizine / ARQME
+            Quizine
           </Typography>
           {isLoggedIn ? (
             <div>
