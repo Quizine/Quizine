@@ -104,25 +104,26 @@ export const addOption = (tableName, columnName, option) => {
   }
 }
 
-export const addEmptyTable = () => {
-  return {
-    type: ADD_TABLE
-  }
-}
-
 export const clearCustomQuery = () => ({
   type: CLEAR_CUSTOM_QUERY_SELECTION
 })
+
+export const addEmptyTable = () => {
+  return {
+    type: ADD_EMPTY_TABLE
+  }
+}
+
 export const addEmptyColumn = tableName => {
   return {
-    type: ADD_COLUMN,
+    type: ADD_EMPTY_COLUMN,
     tableName
   }
 }
 
 export const addEmptyOption = (tableName, columnName) => {
   return {
-    type: ADD_OPTION,
+    type: ADD_EMPTY_OPTION,
     tableName,
     columnName
   }
@@ -130,20 +131,20 @@ export const addEmptyOption = (tableName, columnName) => {
 
 export const removeTable = () => {
   return {
-    type: ADD_TABLE
+    type: REMOVE_TABLE
   }
 }
 
 export const removeColumn = tableName => {
   return {
-    type: ADD_COLUMN,
+    type: REMOVE_COLUMN,
     tableName
   }
 }
 
 export const removeOption = (tableName, columnName) => {
   return {
-    type: ADD_OPTION,
+    type: REMOVE_OPTION,
     tableName,
     columnName
   }
