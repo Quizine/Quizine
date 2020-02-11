@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getValueOptionsForString} from '../../store/customizedQueryReducer'
+import IntegersInputField from './IntegersInputField'
+import TimeFrameField from './TimeFrameField'
 
 class CustomizedQueryWhere extends Component {
   constructor() {
@@ -20,11 +22,15 @@ class CustomizedQueryWhere extends Component {
 
     const {selectedTable, selectedColumn, metaData} = this.props
 
-    const valueOptionsForString = optionsMapping(
+    const {valueOptionsForString, dataType} = optionsMapping(
       selectedTable,
       selectedColumn,
       metaData
     )
+    console.log('FUNC', optionsMapping(selectedTable, selectedColumn, metaData))
+
+    const isIntegerField = dataType === 'integer'
+
     console.log('valueOptionsForString', valueOptionsForString)
     return (
       <div>
@@ -43,7 +49,15 @@ class CustomizedQueryWhere extends Component {
                 })}
             </select>
           </div>
-        ) : null}
+        ) : (
+          <div>
+            {isIntegerField ? (
+              <IntegersInputField dataType={dataType} />
+            ) : (
+              <TimeFrameField dataType={dataType} />
+            )}
+          </div>
+        )}
       </div>
     )
   }

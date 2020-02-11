@@ -44,8 +44,8 @@ export class CustomizedQueryTable extends Component {
     this.setState({count: updatedState})
   }
   render() {
-    console.log('TABLE PROPS', this.props)
-    console.log('TABLE STATE', this.state)
+    // console.log('TABLE PROPS', this.props)
+    // console.log('TABLE STATE', this.state)
 
     const tableNames = this.props.tableNames
     const customQuery = this.props.customQuery
