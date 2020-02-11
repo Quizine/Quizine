@@ -20,7 +20,7 @@ router.get('/customQuery', async (req, res, next) => {
     // const anExample = [
     //   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
     // ]
-    const anExample = [
+    const ex0 = [
       {
         orders: [
           {total: {dataType: 'integer', options: ['$lte', 50]}},
@@ -33,8 +33,22 @@ router.get('/customQuery', async (req, res, next) => {
         ]
       }
     ]
+    const ex1 = [
+      {
+        menus: [{menuName: {dataType: 'string', options: []}}]
+      }
+    ]
+    const ex2 = [
+      //THIS ONE PRODUCTS NULL IN CONDITIONS
+      {
+        waiters: [{name: {dataType: 'string', options: []}}]
+      },
+      {
+        restaurants: [{restaurantName: {dataType: 'string', options: []}}]
+      }
+    ]
 
-    const sql = jsonSql.build(translateQuery(anExample))
+    const sql = jsonSql.build(translateQuery(ex2))
 
     // const sql = jsonSql.build({
     //   type: 'select',
@@ -53,13 +67,6 @@ router.get('/customQuery', async (req, res, next) => {
     next(error)
   }
 })
-function findNowElement(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    let element = arr[i]
-    if (element.slice(0, 3) === 'NOW') return element
-  }
-  return null
-}
 
 router.get('/', async (req, res, next) => {
   try {
@@ -330,6 +337,7 @@ function translateQuery(customQueryArr) {
           // condition: {
           //   name: {$gte: 'John'}
           // }
+
           transformedConditions.$and.push({
             [columnName]: {
               [conditions[columnName].values[0]]:
@@ -348,15 +356,17 @@ function translateQuery(customQueryArr) {
       })
     } else {
       transformedConditions = conditions[0]
+      console.log(`what is here???`, transformedConditions)
     }
   }
+
   translatedQuery.type = type
   translatedQuery.fields = columns
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
   console.log(`here is translate query`, translatedQuery)
-  console.log(`conditions:`, translatedQuery.condition)
+  console.log(`conditions further down in the func:`, translatedQuery.condition)
   // here is translate query {
   //   type: 'select',
   //   fields: [ 'mealType', 'menuName' ],
@@ -365,6 +375,8 @@ function translateQuery(customQueryArr) {
   //   condition: { '$and': [ [Object], [Object] ] }
   // }
 
+  //SEE IF COLUMN NAMES HAVE UNDEFINED VALUES
+  //use delete operator
   for (let key in translatedQuery.condition) {
     const value = translatedQuery.condition[key]
     console.log(`here is the key`, key)
