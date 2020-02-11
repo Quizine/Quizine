@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getValueOptionsForString} from '../../store/customizedQueryReducer'
+import IntegersInputField from './IntegersInputField'
+import TimeFrameField from './TimeFrameField'
 
 class CustomizedQueryWhere extends Component {
   constructor() {
@@ -16,25 +18,25 @@ class CustomizedQueryWhere extends Component {
   }
 
   render() {
-    console.log('WHERE PROPS', this.props)
-
     const {selectedTable, selectedColumn, metaData} = this.props
 
-    const valueOptionsForString = optionsMapping(
+    const {options, dataType} = optionsMapping(
       selectedTable,
       selectedColumn,
       metaData
     )
-    console.log('valueOptionsForString', valueOptionsForString)
+
+    const isIntegerField = dataType === 'integer'
+
     return (
       <div>
-        {valueOptionsForString.length ? (
+        {options.length ? (
           <div>
             <h3>WHERE:</h3>
             <select onChange={() => this.handleValueOptionChange(event)}>
               <option defaultValue>Please Select</option>
-              {valueOptionsForString.length &&
-                valueOptionsForString.map((valueOptionName, idx) => {
+              {options.length &&
+                options.map((valueOptionName, idx) => {
                   return (
                     <option key={idx} value={valueOptionName}>
                       {formatValueOptionName(valueOptionName)}
@@ -43,7 +45,15 @@ class CustomizedQueryWhere extends Component {
                 })}
             </select>
           </div>
-        ) : null}
+        ) : (
+          <div>
+            {isIntegerField ? (
+              <IntegersInputField dataType={dataType} />
+            ) : (
+              <TimeFrameField dataType={dataType} />
+            )}
+          </div>
+        )}
       </div>
     )
   }
@@ -79,5 +89,5 @@ function optionsMapping(tableName, columnName, array) {
     })[0]
     [tableName].filter(columnElement => {
       return Object.keys(columnElement)[0] === columnName
-    })[0][columnName].options
+    })[0][columnName]
 }
