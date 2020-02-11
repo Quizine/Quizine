@@ -37,8 +37,6 @@ export class IntegersInputField extends Component {
   }
 
   render() {
-    console.log('INTEGERS', this.state)
-
     return (
       <div>
         <h3>INTEGERS WHERE</h3>
@@ -53,12 +51,12 @@ export class IntegersInputField extends Component {
         </select>
         {this.state.operator ? (
           <div>
-            <input onChange={this.handleInputChange} />
+            <input onBlur={this.handleInputChange} type="number" />
             {this.state.operator === 'BETWEEN' ? (
               <div>
                 <p>and</p>
                 <br />
-                <input onChange={this.handleBetweenInputChange} />
+                <input onBlur={this.handleBetweenInputChange} type="number" />
               </div>
             ) : null}
           </div>

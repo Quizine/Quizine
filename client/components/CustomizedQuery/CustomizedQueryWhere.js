@@ -18,29 +18,25 @@ class CustomizedQueryWhere extends Component {
   }
 
   render() {
-    console.log('WHERE PROPS', this.props)
-
     const {selectedTable, selectedColumn, metaData} = this.props
 
-    const {valueOptionsForString, dataType} = optionsMapping(
+    const {options, dataType} = optionsMapping(
       selectedTable,
       selectedColumn,
       metaData
     )
-    console.log('FUNC', optionsMapping(selectedTable, selectedColumn, metaData))
 
     const isIntegerField = dataType === 'integer'
 
-    console.log('valueOptionsForString', valueOptionsForString)
     return (
       <div>
-        {valueOptionsForString.length ? (
+        {options.length ? (
           <div>
             <h3>WHERE:</h3>
             <select onChange={() => this.handleValueOptionChange(event)}>
               <option defaultValue>Please Select</option>
-              {valueOptionsForString.length &&
-                valueOptionsForString.map((valueOptionName, idx) => {
+              {options.length &&
+                options.map((valueOptionName, idx) => {
                   return (
                     <option key={idx} value={valueOptionName}>
                       {formatValueOptionName(valueOptionName)}
@@ -93,5 +89,5 @@ function optionsMapping(tableName, columnName, array) {
     })[0]
     [tableName].filter(columnElement => {
       return Object.keys(columnElement)[0] === columnName
-    })[0][columnName].options
+    })[0][columnName]
 }
