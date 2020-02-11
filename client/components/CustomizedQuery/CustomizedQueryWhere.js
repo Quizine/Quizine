@@ -1,6 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getValueOptionsForString} from '../../store/customizedQueryReducer'
+import {
+  getValueOptionsForString,
+  updateOption
+} from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
 
@@ -8,13 +11,15 @@ class CustomizedQueryWhere extends Component {
   constructor() {
     super()
     this.state = {
-      selectedValueOption: ''
+      selectedValueOption: []
     }
     this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
   }
 
-  handleValueOptionChange(event) {
-    this.setState({selectedValueOption: event.target.value})
+  async handleValueOptionChange(event) {
+    await this.setState({
+      selectedValueOption: [...selectedValueOption, event.target.value]
+    })
   }
 
   render() {
