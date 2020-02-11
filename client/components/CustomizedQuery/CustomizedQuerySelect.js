@@ -12,7 +12,7 @@ class CustomizedQuerySelect extends Component {
   constructor() {
     super()
     this.state = {
-      selectedColumn: ''
+      // selectedColumn: ''
       // columnNamesObject: {}
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
@@ -22,7 +22,7 @@ class CustomizedQuerySelect extends Component {
   }
 
   async handleSelectedColumnChange(event) {
-    this.setState({selectedColumn: event.target.value})
+    // this.setState({selectedColumn: event.target.value})
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
@@ -41,40 +41,44 @@ class CustomizedQuerySelect extends Component {
   }
 
   render() {
-    // console.log('STATE', this.state)
-    // console.log('PROPS', this.props)
     const selectedTable = this.props.selectedTable
-    const columnNames = this.props.tableFields
     const metaData = this.props.metaData
     const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
     const valueOptionsForString = this.props.valueOptionsForString
+    const {customQuery} = this.props
     return (
       <div>
-        <div>
-          <h3>COLUMN:</h3>
-          <select onChange={() => this.handleSelectedColumnChange(event)}>
-            <option>Please Select</option>
-            {selectedTable &&
-              metaData &&
-              columnNameMapping(selectedTable, metaData).map(
-                (columnName, idx) => {
-                  return (
-                    <option key={idx} value={columnName}>
-                      {formatColumnName(columnName)}
-                    </option>
-                  )
-                }
-              )}
-          </select>
-        </div>
-        {selectedColumn ? (
-          <div>
-            <CustomizedQueryWhere
-              selectedTable={selectedTable}
-              selectedColumn={selectedColumn}
-            />
-          </div>
-        ) : null}
+        {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
+          return (
+            <div key={idx}>
+              <div>
+                <h3>COLUMN:</h3>
+                <select onChange={() => this.handleSelectedColumnChange(event)}>
+                  <option>Please Select</option>
+                  {selectedTable &&
+                    metaData &&
+                    columnNameMapping(selectedTable, metaData).map(
+                      (columnName, idx) => {
+                        return (
+                          <option key={idx} value={columnName}>
+                            {formatColumnName(columnName)}
+                          </option>
+                        )
+                      }
+                    )}
+                </select>
+              </div>
+              {Object.keys(element)[0] ? (
+                <div>
+                  <CustomizedQueryWhere
+                    selectedTable={selectedTable}
+                    selectedColumn={Object.keys(element)[0]}
+                  />
+                </div>
+              ) : null}
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -135,6 +139,12 @@ function extractDataType(tableName, columnName, array) {
     [tableName].filter(element => {
       return Object.keys(element)[0] === columnName
     })[0][columnName].dataType
+}
+
+function columnArrayMapping(tableName, array) {
+  return array.filter(element => {
+    return Object.keys(element)[0] === tableName
+  })[0][tableName]
 }
 
 // render() {

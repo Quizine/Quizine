@@ -17,57 +17,40 @@ module.exports = router
 // GET OR POST???????
 router.get('/customQuery', async (req, res, next) => {
   try {
-    const FEQuery1 = [
-      // works
+    // const anExample = [
+    //   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
+    // ]
+    const ex0 = [
       {
-        menus: [{mealType: ['dinner']}, {menuName: ['lobster']}]
+        orders: [
+          {total: {dataType: 'integer', options: ['$lte', 50]}},
+          {
+            timeOfPurchase: {
+              dataType: 'timestamp with time zone',
+              options: ['week']
+            }
+          }
+        ]
       }
     ]
-
-    const FEQuery2 = [
-      // works
+    const ex1 = [
       {
-        menus: [{mealType: ['dinner']}, {menuName: ['lobster', 'chicken']}]
+        menus: [{menuName: {dataType: 'string', options: []}}]
       }
     ]
-
-    const FEQuery3 = [
-      //works
+    const ex2 = [
+      //THIS ONE PRODUCTS NULL IN CONDITIONS
       {
-        waiters: [{name: []}]
-      }
-      // {
-      //   orders: [{numberOfGuests: []}]
-      // }
-    ]
-
-    const FEQuery4 = [
-      {
-        orders: [{numberOfGuests: []}]
+        waiters: [{name: {dataType: 'string', options: []}}]
       },
       {
-        waiters: [{name: []}]
+        restaurants: [{restaurantName: {dataType: 'string', options: []}}]
       }
     ]
 
-    const FEQuery5 = [
-      {
-        menus: [{menuName: []}]
-      },
-      {
-        menuOrders: [{quanity: []}]
-      },
-      {
-        orders: [{total: []}]
-      }
-    ]
-
-    // select menus."menuName", "menuOrders".quantity, orders.total
-    // from "menuOrders"
-    // JOIN menus on menus.id = "menuOrders"."menuId"
-    // JOIN orders on orders.id = "menuOrders"."orderId";
 
     const sql = jsonSql.build(translateQuery(FEQuery3))
+    const sql = jsonSql.build(translateQuery(ex2))
 
     // const sql = jsonSql.build({
     //   type: 'select',
@@ -253,6 +236,12 @@ const internalObj = {
   condition: {menuName: 'lobster', mealType: 'dinner'}
 }
 
+//const aCustomQuery= ['tableName': [{'columnName': {'dataType': 'string', 'options': [array]}]]
+
+const anExample = [
+  {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
+]
+
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(customQueryArr) {
   const translatedQuery = {}
@@ -271,10 +260,37 @@ function translateQuery(customQueryArr) {
     tableObj[currentTableName].forEach(columnObj => {
       const currentColumnName = Object.keys(columnObj)[0]
       columns.push(currentColumnName)
-      conditions[currentColumnName] = []
-      columnObj[currentColumnName].forEach(condition => {
-        conditions[currentColumnName].push(condition) //this needs to be an object
-      })
+      conditions[currentColumnName] = {}
+      if (columnObj[currentColumnName].dataType === 'integer') {
+        conditions[currentColumnName].dataType =
+          columnObj[currentColumnName].dataType
+        conditions[currentColumnName].values =
+          columnObj[currentColumnName].options
+      } else if (
+        columnObj[currentColumnName].dataType === 'timestamp with time zone'
+      ) {
+        //      WHERE orders."timeOfPurchase" ::date = $1
+        // WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        conditions.timeOfPurchase = {}
+        conditions.timeOfPurchase.dataType = 'timestamp'
+        let interval = columnObj[currentColumnName].options[0]
+        let now = new Date()
+        if (interval === 'year') {
+          now.setFullYear(now.getFullYear() - 1)
+        } else if (interval === 'month') {
+          now.setMonth(now.getMonth() - 1)
+        } else if (interval === 'week') {
+          now.setDate(now.getDate() - 7)
+        }
+        conditions.timeOfPurchase.values = ['$gte', now]
+      } else {
+        //IT'S A STRING
+        conditions[currentColumnName].values = []
+        conditions[currentColumnName].dataType = 'string'
+        columnObj[currentColumnName].options.forEach(condition => {
+          conditions[currentColumnName].values.push(condition) //this needs to be an object
+        })
+      }
     })
   })
   const transformedJoinTables = {}
@@ -301,21 +317,34 @@ function translateQuery(customQueryArr) {
       }
     })
   }
+  console.log(`conditions:`, conditions)
   let transformedConditions = {}
   if (Object.keys(conditions).length > 1) {
     transformedConditions.$and = []
     for (let columnName in conditions) {
       if (conditions.hasOwnProperty(columnName)) {
-        const orCondition = []
-        if (conditions[columnName].length > 1) {
-          //
-          conditions[columnName].forEach(condition => {
-            orCondition.push({[columnName]: condition})
-          })
-          transformedConditions.$and.push({$or: orCondition})
+        if (conditions[columnName].dataType === 'string') {
+          const orCondition = []
+          if (conditions[columnName].values.length > 1) {
+            conditions[columnName].values.forEach(condition => {
+              orCondition.push({[columnName]: condition})
+            })
+            transformedConditions.$and.push({$or: orCondition})
+          } else {
+            transformedConditions.$and.push({
+              [columnName]: conditions[columnName].values[0]
+            })
+          }
         } else {
+          // condition: {
+          //   name: {$gte: 'John'}
+          // }
+
           transformedConditions.$and.push({
-            [columnName]: conditions[columnName][0]
+            [columnName]: {
+              [conditions[columnName].values[0]]:
+                conditions[columnName].values[1]
+            }
           })
         }
       }
@@ -329,15 +358,17 @@ function translateQuery(customQueryArr) {
       })
     } else {
       transformedConditions = conditions[0]
+      console.log(`what is here???`, transformedConditions)
     }
   }
+
   translatedQuery.type = type
   translatedQuery.fields = columns
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
   console.log(`here is translate query`, translatedQuery)
-  console.log(`conditions:`, translatedQuery.condition)
+  console.log(`conditions further down in the func:`, translatedQuery.condition)
   // here is translate query {
   //   type: 'select',
   //   fields: [ 'mealType', 'menuName' ],
@@ -346,6 +377,8 @@ function translateQuery(customQueryArr) {
   //   condition: { '$and': [ [Object], [Object] ] }
   // }
 
+  //SEE IF COLUMN NAMES HAVE UNDEFINED VALUES
+  //use delete operator
   for (let key in translatedQuery.condition) {
     const value = translatedQuery.condition[key]
     console.log(`here is the key`, key)
