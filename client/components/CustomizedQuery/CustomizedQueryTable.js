@@ -2,9 +2,10 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
   getTableFields,
-  addTable,
+  updateTable,
   getTableNames,
-  clearCustomQuery
+  clearCustomQuery,
+  addEmptyColumn
 } from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
 import _ from 'lodash'
@@ -35,7 +36,8 @@ export class CustomizedQueryTable extends Component {
       selectedTable: event.target.value
     })
 
-    this.props.updateCustomQuery(event.target.value)
+    this.props.updateTable(event.target.value)
+    this.props.addEmptyColumn(event.target.value)
 
     this.setState({
       //USED!!! DO NOT DELETE
@@ -48,6 +50,9 @@ export class CustomizedQueryTable extends Component {
 
   handleAddClick() {
     this.setState({count: [...this.state.count, 1]})
+    this.props.addEmptyColumn(
+      Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    )
   }
 
   handleClearTableClick() {
@@ -65,7 +70,28 @@ export class CustomizedQueryTable extends Component {
     // console.log('TABLE STATE', this.state)
 
     const {tableNames, customQuery} = this.props
+    const lastSelectedTable = customQuery.length
+      ? Object.keys(customQuery[customQuery.length - 1])[0]
+      : null
 
+    const lastSelectedColumn = customQuery.length
+      ? customQuery[customQuery.length - 1][lastSelectedTable][0]
+      : null
+    // console.log(
+    //   'HERE',
+    //   customQuery.length
+    //     ? customQuery[customQuery.length - 1][lastSelectedTable][0]
+    //     : null
+    // )
+
+    console.log('SELECTED TABLE', lastSelectedTable)
+    console.log('SELECTED COLUMN', lastSelectedColumn)
+    // console.log(
+    //   '**** TABLEFUNC',
+    //   lastSelectedTable
+    //     ? columnNameMapping(lastSelectedTable, this.props.metaData)
+    //     : null
+    // )
     return (
       <div className="custom-analytics-container">
         <select
@@ -87,26 +113,22 @@ export class CustomizedQueryTable extends Component {
           Clear Query
         </button>
         <div>
-          {customQuery && customQuery.length ? (
+          {customQuery.length ? (
             <div>
-              <CustomizedQuerySelect
-                selectedTable={
-                  Object.keys(customQuery[customQuery.length - 1])[0]
-                }
-              />
-              <button type="button" onClick={() => this.handleAddClick()}>
-                Add
-              </button>
-              {/* ) : null} */}
-              {/* {this.state.count.length ? ( */}
-              <button type="button" onClick={() => this.handleRemoveClick()}>
-                Remove
-              </button>
-              {/* <CustomizedQuerySelect
-                selectedTable={
-                  Object.keys(customQuery[customQuery.length - 1])[0]
-                }
-              /> */}
+              <CustomizedQuerySelect selectedTable={lastSelectedTable} />
+              {Object.keys(lastSelectedColumn).length ? (
+                <div>
+                  <button type="button" onClick={() => this.handleAddClick()}>
+                    Add Column
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => this.handleRemoveClick()}
+                  >
+                    Remove Column
+                  </button>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -133,11 +155,14 @@ const mapDispatchToProps = dispatch => {
     loadTableFields: tableName => {
       dispatch(getTableFields(tableName))
     },
-    updateCustomQuery: queryObject => {
-      dispatch(addTable(queryObject))
+    updateTable: queryObject => {
+      dispatch(updateTable(queryObject))
     },
     clearCustomQuery: () => {
       dispatch(clearCustomQuery())
+    },
+    addEmptyColumn: tableName => {
+      dispatch(addEmptyColumn(tableName))
     }
   }
 }
