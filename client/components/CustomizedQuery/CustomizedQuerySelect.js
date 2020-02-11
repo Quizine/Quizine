@@ -46,7 +46,6 @@ class CustomizedQuerySelect extends Component {
     const selectedTable = this.props.selectedTable
     const columnNames = this.props.tableFields
     const metaData = this.props.metaData
-    console.log('FUNC', columnNameMapping(selectedTable, metaData))
     const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
     const valueOptionsForString = this.props.valueOptionsForString
     return (

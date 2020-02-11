@@ -67,7 +67,7 @@ router.get('/customQuery', async (req, res, next) => {
     // JOIN menus on menus.id = "menuOrders"."menuId"
     // JOIN orders on orders.id = "menuOrders"."orderId";
 
-    const sql = jsonSql.build(translateQuery(FEQuery4))
+    const sql = jsonSql.build(translateQuery(FEQuery3))
 
     // const sql = jsonSql.build({
     //   type: 'select',
