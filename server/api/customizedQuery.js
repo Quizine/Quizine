@@ -22,14 +22,40 @@ router.get('/customQuery', async (req, res, next) => {
       }
     ]
 
-    // {$or: [{menuName: ‘lobster’}, {menuName: ‘chicken’]}
     const FEQuery2 = [
+      // works
       {
         menus: [{mealType: ['dinner']}, {menuName: ['lobster', 'chicken']}]
       }
     ]
 
-    const sql = jsonSql.build(translateQuery(FEQuery2))
+    const FEQuery3 = [
+      //works
+      {
+        waiters: [{name: ['Adam Vare']}]
+      }
+      // {
+      //   orders: [{numberOfGuests: []}]
+      // }
+    ]
+
+    const FEQuery4 = [
+      //works
+      {
+        waiters: [{name: []}]
+      },
+      {
+        orders: [{numberOfGuests: []}]
+      }
+    ]
+
+    /*
+select waiters."name" , orders."numberOfGuests" 
+     from orders
+     join waiters on waiters.id = orders."waiterId";
+*/
+
+    const sql = jsonSql.build(translateQuery(FEQuery4))
 
     // const sql = jsonSql.build({
     //   type: 'select',
@@ -38,6 +64,9 @@ router.get('/customQuery', async (req, res, next) => {
     //   join: [],
     //   condition: {menuName: 'lobster', mealType: 'dinner'}
     // })
+
+    console.log(`the query is: `, sql.query)
+    console.log(`the values are`, sql.getValuesArray())
 
     const queryResults = await client.query(sql.query, sql.getValuesArray())
     res.json(queryResults)
@@ -217,6 +246,9 @@ const internalObj = {
 const query = [
   {
     menus: [{mealType: ['dinner', 'lunch']}, {menuName: ['lobster']}]
+  },
+  {
+    orders: [{total: [100]}]
   }
 ]
 
@@ -240,7 +272,8 @@ function translateQuery(customQueryArr) {
       columns.push(currentColumnName)
       conditions[currentColumnName] = []
       columnObj[currentColumnName].forEach(condition => {
-        conditions[currentColumnName].push(condition)
+        console.log(`what is here? `, condition)
+        conditions[currentColumnName].push(condition) //this needs to be an object
       })
     })
   })
@@ -285,7 +318,7 @@ function translateQuery(customQueryArr) {
         transformedConditions.$or.push({[columnName]: condition})
       })
     } else {
-      transformedConditions = conditions
+      transformedConditions = conditions[0]
     }
   }
   translatedQuery.type = type
@@ -294,7 +327,7 @@ function translateQuery(customQueryArr) {
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
   console.log(`here is translate query`, translatedQuery)
-  console.log(`conditions:`, translatedQuery)
+  console.log(`conditions:`, translatedQuery.condition)
   // here is translate query {
   //   type: 'select',
   //   fields: [ 'mealType', 'menuName' ],
