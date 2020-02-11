@@ -13,6 +13,7 @@ const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
 const ADD_TABLE = 'ADD_TABLE'
 const ADD_COLUMN = 'ADD_COLUMN'
 const ADD_OPTION = 'ADD_OPTION'
+const CLEAR_CUSTOM_QUERY_SELECTION = 'CLEAR_CUSTOM_QUERY_SELECTION '
 const ADD_EMPTY_TABLE = 'ADD_EMPTY_TABLE'
 const ADD_EMPTY_COLUMN = 'ADD_EMPTY_COLUMN'
 const ADD_EMPTY_OPTION = 'ADD_EMPTY_OPTION'
@@ -109,6 +110,9 @@ export const addEmptyTable = () => {
   }
 }
 
+export const clearCustomQuery = () => ({
+  type: CLEAR_CUSTOM_QUERY_SELECTION
+})
 export const addEmptyColumn = tableName => {
   return {
     type: ADD_COLUMN,
@@ -264,6 +268,11 @@ export default function(state = initialState, action) {
           action.columnName,
           action.option
         )
+      }
+    case CLEAR_CUSTOM_QUERY_SELECTION:
+      return {
+        ...state,
+        customQuery: initialState.customQuery
       }
     case ADD_EMPTY_TABLE:
       return {

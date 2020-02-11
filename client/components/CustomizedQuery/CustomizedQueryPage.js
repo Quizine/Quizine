@@ -7,6 +7,7 @@ export default class CustomizedQueryPage extends Component {
     super()
     this.state = {
       count: [1]
+      // rerender: false
     }
     this.handleJoinClick = this.handleJoinClick.bind(this)
   }
@@ -16,16 +17,11 @@ export default class CustomizedQueryPage extends Component {
   }
 
   render() {
+    console.log('PAGE STATE', this.state)
     return (
       <div>
         <div>
-          {this.state.count.map((element, index) => {
-            return (
-              <div key={index}>
-                <CustomizedQueryTable />
-              </div>
-            )
-          })}
+          <CustomizedQueryTable />
         </div>
         <div>
           <button type="button" onClick={() => this.handleJoinClick()}>
@@ -36,18 +32,3 @@ export default class CustomizedQueryPage extends Component {
     )
   }
 }
-
-//   const mapStateToProps = state => {
-//     return {
-//       tableFields: state.customizedQuery.tableFields
-//     }
-//   }
-
-//   const mapDispatchToProps = dispatch => {
-//     return {
-//       loadTableFields: tableName => {
-//         dispatch(getTableFields(tableName))
-//       }
-//     }
-//   }
-//   export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQuery)
