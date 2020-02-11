@@ -6,6 +6,7 @@ import {
 } from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
+import CheckBoxField from './CheckBoxField'
 
 class CustomizedQueryWhere extends Component {
   constructor() {
@@ -38,17 +39,18 @@ class CustomizedQueryWhere extends Component {
         {options.length ? (
           <div>
             <h3>WHERE:</h3>
-            <select onChange={() => this.handleValueOptionChange(event)}>
+            {/* <select onChange={() => this.handleSelect(event)} multiple>
               <option defaultValue>Please Select</option>
               {options.length &&
                 options.map((valueOptionName, idx) => {
                   return (
-                    <option key={idx} value={valueOptionName}>
+                    <option type="checkbox" key={idx} value={valueOptionName}>
                       {formatValueOptionName(valueOptionName)}
                     </option>
                   )
                 })}
-            </select>
+            </select> */}
+            <CheckBoxField options={options} />
           </div>
         ) : (
           <div>

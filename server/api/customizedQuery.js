@@ -48,7 +48,8 @@ router.get('/customQuery', async (req, res, next) => {
       }
     ]
 
-    const sql = jsonSql.build(translateQuery(ex2))
+    const sql = jsonSql.build(translateQuery(FEQuery3))
+    // const sql = jsonSql.build(translateQuery(ex2))
 
     // const sql = jsonSql.build({
     //   type: 'select',

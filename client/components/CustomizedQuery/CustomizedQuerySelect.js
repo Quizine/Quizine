@@ -43,9 +43,9 @@ class CustomizedQuerySelect extends Component {
   render() {
     const selectedTable = this.props.selectedTable
     const metaData = this.props.metaData
+    const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
+    const valueOptionsForString = this.props.valueOptionsForString
     const {customQuery} = this.props
-
-    console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
     return (
       <div>
         {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
