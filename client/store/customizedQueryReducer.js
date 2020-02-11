@@ -336,7 +336,12 @@ function updateTableFunc(customQuery, tableName) {
   return updatedQuery
 }
 
-function updateColumnFunc(customQuery, tableName, columnName, dataType) {
+function updateColumnFunc(
+  customQuery,
+  tableName,
+  columnName,
+  receivedDataType
+) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
     if (tableName === existingTableName) {
@@ -348,10 +353,12 @@ function updateColumnFunc(customQuery, tableName, columnName, dataType) {
         )
         updatedColumnList = [
           ...updatedColumnList,
-          {[columnName]: {dataType, options: []}}
+          {[columnName]: {dataType: receivedDataType, options: []}}
         ]
       } else {
-        updatedColumnList = [{[columnName]: {dataType, options: []}}]
+        updatedColumnList = [
+          {[columnName]: {dataType: receivedDataType, options: []}}
+        ]
       }
       table[existingTableName] = updatedColumnList
     }

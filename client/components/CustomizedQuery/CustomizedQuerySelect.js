@@ -5,7 +5,7 @@ import {
   getDataType,
   getValueOptionsForString,
   getTableFields,
-  updateCustomQuery
+  updateColumn
 } from '../../store/customizedQueryReducer'
 
 class CustomizedQuerySelect extends Component {
@@ -21,19 +21,23 @@ class CustomizedQuerySelect extends Component {
     this.props.loadTableFields(this.props.selectedTable)
   }
 
-  handleSelectedColumnChange(event) {
+  async handleSelectedColumnChange(event) {
     this.setState({selectedColumn: event.target.value})
-    this.props.loadDataType(this.props.selectedTable, event.target.value)
+    await this.props.loadDataType(this.props.selectedTable, event.target.value)
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
       event.target.value
     )
-
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ADD TO CODE ONCE HELPER FUNCTION IN REDUVER IS FIXED
-    // this.props.updateCustomQuery({
-    //   tableName: this.props.selectedTable,
-    //   columnName: event.target.value
-    // })
+    const dataType = extractDataType(
+      this.props.selectedTable,
+      event.target.value,
+      this.props.metaData
+    )
+    this.props.updateColumn(
+      this.props.selectedTable,
+      event.target.value,
+      dataType
+    )
   }
 
   render() {
@@ -42,7 +46,7 @@ class CustomizedQuerySelect extends Component {
     const selectedTable = this.props.selectedTable
     const columnNames = this.props.tableFields
     const metaData = this.props.metaData
-    // console.log('FUNC', columnNameMapping(selectedTable, metaData))
+    console.log('FUNC', columnNameMapping(selectedTable, metaData))
     const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
     const valueOptionsForString = this.props.valueOptionsForString
     return (
@@ -50,7 +54,6 @@ class CustomizedQuerySelect extends Component {
         <div>
           <h3>COLUMN:</h3>
           <select onChange={() => this.handleSelectedColumnChange(event)}>
-            {/* <select> */}
             <option>Please Select</option>
             {selectedTable &&
               metaData &&
@@ -105,8 +108,8 @@ const mapDispatchToProps = dispatch => {
     loadTableFields: tableName => {
       dispatch(getTableFields(tableName))
     },
-    updateCustomQuery: queryObject => {
-      dispatch(updateCustomQuery(queryObject))
+    updateColumn: (tableName, columnName, dataType) => {
+      dispatch(updateColumn(tableName, columnName, dataType))
     }
   }
 }
@@ -123,6 +126,16 @@ function columnNameMapping(tableName, array) {
     [tableName].map(element => {
       return Object.keys(element)[0]
     })
+}
+
+function extractDataType(tableName, columnName, array) {
+  return array
+    .filter(element => {
+      return Object.keys(element)[0] === tableName
+    })[0]
+    [tableName].filter(element => {
+      return Object.keys(element)[0] === columnName
+    })[0][columnName].dataType
 }
 
 // render() {
