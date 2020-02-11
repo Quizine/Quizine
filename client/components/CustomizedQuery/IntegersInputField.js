@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 
 const operators = [
-  {'Equal to': '='},
-  {'Greater than': '>'},
-  {'Less than': '<'},
-  {'Greater than or equal to': '>='},
-  {'Less than or equal to': '<='},
+  {'Equal to': ''}, // Questionable
+  {'Greater than': '$gt'},
+  {'Less than': '$lt'},
+  {'Greater than or equal to': '$gte'},
+  {'Less than or equal to': '$lte'},
   {'Not equal to': '<>'},
-  {Between: 'BETWEEN'}
+  {Between: '$between'}
 ]
 
 export class IntegersInputField extends Component {
@@ -17,7 +17,7 @@ export class IntegersInputField extends Component {
     this.state = {
       inputValue: '',
       betweenValue: '',
-      operator: ''
+      operator: 'Equal to'
     }
     this.handleWhereSelect = this.handleWhereSelect.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)

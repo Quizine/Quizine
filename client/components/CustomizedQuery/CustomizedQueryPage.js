@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import CustomizedQueryTable from './CustomizedQueryTable'
+import SubmitQueryButton from './SubmitQueryButton'
 
 export default class CustomizedQueryPage extends Component {
   constructor() {
@@ -19,14 +20,19 @@ export default class CustomizedQueryPage extends Component {
   render() {
     console.log('PAGE STATE', this.state)
     return (
-      <div>
-        <div>
-          <CustomizedQueryTable />
+      <div className="query-cont">
+        <div className="query-table">
+          <div>
+            <CustomizedQueryTable />
+          </div>
+          <div>
+            <button type="button" onClick={() => this.handleJoinClick()}>
+              ----Join----
+            </button>
+          </div>
         </div>
         <div>
-          <button type="button" onClick={() => this.handleJoinClick()}>
-            ----Join----
-          </button>
+          <SubmitQueryButton />
         </div>
       </div>
     )
