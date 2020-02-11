@@ -340,7 +340,7 @@ function mapStringOptionsToMetaData(
       element[tableName].map(columnElement => {
         if (Object.keys(columnElement)[0] === columnName) {
           if (
-            columnElement[columnName].dataType !== 'timestamp with time zone' ||
+            columnElement[columnName].dataType !== 'timestamp with time zone' &&
             columnElement[columnName].dataType !== 'integer'
           ) {
             columnElement[columnName].options = updatedValueOptions
