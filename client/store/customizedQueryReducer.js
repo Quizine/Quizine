@@ -12,6 +12,7 @@ const UPDATE_CUSTOM_QUERY = 'UPDATE_CUSTOM_QUERY'
 const ADD_TABLE = 'ADD_TABLE'
 const ADD_COLUMN = 'ADD_COLUMN'
 const ADD_OPTION = 'ADD_OPTION'
+const CLEAR_CUSTOM_QUERY_SELECTION = 'CLEAR_CUSTOM_QUERY_SELECTION '
 
 /**
  * INITIAL STATE
@@ -101,11 +102,9 @@ export const updateCustomQuery = queryObject => ({
   queryObject
 })
 
-// queryObj = {
-//   tableName:...,
-//   columName: ...,
-//   where:...
-// }
+export const clearCustomQuery = () => ({
+  type: CLEAR_CUSTOM_QUERY_SELECTION
+})
 
 /**
  * THUNK CREATORS
@@ -227,7 +226,11 @@ export default function(state = initialState, action) {
           action.option
         )
       }
-
+    case CLEAR_CUSTOM_QUERY_SELECTION:
+      return {
+        ...state,
+        customQuery: initialState.customQuery
+      }
     case GET_JOIN_TABLES:
       return {
         ...state,

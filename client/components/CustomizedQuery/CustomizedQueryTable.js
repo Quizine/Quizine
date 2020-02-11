@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import {
   getTableFields,
   addTable,
-  getTableNames
+  getTableNames,
+  clearCustomQuery
 } from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
 import _ from 'lodash'
@@ -13,11 +14,14 @@ export class CustomizedQueryTable extends Component {
     super()
     this.state = {
       selectedTable: '',
-      count: [1]
+      count: [1],
+      disabled: false, //USED!!! DO NOT DELETE
+      defaultValue: 'default' //USED!!! DO NOT DELETE
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleAddClick = this.handleAddClick.bind(this)
     this.handleRemoveClick = this.handleRemoveClick.bind(this)
+    this.handleClearTableClick = this.handleClearTableClick.bind(this)
   }
 
   componentDidMount() {
@@ -32,10 +36,23 @@ export class CustomizedQueryTable extends Component {
     })
 
     this.props.updateCustomQuery(event.target.value)
+
+    this.setState({
+      //USED!!! DO NOT DELETE
+      ...this.state,
+      disabled: true,
+      defaultValue: event.target.value
+    })
+    event.target.disabled = true
   }
 
   handleAddClick() {
     this.setState({count: [...this.state.count, 1]})
+  }
+
+  handleClearTableClick() {
+    this.props.clearCustomQuery()
+    this.setState({...this.state, disabled: false, defaultValue: 'default'}) //USED!!! DO NOT DELETE
   }
 
   handleRemoveClick() {
@@ -47,16 +64,17 @@ export class CustomizedQueryTable extends Component {
     console.log('TABLE PROPS', this.props)
     console.log('TABLE STATE', this.state)
 
-    const tableNames = this.props.tableNames
-    const customQuery = this.props.customQuery
-    const selectedTable = this.state.selectedTable
-    const selectedColumns = this.props.tableFields
-    // const menus = 'menus'
-    // const waiters = 'waiters'
+    const {tableNames, customQuery} = this.props
+
     return (
       <div className="custom-analytics-container">
-        <select onChange={() => this.handleChange(event)}>
-          <option>Please Select</option>
+        <select
+          onChange={() => this.handleChange(event)}
+          disabled={this.state.disabled}
+          value={this.state.defaultValue}
+        >
+          <option value="default">Please Select</option>
+
           {tableNames.map((element, idx) => {
             return (
               <option value={element} key={idx}>
@@ -65,6 +83,9 @@ export class CustomizedQueryTable extends Component {
             )
           })}
         </select>
+        <button type="button" onClick={() => this.handleClearTableClick()}>
+          Clear Query
+        </button>
         <div>
           {customQuery && customQuery.length ? (
             <div>
@@ -73,11 +94,21 @@ export class CustomizedQueryTable extends Component {
                   Object.keys(customQuery[customQuery.length - 1])[0]
                 }
               />
+              <button type="button" onClick={() => this.handleAddClick()}>
+                Add
+              </button>
+              {/* ) : null} */}
+              {/* {this.state.count.length ? ( */}
+              <button type="button" onClick={() => this.handleRemoveClick()}>
+                Remove
+              </button>
+              {/* <CustomizedQuerySelect
+                selectedTable={
+                  Object.keys(customQuery[customQuery.length - 1])[0]
+                }
+              /> */}
             </div>
           ) : null}
-          {/* <CustomizedQuerySelect selectedTable={menus} />
-          <CustomizedQuerySelect selectedTable={waiters} />
-          <CustomizedQuerySelect selectedTable={menus} /> */}
         </div>
       </div>
     )
@@ -104,12 +135,25 @@ const mapDispatchToProps = dispatch => {
     },
     updateCustomQuery: queryObject => {
       dispatch(addTable(queryObject))
+    },
+    clearCustomQuery: () => {
+      dispatch(clearCustomQuery())
     }
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQueryTable
 )
+
+function columnNameMapping(tableName, array) {
+  return array
+    .filter(element => {
+      return Object.keys(element)[0] === tableName
+    })[0]
+    [tableName].map(element => {
+      return Object.keys(element)[0]
+    })
+}
 
 // import React, {Component} from 'react'
 // import {connect} from 'react-redux'
