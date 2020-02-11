@@ -41,15 +41,11 @@ class CustomizedQuerySelect extends Component {
   }
 
   render() {
-    // console.log('STATE', this.state)
-    // console.log('PROPS', this.props)
     const selectedTable = this.props.selectedTable
-    const columnNames = this.props.tableFields
     const metaData = this.props.metaData
     const {customQuery} = this.props
-    console.log('FUNC', columnNameMapping(selectedTable, metaData))
-    const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
-    const valueOptionsForString = this.props.valueOptionsForString
+
+    console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
     return (
       <div>
         {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
@@ -72,46 +68,18 @@ class CustomizedQuerySelect extends Component {
                     )}
                 </select>
               </div>
-              {/* {selectedColumn ? (
+              {Object.keys(element)[0] ? (
                 <div>
                   <CustomizedQueryWhere
                     selectedTable={selectedTable}
-                    selectedColumn={selectedColumn}
+                    selectedColumn={Object.keys(element)[0]}
                   />
                 </div>
-              ) : null} */}
+              ) : null}
             </div>
           )
         })}
       </div>
-
-      // <div>
-      //   <div>
-      //     <h3>COLUMN:</h3>
-      //     <select onChange={() => this.handleSelectedColumnChange(event)}>
-      //       <option>Please Select</option>
-      //       {selectedTable &&
-      //         metaData &&
-      //         columnNameMapping(selectedTable, metaData).map(
-      //           (columnName, idx) => {
-      //             return (
-      //               <option key={idx} value={columnName}>
-      //                 {formatColumnName(columnName)}
-      //               </option>
-      //             )
-      //           }
-      //         )}
-      //     </select>
-      //   </div>
-      //   {/* {selectedColumn ? (
-      //     <div>
-      //       <CustomizedQueryWhere
-      //         selectedTable={selectedTable}
-      //         selectedColumn={selectedColumn}
-      //       />
-      //     </div>
-      //   ) : null} */}
-      // </div>
     )
   }
 }
