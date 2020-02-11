@@ -87,11 +87,12 @@ export const updateTable = tableName => {
   }
 }
 
-export const updateColumn = (tableName, columnName) => {
+export const updateColumn = (tableName, columnName, dataType) => {
   return {
     type: UPDATE_COLUMN,
     tableName,
-    columnName
+    columnName,
+    dataType
   }
 }
 
@@ -257,7 +258,8 @@ export default function(state = initialState, action) {
         customQuery: updateColumnFunc(
           state.customQuery,
           action.tableName,
-          action.columnName
+          action.columnName,
+          action.dataType
         )
       }
     case UPDATE_OPTION:
@@ -334,7 +336,7 @@ function updateTableFunc(customQuery, tableName) {
   return updatedQuery
 }
 
-function updateColumnFunc(customQuery, tableName, columnName) {
+function updateColumnFunc(customQuery, tableName, columnName, dataType) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
     if (tableName === existingTableName) {
@@ -344,9 +346,12 @@ function updateColumnFunc(customQuery, tableName, columnName) {
           0,
           table[existingTableName].length - 1
         )
-        updatedColumnList = [...updatedColumnList, {[columnName]: []}]
+        updatedColumnList = [
+          ...updatedColumnList,
+          {[columnName]: {dataType, options: []}}
+        ]
       } else {
-        updatedColumnList = [{[columnName]: []}]
+        updatedColumnList = [{[columnName]: {dataType, options: []}}]
       }
       table[existingTableName] = updatedColumnList
     }
@@ -362,17 +367,8 @@ function updateOptionFunc(customQuery, tableName, columnName, option) {
       const updatedColumnList = table[existingTableName].map(column => {
         const existingColumnName = Object.keys(column)[0]
         if (columnName === existingColumnName) {
-          let updatedOptionList
-          if (column[existingColumnName].length) {
-            updatedOptionList = [...column[existingColumnName]].slice(
-              0,
-              column[existingColumnName].length - 1
-            )
-            updatedOptionList = [...updatedOptionList, option]
-          } else {
-            updatedOptionList = [option]
-          }
-          column[existingColumnName] = updatedOptionList
+          let updatedOptionList = option
+          column[existingColumnName].options = updatedOptionList
         }
         return column
       })
@@ -420,12 +416,12 @@ function addEmptyOptionFunc(customQuery, tableName, columnName) {
         const existingColumnName = Object.keys(column)[0]
         if (columnName === existingColumnName) {
           let updatedOptionList
-          if (column[existingColumnName].length) {
-            updatedOptionList = [...column[existingColumnName], '']
+          if (column[existingColumnName].options.length) {
+            updatedOptionList = [...column[existingColumnName].options, '']
           } else {
             updatedOptionList = ['']
           }
-          column[existingColumnName] = updatedOptionList
+          column[existingColumnName].options = updatedOptionList
         }
         return column
       })
@@ -475,14 +471,14 @@ function removeOptionFunc(customQuery, tableName, columnName) {
         if (columnName === existingColumnName) {
           let updatedOptionList
           if (column[existingColumnName].length) {
-            updatedOptionList = [...column[existingColumnName]].slice(
+            updatedOptionList = [...column[existingColumnName].options].slice(
               0,
-              column[existingColumnName].length - 1
+              column[existingColumnName].options.length - 1
             )
           } else {
             updatedOptionList = []
           }
-          column[existingColumnName] = updatedOptionList
+          column[existingColumnName].options = updatedOptionList
         }
         return column
       })
