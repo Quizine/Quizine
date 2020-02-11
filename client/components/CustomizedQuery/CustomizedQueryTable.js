@@ -54,6 +54,8 @@ export class CustomizedQueryTable extends Component {
     //   'IN ADD CLICK',
     //   Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
     // )
+
+    console.log('IN ADD CLICK!!!!!!!!!!')
     this.props.addEmptyColumn(
       Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
     )
@@ -122,18 +124,13 @@ export class CustomizedQueryTable extends Component {
         <div>
           {customQuery.length ? (
             <div>
-              {columnArrayMapping(lastSelectedTable, customQuery).map(idx => {
-                return (
-                  <div key={idx}>
-                    <CustomizedQuerySelect selectedTable={lastSelectedTable} />
-                  </div>
-                )
-              })}
+              <CustomizedQuerySelect selectedTable={lastSelectedTable} />
               {Object.keys(lastSelectedColumn).length ? (
                 <div>
                   <button type="button" onClick={() => this.handleAddClick()}>
                     Add Column
                   </button>
+
                   <button
                     type="button"
                     onClick={() => this.handleRemoveClick()}

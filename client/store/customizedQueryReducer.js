@@ -564,6 +564,7 @@ function mapStringOptionsToMetaData(
   columnName,
   valueOptionsArray
 ) {
+  console.log('HERE IN FUNC!!!!!!')
   let updatedValueOptions = valueOptionsArray.map(element => {
     return element.aliasname
   })
