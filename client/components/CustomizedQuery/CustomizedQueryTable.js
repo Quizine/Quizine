@@ -49,7 +49,11 @@ export class CustomizedQueryTable extends Component {
   }
 
   handleAddClick() {
-    this.setState({count: [...this.state.count, 1]})
+    // this.setState({count: [...this.state.count, 1]})
+    // console.log(
+    //   'IN ADD CLICK',
+    //   Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    // )
     this.props.addEmptyColumn(
       Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
     )
@@ -70,12 +74,15 @@ export class CustomizedQueryTable extends Component {
     // console.log('TABLE STATE', this.state)
 
     const {tableNames, customQuery} = this.props
+
     const lastSelectedTable = customQuery.length
       ? Object.keys(customQuery[customQuery.length - 1])[0]
       : null
 
     const lastSelectedColumn = customQuery.length
-      ? customQuery[customQuery.length - 1][lastSelectedTable][0]
+      ? customQuery[customQuery.length - 1][lastSelectedTable][
+          customQuery[customQuery.length - 1][lastSelectedTable].length - 1
+        ]
       : null
     // console.log(
     //   'HERE',
@@ -115,7 +122,13 @@ export class CustomizedQueryTable extends Component {
         <div>
           {customQuery.length ? (
             <div>
-              <CustomizedQuerySelect selectedTable={lastSelectedTable} />
+              {columnArrayMapping(lastSelectedTable, customQuery).map(idx => {
+                return (
+                  <div key={idx}>
+                    <CustomizedQuerySelect selectedTable={lastSelectedTable} />
+                  </div>
+                )
+              })}
               {Object.keys(lastSelectedColumn).length ? (
                 <div>
                   <button type="button" onClick={() => this.handleAddClick()}>
@@ -170,14 +183,10 @@ export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQueryTable
 )
 
-function columnNameMapping(tableName, array) {
-  return array
-    .filter(element => {
-      return Object.keys(element)[0] === tableName
-    })[0]
-    [tableName].map(element => {
-      return Object.keys(element)[0]
-    })
+function columnArrayMapping(tableName, array) {
+  return array.filter(element => {
+    return Object.keys(element)[0] === tableName
+  })[0][tableName]
 }
 
 // import React, {Component} from 'react'
