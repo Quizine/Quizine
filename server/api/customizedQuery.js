@@ -32,7 +32,7 @@ router.get('/customQuery', async (req, res, next) => {
     const FEQuery3 = [
       //works
       {
-        waiters: [{name: ['Adam Vare']}]
+        waiters: [{name: []}]
       }
       // {
       //   orders: [{numberOfGuests: []}]
@@ -40,20 +40,30 @@ router.get('/customQuery', async (req, res, next) => {
     ]
 
     const FEQuery4 = [
-      //works
-      {
-        waiters: [{name: []}]
-      },
       {
         orders: [{numberOfGuests: []}]
+      },
+      {
+        waiters: [{name: []}]
       }
     ]
 
-    /*
-select waiters."name" , orders."numberOfGuests" 
-     from orders
-     join waiters on waiters.id = orders."waiterId";
-*/
+    const FEQuery5 = [
+      {
+        menus: [{menuName: []}]
+      },
+      {
+        menuOrders: [{quanity: []}]
+      },
+      {
+        orders: [{total: []}]
+      }
+    ]
+
+    // select menus."menuName", "menuOrders".quantity, orders.total
+    // from "menuOrders"
+    // JOIN menus on menus.id = "menuOrders"."menuId"
+    // JOIN orders on orders.id = "menuOrders"."orderId";
 
     const sql = jsonSql.build(translateQuery(FEQuery4))
 
@@ -241,17 +251,6 @@ const internalObj = {
   condition: {menuName: 'lobster', mealType: 'dinner'}
 }
 
-// {menuName: ['lobster',b,c,d,e], foodType: [a,b,c]} object.keys.length
-
-const query = [
-  {
-    menus: [{mealType: ['dinner', 'lunch']}, {menuName: ['lobster']}]
-  },
-  {
-    orders: [{total: [100]}]
-  }
-]
-
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(customQueryArr) {
   const translatedQuery = {}
@@ -272,7 +271,6 @@ function translateQuery(customQueryArr) {
       columns.push(currentColumnName)
       conditions[currentColumnName] = []
       columnObj[currentColumnName].forEach(condition => {
-        console.log(`what is here? `, condition)
         conditions[currentColumnName].push(condition) //this needs to be an object
       })
     })
@@ -282,11 +280,21 @@ function translateQuery(customQueryArr) {
     joinTables.forEach((tableName, idx) => {
       if (idx === 0) {
         transformedJoinTables[tableName] = {
-          on: {[`${tableName}.id`]: `${baseTable}.${tableName}Id`}
+          on: {
+            [`${tableName}.id`]: `${baseTable}.${tableName.slice(
+              0,
+              tableName.length - 1
+            )}Id`
+          }
         }
       } else {
         transformedJoinTables[tableName] = {
-          on: {[`${tableName}.id`]: `${joinTables[idx - 1]}.${tableName}Id`}
+          on: {
+            [`${tableName}.id`]: `${joinTables[idx - 1]}.${tableName.slice(
+              0,
+              tableName.length - 1
+            )}Id`
+          }
         }
       }
     })
