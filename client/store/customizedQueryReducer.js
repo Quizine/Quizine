@@ -1,4 +1,6 @@
+/* eslint-disable complexity */
 import axios from 'axios'
+import {object} from 'prop-types'
 
 /**
  * ACTION TYPES
@@ -8,11 +10,16 @@ const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
-const UPDATE_CUSTOM_QUERY = 'UPDATE_CUSTOM_QUERY'
 const ADD_TABLE = 'ADD_TABLE'
 const ADD_COLUMN = 'ADD_COLUMN'
 const ADD_OPTION = 'ADD_OPTION'
 const CLEAR_CUSTOM_QUERY_SELECTION = 'CLEAR_CUSTOM_QUERY_SELECTION '
+const ADD_EMPTY_TABLE = 'ADD_EMPTY_TABLE'
+const ADD_EMPTY_COLUMN = 'ADD_EMPTY_COLUMN'
+const ADD_EMPTY_OPTION = 'ADD_EMPTY_OPTION'
+const REMOVE_TABLE = 'REMOVE_TABLE'
+const REMOVE_COLUMN = 'REMOVE_COLUMN'
+const REMOVE_OPTION = 'REMOVE_OPTION'
 
 /**
  * INITIAL STATE
@@ -97,14 +104,50 @@ export const addOption = (tableName, columnName, option) => {
   }
 }
 
-export const updateCustomQuery = queryObject => ({
-  type: UPDATE_CUSTOM_QUERY,
-  queryObject
-})
+export const addEmptyTable = () => {
+  return {
+    type: ADD_TABLE
+  }
+}
 
 export const clearCustomQuery = () => ({
   type: CLEAR_CUSTOM_QUERY_SELECTION
 })
+export const addEmptyColumn = tableName => {
+  return {
+    type: ADD_COLUMN,
+    tableName
+  }
+}
+
+export const addEmptyOption = (tableName, columnName) => {
+  return {
+    type: ADD_OPTION,
+    tableName,
+    columnName
+  }
+}
+
+export const removeTable = () => {
+  return {
+    type: ADD_TABLE
+  }
+}
+
+export const removeColumn = tableName => {
+  return {
+    type: ADD_COLUMN,
+    tableName
+  }
+}
+
+export const removeOption = (tableName, columnName) => {
+  return {
+    type: ADD_OPTION,
+    tableName,
+    columnName
+  }
+}
 
 /**
  * THUNK CREATORS
@@ -231,6 +274,44 @@ export default function(state = initialState, action) {
         ...state,
         customQuery: initialState.customQuery
       }
+    case ADD_EMPTY_TABLE:
+      return {
+        ...state,
+        customQuery: addEmptyTableFunc(state.customQuery)
+      }
+    case ADD_EMPTY_COLUMN:
+      return {
+        ...state,
+        customQuery: addEmptyColumnFunc(state.customQuery, action.tableName)
+      }
+    case ADD_EMPTY_OPTION:
+      return {
+        ...state,
+        customQuery: addEmptyOptionFunc(
+          state.customQuery,
+          action.tableName,
+          action.columnName
+        )
+      }
+    case REMOVE_TABLE:
+      return {
+        ...state,
+        customQuery: removeTableFunc(state.customQuery)
+      }
+    case REMOVE_COLUMN:
+      return {
+        ...state,
+        customQuery: removeColumnFunc(state.customQuery, action.tableName)
+      }
+    case REMOVE_OPTION:
+      return {
+        ...state,
+        customQuery: removeOptionFunc(
+          state.customQuery,
+          action.tableName,
+          action.columnName
+        )
+      }
     case GET_JOIN_TABLES:
       return {
         ...state,
@@ -244,7 +325,8 @@ export default function(state = initialState, action) {
 function addTableFunc(customQuery, tableName) {
   let updatedQuery
   if (customQuery.length) {
-    updatedQuery = [...customQuery, {[tableName]: []}]
+    updatedQuery = [...customQuery].slice(0, customQuery.length - 1)
+    updatedQuery = [...updatedQuery, {[tableName]: []}]
   } else {
     updatedQuery = [{[tableName]: []}]
   }
@@ -257,7 +339,11 @@ function addColumnFunc(customQuery, tableName, columnName) {
     if (tableName === existingTableName) {
       let updatedColumnList
       if (table[existingTableName].length) {
-        updatedColumnList = [...table[existingTableName], {[columnName]: []}]
+        updatedColumnList = [...table[existingTableName]].slice(
+          0,
+          table[existingTableName].length - 1
+        )
+        updatedColumnList = [...updatedColumnList, {[columnName]: []}]
       } else {
         updatedColumnList = [{[columnName]: []}]
       }
@@ -277,9 +363,123 @@ function addOptionFunc(customQuery, tableName, columnName, option) {
         if (columnName === existingColumnName) {
           let updatedOptionList
           if (column[existingColumnName].length) {
-            updatedOptionList = [...column[existingColumnName], option]
+            updatedOptionList = [...column[existingColumnName]].slice(
+              0,
+              column[existingColumnName].length - 1
+            )
+            updatedOptionList = [...updatedOptionList, option]
           } else {
             updatedOptionList = [option]
+          }
+          column[existingColumnName] = updatedOptionList
+        }
+        return column
+      })
+      table[existingTableName] = updatedColumnList
+    }
+    return table
+  })
+  return updatedQuery
+}
+
+function addEmptyTableFunc(customQuery) {
+  let updatedQuery
+  if (customQuery.length) {
+    if (Object.keys(customQuery[customQuery.length - 1]).length) {
+      updatedQuery = [...customQuery, {}]
+    }
+  } else {
+    updatedQuery = [{}]
+  }
+  return updatedQuery
+}
+
+function addEmptyColumnFunc(customQuery, tableName) {
+  const updatedQuery = customQuery.map(table => {
+    const existingTableName = Object.keys(table)[0]
+    if (tableName === existingTableName) {
+      let updatedColumnList
+      if (table[existingTableName].length) {
+        updatedColumnList = [...table[existingTableName], {}]
+      } else {
+        updatedColumnList = [{}]
+      }
+      table[existingTableName] = updatedColumnList
+    }
+    return table
+  })
+  return updatedQuery
+}
+
+function addEmptyOptionFunc(customQuery, tableName, columnName) {
+  const updatedQuery = customQuery.map(table => {
+    const existingTableName = Object.keys(table)[0]
+    if (tableName === existingTableName) {
+      const updatedColumnList = table[existingTableName].map(column => {
+        const existingColumnName = Object.keys(column)[0]
+        if (columnName === existingColumnName) {
+          let updatedOptionList
+          if (column[existingColumnName].length) {
+            updatedOptionList = [...column[existingColumnName], '']
+          } else {
+            updatedOptionList = ['']
+          }
+          column[existingColumnName] = updatedOptionList
+        }
+        return column
+      })
+      table[existingTableName] = updatedColumnList
+    }
+    return table
+  })
+  return updatedQuery
+}
+
+function removeTableFunc(customQuery) {
+  let updatedQuery
+  if (customQuery.length) {
+    updatedQuery = [...customQuery].slice(0, customQuery.length - 1)
+  } else {
+    updatedQuery = []
+  }
+  return updatedQuery
+}
+
+function removeColumnFunc(customQuery, tableName) {
+  const updatedQuery = customQuery.map(table => {
+    const existingTableName = Object.keys(table)[0]
+    if (tableName === existingTableName) {
+      let updatedColumnList
+      if (table[existingTableName].length) {
+        updatedColumnList = [...table[existingTableName]].slice(
+          0,
+          table[existingTableName].length - 1
+        )
+      } else {
+        updatedColumnList = []
+      }
+      table[existingTableName] = updatedColumnList
+    }
+    return table
+  })
+  return updatedQuery
+}
+
+function removeOptionFunc(customQuery, tableName, columnName) {
+  const updatedQuery = customQuery.map(table => {
+    const existingTableName = Object.keys(table)[0]
+    if (tableName === existingTableName) {
+      const updatedColumnList = table[existingTableName].map(column => {
+        const existingColumnName = Object.keys(column)[0]
+        if (columnName === existingColumnName) {
+          let updatedOptionList
+          if (column[existingColumnName].length) {
+            updatedOptionList = [...column[existingColumnName]].slice(
+              0,
+              column[existingColumnName].length - 1
+            )
+          } else {
+            updatedOptionList = []
           }
           column[existingColumnName] = updatedOptionList
         }
