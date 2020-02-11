@@ -15,13 +15,20 @@ module.exports = router
 //MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
 router.get('/customQuery', async (req, res, next) => {
   try {
-    const sql = jsonSql.build({
-      type: 'select',
-      fields: ['menuName', 'mealType'],
-      table: 'menus',
-      join: [],
-      condition: {menuName: 'lobster', mealType: 'dinner'}
-    })
+    const FEQuery = [
+      {
+        menus: [{mealType: ['dinner']}, {menuName: ['lobster']}]
+      }
+    ]
+    const sql = jsonSql.build(translateQuery(FEQuery))
+
+    // const sql = jsonSql.build({
+    //   type: 'select',
+    //   fields: ['menuName', 'mealType'],
+    //   table: 'menus',
+    //   join: [],
+    //   condition: {menuName: 'lobster', mealType: 'dinner'}
+    // })
 
     const queryResults = await client.query(sql.query, sql.getValuesArray())
     res.json(queryResults)
@@ -200,10 +207,8 @@ const internalObj = {
 
 const query = [
   {
-    menus: [{mealType: ['dinner', 'lunch']}, {menuName: ['lobster']}],
-    orders: []
-  },
-  {}
+    menus: [{mealType: ['dinner', 'lunch']}, {menuName: ['lobster']}]
+  }
 ]
 
 //CUSTOM QUERYING HELPER FUNCTIONS
@@ -257,7 +262,7 @@ function translateQuery(customQueryArr) {
           transformedConditions.$and.push({$or: orCondition})
         } else {
           transformedConditions.$and.push({
-            [columnName]: conditions[columnName]
+            [columnName]: conditions[columnName][0]
           })
         }
       }
@@ -278,5 +283,26 @@ function translateQuery(customQueryArr) {
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
-  return translateQuery
+  console.log(`here is translate query`, translatedQuery)
+  console.log(`conditions:`, translatedQuery)
+  // here is translate query {
+  //   type: 'select',
+  //   fields: [ 'mealType', 'menuName' ],
+  //   table: 'menus',
+  //   join: {},
+  //   condition: { '$and': [ [Object], [Object] ] }
+  // }
+
+  for (let key in translatedQuery.condition) {
+    const value = translatedQuery.condition[key]
+    console.log(`here is the key`, key)
+    console.log(`and value`, value)
+    if (Array.isArray(value)) {
+      value.forEach(item => {
+        console.log(`here is an array item`, item)
+      })
+    }
+  }
+
+  return translatedQuery
 }
