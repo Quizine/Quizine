@@ -93,8 +93,6 @@ export class CustomizedQueryTable extends Component {
     //     : null
     // )
 
-    console.log('SELECTED TABLE', lastSelectedTable)
-    console.log('SELECTED COLUMN', lastSelectedColumn)
     // console.log(
     //   '**** TABLEFUNC',
     //   lastSelectedTable

@@ -3,20 +3,9 @@ import {connect} from 'react-redux'
 import {getValueOptionsForString} from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
+import CheckBoxField from './CheckBoxField'
 
 class CustomizedQueryWhere extends Component {
-  constructor() {
-    super()
-    this.state = {
-      selectedValueOption: ''
-    }
-    this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
-  }
-
-  handleValueOptionChange(event) {
-    this.setState({selectedValueOption: event.target.value})
-  }
-
   render() {
     const {selectedTable, selectedColumn, metaData} = this.props
 
@@ -33,17 +22,18 @@ class CustomizedQueryWhere extends Component {
         {options.length ? (
           <div>
             <h3>WHERE:</h3>
-            <select onChange={() => this.handleValueOptionChange(event)}>
+            {/* <select onChange={() => this.handleSelect(event)} multiple>
               <option defaultValue>Please Select</option>
               {options.length &&
                 options.map((valueOptionName, idx) => {
                   return (
-                    <option key={idx} value={valueOptionName}>
+                    <option type="checkbox" key={idx} value={valueOptionName}>
                       {formatValueOptionName(valueOptionName)}
                     </option>
                   )
                 })}
-            </select>
+            </select> */}
+            <CheckBoxField options={options} />
           </div>
         ) : (
           <div>
