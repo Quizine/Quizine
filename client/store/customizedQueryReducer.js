@@ -10,9 +10,9 @@ const GET_TABLE_FIELDS = 'GET_TABLE_FIELDS'
 const GET_DATA_TYPE = 'GET_TABLE_TYPE'
 const GET_VALUE_OPTIONS_FOR_STRING = 'GET_VALUE_OPTIONS_FOR_STRING'
 const GET_JOIN_TABLES = 'GET_JOIN_TABLES'
-const ADD_TABLE = 'ADD_TABLE'
-const ADD_COLUMN = 'ADD_COLUMN'
-const ADD_OPTION = 'ADD_OPTION'
+const UPDATE_TABLE = 'UPDATE_TABLE'
+const UPDATE_COLUMN = 'UPDATE_COLUMN'
+const UPDATE_OPTION = 'UPDATE_OPTION'
 const CLEAR_CUSTOM_QUERY_SELECTION = 'CLEAR_CUSTOM_QUERY_SELECTION '
 const ADD_EMPTY_TABLE = 'ADD_EMPTY_TABLE'
 const ADD_EMPTY_COLUMN = 'ADD_EMPTY_COLUMN'
@@ -80,49 +80,50 @@ const gotJoinTables = joinTables => ({
   joinTables
 })
 
-export const addTable = tableName => {
+export const updateTable = tableName => {
   return {
-    type: ADD_TABLE,
+    type: UPDATE_TABLE,
     tableName
   }
 }
 
-export const addColumn = (tableName, columnName) => {
+export const updateColumn = (tableName, columnName) => {
   return {
-    type: ADD_COLUMN,
+    type: UPDATE_COLUMN,
     tableName,
     columnName
   }
 }
 
-export const addOption = (tableName, columnName, option) => {
+export const updateOption = (tableName, columnName, option) => {
   return {
-    type: ADD_OPTION,
+    type: UPDATE_OPTION,
     tableName,
     columnName,
     option
   }
 }
 
-export const addEmptyTable = () => {
-  return {
-    type: ADD_TABLE
-  }
-}
-
 export const clearCustomQuery = () => ({
   type: CLEAR_CUSTOM_QUERY_SELECTION
 })
+
+export const addEmptyTable = () => {
+  return {
+    type: ADD_EMPTY_TABLE
+  }
+}
+
 export const addEmptyColumn = tableName => {
   return {
-    type: ADD_COLUMN,
+    type: ADD_EMPTY_COLUMN,
     tableName
   }
 }
 
 export const addEmptyOption = (tableName, columnName) => {
   return {
-    type: ADD_OPTION,
+    type: ADD_EMPTY_OPTION,
     tableName,
     columnName
   }
@@ -130,20 +131,20 @@ export const addEmptyOption = (tableName, columnName) => {
 
 export const removeTable = () => {
   return {
-    type: ADD_TABLE
+    type: REMOVE_TABLE
   }
 }
 
 export const removeColumn = tableName => {
   return {
-    type: ADD_COLUMN,
+    type: REMOVE_COLUMN,
     tableName
   }
 }
 
 export const removeOption = (tableName, columnName) => {
   return {
-    type: ADD_OPTION,
+    type: REMOVE_OPTION,
     tableName,
     columnName
   }
@@ -245,24 +246,24 @@ export default function(state = initialState, action) {
           action.valueOptionsArray
         )
       }
-    case ADD_TABLE:
+    case UPDATE_TABLE:
       return {
         ...state,
-        customQuery: addTableFunc(state.customQuery, action.tableName)
+        customQuery: updateTableFunc(state.customQuery, action.tableName)
       }
-    case ADD_COLUMN:
+    case UPDATE_COLUMN:
       return {
         ...state,
-        customQuery: addColumnFunc(
+        customQuery: updateColumnFunc(
           state.customQuery,
           action.tableName,
           action.columnName
         )
       }
-    case ADD_OPTION:
+    case UPDATE_OPTION:
       return {
         ...state,
-        customQuery: addOptionFunc(
+        customQuery: updateOptionFunc(
           state.customQuery,
           action.tableName,
           action.columnName,
@@ -322,7 +323,7 @@ export default function(state = initialState, action) {
   }
 }
 
-function addTableFunc(customQuery, tableName) {
+function updateTableFunc(customQuery, tableName) {
   let updatedQuery
   if (customQuery.length) {
     updatedQuery = [...customQuery].slice(0, customQuery.length - 1)
@@ -333,7 +334,7 @@ function addTableFunc(customQuery, tableName) {
   return updatedQuery
 }
 
-function addColumnFunc(customQuery, tableName, columnName) {
+function updateColumnFunc(customQuery, tableName, columnName) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
     if (tableName === existingTableName) {
@@ -354,7 +355,7 @@ function addColumnFunc(customQuery, tableName, columnName) {
   return updatedQuery
 }
 
-function addOptionFunc(customQuery, tableName, columnName, option) {
+function updateOptionFunc(customQuery, tableName, columnName, option) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
     if (tableName === existingTableName) {
