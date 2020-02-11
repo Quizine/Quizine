@@ -13,6 +13,8 @@ jsonSql.configure({
 module.exports = router
 
 //MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
+
+// GET OR POST???????
 router.get('/customQuery', async (req, res, next) => {
   try {
     const FEQuery1 = [

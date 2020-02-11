@@ -21,12 +21,15 @@ const REMOVE_TABLE = 'REMOVE_TABLE'
 const REMOVE_COLUMN = 'REMOVE_COLUMN'
 const REMOVE_OPTION = 'REMOVE_OPTION'
 
+const GET_QUERY_RESULTS = 'GET_QUERY_RESULTS'
+
 /**
  * INITIAL STATE
  */
 const initialState = {
   // dataType: '',
   // valueOptionsForString: [],
+  queryResult: [], //Or object ?
   joinTables: [],
   metaData: [],
   customQuery: []
@@ -46,6 +49,14 @@ const initialState = {
 /**
  * ACTION CREATORS
  */
+
+const gotQueryResult = queryResult => {
+  return {
+    type: GET_QUERY_RESULTS,
+    queryResult
+  }
+}
+
 const gotTableNames = tableNames => ({
   type: GET_TABLE_NAMES,
   tableNames
@@ -207,6 +218,15 @@ export const getJoinTables = tableName => async dispatch => {
   }
 }
 
+export const getQueryResults = queryArray => async dispatch => {
+  try {
+    // const {data} = await axios.post('/customizedQuery/customQuery', queryArray)
+    // dispatch(gotQueryResult(data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -317,6 +337,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         joinTables: action.joinTables
+      }
+    case GET_QUERY_RESULTS:
+      return {
+        ...state,
+        queryResult: action.queryResult
       }
     default:
       return state

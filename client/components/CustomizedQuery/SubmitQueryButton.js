@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {getQueryResults} from '../../store/customizedQueryReducer'
 
 export class SubmitQueryButton extends Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export class SubmitQueryButton extends Component {
 
   handleSubmit() {
     console.log('SEND QUERY TO BACKEND', this.props.currentQuery)
+    // this.props.loadQueryresults(this.props.currentQuery)
   }
 
   render() {
@@ -30,7 +32,9 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => {
-  return {}
+  return {
+    loadQueryresults: queryArray => dispatch(getQueryResults(queryArray))
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubmitQueryButton)
