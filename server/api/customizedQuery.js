@@ -15,12 +15,21 @@ module.exports = router
 //MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
 router.get('/customQuery', async (req, res, next) => {
   try {
-    const FEQuery = [
+    const FEQuery1 = [
+      // works
       {
         menus: [{mealType: ['dinner']}, {menuName: ['lobster']}]
       }
     ]
-    const sql = jsonSql.build(translateQuery(FEQuery))
+
+    // {$or: [{menuName: ‘lobster’}, {menuName: ‘chicken’]}
+    const FEQuery2 = [
+      {
+        menus: [{mealType: ['dinner']}, {menuName: ['lobster', 'chicken']}]
+      }
+    ]
+
+    const sql = jsonSql.build(translateQuery(FEQuery2))
 
     // const sql = jsonSql.build({
     //   type: 'select',
@@ -256,8 +265,9 @@ function translateQuery(customQueryArr) {
       if (conditions.hasOwnProperty(columnName)) {
         const orCondition = []
         if (conditions[columnName].length > 1) {
+          //
           conditions[columnName].forEach(condition => {
-            orCondition.push({columnName: condition})
+            orCondition.push({[columnName]: condition})
           })
           transformedConditions.$and.push({$or: orCondition})
         } else {
