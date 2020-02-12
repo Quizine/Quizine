@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {updateOption} from '../../store/customizedQueryReducer'
 
 const operators = [
-  {'Equal to': ''}, // Questionable
+  {'Equal to': '$is'}, // Questionable
   {'Greater than': '$gt'},
   {'Less than': '$lt'},
   {'Greater than or equal to': '$gte'},
@@ -28,8 +30,13 @@ export class IntegersInputField extends Component {
     this.setState({operator: event.target.value})
   }
 
-  handleInputChange(event) {
-    this.setState({inputValue: event.target.value})
+  async handleInputChange(event) {
+    await this.setState({inputValue: event.target.value})
+    this.props.updateOptionForCustomQuery(
+      this.props.selectedTable,
+      this.props.selectedColumn,
+      [this.state.operator, +this.state.inputValue]
+    )
   }
 
   handleBetweenInputChange(event) {
@@ -66,4 +73,11 @@ export class IntegersInputField extends Component {
   }
 }
 
-export default IntegersInputField
+const mapDispatchToProps = dispatch => {
+  return {
+    updateOptionForCustomQuery: (tableName, columnName, options) =>
+      dispatch(updateOption(tableName, columnName, options))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(IntegersInputField)
