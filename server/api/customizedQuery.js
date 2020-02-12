@@ -265,12 +265,18 @@ function translateQuery(customQueryArr) {
             })
           }
         } else if (conditions[columnName].values.length) {
-          transformedConditions.$and.push({
-            [columnName]: {
-              [conditions[columnName].values[0]]:
-                conditions[columnName].values[1]
-            }
-          })
+          if (conditions[columnName].values[0] === '$is') {
+            transformedConditions.$and.push({
+              [columnName]: conditions[columnName].values[1]
+            })
+          } else {
+            transformedConditions.$and.push({
+              [columnName]: {
+                [conditions[columnName].values[0]]:
+                  conditions[columnName].values[1]
+              }
+            })
+          }
         }
       }
     }
@@ -284,6 +290,10 @@ function translateQuery(customQueryArr) {
             transformedConditions.$or.push({[columnName]: condition})
           }
         })
+      } else if (conditions[columnName].values[0] === '$is') {
+        transformedConditions = {
+          [columnName]: conditions[columnName].values[1]
+        }
       } else {
         transformedConditions = {
           [columnName]: {

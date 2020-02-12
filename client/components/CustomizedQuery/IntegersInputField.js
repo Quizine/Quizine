@@ -19,7 +19,7 @@ export class IntegersInputField extends Component {
     this.state = {
       inputValue: '',
       betweenValue: '',
-      operator: 'Equal to'
+      operator: '$is'
     }
     this.handleWhereSelect = this.handleWhereSelect.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
