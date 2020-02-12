@@ -1,9 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {
-  getValueOptionsForString,
-  updateOption
-} from '../../store/customizedQueryReducer'
+import {getValueOptionsForString} from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
 import CheckBoxField from './CheckBoxField'
@@ -14,14 +11,15 @@ class CustomizedQueryWhere extends Component {
     this.state = {
       selectedValueOption: []
     }
-    this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
+    // this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
   }
 
-  async handleValueOptionChange(event) {
-    await this.setState({
-      selectedValueOption: [...selectedValueOption, event.target.value]
-    })
-  }
+  // handleValueOptionChange(event) {
+  //   this.setState({
+  //     selectedValueOption: [...selectedValueOption, event.target.value]
+  //   })
+  //   this.props.updateOptionForCustomQuery(this.props.selectedTable, this.props.selectedColumn, this.state.selectedValueOption)
+  // }
 
   render() {
     const {selectedTable, selectedColumn, metaData} = this.props
@@ -50,14 +48,26 @@ class CustomizedQueryWhere extends Component {
                   )
                 })}
             </select> */}
-            <CheckBoxField options={options} />
+            <CheckBoxField
+              selectedTable={selectedTable}
+              selectedColumn={selectedColumn}
+              options={options}
+            />
           </div>
         ) : (
           <div>
             {isIntegerField ? (
-              <IntegersInputField dataType={dataType} />
+              <IntegersInputField
+                selectedTable={selectedTable}
+                selectedColumn={selectedColumn}
+                dataType={dataType}
+              />
             ) : (
-              <TimeFrameField dataType={dataType} />
+              <TimeFrameField
+                selectedTable={selectedTable}
+                selectedColumn={selectedColumn}
+                dataType={dataType}
+              />
             )}
           </div>
         )}
