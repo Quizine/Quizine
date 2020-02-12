@@ -22,12 +22,12 @@ export default class CustomizedQueryPage extends Component {
     return (
       <div className="query-cont">
         <div className="query-table">
-          <div>
+          <div className="query-table-cont">
             <CustomizedQueryTable />
           </div>
-          <div>
+          <div className="combine-btn">
             <button type="button" onClick={() => this.handleJoinClick()}>
-              ----Join----
+              Combine With
             </button>
           </div>
         </div>

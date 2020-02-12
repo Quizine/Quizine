@@ -47,13 +47,16 @@ class CustomizedQuerySelect extends Component {
     const valueOptionsForString = this.props.valueOptionsForString
     const {customQuery} = this.props
     return (
-      <div>
+      <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
           return (
-            <div key={idx}>
-              <div>
-                <h3>COLUMN:</h3>
-                <select onChange={() => this.handleSelectedColumnChange(event)}>
+            <div key={idx} className="select-where">
+              <div className="col-cont">
+                <h3>Select column</h3>
+                <select
+                  className="select-cust"
+                  onChange={() => this.handleSelectedColumnChange(event)}
+                >
                   <option>Please Select</option>
                   {selectedTable &&
                     metaData &&
@@ -68,14 +71,16 @@ class CustomizedQuerySelect extends Component {
                     )}
                 </select>
               </div>
-              {Object.keys(element)[0] ? (
-                <div>
-                  <CustomizedQueryWhere
-                    selectedTable={selectedTable}
-                    selectedColumn={Object.keys(element)[0]}
-                  />
-                </div>
-              ) : null}
+              <div className="where-cont">
+                {Object.keys(element)[0] ? (
+                  <div>
+                    <CustomizedQueryWhere
+                      selectedTable={selectedTable}
+                      selectedColumn={Object.keys(element)[0]}
+                    />
+                  </div>
+                ) : null}
+              </div>
             </div>
           )
         })}

@@ -16,7 +16,7 @@ export class SubmitQueryButton extends Component {
 
   render() {
     return (
-      <div>
+      <div className="submit-query-btn">
         <button type="submit" onClick={this.handleSubmit}>
           <h2>Submit me carefully!</h2>
         </button>

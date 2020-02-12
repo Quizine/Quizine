@@ -189,9 +189,57 @@ form div {
 
 /* ---------custom analytics--------- */
 .custom-analytics-container {
-  margin-left: 150px;
+  display: flex;
+  flex-direction: column;
   background-color: rgb(239, 239, 239);
+  /* width: 100%; */
+  /* max-width: 100%; */
   /* min-height: 100vh; */
+}
+
+.row-query {
+  display: flex;
+  margin-bottom: 1em;
+  /* min-width: 800px; */
+}
+
+.row-columns {
+  display: flex;
+  flex-direction: column;
+  /* margin: 0 1em 1em 1em; */
+}
+
+.select-where {
+  display: flex;
+  margin-bottom: 2em;
+}
+
+.col-cont {
+  background-color: rgb(110, 110, 179);
+  min-width: 150px;
+}
+
+.where-cont {
+  margin-left: 40px;
+  min-width: 200px;
+  max-width: 500px;
+  background-color: rgb(179, 179, 223);
+}
+
+.select-table-name {
+  background-color: rgb(73, 73, 143);
+  margin-right: 40px;
+}
+
+.select-cust {
+  width: 150px;
+  font-size: 14px;
+  height: 38px;
+}
+.integer-input {
+  width: 145px;
+  font-size: 14px;
+  height: 38px;
 }
 
 /* --------select--------- */
@@ -577,21 +625,53 @@ body {
 .customized-query-container {
   margin-left: 150px;
   min-height: 100vh;
-  margin-top: 50px;
+  min-width: 600px;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  background-color: tomato;
 }
 
 .query-cont {
   display: flex;
   flex-direction: column;
-  margin: 2em;
+  /* background-color: teal; */
+  align-items: center;
+  margin: 10px 70px;
+  width: 100vw - 140px;
 }
 
 .query-table {
+  /* margin-left: 150px; */
+  /* padding: 2em; */
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin: 2em; */
+  /* min-width: 600px; */
+  /* width: 100vw; */
+  width: 100%;
+  max-width: 100%;
+  background-color: turquoise;
+}
+
+.submit-query-btn {
+  padding: 0.5em;
+}
+
+.combine-btn {
+  background-color: yellow;
+  /* width: 100vw; */
   margin: 2em;
+}
+
+.combine-btn button {
+  text-align: center;
+}
+.query-table-cont {
+  width: 100%;
+  max-width: 100%;
 }
 
 /* --------------TABLE RESULTS---------------- */
@@ -646,7 +726,7 @@ body {
   }
 
   .table-wrapper:before {
-    content: 'Scroll horizontally >';
+    /* content: 'Scroll horizontally >'; */
     display: block;
     text-align: right;
     font-size: 11px;

@@ -101,45 +101,52 @@ export class CustomizedQueryTable extends Component {
     // )
     return (
       <div className="custom-analytics-container">
-        <select
-          onChange={() => this.handleChange(event)}
-          disabled={this.state.disabled}
-          value={this.state.defaultValue}
-        >
-          <option value="default">Please Select</option>
+        <div className="row-query">
+          <div className="select-table-name">
+            <h3>Select table</h3>
+            <select
+              onChange={() => this.handleChange(event)}
+              disabled={this.state.disabled}
+              value={this.state.defaultValue}
+              className="select-cust"
+            >
+              <option value="default">Please Select</option>
 
-          {tableNames.map((element, idx) => {
-            return (
-              <option value={element} key={idx}>
-                {_.capitalize(element)}
-              </option>
-            )
-          })}
-        </select>
+              {tableNames.map((element, idx) => {
+                return (
+                  <option value={element} key={idx}>
+                    {_.capitalize(element)}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+
+          <div>
+            {customQuery.length ? (
+              <div className="row-columns">
+                <CustomizedQuerySelect selectedTable={lastSelectedTable} />
+                {Object.keys(lastSelectedColumn).length ? (
+                  <div>
+                    <button type="button" onClick={() => this.handleAddClick()}>
+                      Add Column
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => this.handleRemoveClick()}
+                    >
+                      Remove Column
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        </div>
         <button type="button" onClick={() => this.handleClearTableClick()}>
           Clear Query
         </button>
-        <div>
-          {customQuery.length ? (
-            <div>
-              <CustomizedQuerySelect selectedTable={lastSelectedTable} />
-              {Object.keys(lastSelectedColumn).length ? (
-                <div>
-                  <button type="button" onClick={() => this.handleAddClick()}>
-                    Add Column
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => this.handleRemoveClick()}
-                  >
-                    Remove Column
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
       </div>
     )
   }
