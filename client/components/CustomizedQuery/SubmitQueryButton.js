@@ -11,10 +11,11 @@ export class SubmitQueryButton extends Component {
 
   handleSubmit() {
     console.log('SEND QUERY TO BACKEND', this.props.currentQuery)
-    // this.props.loadQueryresults(this.props.currentQuery)
+    this.props.loadQueryresults(this.props.currentQuery)
   }
 
   render() {
+    console.log(`this.props.customQueryResult:`, this.props.customQueryResult)
     return (
       <div className="submit-query-btn">
         <button type="submit" onClick={this.handleSubmit}>
@@ -27,7 +28,8 @@ export class SubmitQueryButton extends Component {
 
 const mapStateToProps = state => {
   return {
-    currentQuery: state.customizedQuery.customQuery
+    currentQuery: state.customizedQuery.customQuery,
+    customQueryResult: state.customizedQuery.customQueryResult
   }
 }
 

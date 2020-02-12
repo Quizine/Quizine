@@ -14,52 +14,19 @@ module.exports = router
 
 //A POST ROUTE TO MAKE A CUSTOM QUERY
 
-// const sql = jsonSql.build({
-//   type: 'select',
-//   fields: ['menuName', 'mealType'],
-//   table: 'menus',
-//   join: [],
-//   condition: {menuName: 'lobster', mealType: 'dinner'}
-// })
-
-// const anExample = [
-//   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
-// ]
-
-router.get('/customQuery', async (req, res, next) => {
+router.post('/customQuery', async (req, res, next) => {
   try {
-    const ex0 = [
-      {
-        orders: [
-          {total: {dataType: 'integer', options: ['$lte', 50]}},
-          {
-            timeOfPurchase: {
-              dataType: 'timestamp with time zone',
-              options: ['week']
-            }
-          }
-        ]
-      }
-    ]
-    const ex1 = [
-      {
-        menus: [
-          {menuName: {dataType: 'string', options: []}},
-          {mealType: {dataType: 'string', options: []}}
-        ]
-      }
-    ]
-    const ex2 = [
-      //THIS ONE PRODUCTS NULL IN CONDITIONS
-      {
-        waiters: [{name: {dataType: 'string', options: []}}]
-      },
-      {
-        restaurants: [{restaurantName: {dataType: 'string', options: []}}]
-      }
-    ]
-
-    const sql = jsonSql.build(translateQuery(ex1))
+    // const ex1 = [
+    //   {
+    //     menus: [
+    //       {menuName: {dataType: 'string', options: []}},
+    //       {mealType: {dataType: 'string', options: []}}
+    //     ]
+    //   }
+    // ]
+    const customQueryRequest = req.body.customQueryRequest
+    console.log(`here@`, customQueryRequest)
+    const sql = jsonSql.build(translateQuery(customQueryRequest))
 
     console.log(`the query is: `, sql.query)
     console.log(`the values are`, sql.getValuesArray())
@@ -354,15 +321,15 @@ function translateQuery(customQueryArr) {
     }
   } else {
     const columnName = Object.keys(conditions)[0]
-    if (conditions[columnName].length > 1) {
+    if (conditions[columnName].values.length > 1) {
       transformedConditions.$or = []
-      conditions[columnName].forEach(condition => {
+      conditions[columnName].values.forEach(condition => {
         if (condition) {
           transformedConditions.$or.push({[columnName]: condition})
         }
       })
-    } else {
-      transformedConditions = conditions[0]
+    } else if (conditions[columnName].values.length === 1) {
+      transformedConditions = conditions[columnName].values[0]
       console.log(`what is here???`, transformedConditions)
     }
   }
@@ -372,15 +339,18 @@ function translateQuery(customQueryArr) {
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
-  if (translatedQuery.condition.$and) {
-    if (!translatedQuery.condition.$and.length) {
+
+  console.log(`before translated query condition`, translatedQuery.condition)
+  if (translatedQuery.condition) {
+    if (!Object.keys(translatedQuery.condition).length) {
       delete translatedQuery.condition
+    } else if (translatedQuery.condition.$and) {
+      if (!translatedQuery.condition.$and.length) {
+        delete translatedQuery.condition
+      }
     }
   }
 
-  if (!Object.keys(translatedQuery.condition).length) {
-    delete translatedQuery.condition
-  }
   console.log(`here is translate query`, translatedQuery)
   console.log(`conditions further down in the func:`, translatedQuery.condition)
   // here is translate query {

@@ -220,7 +220,7 @@ export const getJoinTables = tableName => async dispatch => {
 
 export const getQueryResults = customQueryArr => async dispatch => {
   try {
-    const {data} = await axios.post('/customizedQuery/customQuery', {
+    const {data} = await axios.post('/api/customizedQuery/customQuery', {
       customQueryRequest: customQueryArr
     })
     dispatch(gotCustomQueryResult(data))
