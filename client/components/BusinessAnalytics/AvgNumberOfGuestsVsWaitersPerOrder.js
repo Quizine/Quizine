@@ -59,7 +59,7 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
       labels: labels,
       datasets: [
         {
-          label: 'AVG # of Guests Served',
+          label: 'Average Number of Guests Served',
           data: yAxis,
           backgroundColor: '#bb4a4a'
         }
