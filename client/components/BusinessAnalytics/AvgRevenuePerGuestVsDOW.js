@@ -82,8 +82,8 @@ class AvgRevenuePerGuestVsDOW extends Component {
                     yAxes: [
                       {
                         ticks: {
-                          suggestedMax: guest$.min(),
-                          suggestedMin: guest$.max()
+                          suggestedMin: 40, //(guest$.min()) * .5,
+                          suggestedMax: 80 //guest$.max()
                         }
                       }
                     ]

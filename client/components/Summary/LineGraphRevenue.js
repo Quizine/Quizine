@@ -81,19 +81,18 @@ class LineGraphRevenue extends Component {
                   <Line
                     data={chartData}
                     options={{
-//                       title: {
-//                         display: true,
-//                         text: 'REVENUE vs TIME'
-//                       },
+                      //                       title: {
+                      //                         display: true,
+                      //                         text: 'REVENUE vs TIME'
+                      //                       },
                       scales: {
                         yAxes: [
                           {
                             display: true,
                             ticks: {
-                              suggestedMin: revenue.min(),
-                              suggestedMax: revenue.max()
+                              suggestedMin: 500, //revenue.min(),
+                              suggestedMax: 1000 //revenue.max()
                             }
-
                           }
                         ]
                       }
