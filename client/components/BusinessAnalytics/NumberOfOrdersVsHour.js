@@ -14,6 +14,15 @@ import {
   Button
 } from '@material-ui/core'
 
+//UTILITY FUNCTIONS:
+Array.prototype.max = function() {
+  return Math.max.apply(null, this)
+}
+
+Array.prototype.min = function() {
+  return Math.min.apply(null, this)
+}
+
 class NumberOfOrdersVsHour extends Component {
   constructor(props) {
     super(props)
@@ -63,7 +72,10 @@ class NumberOfOrdersVsHour extends Component {
         }
       ]
     }
-
+    const orders = chartData.datasets[0].data
+    if (!orders) {
+      return <h6>loading</h6>
+    }
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
@@ -93,6 +105,16 @@ class NumberOfOrdersVsHour extends Component {
                   title: {
                     display: false,
                     text: 'Number of Orders Per Hour'
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          suggestedMax: orders.min(),
+                          suggestedMin: orders.max()
+                        }
+                      }
+                    ]
                   }
                 }}
               />
