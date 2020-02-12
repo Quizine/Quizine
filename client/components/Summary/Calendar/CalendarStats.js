@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import _ from 'lodash'
 
 export class CalenderStats extends Component {
   render() {
@@ -26,7 +27,7 @@ export class CalenderStats extends Component {
           </div>
           <div>
             <h2>Most Popular Dish of the Day:</h2>
-            <h1>{popularDish.toUpperCase()}</h1>
+            <h1>{_.startCase(popularDish)}</h1>
           </div>
         </div>
       </div>

@@ -8,8 +8,8 @@ const operators = [
   {'Less than': '$lt'},
   {'Greater than or equal to': '$gte'},
   {'Less than or equal to': '$lte'},
-  {'Not equal to': '<>'},
-  {Between: '$between'}
+  {'Not equal to': '<>'}
+  // {Between: '$between'}
 ]
 
 export class IntegersInputField extends Component {

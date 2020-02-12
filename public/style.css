@@ -258,6 +258,11 @@ form div {
   justify-content: center;
 }
 
+.remove-add button {
+  width: 100px;
+  height: 30px;
+}
+
 /* --------select--------- */
 .select-css {
   display: block;
@@ -674,6 +679,14 @@ body {
 }
 
 .submit-query-btn {
+  margin: 1em 0;
+  /* padding: 0.5em; */
+  text-align: center;
+}
+
+.submit-query-btn button {
+  height: 30px;
+  width: 150px;
   padding: 0.5em;
 }
 
