@@ -16,14 +16,18 @@ export class SubmitQueryButton extends Component {
 
   render() {
     return (
-      <div className="submit-query-btn">
-        <button type="submit" onClick={this.handleSubmit}>
-          <h2>Submit me carefully!</h2>
-        </button>
-        {this.props.customQueryResult &&
-        Object.keys(this.props.customQueryResult).length ? (
-          <TableResults results={this.props.customQueryResult} />
-        ) : null}
+      <div>
+        <div className="submit-query-btn">
+          <button type="submit" onClick={this.handleSubmit}>
+            <h2>Submit me carefully!</h2>
+          </button>
+        </div>
+        <div className="table-width">
+          {this.props.customQueryResult &&
+          Object.keys(this.props.customQueryResult).length ? (
+            <TableResults results={this.props.customQueryResult} />
+          ) : null}
+        </div>
       </div>
     )
   }

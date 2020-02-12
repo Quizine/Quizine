@@ -31,7 +31,7 @@ export default class CustomizedQueryPage extends Component {
             </button>
           </div>
         </div>
-        <div>
+        <div className="submit-query">
           <SubmitQueryButton />
         </div>
       </div>
