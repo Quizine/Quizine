@@ -65,7 +65,7 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
-      ROUND((SUM(total)::numeric)/SUM("numberOfGuests")/100, 2) revenue_per_guest
+      ROUND((SUM(total)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
       FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
       AND orders."restaurantId" = $2
@@ -119,7 +119,7 @@ router.get(
         const topOrBottom = req.query.topOrBottom
         if (topOrBottom === 'asc') {
           text = `
-          SELECT menus."menuName" as name,
+          SELECT menus."menuItem" as name,
           SUM("menuOrders" .quantity) as total
           FROM "menuOrders"
           JOIN menus on menus.id = "menuOrders"."menuId"
@@ -132,7 +132,7 @@ router.get(
           `
         } else if (topOrBottom === 'desc') {
           text = `
-          SELECT menus."menuName" as name,
+          SELECT menus."menuItem" as name,
           SUM("menuOrders" .quantity) as total
           FROM "menuOrders"
           JOIN menus on menus.id = "menuOrders"."menuId"
@@ -202,7 +202,7 @@ router.get(
 //       waitersByAvgServedDishFormatted[1]
 
 //     // WOULD BE NICE TO CONVERT TO %
-//     const menuItemsByOrder = await client.query(`SELECT menus."menuName" AS "menuItem",
+//     const menuItemsByOrder = await client.query(`SELECT menus."menuItem" AS "menuItem",
 //     SUM("menuOrders".quantity) AS "quantity" FROM menus
 //     JOIN "menuOrders" ON menus.id = "menuOrders"."menuId"
 //     JOIN orders ON orders.id = "menuOrders"."orderId"
