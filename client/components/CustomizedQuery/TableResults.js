@@ -3,75 +3,11 @@ import {connect} from 'react-redux'
 import {CSVLink} from 'react-csv'
 import _ from 'lodash'
 
-// receives rows and fields
-const exampleData = {
-  rows: [
-    {
-      menuName: 'lobster',
-      mealType: 'lunch',
-      menuNam: 'lo222bster',
-      mealTy2pe: 'lun222ch'
-    },
-    {menuName: 'pizza', mealType: 'dinner', sdd: '233', deed: 'cdsklclscn'},
-    {
-      menuName: 'lobster',
-      mealType: 'lunch',
-      menuNam: 'lo222bster',
-      mealTy2pe: 'lun222ch'
-    },
-    {menuName: 'pizza', mealType: 'dinner', sdd: '233', deed: 'cdsklclscn'},
-    {
-      menuName: 'lobster',
-      mealType: 'lunch',
-      menuNam: 'lo222bster',
-      mealTy2pe: 'lun222ch'
-    }
-  ],
-  fields: [
-    {
-      name: 'menuName',
-      tableID: 185347,
-      columnID: 2,
-      dataTypeID: 1043,
-      dataTypeSize: -1,
-      dataTypeModifier: 259,
-      format: 'text'
-    },
-    {
-      name: 'mealType',
-      tableID: 185347,
-      columnID: 5,
-      dataTypeID: 185340,
-      dataTypeSize: 4,
-      dataTypeModifier: -1,
-      format: 'text'
-    },
-    {
-      name: 'Bla',
-      tableID: 185347,
-      columnID: 5,
-      dataTypeID: 185340,
-      dataTypeSize: 4,
-      dataTypeModifier: -1,
-      format: 'text'
-    },
-    {
-      name: 'Fulls',
-      tableID: 185347,
-      columnID: 5,
-      dataTypeID: 185340,
-      dataTypeSize: 4,
-      dataTypeModifier: -1,
-      format: 'text'
-    }
-  ]
-}
-
 export class TableResults extends Component {
   render() {
-    const tableData = this.props.queryResult || {fields: [], rows: []}
+    const tableData = this.props.results
     console.log(`here is tableData:`, tableData.fields)
-    const [rows, columns] = modifyEndpoint(exampleData)
+    const [rows, columns] = modifyEndpoint(tableData)
     const dataForCsv = [columns, ...rows]
     return (
       <div className="table-results-cont">
