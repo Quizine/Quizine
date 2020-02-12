@@ -13,11 +13,21 @@ jsonSql.configure({
 module.exports = router
 
 //A POST ROUTE TO MAKE A CUSTOM QUERY
+
+// const sql = jsonSql.build({
+//   type: 'select',
+//   fields: ['menuName', 'mealType'],
+//   table: 'menus',
+//   join: [],
+//   condition: {menuName: 'lobster', mealType: 'dinner'}
+// })
+
+// const anExample = [
+//   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
+// ]
+
 router.get('/customQuery', async (req, res, next) => {
   try {
-    // const anExample = [
-    //   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
-    // ]
     const ex0 = [
       {
         orders: [
@@ -50,14 +60,6 @@ router.get('/customQuery', async (req, res, next) => {
     ]
 
     const sql = jsonSql.build(translateQuery(ex1))
-
-    // const sql = jsonSql.build({
-    //   type: 'select',
-    //   fields: ['menuName', 'mealType'],
-    //   table: 'menus',
-    //   join: [],
-    //   condition: {menuName: 'lobster', mealType: 'dinner'}
-    // })
 
     console.log(`the query is: `, sql.query)
     console.log(`the values are`, sql.getValuesArray())
@@ -335,16 +337,12 @@ function translateQuery(customQueryArr) {
               orCondition.push({[columnName]: condition})
             })
             transformedConditions.$and.push({$or: orCondition})
-          } else {
+          } else if (conditions[columnName].values.length === 1) {
             transformedConditions.$and.push({
               [columnName]: conditions[columnName].values[0]
             })
           }
-        } else {
-          // condition: {
-          //   name: {$gte: 'John'}
-          // }
-
+        } else if (conditions[columnName].values.length) {
           transformedConditions.$and.push({
             [columnName]: {
               [conditions[columnName].values[0]]:
@@ -359,7 +357,9 @@ function translateQuery(customQueryArr) {
     if (conditions[columnName].length > 1) {
       transformedConditions.$or = []
       conditions[columnName].forEach(condition => {
-        transformedConditions.$or.push({[columnName]: condition})
+        if (condition) {
+          transformedConditions.$or.push({[columnName]: condition})
+        }
       })
     } else {
       transformedConditions = conditions[0]
@@ -372,6 +372,15 @@ function translateQuery(customQueryArr) {
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
+  if (translatedQuery.condition.$and) {
+    if (!translatedQuery.condition.$and.length) {
+      delete translatedQuery.condition
+    }
+  }
+
+  if (!Object.keys(translatedQuery.condition).length) {
+    delete translatedQuery.condition
+  }
   console.log(`here is translate query`, translatedQuery)
   console.log(`conditions further down in the func:`, translatedQuery.condition)
   // here is translate query {
@@ -380,6 +389,19 @@ function translateQuery(customQueryArr) {
   //   table: 'menus',
   //   join: {},
   //   condition: { '$and': [ [Object], [Object] ] }
+  // }
+  // for (let key in translatedQuery.condition) {
+  //   if (translatedQuery.condition.hasOwnProperty(key)) {
+  //     if (translatedQuery.condition[key] === '$and') {
+  //       for (let i = 0; i < translatedQuery.condition.$and.length; i++) {
+  //         let element =
+  //         if (tra)
+  //       }
+  //     }
+  //     else {
+
+  //     }
+  //   }
   // }
 
   //SEE IF COLUMN NAMES HAVE UNDEFINED VALUES

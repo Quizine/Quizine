@@ -11,10 +11,9 @@ import {
 class CustomizedQuerySelect extends Component {
   constructor() {
     super()
-    this.state = {
-      // selectedColumn: ''
-      // columnNamesObject: {}
-    }
+    // this.state = {
+    //   selectedColumns: []
+    // }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
   }
   componentDidMount() {
@@ -22,12 +21,18 @@ class CustomizedQuerySelect extends Component {
   }
 
   async handleSelectedColumnChange(event) {
-    // this.setState({selectedColumn: event.target.value})
+    // await this.setState({
+    //   //USED!!! DO NOT DELETE
+    //   selectedColumns: [...this.state.selectedColumns, event.target.value]
+    // })
+    console.log('IN CLICK!!!! 111', event.target.value)
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
+    // console.log('IN CLICK!!!! 222', event.target.value)
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
       event.target.value
     )
+
     const dataType = extractDataType(
       this.props.selectedTable,
       event.target.value,
@@ -41,11 +46,35 @@ class CustomizedQuerySelect extends Component {
   }
 
   render() {
-    const selectedTable = this.props.selectedTable
-    const metaData = this.props.metaData
-    const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
-    const valueOptionsForString = this.props.valueOptionsForString
-    const {customQuery} = this.props
+    const {customQuery, selectedTable, metaData} = this.props
+
+    console.log('IN SELECT', this.props, this.state)
+    console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
+    console.log(
+      'COLUMN NAME MAPPING 1111',
+      selectedTable && metaData && columnNameMapping(selectedTable, metaData)
+    )
+    console.log(
+      'COLUMN NAME MAPPING 2222',
+      selectedTable && columnNameMapping(selectedTable, customQuery)
+    )
+    // const test =
+    //   selectedTable &&
+    //   metaData &&
+    //   columnNameMapping(selectedTable, metaData).filter(
+    //     columnNameFilter =>
+    //       columnNameMapping(selectedTable, customQuery).indexOf(
+    //         columnNameFilter
+    //       ) < 0
+    //   )
+
+    // const test =
+    //   selectedTable &&
+    //   metaData &&
+    //   columnNameMapping(selectedTable, metaData).filter(
+    //     columnNameFilter =>
+    //       this.state.selectedColumns.indexOf(columnNameFilter) < 0
+    //   )
     return (
       <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
@@ -53,22 +82,35 @@ class CustomizedQuerySelect extends Component {
             <div key={idx} className="select-where">
               <div className="col-cont">
                 <h3>Select column</h3>
+                <h3>
+                  {Object.keys(element)[0]
+                    ? formatColumnName(Object.keys(element)[0])
+                    : null}
+                </h3>
                 <select
                   className="select-cust"
                   onChange={() => this.handleSelectedColumnChange(event)}
+                  disabled={!!Object.keys(element).length}
+                  value={Object.keys(element)[0]}
                 >
-                  <option>Please Select</option>
+                  <option value="default">Please Select</option>
+
                   {selectedTable &&
                     metaData &&
-                    columnNameMapping(selectedTable, metaData).map(
-                      (columnName, idx) => {
+                    columnNameMapping(selectedTable, metaData)
+                      .filter(
+                        columnNameFilter =>
+                          columnNameMapping(selectedTable, customQuery).indexOf(
+                            columnNameFilter
+                          ) < 0
+                      )
+                      .map((columnName, idx) => {
                         return (
                           <option key={idx} value={columnName}>
                             {formatColumnName(columnName)}
                           </option>
                         )
-                      }
-                    )}
+                      })}
                 </select>
               </div>
               <div className="where-cont">
