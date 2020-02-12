@@ -22,28 +22,28 @@ where sex = 'female'
 and waiters ."restaurantId" = '1' ;
 
 
-select "menuName"  
+select "menuItem"  
 from menus
 where "beverageType" notnull ;
 
 
-select "menuName"  
+select "menuItem"  
 from menus
 where "beverageType" = 'alcohol';
 
-select "menuName"
+select "menuItem"
 from menus
 where "mealType" = '${lunch}';
 
-select distinct "menuName"
+select distinct "menuItem"
 from menus
 where "foodType" = '${foodType}';
 
-select "menuName" , price 
+select "menuItem" , price 
 from menus
 order by price desc;
 
-SELECT menus."menuName" as name,
+SELECT menus."menuItem" as name,
 sum("menuOrders" .quantity) as total
 from "menuOrders"
 join menus on menus.id = "menuOrders"."menuId"

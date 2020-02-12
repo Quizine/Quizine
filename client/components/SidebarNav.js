@@ -24,10 +24,11 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'none',
     letterSpacing: 0,
     width: 150,
-    fontWeight: theme.typography.fontWeightMedium
+    fontWeight: theme.typography.fontWeightMedium,
+    color: '#24497A'
   },
   icon: {
-    color: 'black',
+    color: '#24497A',
     width: 24,
     height: 24,
     display: 'flex',
@@ -35,9 +36,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1)
   },
   active: {
-    fontWeight: 'bolder',
+    color: 'inherit',
+    // fontWeight: 'bolder',
     '& $icon': {
-      color: '#3b773d'
+      color: 'inherit'
     }
     // backgroundColor: 'black'
   }

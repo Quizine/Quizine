@@ -51,7 +51,7 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
-      SELECT menus."menuName" as name,
+      SELECT menus."menuItem" as name,
       SUM("menuOrders" .quantity) as total
       FROM "menuOrders"
       JOIN menus on menus.id = "menuOrders"."menuId"
@@ -175,7 +175,7 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
     if (req.user.id) {
       const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", 
       SUM(orders."numberOfGuests") AS "numberOfGuests", 
-      ROUND((SUM(orders.total)::numeric)/100000,2) AS "dayRevenue", 
+      ROUND((SUM(orders.total)::numeric)/1000,2) AS "dayRevenue", 
       SUM("summedMenuOrder"."summedQuantity")
             FROM orders
             JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId"

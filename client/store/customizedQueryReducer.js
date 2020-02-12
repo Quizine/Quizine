@@ -36,7 +36,7 @@ const initialState = {
 
 // query = [
 //   {tableName: 'menu',
-//   menuName: [lobster, coke],
+//   menuItem: [lobster, coke],
 //    foodType: [dinner, lunch]
 //   }
 //   ,

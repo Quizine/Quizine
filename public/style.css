@@ -172,19 +172,20 @@ form div {
 }
 
 .dish-rev h1 {
-  color: #24497a;
+  color: #767c83;
   margin: 0.5em;
   text-align: center;
 }
 
 .dish-rev h2 {
   color: #767c83;
-  /* margin: 0.5em; */
+  text-align: center;
+  margin: 0.5em;
   /* text-align: center; */
 }
 
 .dish-rev span {
-  color: black;
+  color: #767c83;
 }
 
 /* ---------custom analytics--------- */
