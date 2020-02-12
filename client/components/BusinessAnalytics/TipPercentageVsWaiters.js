@@ -14,6 +14,15 @@ import {
   Button
 } from '@material-ui/core'
 
+//UTILITY FUNCTIONS:
+Array.prototype.max = function() {
+  return Math.max.apply(null, this)
+}
+
+Array.prototype.min = function() {
+  return Math.min.apply(null, this)
+}
+
 class TipPercentageVsWaiters extends Component {
   constructor(props) {
     super(props)
@@ -53,85 +62,59 @@ class TipPercentageVsWaiters extends Component {
         }
       ]
     }
-    return (
-      <div className="peak-time-div">
-        <Card className={clsx('classes.root, className')}>
-          <CardHeader
-            action={
-              <div className="month-button">
-                <select
-                  onChange={this.handleChange}
-                  className="select-css"
-                  defaultValue="month"
-                >
-                  <option value="month">Month</option>
-                  <option value="year">Year</option>
-                  <option value="week">Week</option>
-                </select>
-              </div>
-            }
-            title="Waiter Performance (%)"
-          />
-          <Divider />
+    const tipPercentage = chartData.datasets[0].data
+    if (!tipPercentage) {
+      return <h6>loading...</h6>
+    } else {
+      return (
+        <div className="peak-time-div">
+          <Card className={clsx('classes.root, className')}>
+            <CardHeader
+              action={
+                <div className="month-button">
+                  <select
+                    onChange={this.handleChange}
+                    className="select-css"
+                    defaultValue="month"
+                  >
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                    <option value="week">Week</option>
+                  </select>
+                </div>
+              }
+              title="Waiter Performance (%)"
+            />
+            <Divider />
 
-          <CardContent>
-            <div className="classes.chartContainer">
-              <Bar
-                data={chartData}
-                options={{
-                  title: {
-                    display: false,
-                    text: 'Waiters Tip Percentage'
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        display: true,
-                        ticks: {
-                          suggestedMin: 5,
-                          suggestedMax: 25
+            <CardContent>
+              <div className="classes.chartContainer">
+                <Bar
+                  data={chartData}
+                  options={{
+                    title: {
+                      display: false,
+                      text: 'Waiters Tip Percentage'
+                    },
+                    scales: {
+                      yAxes: [
+                        {
+                          display: true,
+                          ticks: {
+                            suggestedMin: tipPercentage.min() * 0.8,
+                            suggestedMax: tipPercentage.max() * 1.1
+                          }
                         }
-                      }
-                    ]
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      // <div className="peak-time-div">
-      //   <select onChange={this.handleChange} defaultValue="month">
-      //     <option value="month">Month</option>
-      //     <option value="year">Year</option>
-      //     <option value="week">Week</option>
-      //   </select>
-      //   <div>
-      //     <Bar
-      //       data={chartData}
-      //       options={{
-      //         title: {
-      //           display: true,
-      //           text: 'Waiters Tip Percentage'
-      //         },
-      //         scales: {
-      //           yAxes: [
-      //             {
-      //               display: true,
-      //               ticks: {
-      //                 suggestedMin: 5, // minimum will be 0, unless there is a lower value.
-      //                 // OR //
-      //                 suggestedMax: 25
-      //               }
-      //             }
-      //           ]
-      //         }
-      //       }}
-      //     />
-      //   </div>
-      // </div>
-    )
+                      ]
+                    }
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    }
   }
 }
 

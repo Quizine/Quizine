@@ -14,6 +14,14 @@ import {
   Button
 } from '@material-ui/core'
 
+Array.prototype.max = function() {
+  return Math.max.apply(null, this)
+}
+
+Array.prototype.min = function() {
+  return Math.min.apply(null, this)
+}
+
 class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
   constructor(props) {
     super(props)
@@ -51,79 +59,65 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
       labels: labels,
       datasets: [
         {
-          label: 'AVG # of Guests Served',
+          label: 'Average Number of Guests Served',
           data: yAxis,
           backgroundColor: '#bb4a4a'
         }
       ]
     }
-    return (
-      <div className="peak-time-div">
-        <Card className={clsx('classes.root, className')}>
-          <CardHeader
-            action={
-              <div className="month-button">
-                <select
-                  onChange={this.handleChange}
-                  className="select-css"
-                  defaultValue="month"
-                >
-                  <option value="month">Month</option>
-                  <option value="year">Year</option>
-                  <option value="week">Week</option>
-                </select>
-              </div>
-            }
-            title="Waiter-Client Engagement (%)"
-          />
-          <Divider />
+    const avgNumberOfGuests = chartData.datasets[0].data
+    if (!avgNumberOfGuests) {
+      return <h5>loading...</h5>
+    } else {
+      return (
+        <div className="peak-time-div">
+          <Card className={clsx('classes.root, className')}>
+            <CardHeader
+              action={
+                <div className="month-button">
+                  <select
+                    onChange={this.handleChange}
+                    className="select-css"
+                    defaultValue="month"
+                  >
+                    <option value="month">Month</option>
+                    <option value="year">Year</option>
+                    <option value="week">Week</option>
+                  </select>
+                </div>
+              }
+              title="Waiter-Client Engagement (%)"
+            />
+            <Divider />
 
-          <CardContent>
-            <div className="classes.chartContainer">
-              <Bar
-                data={chartData}
-                options={{
-                  title: {
-                    display: false,
-                    text: 'Waiters Tip Percentage'
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        display: true,
-                        ticks: {
-                          suggestedMin: 2.5,
-                          suggestedMax: 6
+            <CardContent>
+              <div className="classes.chartContainer">
+                <Bar
+                  data={chartData}
+                  options={{
+                    title: {
+                      display: false,
+                      text: 'Waiters Tip Percentage'
+                    },
+                    scales: {
+                      yAxes: [
+                        {
+                          display: true,
+                          ticks: {
+                            suggestedMin: avgNumberOfGuests.min(),
+                            suggestedMax: avgNumberOfGuests.max()
+                          }
                         }
-                      }
-                    ]
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      // <div className="peak-time-div">
-      //   <select onChange={this.handleChange}>
-      //     <option value="month">Month</option>
-      //     <option value="year">Year</option>
-      //     <option value="week">Week</option>
-      //   </select>
-      //   <div>
-      //     <Bar
-      //       data={chartData}
-      //       options={{
-      //         title: {
-      //           display: true,
-      //           text: 'Average Number of Guests Served by Waiter per Order'
-      //         }
-      //       }}
-      //     />
-      //   </div>
-      // </div>
-    )
+                      ]
+                    }
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    }
   }
 }
 
