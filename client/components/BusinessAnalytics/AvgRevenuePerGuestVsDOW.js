@@ -5,6 +5,15 @@ import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
+//UTILITY FUNCTIONS:
+Array.prototype.max = function() {
+  return Math.max.apply(null, this)
+}
+
+Array.prototype.min = function() {
+  return Math.min.apply(null, this)
+}
+
 class AvgRevenuePerGuestVsDOW extends Component {
   constructor(props) {
     super(props)
@@ -44,7 +53,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
         }
       ]
     }
-
+    const guest$ = chartData.datasets[0].data
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
@@ -73,8 +82,8 @@ class AvgRevenuePerGuestVsDOW extends Component {
                     yAxes: [
                       {
                         ticks: {
-                          suggestedMax: 75,
-                          suggestedMin: 45
+                          suggestedMax: guest$.min(),
+                          suggestedMin: guest$.max()
                         }
                       }
                     ]

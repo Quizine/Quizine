@@ -12,12 +12,21 @@ import {
   Button
 } from '@material-ui/core'
 
+//UTILITY FUNCTIONS:
+Array.prototype.max = function() {
+  return Math.max.apply(null, this)
+}
+
+Array.prototype.min = function() {
+  return Math.min.apply(null, this)
+}
+
 class LineGraphRevenue extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedOption: 'oneYear'
+      selectedOption: 'allPeriod'
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -50,49 +59,55 @@ class LineGraphRevenue extends Component {
         }
       ]
     }
-    return (
-      <div>
-        <div className="peak-time-div">
-          <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              action={
-                <select onChange={this.handleChange} className="select-css">
-                  <option value="oneYear">Last Year</option>
-                  <option value="twoYears">Last 2 Years</option>
-                  <option value="allPeriod">All History</option>
-                </select>
-              }
-              title="Revenue per Month ($)"
-            />
-            <Divider />
-            <CardContent>
-              <div className="classes.chartContainer">
-                <Line
-                  data={chartData}
-                  options={{
-                    // title: {
-                    //   display: true,
-                    //   text: 'REVENUE vs TIME'
-                    // },
-                    scales: {
-                      yAxes: [
-                        {
-                          display: true,
-                          ticks: {
-                            suggestedMin: 45000,
-                            suggestedMax: 145000
+
+    if (revenue) {
+      return (
+        <div>
+          <div className="peak-time-div">
+            <Card className={clsx('classes.root, className')}>
+              <CardHeader
+                action={
+                  <select onChange={this.handleChange} className="select-css">
+                    <option value="allPeriod">All History</option>
+                    <option value="oneYear">Last Year</option>
+                    <option value="twoYears">Last 2 Years</option>
+                  </select>
+                }
+                title="Revenue per Month ($)"
+              />
+              <Divider />
+              <CardContent>
+                <div className="classes.chartContainer">
+                  <Line
+                    data={chartData}
+                    options={{
+//                       title: {
+//                         display: true,
+//                         text: 'REVENUE vs TIME'
+//                       },
+                      scales: {
+                        yAxes: [
+                          {
+                            display: true,
+                            ticks: {
+                              suggestedMin: revenue.min(),
+                              suggestedMax: revenue.max()
+                            }
+
                           }
-                        }
-                      ]
-                    }
-                  }}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                        ]
+                      }
+                    }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      return <h6>loading</h6>
+    }
   }
 }
 
