@@ -71,19 +71,21 @@ class PeakTimeGraph extends Component {
                 <option value="week">Week</option>
               </select>
             }
-            title="Guests by the Hour (%)"
+            title="Guest Distribution per Hour (%)"
           />
           <Divider />
           <CardContent>
             <div className="classes.chartContainer">
               <Bar
                 data={chartData}
-                options={{
-                  title: {
-                    display: true,
-                    text: 'Peak Times'
+                options={
+                  {
+                    // title: {
+                    //   display: true,
+                    //   text: 'Peak Times'
+                    // }
                   }
-                }}
+                }
               />
             </div>
           </CardContent>
