@@ -18,6 +18,7 @@ router.post('/customQuery', async (req, res, next) => {
   try {
     const customQueryRequest = req.body.customQueryRequest
     console.log(`here@`, customQueryRequest)
+    console.log(`here22222@`, customQueryRequest[0].orders)
     const sql = jsonSql.build(translateQuery(customQueryRequest))
 
     console.log(`the query is: `, sql.query)
@@ -151,32 +152,6 @@ router.get('/:tableName/:columnName', async (req, res, next) => {
   }
 })
 
-// router.get('/:tableName/:columnName/timestamp', async (req, res, next) => {
-//   try {
-//     const datatypeQuery = await client.query(`
-//     SELECT data_type from information_schema.columns
-//     WHERE table_name = '${req.params.tableName}'
-//     AND column_name = '${req.params.columnName}';`)
-//     const datatype = datatypeQuery.rows[0].data_type
-//     res.json(datatype)
-//   } catch (error) {
-//     next(error)
-//   }
-// })
-
-// router.get('/:tableName/:columnName/integer', async (req, res, next) => {
-//   try {
-//     const datatypeQuery = await client.query(`
-//     SELECT data_type from information_schema.columns
-//     WHERE table_name = '${req.params.tableName}'
-//     AND column_name = '${req.params.columnName}';`)
-//     const datatype = datatypeQuery.rows[0].data_type
-//     res.json(datatype)
-//   } catch (error) {
-//     next(error)
-//   }
-// })
-
 //SHOULD JUST GIVE BACK THE COLUMN NAME?? WHAT DOES THIS DO? (GIVING ME STRANGE RESULTS)
 router.get('/:tableName/:columnName/string', async (req, res, next) => {
   try {
@@ -299,21 +274,29 @@ function translateQuery(customQueryArr) {
         }
       }
     }
-  } else {
-    const columnName = Object.keys(conditions)[0]
+  } else if (Object.keys(conditions).length === 1) {
+    const columnName = Object.keys(conditions)[0] //timeOfPurchase
     if (conditions[columnName].values.length > 1) {
-      transformedConditions.$or = []
-      conditions[columnName].values.forEach(condition => {
-        if (condition) {
-          transformedConditions.$or.push({[columnName]: condition})
+      if (conditions[columnName].dataType === 'string') {
+        transformedConditions.$or = []
+        conditions[columnName].values.forEach(condition => {
+          if (condition) {
+            transformedConditions.$or.push({[columnName]: condition})
+          }
+        })
+      } else {
+        transformedConditions = {
+          [columnName]: {
+            [conditions[columnName].values[0]]: conditions[columnName].values[1]
+          }
         }
-      })
+      }
     } else if (conditions[columnName].values.length === 1) {
       transformedConditions = {[columnName]: conditions[columnName].values[0]}
       console.log(`what is here???`, transformedConditions)
     }
   }
-
+  console.log('transformed condition: ', transformedConditions)
   translatedQuery.type = type
   translatedQuery.fields = columns
   translatedQuery.table = baseTable
