@@ -161,7 +161,7 @@ router.get('/revenueVsTime', async (req, res, next) => {
       const allDateRevenue = {month: [], revenue: []}
       revenueVsTime.rows.forEach(row => {
         allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-        allDateRevenue.revenue.push(Number(row.monthlyRevenue) / 100)
+        allDateRevenue.revenue.push(Number(row.monthlyRevenue))
       })
       res.json(allDateRevenue)
     }

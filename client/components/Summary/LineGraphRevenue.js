@@ -49,7 +49,7 @@ class LineGraphRevenue extends Component {
       labels: month,
       datasets: [
         {
-          label: 'REVENUE',
+          label: 'Revenue',
           data: revenue,
           backgroundColor: 'lightgreen',
           borderColor: 'yellow',
@@ -90,8 +90,8 @@ class LineGraphRevenue extends Component {
                           {
                             display: true,
                             ticks: {
-                              suggestedMin: 500, //revenue.min(),
-                              suggestedMax: 1000 //revenue.max()
+                              suggestedMin: 50000, //revenue.min(),
+                              suggestedMax: 100000 //revenue.max()
                             }
                           }
                         ]
