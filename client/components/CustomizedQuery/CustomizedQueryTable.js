@@ -14,8 +14,6 @@ export class CustomizedQueryTable extends Component {
   constructor() {
     super()
     this.state = {
-      selectedTable: '',
-      count: [1],
       disabled: false, //USED!!! DO NOT DELETE
       defaultValue: 'default' //USED!!! DO NOT DELETE
     }
@@ -32,10 +30,6 @@ export class CustomizedQueryTable extends Component {
   handleChange(event) {
     this.props.loadTableFields(event.target.value)
 
-    this.setState({
-      selectedTable: event.target.value
-    })
-
     this.props.updateTable(event.target.value)
     this.props.addEmptyColumn(event.target.value)
 
@@ -49,13 +43,6 @@ export class CustomizedQueryTable extends Component {
   }
 
   handleAddClick() {
-    // this.setState({count: [...this.state.count, 1]})
-    // console.log(
-    //   'IN ADD CLICK',
-    //   Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
-    // )
-
-    console.log('IN ADD CLICK!!!!!!!!!!')
     this.props.addEmptyColumn(
       Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
     )
@@ -86,21 +73,10 @@ export class CustomizedQueryTable extends Component {
           customQuery[customQuery.length - 1][lastSelectedTable].length - 1
         ]
       : null
-    // console.log(
-    //   'HERE',
-    //   customQuery.length
-    //     ? customQuery[customQuery.length - 1][lastSelectedTable][0]
-    //     : null
-    // )
 
     console.log('SELECTED TABLE', lastSelectedTable)
     console.log('SELECTED COLUMN', lastSelectedColumn)
-    // console.log(
-    //   '**** TABLEFUNC',
-    //   lastSelectedTable
-    //     ? columnNameMapping(lastSelectedTable, this.props.metaData)
-    //     : null
-    // )
+
     return (
       <div className="custom-analytics-container">
         <select

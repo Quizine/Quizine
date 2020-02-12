@@ -10,18 +10,3 @@ export default class CustomizedQueryContainer extends Component {
     )
   }
 }
-
-// const mapStateToProps = state => {
-//   return {
-//     tableFields: state.customizedQuery.tableFields
-//   }
-// }
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     loadTableFields: tableName => {
-//       dispatch(getTableFields(tableName))
-//     }
-//   }
-// }
-// export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQueryPage)
