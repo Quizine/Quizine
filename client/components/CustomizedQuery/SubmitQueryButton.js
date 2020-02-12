@@ -19,7 +19,7 @@ export class SubmitQueryButton extends Component {
       <div>
         <div className="submit-query-btn">
           <button type="submit" onClick={this.handleSubmit}>
-            <h2>Submit me carefully!</h2>
+            <h2>Submit Search</h2>
           </button>
         </div>
         <div className="table-width">

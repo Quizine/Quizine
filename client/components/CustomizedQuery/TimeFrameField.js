@@ -30,7 +30,7 @@ class TimeFrameField extends Component {
   render() {
     return (
       <div>
-        <h3>TimeStamp WHERE</h3>
+        <h3>{`Where ${formatColumnName(this.props.selectedColumn)} is:`}</h3>
         <select
           className="select-cust"
           onChange={() => this.handleChange(event)}
@@ -57,3 +57,9 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(null, mapDispatchToProps)(TimeFrameField)
+
+function formatColumnName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
+}

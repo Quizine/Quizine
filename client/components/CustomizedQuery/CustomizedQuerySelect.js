@@ -81,12 +81,12 @@ class CustomizedQuerySelect extends Component {
           return (
             <div key={idx} className="select-where">
               <div className="col-cont">
-                <h3>Select column</h3>
-                <h3>
+                <h3>Select Search Criteria:</h3>
+                {/* <h3>
                   {Object.keys(element)[0]
                     ? formatColumnName(Object.keys(element)[0])
                     : null}
-                </h3>
+                </h3> */}
                 <select
                   className="select-cust"
                   onChange={() => this.handleSelectedColumnChange(event)}

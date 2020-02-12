@@ -4,6 +4,7 @@ import {getValueOptionsForString} from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
 import CheckBoxField from './CheckBoxField'
+import _ from 'lodash'
 
 class CustomizedQueryWhere extends Component {
   constructor() {
@@ -36,7 +37,7 @@ class CustomizedQueryWhere extends Component {
       <div>
         {options.length ? (
           <div>
-            <h3>WHERE:</h3>
+            <h3>{`Where ${_.startCase(selectedColumn)} is:`}</h3>
             {/* <select onChange={() => this.handleSelect(event)} multiple>
               <option defaultValue>Please Select</option>
               {options.length &&

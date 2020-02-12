@@ -111,7 +111,7 @@ export class CustomizedQueryTable extends Component {
       <div className="custom-analytics-container">
         <div className="row-query">
           <div className="select-table-name">
-            <h3>Select table</h3>
+            <h3>Select Category:</h3>
             <select
               onChange={() => this.handleChange(event)}
               disabled={this.state.disabled}
@@ -144,14 +144,14 @@ export class CustomizedQueryTable extends Component {
                         type="button"
                         onClick={() => this.handleAddClick()}
                       >
-                        Add Column
+                        Add Search Criteria
                       </button>
                     ) : null}
                     <button
                       type="button"
                       onClick={() => this.handleRemoveClick()}
                     >
-                      Remove Column
+                      Remove Search Criteria
                     </button>
                   </div>
                 ) : null}
@@ -164,7 +164,7 @@ export class CustomizedQueryTable extends Component {
           type="button"
           onClick={() => this.handleClearTableClick()}
         >
-          Clear Query
+          Clear Search
         </button>
       </div>
     )
