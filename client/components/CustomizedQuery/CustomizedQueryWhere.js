@@ -1,11 +1,28 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getValueOptionsForString} from '../../store/customizedQueryReducer'
+import {
+  getValueOptionsForString,
+  updateOption
+} from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
 import CheckBoxField from './CheckBoxField'
 
 class CustomizedQueryWhere extends Component {
+  constructor() {
+    super()
+    this.state = {
+      selectedValueOption: []
+    }
+    this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
+  }
+
+  async handleValueOptionChange(event) {
+    await this.setState({
+      selectedValueOption: [...selectedValueOption, event.target.value]
+    })
+  }
+
   render() {
     const {selectedTable, selectedColumn, metaData} = this.props
 

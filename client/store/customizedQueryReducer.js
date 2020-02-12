@@ -20,8 +20,7 @@ const ADD_EMPTY_OPTION = 'ADD_EMPTY_OPTION'
 const REMOVE_TABLE = 'REMOVE_TABLE'
 const REMOVE_COLUMN = 'REMOVE_COLUMN'
 const REMOVE_OPTION = 'REMOVE_OPTION'
-
-const GET_QUERY_RESULTS = 'GET_QUERY_RESULTS'
+const GET_CUSTOM_QUERY_RESULTS = 'GET_CUSTOM_QUERY_RESULTS'
 
 /**
  * INITIAL STATE
@@ -29,7 +28,7 @@ const GET_QUERY_RESULTS = 'GET_QUERY_RESULTS'
 const initialState = {
   // dataType: '',
   // valueOptionsForString: [],
-  queryResult: [], //Or object ?
+  customQueryResult: [], //Or object ?
   joinTables: [],
   metaData: [],
   customQuery: []
@@ -50,10 +49,10 @@ const initialState = {
  * ACTION CREATORS
  */
 
-const gotQueryResult = queryResult => {
+const gotCustomQueryResult = customQueryResult => {
   return {
-    type: GET_QUERY_RESULTS,
-    queryResult
+    type: GET_CUSTOM_QUERY_RESULTS,
+    customQueryResult
   }
 }
 
@@ -219,10 +218,12 @@ export const getJoinTables = tableName => async dispatch => {
   }
 }
 
-export const getQueryResults = queryArray => async dispatch => {
+export const getQueryResults = customQueryArr => async dispatch => {
   try {
-    // const {data} = await axios.post('/customizedQuery/customQuery', queryArray)
-    // dispatch(gotQueryResult(data))
+    const {data} = await axios.post('/customizedQuery/customQuery', {
+      customQueryRequest: customQueryArr
+    })
+    dispatch(gotCustomQueryResult(data))
   } catch (err) {
     console.error(err)
   }
@@ -340,10 +341,10 @@ export default function(state = initialState, action) {
         ...state,
         joinTables: action.joinTables
       }
-    case GET_QUERY_RESULTS:
+    case GET_CUSTOM_QUERY_RESULTS:
       return {
         ...state,
-        queryResult: action.queryResult
+        customQueryResult: action.customQueryResult
       }
     default:
       return state

@@ -48,9 +48,8 @@ router.get('/customQuery', async (req, res, next) => {
       }
     ]
 
-
     const sql = jsonSql.build(translateQuery(FEQuery3))
-    const sql = jsonSql.build(translateQuery(ex2))
+    // const sql = jsonSql.build(translateQuery(ex2))
 
     // const sql = jsonSql.build({
     //   type: 'select',
@@ -77,7 +76,7 @@ router.get('/', async (req, res, next) => {
     FROM information_schema.tables
     WHERE table_type='BASE TABLE'
     AND table_schema='public'
-    AND table_name !='Sessions' 
+    AND table_name !='Sessions'
     AND table_name !='users'
     AND table_name !='menuOrders'
     AND table_name !='restaurants';`)
