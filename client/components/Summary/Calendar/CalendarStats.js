@@ -8,7 +8,13 @@ export class CalenderStats extends Component {
     return (
       <div className="calendar-stats-cont">
         <div className="waiters-list">
-          <h2>Waiters on Duty:</h2>
+          {/* <h2>Waiters on Duty:</h2> */}
+          <h2>
+            Waiters on Duty on
+            <span>
+              <i>{` ${this.props.currentDate.toDateString()}`}:</i>
+            </span>
+          </h2>
           <ul className="waiters-list-li">
             {listOfWaiters.map((el, idx) => {
               return <li key={idx}>{el.name}</li>
@@ -19,15 +25,16 @@ export class CalenderStats extends Component {
           <div>
             <h2>
               Revenue on
-              <span color="black">
+              <span>
                 <i>{` ${this.props.currentDate.toDateString()}`}:</i>
               </span>
             </h2>
-            <h1>{`$ ${convertToDollar(Number(revenue))}`}</h1>
+            <h2 color="black">{`$ ${convertToDollar(Number(revenue))}`}</h2>
           </div>
           <div>
             <h2>Most Popular Dish of the Day:</h2>
-            <h1>{_.startCase(popularDish)}</h1>
+
+            <h2>{_.startCase(popularDish)}</h2>
           </div>
         </div>
       </div>
@@ -44,5 +51,5 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps)(CalenderStats)
 
 function convertToDollar(num) {
-  return (num / 100).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+  return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
 }

@@ -26,9 +26,9 @@ export default class CustomizedQueryPage extends Component {
             <CustomizedQueryTable />
           </div>
           <div className="combine-btn">
-            <button type="button" onClick={() => this.handleJoinClick()}>
+            {/* <button type="button" onClick={() => this.handleJoinClick()}>
               Combine With
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="submit-query">
