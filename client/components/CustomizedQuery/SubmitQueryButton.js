@@ -11,12 +11,10 @@ export class SubmitQueryButton extends Component {
   }
 
   handleSubmit() {
-    console.log('SEND QUERY TO BACKEND', this.props.currentQuery)
     this.props.loadQueryresults(this.props.currentQuery)
   }
 
   render() {
-    console.log(`LOOOOOOOOG:`, this.props.customQueryResult)
     return (
       <div className="submit-query-btn">
         <button type="submit" onClick={this.handleSubmit}>

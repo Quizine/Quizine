@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {CSVLink} from 'react-csv'
 import _ from 'lodash'
 
-export class TableResults extends Component {
+export default class TableResults extends Component {
   render() {
     const tableData = this.props.results
     console.log(`here is tableData:`, tableData.fields)
@@ -40,14 +40,6 @@ export class TableResults extends Component {
     )
   }
 }
-
-const mapStateToProps = state => {
-  return {
-    queryResult: state.customizedQuery.customQueryResult
-  }
-}
-
-export default connect(mapStateToProps)(TableResults)
 
 function modifyEndpoint(obj) {
   const columns = obj.fields.map(column => _.startCase(column.name))
