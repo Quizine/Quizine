@@ -16,10 +16,10 @@ module.exports = router
 
 router.post('/customQuery', async (req, res, next) => {
   try {
-    const customQueryRequest = req.body.customQueryRequest
+    const customQueryRequest = req.body.customQueryRequest //custom query from FE
     console.log(`here@`, customQueryRequest)
     console.log(`here22222@`, customQueryRequest[0].orders)
-    const sql = jsonSql.build(translateQuery(customQueryRequest))
+    const sql = jsonSql.build(translateQuery(customQueryRequest)) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
 
     console.log(`the query is: `, sql.query)
     console.log(`the values are`, sql.getValuesArray())

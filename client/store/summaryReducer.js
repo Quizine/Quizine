@@ -138,7 +138,21 @@ export const getCalendarData = date => async dispatch => {
 export const getDOWAnalysisTable = () => async dispatch => {
   try {
     const {data} = await axios.get('/api/summary/DOWAnalysisTable')
-    dispatch(gotDOWAnalysisTable(data))
+    console.log('table data: ', data)
+    const correctedDataTypeArr = data.map(row => {
+      const correctedRow = {}
+      for (let key in row) {
+        if (row.hasOwnProperty(key)) {
+          if (key !== 'dayOfWeek') {
+            correctedRow[key] = +row[key]
+          } else {
+            correctedRow[key] = row[key]
+          }
+        }
+      }
+      return correctedRow
+    })
+    dispatch(gotDOWAnalysisTable(correctedDataTypeArr))
   } catch (err) {
     console.error(err)
   }
