@@ -69,10 +69,10 @@ const exampleData = {
 
 export class TableResults extends Component {
   render() {
-    const tableData = this.props.queryResult
+    const tableData = this.props.queryResult || {fields: [], rows: []}
+    console.log(`here is tableData:`, tableData.fields)
     const [rows, columns] = modifyEndpoint(exampleData)
     const dataForCsv = [columns, ...rows]
-
     return (
       <div className="table-results-cont">
         <div className="table-wrapper">
