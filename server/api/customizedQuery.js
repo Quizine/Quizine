@@ -16,14 +16,6 @@ module.exports = router
 
 router.post('/customQuery', async (req, res, next) => {
   try {
-    // const ex1 = [
-    //   {
-    //     menus: [
-    //       {menuName: {dataType: 'string', options: []}},
-    //       {mealType: {dataType: 'string', options: []}}
-    //     ]
-    //   }
-    // ]
     const customQueryRequest = req.body.customQueryRequest
     console.log(`here@`, customQueryRequest)
     const sql = jsonSql.build(translateQuery(customQueryRequest))
@@ -204,18 +196,6 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
   }
 })
 
-// const internalObj = {
-//   type: 'select',
-//   fields: ['menuName', 'mealType'],
-//   table: 'menus',
-//   join: [],
-//   condition: {menuName: 'lobster', mealType: 'dinner'}
-// }
-
-// const externalObj = [
-//   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
-// ]
-
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(customQueryArr) {
   const translatedQuery = {}
@@ -329,7 +309,7 @@ function translateQuery(customQueryArr) {
         }
       })
     } else if (conditions[columnName].values.length === 1) {
-      transformedConditions = conditions[columnName].values[0]
+      transformedConditions = {[columnName]: conditions[columnName].values[0]}
       console.log(`what is here???`, transformedConditions)
     }
   }
@@ -350,42 +330,5 @@ function translateQuery(customQueryArr) {
       }
     }
   }
-
-  console.log(`here is translate query`, translatedQuery)
-  console.log(`conditions further down in the func:`, translatedQuery.condition)
-  // here is translate query {
-  //   type: 'select',
-  //   fields: [ 'mealType', 'menuName' ],
-  //   table: 'menus',
-  //   join: {},
-  //   condition: { '$and': [ [Object], [Object] ] }
-  // }
-  // for (let key in translatedQuery.condition) {
-  //   if (translatedQuery.condition.hasOwnProperty(key)) {
-  //     if (translatedQuery.condition[key] === '$and') {
-  //       for (let i = 0; i < translatedQuery.condition.$and.length; i++) {
-  //         let element =
-  //         if (tra)
-  //       }
-  //     }
-  //     else {
-
-  //     }
-  //   }
-  // }
-
-  //SEE IF COLUMN NAMES HAVE UNDEFINED VALUES
-  //use delete operator
-  for (let key in translatedQuery.condition) {
-    const value = translatedQuery.condition[key]
-    console.log(`here is the key`, key)
-    console.log(`and value`, value)
-    if (Array.isArray(value)) {
-      value.forEach(item => {
-        console.log(`here is an array item`, item)
-      })
-    }
-  }
-
   return translatedQuery
 }
