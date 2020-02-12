@@ -127,7 +127,7 @@ export class CustomizedQueryTable extends Component {
               <div className="row-columns">
                 <CustomizedQuerySelect selectedTable={lastSelectedTable} />
                 {Object.keys(lastSelectedColumn).length ? (
-                  <div>
+                  <div className="remove-add">
                     <button type="button" onClick={() => this.handleAddClick()}>
                       Add Column
                     </button>
@@ -144,7 +144,11 @@ export class CustomizedQueryTable extends Component {
             ) : null}
           </div>
         </div>
-        <button type="button" onClick={() => this.handleClearTableClick()}>
+        <button
+          className="clear-btn"
+          type="button"
+          onClick={() => this.handleClearTableClick()}
+        >
           Clear Query
         </button>
       </div>
