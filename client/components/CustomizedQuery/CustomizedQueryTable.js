@@ -162,6 +162,16 @@ function columnArrayMapping(tableName, array) {
   })[0][tableName]
 }
 
+function columnNameMapping(tableName, array) {
+  return array
+    .filter(element => {
+      return Object.keys(element)[0] === tableName
+    })[0]
+    [tableName].map(element => {
+      return Object.keys(element)[0]
+    })
+}
+
 // import React, {Component} from 'react'
 // import {connect} from 'react-redux'
 // import {getTableFields} from '../../store/customizedQueryReducer'
