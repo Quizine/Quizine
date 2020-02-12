@@ -343,13 +343,13 @@ function translateQuery(customQueryArr) {
             })
           }
         } else if (conditions[columnName].values.length) {
-            transformedConditions.$and.push({
-              [columnName]: {
-                [conditions[columnName].values[0]]:
-                  conditions[columnName].values[1]
-              }
-            })
-          }
+          transformedConditions.$and.push({
+            [columnName]: {
+              [conditions[columnName].values[0]]:
+                conditions[columnName].values[1]
+            }
+          })
+        }
       }
     }
   } else {

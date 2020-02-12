@@ -76,18 +76,19 @@ class CustomizedQuerySelect extends Component {
     //       this.state.selectedColumns.indexOf(columnNameFilter) < 0
     //   )
     return (
-      <div>
+      <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
           return (
-            <div key={idx}>
-              <div>
-                <h3>COLUMN:</h3>
+            <div key={idx} className="select-where">
+              <div className="col-cont">
+                <h3>Select column</h3>
                 <h3>
                   {Object.keys(element)[0]
                     ? formatColumnName(Object.keys(element)[0])
                     : null}
                 </h3>
                 <select
+                  className="select-cust"
                   onChange={() => this.handleSelectedColumnChange(event)}
                   disabled={!!Object.keys(element).length}
                   value={Object.keys(element)[0]}
@@ -112,14 +113,16 @@ class CustomizedQuerySelect extends Component {
                       })}
                 </select>
               </div>
-              {Object.keys(element)[0] ? (
-                <div>
-                  <CustomizedQueryWhere
-                    selectedTable={selectedTable}
-                    selectedColumn={Object.keys(element)[0]}
-                  />
-                </div>
-              ) : null}
+              <div className="where-cont">
+                {Object.keys(element)[0] ? (
+                  <div>
+                    <CustomizedQueryWhere
+                      selectedTable={selectedTable}
+                      selectedColumn={Object.keys(element)[0]}
+                    />
+                  </div>
+                ) : null}
+              </div>
             </div>
           )
         })}

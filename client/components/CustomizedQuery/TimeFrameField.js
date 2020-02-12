@@ -31,7 +31,10 @@ class TimeFrameField extends Component {
     return (
       <div>
         <h3>TimeStamp WHERE</h3>
-        <select onChange={() => this.handleChange(event)}>
+        <select
+          className="select-cust"
+          onChange={() => this.handleChange(event)}
+        >
           <option>Please Select Period</option>
           {timeFrameOptions.map((option, idx) => {
             return (

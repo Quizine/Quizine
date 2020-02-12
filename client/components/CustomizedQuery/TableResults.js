@@ -6,8 +6,26 @@ import _ from 'lodash'
 // receives rows and fields
 const exampleData = {
   rows: [
-    {menuName: 'lobster', mealType: 'lunch'},
-    {menuName: 'pizza', mealType: 'dinner'}
+    {
+      menuName: 'lobster',
+      mealType: 'lunch',
+      menuNam: 'lo222bster',
+      mealTy2pe: 'lun222ch'
+    },
+    {menuName: 'pizza', mealType: 'dinner', sdd: '233', deed: 'cdsklclscn'},
+    {
+      menuName: 'lobster',
+      mealType: 'lunch',
+      menuNam: 'lo222bster',
+      mealTy2pe: 'lun222ch'
+    },
+    {menuName: 'pizza', mealType: 'dinner', sdd: '233', deed: 'cdsklclscn'},
+    {
+      menuName: 'lobster',
+      mealType: 'lunch',
+      menuNam: 'lo222bster',
+      mealTy2pe: 'lun222ch'
+    }
   ],
   fields: [
     {
@@ -21,6 +39,24 @@ const exampleData = {
     },
     {
       name: 'mealType',
+      tableID: 185347,
+      columnID: 5,
+      dataTypeID: 185340,
+      dataTypeSize: 4,
+      dataTypeModifier: -1,
+      format: 'text'
+    },
+    {
+      name: 'Bla',
+      tableID: 185347,
+      columnID: 5,
+      dataTypeID: 185340,
+      dataTypeSize: 4,
+      dataTypeModifier: -1,
+      format: 'text'
+    },
+    {
+      name: 'Fulls',
       tableID: 185347,
       columnID: 5,
       dataTypeID: 185340,

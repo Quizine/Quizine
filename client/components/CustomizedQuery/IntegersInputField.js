@@ -47,7 +47,10 @@ export class IntegersInputField extends Component {
     return (
       <div>
         <h3>INTEGERS WHERE</h3>
-        <select onChange={() => this.handleWhereSelect(event)}>
+        <select
+          className="select-cust"
+          onChange={() => this.handleWhereSelect(event)}
+        >
           {operators.map((option, idx) => {
             return (
               <option key={idx} value={Object.values(option)[0]}>
@@ -58,7 +61,11 @@ export class IntegersInputField extends Component {
         </select>
         {this.state.operator ? (
           <div>
-            <input onBlur={this.handleInputChange} type="number" />
+            <input
+              className="integer-input"
+              onBlur={this.handleInputChange}
+              type="number"
+            />
             {this.state.operator === 'BETWEEN' ? (
               <div>
                 <p>and</p>
