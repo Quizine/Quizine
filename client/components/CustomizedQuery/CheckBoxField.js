@@ -16,7 +16,9 @@ class CheckBoxField extends Component {
     this.props.updateOptionForCustomQuery(
       this.props.selectedTable,
       this.props.selectedColumn,
-      this.state.selectedOptions.map(element => element.value)
+      this.state.selectedOptions
+        ? this.state.selectedOptions.map(element => element.value)
+        : []
     )
   }
   render() {
