@@ -5,7 +5,8 @@ import {
   updateTable,
   getTableNames,
   clearCustomQuery,
-  addEmptyColumn
+  addEmptyColumn,
+  removeColumn
 } from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
 import _ from 'lodash'
@@ -54,15 +55,33 @@ export class CustomizedQueryTable extends Component {
   }
 
   handleRemoveClick() {
-    let updatedState = [...this.state.count]
-    updatedState.pop()
-    this.setState({count: updatedState})
+    this.props.removeColumn(
+      Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    )
+    const {customQuery} = this.props
+    const lastSelectedTable = customQuery.length
+      ? Object.keys(customQuery[customQuery.length - 1])[0]
+      : null
+
+    const lastSelectedColumn = customQuery.length
+      ? customQuery[customQuery.length - 1][lastSelectedTable][
+          customQuery[customQuery.length - 1][lastSelectedTable].length - 1
+        ]
+      : null
+
+    if (!lastSelectedColumn) {
+      this.props.addEmptyColumn(
+        Object.keys(
+          this.props.customQuery[this.props.customQuery.length - 1]
+        )[0]
+      )
+    }
   }
   render() {
     // console.log('TABLE PROPS', this.props)
-    // console.log('TABLE STATE', this.state)
+    console.log('TABLE STATE', this.state)
 
-    const {tableNames, customQuery} = this.props
+    const {tableNames, customQuery, metaData} = this.props
 
     const lastSelectedTable = customQuery.length
       ? Object.keys(customQuery[customQuery.length - 1])[0]
@@ -74,8 +93,16 @@ export class CustomizedQueryTable extends Component {
         ]
       : null
 
-    console.log('SELECTED TABLE', lastSelectedTable)
-    console.log('SELECTED COLUMN', lastSelectedColumn)
+    const columnNumberForLastSelectedTable =
+      lastSelectedTable &&
+      columnArrayMapping(lastSelectedTable, metaData).length
+
+    const columnNumberForLastSelectedTableTEST =
+      lastSelectedTable &&
+      columnArrayMapping(lastSelectedTable, customQuery).length
+
+    // console.log('SELECTED TABLE', lastSelectedTable)
+    // console.log('SELECTED COLUMN', lastSelectedColumn)
 
     return (
       <div className="custom-analytics-container">
@@ -106,10 +133,17 @@ export class CustomizedQueryTable extends Component {
                 <CustomizedQuerySelect selectedTable={lastSelectedTable} />
                 {Object.keys(lastSelectedColumn).length ? (
                   <div className="remove-add">
-                    <button type="button" onClick={() => this.handleAddClick()}>
-                      Add Column
-                    </button>
-
+                    {columnNumberForLastSelectedTable &&
+                    columnNumberForLastSelectedTableTEST &&
+                    columnNumberForLastSelectedTableTEST <
+                      columnNumberForLastSelectedTable ? (
+                      <button
+                        type="button"
+                        onClick={() => this.handleAddClick()}
+                      >
+                        Add Column
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       onClick={() => this.handleRemoveClick()}
@@ -136,6 +170,7 @@ export class CustomizedQueryTable extends Component {
 
 const mapStateToProps = state => {
   return {
+    metaData: state.customizedQuery.metaData,
     tableNames: state.customizedQuery.metaData.map(element => {
       return Object.keys(element)[0]
     }),
@@ -160,6 +195,9 @@ const mapDispatchToProps = dispatch => {
     },
     addEmptyColumn: tableName => {
       dispatch(addEmptyColumn(tableName))
+    },
+    removeColumn: tableName => {
+      dispatch(removeColumn(tableName))
     }
   }
 }
