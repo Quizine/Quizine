@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {updateOption} from '../../store/customizedQueryReducer'
 
 const timeFrameOptions = [
   {week: 'Last Week'},
@@ -6,17 +8,23 @@ const timeFrameOptions = [
   {year: 'Last Year'}
 ]
 
-export class TimeFrameField extends Component {
+class TimeFrameField extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedInterval: ''
+      selectedInterval: ['']
     }
   }
 
-  handleChange(event) {
-    this.setState({selectedInterval: event.target.value})
+  async handleChange(event) {
+    await this.setState({selectedInterval: [event.target.value]})
+    console.log('TIMEFRAME----->', this.state.selectedInterval)
+    this.props.updateOptionForCustomQuery(
+      this.props.selectedTable,
+      this.props.selectedColumn,
+      this.state.selectedInterval
+    )
   }
 
   render() {
@@ -38,4 +46,11 @@ export class TimeFrameField extends Component {
   }
 }
 
-export default TimeFrameField
+const mapDispatchToProps = dispatch => {
+  return {
+    updateOptionForCustomQuery: (tableName, columnName, options) =>
+      dispatch(updateOption(tableName, columnName, options))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(TimeFrameField)

@@ -3,19 +3,23 @@ import {connect} from 'react-redux'
 import {getValueOptionsForString} from '../../store/customizedQueryReducer'
 import IntegersInputField from './IntegersInputField'
 import TimeFrameField from './TimeFrameField'
+import CheckBoxField from './CheckBoxField'
 
 class CustomizedQueryWhere extends Component {
   constructor() {
     super()
     this.state = {
-      selectedValueOption: ''
+      selectedValueOption: []
     }
-    this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
+    // this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
   }
 
-  handleValueOptionChange(event) {
-    this.setState({selectedValueOption: event.target.value})
-  }
+  // handleValueOptionChange(event) {
+  //   this.setState({
+  //     selectedValueOption: [...selectedValueOption, event.target.value]
+  //   })
+  //   this.props.updateOptionForCustomQuery(this.props.selectedTable, this.props.selectedColumn, this.state.selectedValueOption)
+  // }
 
   render() {
     const {selectedTable, selectedColumn, metaData} = this.props
@@ -33,24 +37,37 @@ class CustomizedQueryWhere extends Component {
         {options.length ? (
           <div>
             <h3>WHERE:</h3>
-            <select onChange={() => this.handleValueOptionChange(event)}>
+            {/* <select onChange={() => this.handleSelect(event)} multiple>
               <option defaultValue>Please Select</option>
               {options.length &&
                 options.map((valueOptionName, idx) => {
                   return (
-                    <option key={idx} value={valueOptionName}>
+                    <option type="checkbox" key={idx} value={valueOptionName}>
                       {formatValueOptionName(valueOptionName)}
                     </option>
                   )
                 })}
-            </select>
+            </select> */}
+            <CheckBoxField
+              selectedTable={selectedTable}
+              selectedColumn={selectedColumn}
+              options={options}
+            />
           </div>
         ) : (
           <div>
             {isIntegerField ? (
-              <IntegersInputField dataType={dataType} />
+              <IntegersInputField
+                selectedTable={selectedTable}
+                selectedColumn={selectedColumn}
+                dataType={dataType}
+              />
             ) : (
-              <TimeFrameField dataType={dataType} />
+              <TimeFrameField
+                selectedTable={selectedTable}
+                selectedColumn={selectedColumn}
+                dataType={dataType}
+              />
             )}
           </div>
         )}

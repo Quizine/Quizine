@@ -12,15 +12,13 @@ jsonSql.configure({
 })
 module.exports = router
 
-//MOVED TO THE TOP B/C OF ALL THE WILDCARD GET ROUTES BELOW
-
-// GET OR POST???????
+//A POST ROUTE TO MAKE A CUSTOM QUERY
 router.get('/customQuery', async (req, res, next) => {
   try {
     // const anExample = [
     //   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
     // ]
-    const anExample = [
+    const ex0 = [
       {
         orders: [
           {total: {dataType: 'integer', options: ['$lte', 50]}},
@@ -33,8 +31,25 @@ router.get('/customQuery', async (req, res, next) => {
         ]
       }
     ]
+    const ex1 = [
+      {
+        menus: [
+          {menuName: {dataType: 'string', options: []}},
+          {mealType: {dataType: 'string', options: []}}
+        ]
+      }
+    ]
+    const ex2 = [
+      //THIS ONE PRODUCTS NULL IN CONDITIONS
+      {
+        waiters: [{name: {dataType: 'string', options: []}}]
+      },
+      {
+        restaurants: [{restaurantName: {dataType: 'string', options: []}}]
+      }
+    ]
 
-    const sql = jsonSql.build(translateQuery(anExample))
+    const sql = jsonSql.build(translateQuery(ex1))
 
     // const sql = jsonSql.build({
     //   type: 'select',
@@ -53,70 +68,51 @@ router.get('/customQuery', async (req, res, next) => {
     next(error)
   }
 })
-function findNowElement(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    let element = arr[i]
-    if (element.slice(0, 3) === 'NOW') return element
-  }
-  return null
-}
 
+//GETS THESE TABLE NAMES(just the names): MENUS, WAITERS, ORDERS
 router.get('/', async (req, res, next) => {
   try {
-    const tableNames = await client.query(`
-    SELECT table_name
-    FROM information_schema.tables
-    WHERE table_type='BASE TABLE'
-    AND table_schema='public'
-    AND table_name !='Sessions' 
-    AND table_name !='users'
-    AND table_name !='menuOrders'
-    AND table_name !='restaurants';`)
-
-    res.json(tableNames.rows)
+    if (req.user.id) {
+      const text = `
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_type='BASE TABLE'
+      AND table_schema='public'
+      AND table_name !='Sessions'
+      AND table_name !='users'
+      AND table_name !='menuOrders'
+      AND table_name !='restaurants';`
+      const tableNames = await client.query(text)
+      res.json(tableNames.rows)
+    }
   } catch (error) {
     next(error)
   }
 })
-
+//GETS RELEVANT COLUMN NAMES FOR A GIVEN TABLE
 router.get('/:tableName', async (req, res, next) => {
   try {
-    const columns = await client.query(`
+    if (req.user.id) {
+      const text = `
       SELECT COLUMN_NAME
       FROM INFORMATION_SCHEMA.COLUMNS
-      WHERE TABLE_NAME = '${req.params.tableName}'
+      WHERE TABLE_NAME = $1
       AND COLUMN_NAME <> 'id'
       AND COLUMN_NAME NOT LIKE '%At'
-      AND COLUMN_NAME NOT LIKE '%Id'`)
-    res.json(columns.rows)
+      AND COLUMN_NAME NOT LIKE '%Id'`
+      const values = [req.params.tableName]
+      const columns = await client.query(text, values)
+      res.json(columns.rows)
+    }
   } catch (error) {
     next(error)
   }
 })
-
+//GETS FOREIGN KEYS FOR A GIVEN TABLE AND THE COLUMN NAMES OF THE MENUORDERS JOIN TABLE IF APPROPRIATE
 router.get('/:tableName/foreignTableNames', async (req, res, next) => {
   try {
-    const foreignTableNamesFromFK = await client.query(`
-    SELECT
-    tc.table_schema,
-    tc.constraint_name,
-    tc.table_name,
-    kcu.column_name,
-    ccu.table_schema AS foreign_table_schema,
-    ccu.table_name AS foreign_table_name,
-    ccu.column_name AS foreign_column_name
-    FROM information_schema.table_constraints AS tc
-    JOIN information_schema.key_column_usage AS kcu
-    ON tc.constraint_name = kcu.constraint_name
-    AND tc.table_schema = kcu.table_schema
-    JOIN information_schema.constraint_column_usage AS ccu
-    ON ccu.constraint_name = tc.constraint_name
-    AND ccu.table_schema = tc.table_schema
-    WHERE tc.constraint_type = 'FOREIGN KEY'
-    AND tc.table_name='${req.params.tableName}'
-    AND ccu.table_name <> 'restaurants';`)
-    if (req.params.tableName === 'orders' || req.params.tableName === 'menus') {
-      const foreignTableNameFromMenuOrders = await client.query(`
+    if (req.user.id) {
+      const text = `
       SELECT
       tc.table_schema,
       tc.constraint_name,
@@ -133,27 +129,62 @@ router.get('/:tableName/foreignTableNames', async (req, res, next) => {
       ON ccu.constraint_name = tc.constraint_name
       AND ccu.table_schema = tc.table_schema
       WHERE tc.constraint_type = 'FOREIGN KEY'
-      AND tc.table_name='menuOrders'
-      AND ccu.table_name <> '${req.params.tableName}';`)
-      res.json(
-        foreignTableNamesFromFK.rows.concat(foreignTableNameFromMenuOrders.rows)
-      )
-    } else {
-      res.json(foreignTableNamesFromFK.rows)
+      AND tc.table_name= $1
+      AND ccu.table_name <> 'restaurants';`
+      const values = [req.params.tableName]
+      const foreignTableNamesFromFK = await client.query(text, values)
+      if (
+        req.params.tableName === 'orders' ||
+        req.params.tableName === 'menus'
+      ) {
+        const text = `
+        SELECT
+        tc.table_schema,
+        tc.constraint_name,
+        tc.table_name,
+        kcu.column_name,
+        ccu.table_schema AS foreign_table_schema,
+        ccu.table_name AS foreign_table_name,
+        ccu.column_name AS foreign_column_name
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+        ON tc.constraint_name = kcu.constraint_name
+        AND tc.table_schema = kcu.table_schema
+        JOIN information_schema.constraint_column_usage AS ccu
+        ON ccu.constraint_name = tc.constraint_name
+        AND ccu.table_schema = tc.table_schema
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+        AND tc.table_name='menuOrders'
+        AND ccu.table_name <> $1;`
+        const values = [req.params.tableName]
+        const foreignTableNameFromMenuOrders = await client.query(text, values)
+        res.json(
+          foreignTableNamesFromFK.rows.concat(
+            foreignTableNameFromMenuOrders.rows
+          )
+        )
+      } else {
+        res.json(foreignTableNamesFromFK.rows)
+      }
     }
   } catch (error) {
     next(error)
   }
 })
 
+//GETS DATATYPE
 router.get('/:tableName/:columnName', async (req, res, next) => {
   try {
-    const datatypeQuery = await client.query(`
-    SELECT data_type from information_schema.columns
-    WHERE table_name = '${req.params.tableName}'
-    AND column_name = '${req.params.columnName}';`)
-    const datatype = datatypeQuery.rows[0].data_type
-    res.json(datatype)
+    if (req.user.id) {
+      const text = `
+      SELECT data_type from information_schema.columns
+      WHERE table_name = $1
+      AND column_name = $2;`
+      const values = [req.params.tableName, req.params.columnName]
+      const datatypeQuery = await client.query(text, values)
+      const datatype = datatypeQuery.rows[0].data_type
+      res.json(datatype)
+    }
   } catch (error) {
     next(error)
   }
@@ -185,53 +216,36 @@ router.get('/:tableName/:columnName', async (req, res, next) => {
 //   }
 // })
 
+//SHOULD JUST GIVE BACK THE COLUMN NAME?? WHAT DOES THIS DO? (GIVING ME STRANGE RESULTS)
 router.get('/:tableName/:columnName/string', async (req, res, next) => {
   try {
-    const valueOptions = await client.query(`
-    SELECT DISTINCT "${req.params.columnName}" AS aliasname from ${
-      req.params.tableName
+    if (req.user.id) {
+      const text = `
+      SELECT DISTINCT "${req.params.columnName}" AS aliasname
+      FROM ${req.params.tableName}
+      WHERE "${req.params.columnName}" IS NOT NULL;`
+      // const text = `SELECT DISTINCT $1 AS aliasname FROM $2
+      // WHERE $1 IS NOT NULL;`
+      const values = [req.params.columnName, req.params.tableName] //SUBSTITION NOT WORKING
+      const valueOptions = await client.query(text)
+      res.json(valueOptions.rows)
     }
-    WHERE "${req.params.columnName}" IS NOT NULL;`)
-    res.json(valueOptions.rows)
   } catch (error) {
     next(error)
   }
 })
-// orders ----> need foreign key "waiters" also need to exclude 'restaraurants'
-// orders ----> need "menuOrders" table -------> foreign keys (orderId nad menuId)
-//menus ----> menuOrders table ----> foreign keys (orderId and menuId)
 
-// query = [
-// {tableName: 'menu',
-// menuName: [lobster, coke], //this case would be a select all
-//  foodType: [dinner, lunch]
+// const internalObj = {
+//   type: 'select',
+//   fields: ['menuName', 'mealType'],
+//   table: 'menus',
+//   join: [],
+//   condition: {menuName: 'lobster', mealType: 'dinner'}
 // }
-//   ,
-//   {tableName: waiters,
-//   age: [>, 25]
-//   }
+
+// const externalObj = [
+//   {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
 // ]
-
-// {'foodType': []} means select * foodTypes
-
-// select "menuName", "mealType"
-// from menus
-// where "menuName" = 'lobster'
-// and "mealType" = 'dinner';
-
-const internalObj = {
-  type: 'select',
-  fields: ['menuName', 'mealType'],
-  table: 'menus',
-  join: [],
-  condition: {menuName: 'lobster', mealType: 'dinner'}
-}
-
-//const aCustomQuery= ['tableName': [{'columnName': {'dataType': 'string', 'options': [array]}]]
-
-const anExample = [
-  {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
-]
 
 //CUSTOM QUERYING HELPER FUNCTIONS
 function translateQuery(customQueryArr) {
@@ -330,6 +344,7 @@ function translateQuery(customQueryArr) {
           // condition: {
           //   name: {$gte: 'John'}
           // }
+
           transformedConditions.$and.push({
             [columnName]: {
               [conditions[columnName].values[0]]:
@@ -348,15 +363,17 @@ function translateQuery(customQueryArr) {
       })
     } else {
       transformedConditions = conditions[0]
+      console.log(`what is here???`, transformedConditions)
     }
   }
+
   translatedQuery.type = type
   translatedQuery.fields = columns
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
   console.log(`here is translate query`, translatedQuery)
-  console.log(`conditions:`, translatedQuery.condition)
+  console.log(`conditions further down in the func:`, translatedQuery.condition)
   // here is translate query {
   //   type: 'select',
   //   fields: [ 'mealType', 'menuName' ],
@@ -365,6 +382,8 @@ function translateQuery(customQueryArr) {
   //   condition: { '$and': [ [Object], [Object] ] }
   // }
 
+  //SEE IF COLUMN NAMES HAVE UNDEFINED VALUES
+  //use delete operator
   for (let key in translatedQuery.condition) {
     const value = translatedQuery.condition[key]
     console.log(`here is the key`, key)
