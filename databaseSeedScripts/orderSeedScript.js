@@ -7,7 +7,7 @@ let server = [
   {id: 2, name: 'Cynthia Klein', sex: 'female', age: 31, restaurantId: 1},
   {id: 3, name: 'Adam Essaire', sex: 'male', age: 24, restaurantId: 1},
   {id: 4, name: 'Paula Davidson', sex: 'female', age: 34, restaurantId: 1},
-  {id: 5, name: 'Nicole Eastman', sex: 'female', age: 26, restaurantId: 1},
+  {id: 5, name: 'Beth Connolly', sex: 'female', age: 26, restaurantId: 1},
   {id: 6, name: 'Leo Jackson', sex: 'male', age: 37, restaurantId: 1},
   {id: 7, name: 'Erik Jenson', sex: 'male', age: 32, restaurantId: 1},
   {id: 8, name: 'John Cho', sex: 'male', age: 21, restaurantId: 1},
