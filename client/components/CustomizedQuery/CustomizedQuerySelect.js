@@ -11,10 +11,7 @@ import {
 class CustomizedQuerySelect extends Component {
   constructor() {
     super()
-    this.state = {
-      // selectedColumn: ''
-      // columnNamesObject: {}
-    }
+
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
   }
   componentDidMount() {
@@ -22,12 +19,12 @@ class CustomizedQuerySelect extends Component {
   }
 
   async handleSelectedColumnChange(event) {
-    // this.setState({selectedColumn: event.target.value})
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
       event.target.value
     )
+
     const dataType = extractDataType(
       this.props.selectedTable,
       event.target.value,
@@ -41,11 +38,10 @@ class CustomizedQuerySelect extends Component {
   }
 
   render() {
-    const selectedTable = this.props.selectedTable
-    const metaData = this.props.metaData
-    const selectedColumn = this.state.selectedColumn // TO BE UPDATED TO REDUCER ONCE HELPER FUNC IS FIXED
-    const valueOptionsForString = this.props.valueOptionsForString
-    const {customQuery} = this.props
+    const {customQuery, selectedTable, metaData} = this.props
+
+    console.log('IN SELECT', this.props, this.state)
+    console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
     return (
       <div>
         {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
@@ -53,8 +49,12 @@ class CustomizedQuerySelect extends Component {
             <div key={idx}>
               <div>
                 <h3>COLUMN:</h3>
-                <select onChange={() => this.handleSelectedColumnChange(event)}>
-                  <option>Please Select</option>
+                <select
+                  onChange={() => this.handleSelectedColumnChange(event)}
+                  disabled={!!Object.keys(element).length}
+                  value={Object.keys(element)[0]}
+                >
+                  <option value="default">Please Select</option>
                   {selectedTable &&
                     metaData &&
                     columnNameMapping(selectedTable, metaData).map(
