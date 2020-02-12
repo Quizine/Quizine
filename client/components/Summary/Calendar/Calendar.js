@@ -30,6 +30,7 @@ export class CalendarContainer extends Component {
             className="reactCalendar"
             onChange={this.onChange}
             value={this.state.date}
+            minDate={new Date(2018, 0, 1)}
             maxDate={new Date()}
           />
         </div>
