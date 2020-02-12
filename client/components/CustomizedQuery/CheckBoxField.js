@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import Select from 'react-select'
+import {connect} from 'react-redux'
+import {updateOption} from '../../store/customizedQueryReducer'
 
-export class CheckBoxField extends Component {
+class CheckBoxField extends Component {
   constructor(props) {
     super(props)
 
@@ -9,9 +11,13 @@ export class CheckBoxField extends Component {
     this.handleChange = this.handleChange.bind(this)
   }
 
-  handleChange(selectedOptions) {
-    this.setState({selectedOptions})
-    console.log(this.state)
+  async handleChange(selectedOptions) {
+    await this.setState({selectedOptions})
+    this.props.updateOptionForCustomQuery(
+      this.props.selectedTable,
+      this.props.selectedColumn,
+      this.state.selectedOptions.map(element => element.value)
+    )
   }
   render() {
     const options = this.props.options.map(option => {
@@ -34,4 +40,11 @@ export class CheckBoxField extends Component {
   }
 }
 
-export default CheckBoxField
+const mapDispatchToProps = dispatch => {
+  return {
+    updateOptionForCustomQuery: (tableName, columnName, options) =>
+      dispatch(updateOption(tableName, columnName, options))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(CheckBoxField)
