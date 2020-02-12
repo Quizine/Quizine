@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getQueryResults} from '../../store/customizedQueryReducer'
+import TableResults from './TableResults'
 
 export class SubmitQueryButton extends Component {
   constructor(props) {
@@ -10,17 +11,19 @@ export class SubmitQueryButton extends Component {
   }
 
   handleSubmit() {
-    console.log('SEND QUERY TO BACKEND', this.props.currentQuery)
     this.props.loadQueryresults(this.props.currentQuery)
   }
 
   render() {
-    console.log(`this.props.customQueryResult:`, this.props.customQueryResult)
     return (
       <div className="submit-query-btn">
         <button type="submit" onClick={this.handleSubmit}>
           <h2>Submit me carefully!</h2>
         </button>
+        {this.props.customQueryResult &&
+        Object.keys(this.props.customQueryResult).length ? (
+          <TableResults results={this.props.customQueryResult} />
+        ) : null}
       </div>
     )
   }
