@@ -12,7 +12,7 @@ join orders on orders."waiterId" = waiters.id
 where orders."timeOfPurchase" ::date = '2018-10-11';
 
 --most popular dish on a specific day: **still need by the date...
-SELECT menus."menuName" as name,
+SELECT menus."menuItem" as name,
 sum("menuOrders" .quantity) as total
 from "menuOrders"
 join menus on menus.id = "menuOrders"."menuId"

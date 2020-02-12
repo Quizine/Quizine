@@ -1,9 +1,9 @@
 // const sql = jsonSql.build({
 // type: 'select',
-// fields: ['menuName', 'mealType'],
+// fields: ['menuItem', 'mealType'],
 // table: 'menus',
 // join: [],
-// condition: {menuName: 'lobster', mealType: 'dinner'}
+// condition: {menuItem: 'lobster', mealType: 'dinner'}
 // })
 
 // const anExample = [
@@ -36,10 +36,10 @@ options: ['week']
 
 // const internalObj = {
 // type: 'select',
-// fields: ['menuName', 'mealType'],
+// fields: ['menuItem', 'mealType'],
 // table: 'menus',
 // join: [],
-// condition: {menuName: 'lobster', mealType: 'dinner'}
+// condition: {menuItem: 'lobster', mealType: 'dinner'}
 // }
 
 // const externalObj = [
@@ -50,7 +50,7 @@ options: ['week']
 //console.log(`conditions further down in the func:`, translatedQuery.condition)
 // here is translate query {
 // type: 'select',
-// fields: [ 'mealType', 'menuName' ],
+// fields: [ 'mealType', 'menuItem' ],
 // table: 'menus',
 // join: {},
 // condition: { '$and': [ [Object], [Object] ] }
@@ -58,7 +58,7 @@ options: ['week']
 // for (let key in translatedQuery.condition) {
 // if (translatedQuery.condition.hasOwnProperty(key)) {
 // if (translatedQuery.condition[key] === '$and') {
-// for (let i = 0; i < translatedQuery.condition.$and.length; i++) {
+// for (let i = 0; i < translatedQuery.condition.\$and.length; i++) {
 // let element =
 // if (tra)
 // }
@@ -85,7 +85,7 @@ options: ['week']
     // const ex1 = [
     //   {
     //     menus: [
-    //       {menuName: {dataType: 'string', options: []}},
+    //       {menuItem: {dataType: 'string', options: []}},
     //       {mealType: {dataType: 'string', options: []}}
     //     ]
     //   }

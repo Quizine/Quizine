@@ -36,7 +36,7 @@ const initialState = {
 
 // query = [
 //   {tableName: 'menu',
-//   menuName: [lobster, coke],
+//   menuItem: [lobster, coke],
 //    foodType: [dinner, lunch]
 //   }
 //   ,
@@ -49,7 +49,7 @@ const initialState = {
  * ACTION CREATORS
  */
 
-const gotCustomQueryResult = customQueryResult => {
+export const gotCustomQueryResult = customQueryResult => {
   return {
     type: GET_CUSTOM_QUERY_RESULTS,
     customQueryResult

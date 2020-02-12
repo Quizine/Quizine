@@ -28,7 +28,8 @@ class Routes extends Component {
       <div className="routes-cont">
         <Sidebar />
         <Switch>
-          <Route path="/home" component={UserHome} />
+          <Route exact path="/" component={Summary} />
+          {/* <Route path="/home" component={UserHome} /> */}
           <Route path="/customizedQuery" component={CustomizedQueryContainer} />
           <Route path="/summary" component={Summary} />
           <Route path="/businessAnalytics" component={BusinessAnalytics} />

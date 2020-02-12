@@ -59,6 +59,7 @@ class LineGraphRevenue extends Component {
         }
       ]
     }
+
     if (revenue) {
       return (
         <div>
@@ -80,10 +81,10 @@ class LineGraphRevenue extends Component {
                   <Line
                     data={chartData}
                     options={{
-                      title: {
-                        display: true,
-                        text: 'REVENUE vs TIME'
-                      },
+//                       title: {
+//                         display: true,
+//                         text: 'REVENUE vs TIME'
+//                       },
                       scales: {
                         yAxes: [
                           {
@@ -92,6 +93,7 @@ class LineGraphRevenue extends Component {
                               suggestedMin: revenue.min(),
                               suggestedMax: revenue.max()
                             }
+
                           }
                         ]
                       }

@@ -11,13 +11,14 @@ export class CalendarContainer extends Component {
     this.state = {
       date: new Date()
     }
+    this.onChange = this.onChange.bind(this)
   }
   componentDidMount() {
     this.props.loadCalendarData(convertJsDate(this.state.date))
   }
 
-  onChange = date => {
-    this.setState({date})
+  async onChange(date) {
+    await this.setState({date})
     this.props.loadCalendarData(convertJsDate(this.state.date))
   }
 

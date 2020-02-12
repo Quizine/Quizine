@@ -200,7 +200,7 @@ export default function EnhancedTable(props) {
   const [orderBy, setOrderBy] = React.useState('calories')
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
-  const [dense, setDense] = React.useState(false)
+  const [dense, setDense] = React.useState(true)
   const [rowsPerPage, setRowsPerPage] = React.useState(7)
 
   const handleRequestSort = (event, property) => {
@@ -218,25 +218,25 @@ export default function EnhancedTable(props) {
     setSelected([])
   }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name)
-    let newSelected = []
+  // const handleClick = (event, name) => {
+  //   const selectedIndex = selected.indexOf(name)
+  //   let newSelected = []
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      )
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, name)
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1))
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1))
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1)
+  //     )
+  //   }
 
-    setSelected(newSelected)
-  }
+  //   setSelected(newSelected)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -325,10 +325,10 @@ export default function EnhancedTable(props) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
+      {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-      />
+      /> */}
     </div>
   )
 }
