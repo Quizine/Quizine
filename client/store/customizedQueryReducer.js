@@ -237,7 +237,7 @@ export default function(state = initialState, action) {
     case GET_TABLE_NAMES:
       return {
         ...state,
-        metaData: mapTablesToMetaData(action.tableNames)
+        metaData: [...state.metaData, ...mapTablesToMetaData(action.tableNames)]
       }
     case GET_TABLE_FIELDS:
       return {
