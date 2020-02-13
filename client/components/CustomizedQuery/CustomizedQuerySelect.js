@@ -25,7 +25,7 @@ class CustomizedQuerySelect extends Component {
     //   //USED!!! DO NOT DELETE
     //   selectedColumns: [...this.state.selectedColumns, event.target.value]
     // })
-    console.log('IN CLICK!!!! 111', event.target.value)
+    // console.log('IN CLICK!!!! 111', event.target.value)
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
     // console.log('IN CLICK!!!! 222', event.target.value)
     this.props.loadValueOptionsForString(
@@ -48,16 +48,16 @@ class CustomizedQuerySelect extends Component {
   render() {
     const {customQuery, selectedTable, metaData} = this.props
 
-    console.log('IN SELECT', this.props, this.state)
-    console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
-    console.log(
-      'COLUMN NAME MAPPING 1111',
-      selectedTable && metaData && columnNameMapping(selectedTable, metaData)
-    )
-    console.log(
-      'COLUMN NAME MAPPING 2222',
-      selectedTable && columnNameMapping(selectedTable, customQuery)
-    )
+    // console.log('IN SELECT', this.props, this.state)
+    // console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
+    // console.log(
+    //   'COLUMN NAME MAPPING 1111',
+    //   selectedTable && metaData && columnNameMapping(selectedTable, metaData)
+    // )
+    // console.log(
+    //   'COLUMN NAME MAPPING 2222',
+    //   selectedTable && columnNameMapping(selectedTable, customQuery)
+    // )
     // const test =
     //   selectedTable &&
     //   metaData &&
@@ -77,55 +77,57 @@ class CustomizedQuerySelect extends Component {
     //   )
     return (
       <div className="select-where-cont">
-        {columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
-          return (
-            <div key={idx} className="select-where">
-              <div className="col-cont">
-                <h3>Select Search Criteria:</h3>
-                {/* <h3>
+        {columnArrayMapping(selectedTable, customQuery) &&
+          columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
+            return (
+              <div key={idx} className="select-where">
+                <div className="col-cont">
+                  <h3>Select Search Criteria:</h3>
+                  {/* <h3>
                   {Object.keys(element)[0]
                     ? formatColumnName(Object.keys(element)[0])
                     : null}
                 </h3> */}
-                <select
-                  className="select-cust"
-                  onChange={() => this.handleSelectedColumnChange(event)}
-                  disabled={!!Object.keys(element).length}
-                  value={Object.keys(element)[0]}
-                >
-                  <option value="default">Please Select</option>
+                  <select
+                    className="select-cust"
+                    onChange={() => this.handleSelectedColumnChange(event)}
+                    disabled={!!Object.keys(element).length}
+                    value={Object.keys(element)[0]}
+                  >
+                    <option value="default">Please Select</option>
 
-                  {selectedTable &&
-                    metaData &&
-                    columnNameMapping(selectedTable, metaData)
-                      .filter(
-                        columnNameFilter =>
-                          columnNameMapping(selectedTable, customQuery).indexOf(
-                            columnNameFilter
-                          ) < 0
-                      )
-                      .map((columnName, idx) => {
-                        return (
-                          <option key={idx} value={columnName}>
-                            {formatColumnName(columnName)}
-                          </option>
+                    {selectedTable &&
+                      metaData &&
+                      columnNameMapping(selectedTable, metaData)
+                        .filter(
+                          columnNameFilter =>
+                            columnNameMapping(
+                              selectedTable,
+                              customQuery
+                            ).indexOf(columnNameFilter) < 0
                         )
-                      })}
-                </select>
+                        .map((columnName, idx) => {
+                          return (
+                            <option key={idx} value={columnName}>
+                              {formatColumnName(columnName)}
+                            </option>
+                          )
+                        })}
+                  </select>
+                </div>
+                <div className="where-cont">
+                  {Object.keys(element)[0] ? (
+                    <div>
+                      <CustomizedQueryWhere
+                        selectedTable={selectedTable}
+                        selectedColumn={Object.keys(element)[0]}
+                      />
+                    </div>
+                  ) : null}
+                </div>
               </div>
-              <div className="where-cont">
-                {Object.keys(element)[0] ? (
-                  <div>
-                    <CustomizedQueryWhere
-                      selectedTable={selectedTable}
-                      selectedColumn={Object.keys(element)[0]}
-                    />
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          )
-        })}
+            )
+          })}
       </div>
     )
   }

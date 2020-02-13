@@ -82,16 +82,18 @@ export class CustomizedQueryTable extends Component {
   }
   render() {
     // console.log('TABLE PROPS', this.props)
-    console.log('TABLE STATE', this.state)
+    // console.log('TABLE STATE', this.state)
 
     const {tableNames, customQuery, metaData} = this.props
 
+    // console.log(`customQuery:`, customQuery)
     const lastSelectedTable = customQuery.length
       ? Object.keys(customQuery[customQuery.length - 1])[0]
       : null
 
     const lastSelectedColumn = customQuery.length
-      ? customQuery[customQuery.length - 1][lastSelectedTable][
+      ? lastSelectedTable &&
+        customQuery[customQuery.length - 1][lastSelectedTable][
           customQuery[customQuery.length - 1][lastSelectedTable].length - 1
         ]
       : null
@@ -104,8 +106,8 @@ export class CustomizedQueryTable extends Component {
       lastSelectedTable &&
       columnArrayMapping(lastSelectedTable, customQuery).length
 
-    // console.log('SELECTED TABLE', lastSelectedTable)
-    // console.log('SELECTED COLUMN', lastSelectedColumn)
+    console.log('SELECTED TABLE', lastSelectedTable)
+    console.log('SELECTED COLUMN', lastSelectedColumn)
 
     return (
       <div className="custom-analytics-container">
@@ -133,8 +135,13 @@ export class CustomizedQueryTable extends Component {
           <div>
             {customQuery.length ? (
               <div className="row-columns">
-                <CustomizedQuerySelect selectedTable={lastSelectedTable} />
-                {Object.keys(lastSelectedColumn).length ? (
+                {this.props.selectedTable ? (
+                  <CustomizedQuerySelect
+                    selectedTable={this.props.selectedTable}
+                  />
+                ) : null}
+                {lastSelectedColumn &&
+                Object.keys(lastSelectedColumn).length ? (
                   <div className="remove-add">
                     {columnNumberForLastSelectedTable &&
                     columnNumberForLastSelectedTableTEST &&

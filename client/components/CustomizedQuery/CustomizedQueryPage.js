@@ -2,33 +2,47 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import CustomizedQueryTable from './CustomizedQueryTable'
 import SubmitQueryButton from './SubmitQueryButton'
+import {addEmptyTable} from '../../store/customizedQueryReducer'
 
-export default class CustomizedQueryPage extends Component {
+class CustomizedQueryPage extends Component {
   constructor() {
     super()
-    this.state = {
-      count: [1]
-      // rerender: false
-    }
+
     this.handleJoinClick = this.handleJoinClick.bind(this)
+  }
+  componentDidMount() {
+    this.props.addEmptyTable()
   }
 
   handleJoinClick() {
-    this.setState({count: [...this.state.count, 1]})
+    this.props.addEmptyTable()
   }
 
   render() {
-    console.log('PAGE STATE', this.state)
+    // console.log('PAGE STATE', this.state)
+    const customQuery = this.props.customQuery
+
     return (
       <div className="query-cont">
         <div className="query-table">
-          <div className="query-table-cont">
-            <CustomizedQueryTable />
-          </div>
+          {this.props.customQuery.map((tableObj, idx) => {
+            return (
+              <div key={idx} className="query-table-cont">
+                {Object.keys(tableObj)[0] ? (
+                  <CustomizedQueryTable
+                    selectedTable={Object.keys(tableObj)[0]}
+                  />
+                ) : (
+                  <CustomizedQueryTable />
+                )}
+              </div>
+            )
+          })}
+
           <div className="combine-btn">
-            {/* <button type="button" onClick={() => this.handleJoinClick()}>
+            <button type="button" onClick={() => this.handleJoinClick()}>
               Combine With
-            </button> */}
+            </button>
           </div>
         </div>
         <div className="submit-query">
@@ -38,3 +52,17 @@ export default class CustomizedQueryPage extends Component {
     )
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    customQuery: state.customizedQuery.customQuery
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addEmptyTable: () => dispatch(addEmptyTable())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQueryPage)
