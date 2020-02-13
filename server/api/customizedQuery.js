@@ -59,9 +59,7 @@ router.post('/customQuery', async (req, res, next) => {
     // const customQueryRequest = exampleQuery
     const customQueryRequest = req.body.customQueryRequest //custom query from FE
     console.log(`here@`, customQueryRequest)
-    const sql = jsonSql.build(
-      translateQuery(customQueryRequest, exampleArrangementObj)
-    ) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
+    const sql = jsonSql.build(translateQuery(customQueryRequest)) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
 
     console.log(`the query is: `, sql.query)
     console.log(`the values are`, sql.getValuesArray())
@@ -389,7 +387,7 @@ function translateQuery(customQueryArr, arrangementObj) {
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
-  translatedQuery.group = arrangementObj.groupBy
+  // translatedQuery.group = arrangementObj.groupBy
 
   console.log(`before translated query condition`, translatedQuery.condition)
   if (translatedQuery.condition) {
