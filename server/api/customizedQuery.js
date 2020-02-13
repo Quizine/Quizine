@@ -12,14 +12,56 @@ jsonSql.configure({
 })
 module.exports = router
 
+const exampleArrangementObj = {
+  groupBy: 'foodType'
+  // sortBy: 'sum'
+}
+
+const exampleQuery = [
+  {
+    orders: [
+      {
+        quantity: {dataType: 'integer', options: ['$gte', 3], funcType: 'sum'}
+      }
+    ]
+  },
+  // {
+  //   orders: [
+  //     {
+  //       tip: {dataType: 'integer', options: ['$gte', 50]}
+  //     },
+  //     {
+  //       quantity: {dataType: 'integer', options: ['$gte', 3]}
+  //     }
+  //   ]
+  // },
+  {
+    menus: [
+      {
+        foodType: {dataType: 'string', options: []}
+      }
+    ]
+  }
+
+  // {
+  //   menuOrders: [
+  //     {
+  //       quantity: {dataType: 'integer', options: ['$gte', 3]}
+  //     }
+  //   ]
+  // }
+]
+
 //A POST ROUTE TO MAKE A CUSTOM QUERY
 
 router.post('/customQuery', async (req, res, next) => {
   try {
+    // const customQueryRequest = exampleQuery
     const customQueryRequest = req.body.customQueryRequest //custom query from FE
     console.log(`here@`, customQueryRequest)
-    console.log(`here22222@`, customQueryRequest[0].orders)
-    const sql = jsonSql.build(translateQuery(customQueryRequest)) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
+    const sql = jsonSql.build(
+      translateQuery(customQueryRequest, exampleArrangementObj)
+    ) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
 
     console.log(`the query is: `, sql.query)
     console.log(`the values are`, sql.getValuesArray())
@@ -172,7 +214,7 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 })
 
 //CUSTOM QUERYING HELPER FUNCTIONS
-function translateQuery(customQueryArr) {
+function translateQuery(customQueryArr, arrangementObj) {
   const translatedQuery = {}
   const type = 'select'
   let baseTable = ''
@@ -188,7 +230,20 @@ function translateQuery(customQueryArr) {
     }
     tableObj[currentTableName].forEach(columnObj => {
       const currentColumnName = Object.keys(columnObj)[0]
-      columns.push(currentColumnName)
+      if (
+        columnObj[currentColumnName].funcType &&
+        columnObj[currentColumnName].funcType.length
+      ) {
+        let funcObj = {
+          func: {
+            name: columnObj[currentColumnName].funcType,
+            args: [{field: currentColumnName}]
+          }
+        }
+        columns.push(funcObj)
+      } else {
+        columns.push(currentColumnName)
+      }
       conditions[currentColumnName] = {}
       if (columnObj[currentColumnName].dataType === 'integer') {
         conditions[currentColumnName].dataType =
@@ -226,12 +281,34 @@ function translateQuery(customQueryArr) {
   if (joinTables.length) {
     joinTables.forEach((tableName, idx) => {
       if (idx === 0) {
-        transformedJoinTables[tableName] = {
-          on: {
-            [`${tableName}.id`]: `${baseTable}.${tableName.slice(
-              0,
-              tableName.length - 1
-            )}Id`
+        if (
+          (baseTable === 'menus' && tableName === 'orders') ||
+          (baseTable === 'orders' && tableName === 'menus')
+        ) {
+          transformedJoinTables.menuOrders = {
+            on: {
+              [`${baseTable}.id`]: `"menuOrders".${baseTable.slice(
+                0,
+                baseTable.length - 1
+              )}Id`
+            }
+          }
+          transformedJoinTables[tableName] = {
+            on: {
+              [`${tableName}.id`]: `"menuOrders".${tableName.slice(
+                0,
+                tableName.length - 1
+              )}Id`
+            }
+          }
+        } else {
+          transformedJoinTables[tableName] = {
+            on: {
+              [`${tableName}.id`]: `${baseTable}.${tableName.slice(
+                0,
+                tableName.length - 1
+              )}Id`
+            }
           }
         }
       } else {
@@ -312,6 +389,7 @@ function translateQuery(customQueryArr) {
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
+  translatedQuery.group = arrangementObj.groupBy
 
   console.log(`before translated query condition`, translatedQuery.condition)
   if (translatedQuery.condition) {

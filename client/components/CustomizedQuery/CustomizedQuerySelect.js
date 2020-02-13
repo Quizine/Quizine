@@ -8,16 +8,41 @@ import {
   updateColumn
 } from '../../store/customizedQueryReducer'
 
+const funcTypeOperators = [
+  {Total: 'sum'}, // Questionable
+  {Average: 'avg'},
+  {Minimum: 'min'},
+  {Maximum: 'max'},
+  {Count: 'count'}
+]
+
 class CustomizedQuerySelect extends Component {
   constructor() {
     super()
-    // this.state = {
-    //   selectedColumns: []
-    // }
+    this.state = {
+      selectedColumnForFunc: '',
+      funcOperator: ''
+    }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
+    this.handleFuncSelect = this.handleFuncSelect.bind(this)
   }
   componentDidMount() {
     this.props.loadTableFields(this.props.selectedTable)
+  }
+
+  async handleFuncSelect(event) {
+    await this.setState({funcOperator: event.target.value})
+    const dataType = extractDataType(
+      this.props.selectedTable,
+      this.state.selectedColumnForFunc,
+      this.props.metaData
+    )
+    this.props.updateColumn(
+      this.props.selectedTable,
+      this.state.selectedColumnForFunc,
+      dataType,
+      this.state.funcOperator
+    )
   }
 
   async handleSelectedColumnChange(event) {
@@ -25,7 +50,11 @@ class CustomizedQuerySelect extends Component {
     //   //USED!!! DO NOT DELETE
     //   selectedColumns: [...this.state.selectedColumns, event.target.value]
     // })
-    // console.log('IN CLICK!!!! 111', event.target.value)
+
+    await this.setState({
+      selectedColumnForFunc: event.target.value
+    })
+    console.log('IN CLICK!!!! 111', event.target.value)
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
     // console.log('IN CLICK!!!! 222', event.target.value)
     this.props.loadValueOptionsForString(
@@ -114,6 +143,19 @@ class CustomizedQuerySelect extends Component {
                           )
                         })}
                   </select>
+                  <select
+                  className="select-cust"
+                  onChange={() => this.handleFuncSelect(event)}
+                >
+                  <option value="default">Please Select</option>
+                  {funcTypeOperators.map((option, idx) => {
+                    return (
+                      <option key={idx} value={Object.values(option)[0]}>
+                        {Object.keys(option)[0]}
+                      </option>
+                    )
+                  })}
+                </select>
                 </div>
                 <div className="where-cont">
                   {Object.keys(element)[0] ? (
@@ -160,8 +202,8 @@ const mapDispatchToProps = dispatch => {
     loadTableFields: tableName => {
       dispatch(getTableFields(tableName))
     },
-    updateColumn: (tableName, columnName, dataType) => {
-      dispatch(updateColumn(tableName, columnName, dataType))
+    updateColumn: (tableName, columnName, dataType, funcType) => {
+      dispatch(updateColumn(tableName, columnName, dataType, funcType))
     }
   }
 }
