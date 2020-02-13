@@ -56,8 +56,8 @@ const exampleQuery = [
 
 router.post('/customQuery', async (req, res, next) => {
   try {
-    const customQueryRequest = exampleQuery
-    // const customQueryRequest = req.body.customQueryRequest //custom query from FE
+    // const customQueryRequest = exampleQuery
+    const customQueryRequest = req.body.customQueryRequest //custom query from FE
     console.log(`here@`, customQueryRequest)
     const sql = jsonSql.build(
       translateQuery(customQueryRequest, exampleArrangementObj)

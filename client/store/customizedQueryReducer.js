@@ -97,12 +97,13 @@ export const updateTable = tableName => {
   }
 }
 
-export const updateColumn = (tableName, columnName, dataType) => {
+export const updateColumn = (tableName, columnName, dataType, funcType) => {
   return {
     type: UPDATE_COLUMN,
     tableName,
     columnName,
-    dataType
+    dataType,
+    funcType
   }
 }
 
@@ -280,7 +281,8 @@ export default function(state = initialState, action) {
           state.customQuery,
           action.tableName,
           action.columnName,
-          action.dataType
+          action.dataType,
+          action.funcType
         )
       }
     case UPDATE_OPTION:
@@ -366,7 +368,8 @@ function updateColumnFunc(
   customQuery,
   tableName,
   columnName,
-  receivedDataType
+  receivedDataType,
+  receivedFuncType = ''
 ) {
   const updatedQuery = customQuery.map(table => {
     const existingTableName = Object.keys(table)[0]
@@ -379,11 +382,23 @@ function updateColumnFunc(
         )
         updatedColumnList = [
           ...updatedColumnList,
-          {[columnName]: {dataType: receivedDataType, options: []}}
+          {
+            [columnName]: {
+              funcType: receivedFuncType,
+              dataType: receivedDataType,
+              options: []
+            }
+          }
         ]
       } else {
         updatedColumnList = [
-          {[columnName]: {dataType: receivedDataType, options: []}}
+          {
+            [columnName]: {
+              funcType: receivedFuncType,
+              dataType: receivedDataType,
+              options: []
+            }
+          }
         ]
       }
       table[existingTableName] = updatedColumnList
