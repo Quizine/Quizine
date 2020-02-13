@@ -236,7 +236,8 @@ function translateQuery(customQueryArr, arrangementObj) {
           func: {
             name: columnObj[currentColumnName].funcType,
             args: [{field: currentColumnName}]
-          }
+          },
+          alias: `${columnObj[currentColumnName].funcType} ${currentColumnName}`
         }
         columns.push(funcObj)
       } else {
@@ -338,6 +339,10 @@ function translateQuery(customQueryArr, arrangementObj) {
             transformedConditions.$and.push({
               [columnName]: conditions[columnName].values[0]
             })
+          } else {
+            transformedConditions.$and.push({
+              [columnName]: {$isNot: null}
+            })
           }
         } else if (conditions[columnName].values.length) {
           if (conditions[columnName].values[0] === '$is') {
@@ -379,6 +384,8 @@ function translateQuery(customQueryArr, arrangementObj) {
     } else if (conditions[columnName].values.length === 1) {
       transformedConditions = {[columnName]: conditions[columnName].values[0]}
       console.log(`what is here???`, transformedConditions)
+    } else if (conditions[columnName].values.length === 0) {
+      transformedConditions = {[columnName]: {$isNot: null}}
     }
   }
   console.log('transformed condition: ', transformedConditions)
