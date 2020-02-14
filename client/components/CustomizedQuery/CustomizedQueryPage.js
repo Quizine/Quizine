@@ -39,14 +39,19 @@ class CustomizedQueryPage extends Component {
   render() {
     const customQuery = this.props.customQuery
     if (customQuery.length) {
-      let combineWithStatus = false
       //makes sure one cannot join tables before selecting a table
-      for (let i = 0; i < customQuery.length; i++) {
-        if (customQuery.length && !Object.keys(customQuery[i])[0]) {
-          combineWithStatus = false
-          break
+      let combineWithStatus = false
+
+      if (customQuery.length >= 2) {
+        combineWithStatus = false
+      } else {
+        for (let i = 0; i < customQuery.length; i++) {
+          if (customQuery.length && !Object.keys(customQuery[i])[0]) {
+            combineWithStatus = false
+            break
+          }
+          combineWithStatus = true
         }
-        combineWithStatus = true
       }
 
       return (
@@ -77,15 +82,7 @@ class CustomizedQueryPage extends Component {
                 <button type="button" onClick={() => this.handleJoinClick()}>
                   Combine With
                 </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => this.handleJoinClick()}
-                  disabled
-                >
-                  Combine With
-                </button>
-              )}
+              ) : null}
             </div>
           </div>
           <div className="submit-query">

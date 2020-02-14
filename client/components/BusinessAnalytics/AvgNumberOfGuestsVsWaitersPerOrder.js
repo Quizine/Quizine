@@ -14,13 +14,14 @@ import {
   Button
 } from '@material-ui/core'
 
-Array.prototype.max = function() {
-  return Math.max.apply(null, this)
-}
+//these were used for dynamic rendering
+// Array.prototype.max = function() {
+//   return Math.max.apply(null, this)
+// }
 
-Array.prototype.min = function() {
-  return Math.min.apply(null, this)
-}
+// Array.prototype.min = function() {
+//   return Math.min.apply(null, this)
+// }
 
 class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
   constructor(props) {
@@ -102,8 +103,8 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
                       {
                         display: true,
                         ticks: {
-                          suggestedMin: avgNumberOfGuests.min(),
-                          suggestedMax: avgNumberOfGuests.max()
+                          suggestedMin: 0,
+                          suggestedMax: 5
                         }
                       }
                     ]

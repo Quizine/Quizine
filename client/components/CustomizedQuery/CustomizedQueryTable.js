@@ -117,22 +117,26 @@ export class CustomizedQueryTable extends Component {
         <div className="row-query">
           <div className="select-table-name">
             <h3>Select Category:</h3>
-            <select
-              onChange={() => this.handleChange(event)}
-              disabled={this.state.disabled}
-              value={this.state.defaultValue}
-              className="select-cust"
-            >
-              <option value="default">Please Select</option>
+            {this.state.defaultValue === 'default' ? (
+              <select
+                onChange={() => this.handleChange(event)}
+                disabled={this.state.disabled}
+                value={this.state.defaultValue}
+                className="select-cust"
+              >
+                <option value="default">Please Select</option>
 
-              {tableNamesToRender.map((element, idx) => {
-                return (
-                  <option value={element} key={idx}>
-                    {_.capitalize(element)}
-                  </option>
-                )
-              })}
-            </select>
+                {tableNamesToRender.map((element, idx) => {
+                  return (
+                    <option value={element} key={idx}>
+                      {_.capitalize(element)}
+                    </option>
+                  )
+                })}
+              </select>
+            ) : (
+              <h1>{this.state.defaultValue}</h1>
+            )}
           </div>
 
           <div>
