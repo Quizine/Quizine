@@ -85,7 +85,7 @@ export class CustomizedQueryTable extends Component {
     // console.log('TABLE PROPS', this.props)
     // console.log('TABLE STATE', this.state)
 
-    const {tableNames, customQuery, metaData} = this.props
+    const {tableNames, customQuery, metaData, joinTables} = this.props
 
     // console.log(`customQuery:`, customQuery)
     const lastSelectedTable = customQuery.length
@@ -109,28 +109,34 @@ export class CustomizedQueryTable extends Component {
 
     console.log('SELECTED TABLE', lastSelectedTable)
     console.log('SELECTED COLUMN', lastSelectedColumn)
-
+    const tableNamesToRender = this.props.joinTables.length
+      ? joinTables
+      : tableNames
     return (
       <div className="custom-analytics-container">
         <div className="row-query">
           <div className="select-table-name">
             <h3>Select Category:</h3>
-            <select
-              onChange={() => this.handleChange(event)}
-              disabled={this.state.disabled}
-              value={this.state.defaultValue}
-              className="select-cust"
-            >
-              <option value="default">Please Select</option>
+            {this.state.defaultValue === 'default' ? (
+              <select
+                onChange={() => this.handleChange(event)}
+                disabled={this.state.disabled}
+                value={this.state.defaultValue}
+                className="select-cust"
+              >
+                <option value="default">Please Select</option>
 
-              {tableNames.map((element, idx) => {
-                return (
-                  <option value={element} key={idx}>
-                    {_.capitalize(element)}
-                  </option>
-                )
-              })}
-            </select>
+                {tableNamesToRender.map((element, idx) => {
+                  return (
+                    <option value={element} key={idx}>
+                      {_.capitalize(element)}
+                    </option>
+                  )
+                })}
+              </select>
+            ) : (
+              <h1>{this.state.defaultValue}</h1>
+            )}
           </div>
 
           <div>
@@ -186,7 +192,8 @@ const mapStateToProps = state => {
       return Object.keys(element)[0]
     }),
     tableFields: state.customizedQuery.tableFields,
-    customQuery: state.customizedQuery.customQuery
+    customQuery: state.customizedQuery.customQuery,
+    joinTables: state.customizedQuery.joinTables
   }
 }
 
