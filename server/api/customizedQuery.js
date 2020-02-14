@@ -162,11 +162,11 @@ router.get('/:tableName/foreignTableNames', async (req, res, next) => {
         AND tc.table_name='menuOrders'
         AND ccu.table_name <> $1;`
         const foreignTableNameFromMenuOrders = await client.query(text, values)
-        res.json(
-          foreignTableNamesFromFK.rows.concat(
-            foreignTableNameFromMenuOrders.rows
-          )
+        const response = foreignTableNamesFromFK.rows.concat(
+          foreignTableNameFromMenuOrders.rows
         )
+
+        res.json(extractForeignTableNames(response))
       } else {
         res.json(foreignTableNamesFromFK.rows)
       }
@@ -409,4 +409,10 @@ function translateQuery(customQueryArr, arrangementObj) {
     }
   }
   return translatedQuery
+}
+
+function extractForeignTableNames(array) {
+  return array.map(element => {
+    return element.foreign_table_name
+  })
 }
