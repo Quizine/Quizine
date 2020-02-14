@@ -8,7 +8,8 @@ import {
   clearCustomQuery,
   addEmptyColumn,
   removeColumn,
-  gotCustomQueryResult
+  gotCustomQueryResult,
+  addEmptyTable
 } from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
 import _ from 'lodash'
@@ -54,6 +55,8 @@ export class CustomizedQueryTable extends Component {
   handleClearTableClick() {
     this.props.clearCustomQuery()
     this.props.clearQueryResults()
+    this.props.addEmptyTable()
+
     this.setState({...this.state, disabled: false, defaultValue: 'default'}) //USED!!! DO NOT DELETE
   }
 
@@ -211,6 +214,9 @@ const mapDispatchToProps = dispatch => {
     },
     removeColumn: tableName => {
       dispatch(removeColumn(tableName))
+    },
+    addEmptyTable: () => {
+      dispatch(addEmptyTable())
     }
   }
 }
