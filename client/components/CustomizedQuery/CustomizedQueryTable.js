@@ -145,9 +145,16 @@ export class CustomizedQueryTable extends Component {
                 {this.props.selectedTable ? (
                   <CustomizedQuerySelect
                     selectedTable={this.props.selectedTable}
+                    lastSelectedColumn={lastSelectedColumn}
+                    columnNumberForLastSelectedTableTEST={
+                      columnNumberForLastSelectedTableTEST
+                    }
+                    columnNumberForLastSelectedTable={
+                      columnNumberForLastSelectedTable
+                    }
                   />
                 ) : null}
-                {lastSelectedColumn &&
+                {/* {lastSelectedColumn &&
                 Object.keys(lastSelectedColumn).length ? (
                   <div className="remove-add">
                     {columnNumberForLastSelectedTable &&
@@ -168,7 +175,7 @@ export class CustomizedQueryTable extends Component {
                       Remove Search Criteria
                     </button>
                   </div>
-                ) : null}
+                ) : null} */}
               </div>
             ) : null}
           </div>

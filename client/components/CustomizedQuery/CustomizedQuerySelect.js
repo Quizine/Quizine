@@ -6,8 +6,11 @@ import {
   getValueOptionsForString,
   getTableFields,
   updateColumn,
-  addGroupBy
+  addGroupBy,
+  addEmptyColumn,
+  removeColumn
 } from '../../store/customizedQueryReducer'
+import AddRemoveButtons from './AddRemoveButtons'
 
 const funcTypeOperators = [
   {Total: 'sum'}, // Questionable
@@ -27,6 +30,7 @@ class CustomizedQuerySelect extends Component {
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
     this.handleFuncSelect = this.handleFuncSelect.bind(this)
+    this.handleAddClick = this.handleAddClick.bind(this)
   }
   componentDidMount() {
     this.props.loadTableFields(this.props.selectedTable)
@@ -87,6 +91,36 @@ class CustomizedQuerySelect extends Component {
     }
   }
 
+  handleAddClick() {
+    this.props.addEmptyColumn(
+      Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    )
+  }
+
+  handleRemoveClick() {
+    this.props.removeColumn(
+      Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    )
+    const {customQuery} = this.props
+    const lastSelectedTable = customQuery.length
+      ? Object.keys(customQuery[customQuery.length - 1])[0]
+      : null
+
+    const lastSelectedColumn = customQuery.length
+      ? customQuery[customQuery.length - 1][lastSelectedTable][
+          customQuery[customQuery.length - 1][lastSelectedTable].length - 1
+        ]
+      : null
+
+    if (!lastSelectedColumn) {
+      this.props.addEmptyColumn(
+        Object.keys(
+          this.props.customQuery[this.props.customQuery.length - 1]
+        )[0]
+      )
+    }
+  }
+
   render() {
     const {customQuery, selectedTable, metaData} = this.props
 
@@ -117,9 +151,29 @@ class CustomizedQuerySelect extends Component {
     //     columnNameFilter =>
     //       this.state.selectedColumns.indexOf(columnNameFilter) < 0
     //   )
+    console.log(`here is selected table`, selectedTable)
+    const {
+      lastSelectedColumn,
+      columnNumberForLastSelectedTable,
+      columnNumberForLastSelectedTableTEST
+    } = this.props
+
+    let lastSelectedColumnName
+    if (lastSelectedColumn) {
+      lastSelectedColumnName = Object.keys(lastSelectedColumn)[0]
+    }
+    const addButtonStatus = showAddButton(
+      customQuery,
+      selectedTable,
+      lastSelectedColumnName
+    )
+    // console.log(`last selected column`, lastSelectedColumnName)
+    console.log(`addbuttonstatus`, addButtonStatus)
+
     return (
       <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery) &&
+          // eslint-disable-next-line complexity
           columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
             return (
               <div key={idx} className="select-where">
@@ -190,6 +244,38 @@ class CustomizedQuerySelect extends Component {
                   />
                   <label htmlFor="groupBy">Group By</label>
                 </div>
+                <AddRemoveButtons
+                  columnNumberForLastSelectedTable={
+                    columnNumberForLastSelectedTable
+                  }
+                  columnNumberForLastSelectedTableTEST={
+                    columnNumberForLastSelectedTableTEST
+                  }
+                  lastSelectedColumn={lastSelectedColumn}
+                  handleAddClick={this.handleAddClick}
+                  handleRemoveClick={this.handleRemoveClick}
+                  customQuery={customQuery}
+                  selectedTable={selectedTable}
+                />
+                {/* {lastSelectedColumn &&
+                Object.keys(lastSelectedColumn).length ? (
+                  <div className="remove-add">
+                    {columnNumberForLastSelectedTable &&
+                    columnNumberForLastSelectedTableTEST &&
+                    columnNumberForLastSelectedTableTEST <
+                      columnNumberForLastSelectedTable ? (
+                      <button type="button" onClick={this.handleAddClick}>
+                        Add Search Criteria
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => this.handleRemoveClick()}
+                    >
+                      Remove Search Criteria
+                    </button>
+                  </div>
+                ) : null} */}
               </div>
             )
           })}
@@ -230,6 +316,12 @@ const mapDispatchToProps = dispatch => {
     },
     updateGroupBy: selectedColumn => {
       dispatch(addGroupBy(selectedColumn))
+    },
+    addEmptyColumn: tableName => {
+      dispatch(addEmptyColumn(tableName))
+    },
+    removeColumn: tableName => {
+      dispatch(removeColumn(tableName))
     }
   }
 }
@@ -237,6 +329,24 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQuerySelect
 )
+
+function showAddButton(customQuery, tableName, columnName) {
+  const lastTable = customQuery[customQuery.length - 1]
+  const lastTableName = Object.keys(lastTable)[0]
+  if (lastTableName === tableName) {
+    const columnName2 = Object.keys(lastTable)[0]
+    const arrOfOptions = lastTable[columnName2]
+    const lastOption = arrOfOptions[arrOfOptions.length - 1]
+    const lastOptionName = Object.keys(lastOption)[0]
+    if (columnName) {
+      if (lastOptionName === columnName) {
+        console.log("I'M AT THE FINAL")
+        return true
+      }
+    }
+  }
+  return false
+}
 
 function columnNameMapping(tableName, array) {
   return array
