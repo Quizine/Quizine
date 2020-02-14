@@ -2,7 +2,11 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import CustomizedQueryTable from './CustomizedQueryTable'
 import SubmitQueryButton from './SubmitQueryButton'
-import {addEmptyTable} from '../../store/customizedQueryReducer'
+import {
+  addEmptyTable,
+  clearCustomQuery,
+  gotCustomQueryResult
+} from '../../store/customizedQueryReducer'
 
 class CustomizedQueryPage extends Component {
   constructor() {
@@ -11,6 +15,8 @@ class CustomizedQueryPage extends Component {
     this.handleJoinClick = this.handleJoinClick.bind(this)
   }
   componentDidMount() {
+    this.props.clearCustomQuery()
+    this.props.clearQueryResults()
     this.props.addEmptyTable()
   }
 
@@ -18,56 +24,70 @@ class CustomizedQueryPage extends Component {
     this.props.addEmptyTable()
   }
 
+  async handleClearTableClick() {
+    this.props.clearCustomQuery()
+    await this.props.clearQueryResults()
+    this.props.addEmptyTable()
+  }
+
   render() {
     const customQuery = this.props.customQuery
-    let combineWithStatus = false
-    //makes sure one cannot join tables before selecting a table
-    for (let i = 0; i < customQuery.length; i++) {
-      if (customQuery.length && !Object.keys(customQuery[i])[0]) {
-        combineWithStatus = false
-        break
+    if (customQuery.length) {
+      let combineWithStatus = false
+      //makes sure one cannot join tables before selecting a table
+      for (let i = 0; i < customQuery.length; i++) {
+        if (customQuery.length && !Object.keys(customQuery[i])[0]) {
+          combineWithStatus = false
+          break
+        }
+        combineWithStatus = true
       }
-      combineWithStatus = true
-    }
-    // customQuery.forEach(tableObj => {})
 
-    return (
-      <div className="query-cont">
-        <div className="query-table">
-          {this.props.customQuery.map((tableObj, idx) => {
-            return (
-              <div key={idx} className="query-table-cont">
-                {Object.keys(tableObj)[0] ? (
-                  <CustomizedQueryTable
-                    selectedTable={Object.keys(tableObj)[0]}
-                  />
-                ) : (
-                  <CustomizedQueryTable />
-                )}
-              </div>
-            )
-          })}
-          <div className="combine-btn">
-            {combineWithStatus ? (
-              <button type="button" onClick={() => this.handleJoinClick()}>
-                Combine With
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => this.handleJoinClick()}
-                disabled
-              >
-                Combine With
-              </button>
-            )}
+      return (
+        <div className="query-cont">
+          <div className="query-table">
+            {this.props.customQuery.map((tableObj, idx) => {
+              return (
+                <div key={idx} className="query-table-cont">
+                  {Object.keys(tableObj)[0] ? (
+                    <CustomizedQueryTable
+                      selectedTable={Object.keys(tableObj)[0]}
+                    />
+                  ) : (
+                    <CustomizedQueryTable />
+                  )}
+                </div>
+              )
+            })}
+            <button
+              className="clear-btn"
+              type="button"
+              onClick={() => this.handleClearTableClick()}
+            >
+              Clear Search
+            </button>
+            <div className="combine-btn">
+              {combineWithStatus ? (
+                <button type="button" onClick={() => this.handleJoinClick()}>
+                  Combine With
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => this.handleJoinClick()}
+                  disabled
+                >
+                  Combine With
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="submit-query">
+            <SubmitQueryButton />
           </div>
         </div>
-        <div className="submit-query">
-          <SubmitQueryButton />
-        </div>
-      </div>
-    )
+      )
+    } else return null
   }
 }
 
@@ -79,7 +99,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addEmptyTable: () => dispatch(addEmptyTable())
+    addEmptyTable: () => dispatch(addEmptyTable()),
+    clearCustomQuery: () => {
+      dispatch(clearCustomQuery())
+    },
+    clearQueryResults: () => {
+      dispatch(gotCustomQueryResult([]))
+    }
   }
 }
 

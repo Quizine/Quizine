@@ -249,6 +249,8 @@ form div {
 }
 
 .clear-btn {
+  align-self: flex-start;
+  margin-left: 16px;
   height: 30px;
   width: 100px;
   text-align: center;

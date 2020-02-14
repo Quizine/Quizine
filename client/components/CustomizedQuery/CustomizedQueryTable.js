@@ -24,7 +24,7 @@ export class CustomizedQueryTable extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleAddClick = this.handleAddClick.bind(this)
     this.handleRemoveClick = this.handleRemoveClick.bind(this)
-    this.handleClearTableClick = this.handleClearTableClick.bind(this)
+    // this.handleClearTableClick = this.handleClearTableClick.bind(this)
   }
 
   componentDidMount() {
@@ -39,7 +39,6 @@ export class CustomizedQueryTable extends Component {
 
     this.setState({
       //USED!!! DO NOT DELETE
-      ...this.state,
       disabled: true,
       defaultValue: event.target.value
     })
@@ -52,13 +51,12 @@ export class CustomizedQueryTable extends Component {
     )
   }
 
-  handleClearTableClick() {
-    this.props.clearCustomQuery()
-    this.props.clearQueryResults()
-    this.props.addEmptyTable()
-
-    this.setState({...this.state, disabled: false, defaultValue: 'default'}) //USED!!! DO NOT DELETE
-  }
+  // async handleClearTableClick() {
+  //   this.props.clearCustomQuery()
+  //   await this.props.clearQueryResults()
+  //   this.props.addEmptyTable()
+  //   this.setState({disabled: false, defaultValue: 'default'}) //USED!!! DO NOT DELETE
+  // }
 
   handleRemoveClick() {
     this.props.removeColumn(
@@ -169,13 +167,13 @@ export class CustomizedQueryTable extends Component {
             ) : null}
           </div>
         </div>
-        <button
+        {/* <button
           className="clear-btn"
           type="button"
           onClick={() => this.handleClearTableClick()}
         >
           Clear Search
-        </button>
+        </button> */}
       </div>
     )
   }

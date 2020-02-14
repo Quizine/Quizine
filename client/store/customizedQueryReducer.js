@@ -233,12 +233,16 @@ export const getQueryResults = customQueryArr => async dispatch => {
 /**
  * REDUCER
  */
+
 export default function(state = initialState, action) {
   switch (action.type) {
     case GET_TABLE_NAMES:
       return {
         ...state,
-        metaData: [...state.metaData, ...mapTablesToMetaData(action.tableNames)]
+        metaData: [
+          ...state.metaData,
+          ...mapTablesToMetaData(state.metaData, action.tableNames)
+        ]
       }
     case GET_TABLE_FIELDS:
       return {
@@ -537,13 +541,6 @@ function removeOptionFunc(customQuery, tableName, columnName) {
   return updatedQuery
 }
 
-function mapTablesToMetaData(tableNameArray) {
-  return tableNameArray.map(element => {
-    const keyName = element.table_name
-    return {[keyName]: []}
-  })
-}
-
 function mapColumnsToMetaData(array, tableName, columnsArray) {
   let updatedColumnNames = columnsArray.map(element => {
     const keyName = element.column_name
@@ -557,6 +554,16 @@ function mapColumnsToMetaData(array, tableName, columnsArray) {
   })
 
   return metaData
+}
+
+function mapTablesToMetaData(metadata, tableNameArray) {
+  if (!metadata.length) {
+    return tableNameArray.map(element => {
+      const keyName = element.table_name
+      return {[keyName]: []}
+    })
+  }
+  return []
 }
 
 function mapDataTypeToMetaData(array, tableName, columnName, dataType) {
