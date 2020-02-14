@@ -5,7 +5,8 @@ import {
   getDataType,
   getValueOptionsForString,
   getTableFields,
-  updateColumn
+  updateColumn,
+  addGroupBy
 } from '../../store/customizedQueryReducer'
 
 const funcTypeOperators = [
@@ -20,7 +21,8 @@ class CustomizedQuerySelect extends Component {
   constructor() {
     super()
     this.state = {
-      selectedColumnForFunc: '',
+      checked: false,
+      selectedColumnInUse: '',
       funcOperator: ''
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
@@ -34,12 +36,12 @@ class CustomizedQuerySelect extends Component {
     await this.setState({funcOperator: event.target.value})
     const dataType = extractDataType(
       this.props.selectedTable,
-      this.state.selectedColumnForFunc,
+      this.state.selectedColumnInUse,
       this.props.metaData
     )
     this.props.updateColumn(
       this.props.selectedTable,
-      this.state.selectedColumnForFunc,
+      this.state.selectedColumnInUse,
       dataType,
       this.state.funcOperator
     )
@@ -52,7 +54,7 @@ class CustomizedQuerySelect extends Component {
     // })
 
     await this.setState({
-      selectedColumnForFunc: event.target.value
+      selectedColumnInUse: event.target.value
     })
     console.log('IN CLICK!!!! 111', event.target.value)
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
@@ -72,6 +74,15 @@ class CustomizedQuerySelect extends Component {
       event.target.value,
       dataType
     )
+  }
+
+  async handleChecked(event) {
+    await this.setState(state => {
+      return {checked: !state.checked}
+    })
+    if (this.state.checked) {
+      this.props.updateGroupBy(this.state.selectedColumnInUse)
+    }
   }
 
   render() {
@@ -144,18 +155,18 @@ class CustomizedQuerySelect extends Component {
                         })}
                   </select>
                   <select
-                  className="select-cust"
-                  onChange={() => this.handleFuncSelect(event)}
-                >
-                  <option value="default">Please Select</option>
-                  {funcTypeOperators.map((option, idx) => {
-                    return (
-                      <option key={idx} value={Object.values(option)[0]}>
-                        {Object.keys(option)[0]}
-                      </option>
-                    )
-                  })}
-                </select>
+                    className="select-cust"
+                    onChange={() => this.handleFuncSelect(event)}
+                  >
+                    <option value="default">Please Select</option>
+                    {funcTypeOperators.map((option, idx) => {
+                      return (
+                        <option key={idx} value={Object.values(option)[0]}>
+                          {Object.keys(option)[0]}
+                        </option>
+                      )
+                    })}
+                  </select>
                 </div>
                 <div className="where-cont">
                   {Object.keys(element)[0] ? (
@@ -166,6 +177,16 @@ class CustomizedQuerySelect extends Component {
                       />
                     </div>
                   ) : null}
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={this.state.checked}
+                    id="groupBy"
+                    name="groupBy"
+                    onChange={() => this.handleChecked(event)}
+                  />
+                  <label htmlFor="groupBy">Group By</label>
                 </div>
               </div>
             )
@@ -204,6 +225,9 @@ const mapDispatchToProps = dispatch => {
     },
     updateColumn: (tableName, columnName, dataType, funcType) => {
       dispatch(updateColumn(tableName, columnName, dataType, funcType))
+    },
+    updateGroupBy: selectedColumn => {
+      dispatch(addGroupBy(selectedColumn))
     }
   }
 }
