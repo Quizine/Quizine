@@ -5,8 +5,7 @@ import {
   getDataType,
   getValueOptionsForString,
   getTableFields,
-  updateColumn,
-  addGroupBy
+  updateColumn
 } from '../../store/customizedQueryReducer'
 
 const funcTypeOperators = [
@@ -21,7 +20,6 @@ class CustomizedQuerySelect extends Component {
   constructor() {
     super()
     this.state = {
-      checked: false,
       selectedColumnInUse: '',
       funcOperator: ''
     }
@@ -74,17 +72,6 @@ class CustomizedQuerySelect extends Component {
       event.target.value,
       dataType
     )
-  }
-
-  async handleChecked(event) {
-    await this.setState(state => {
-      return {checked: !state.checked}
-    })
-    if (this.state.checked) {
-      this.props.updateGroupBy(this.state.selectedColumnInUse)
-    } else {
-      this.props.updateGroupBy('')
-    }
   }
 
   render() {
@@ -180,16 +167,6 @@ class CustomizedQuerySelect extends Component {
                     </div>
                   ) : null}
                 </div>
-                <div>
-                  <input
-                    type="checkbox"
-                    checked={this.state.checked}
-                    id="groupBy"
-                    name="groupBy"
-                    onChange={() => this.handleChecked(event)}
-                  />
-                  <label htmlFor="groupBy">Group By</label>
-                </div>
               </div>
             )
           })}
@@ -227,9 +204,6 @@ const mapDispatchToProps = dispatch => {
     },
     updateColumn: (tableName, columnName, dataType, funcType) => {
       dispatch(updateColumn(tableName, columnName, dataType, funcType))
-    },
-    updateGroupBy: selectedColumn => {
-      dispatch(addGroupBy(selectedColumn))
     }
   }
 }

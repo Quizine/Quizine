@@ -12,57 +12,13 @@ jsonSql.configure({
 })
 module.exports = router
 
-const exampleArrangementObj = {
-  groupBy: 'foodType'
-  // sortBy: 'sum'
-}
-
-const exampleQuery = [
-  {
-    orders: [
-      {
-        quantity: {dataType: 'integer', options: ['$gte', 3], funcType: 'sum'}
-      }
-    ]
-  },
-  // {
-  //   orders: [
-  //     {
-  //       tip: {dataType: 'integer', options: ['$gte', 50]}
-  //     },
-  //     {
-  //       quantity: {dataType: 'integer', options: ['$gte', 3]}
-  //     }
-  //   ]
-  // },
-  {
-    menus: [
-      {
-        foodType: {dataType: 'string', options: []}
-      }
-    ]
-  }
-
-  // {
-  //   menuOrders: [
-  //     {
-  //       quantity: {dataType: 'integer', options: ['$gte', 3]}
-  //     }
-  //   ]
-  // }
-]
-
 //A POST ROUTE TO MAKE A CUSTOM QUERY
 
 router.post('/customQuery', async (req, res, next) => {
   try {
-    // const customQueryRequest = exampleQuery
     const customQueryRequest = req.body.customQueryRequest //custom query from FE
     console.log(`here@`, customQueryRequest)
-    const arrangementQueryRequest = req.body.arrangementQueryRequest
-    const sql = jsonSql.build(
-      translateQuery(customQueryRequest, arrangementQueryRequest)
-    ) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
+    const sql = jsonSql.build(translateQuery(customQueryRequest)) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
 
     console.log(`the query is: `, sql.query)
     console.log(`the values are`, sql.getValuesArray())
@@ -85,7 +41,6 @@ router.get('/', async (req, res, next) => {
       AND table_schema='public'
       AND table_name !='Sessions'
       AND table_name !='users'
-      AND table_name !='menuOrders'
       AND table_name !='restaurants';`
       const tableNames = await client.query(text)
       res.json(tableNames.rows)
@@ -138,38 +93,8 @@ router.get('/:tableName/foreignTableNames', async (req, res, next) => {
       AND ccu.table_name <> 'restaurants';`
       const values = [req.params.tableName]
       const foreignTableNamesFromFK = await client.query(text, values)
-      if (
-        req.params.tableName === 'orders' ||
-        req.params.tableName === 'menus'
-      ) {
-        const text = `
-        SELECT
-        tc.table_schema,
-        tc.constraint_name,
-        tc.table_name,
-        kcu.column_name,
-        ccu.table_schema AS foreign_table_schema,
-        ccu.table_name AS foreign_table_name,
-        ccu.column_name AS foreign_column_name
-        FROM information_schema.table_constraints AS tc
-        JOIN information_schema.key_column_usage AS kcu
-        ON tc.constraint_name = kcu.constraint_name
-        AND tc.table_schema = kcu.table_schema
-        JOIN information_schema.constraint_column_usage AS ccu
-        ON ccu.constraint_name = tc.constraint_name
-        AND ccu.table_schema = tc.table_schema
-        WHERE tc.constraint_type = 'FOREIGN KEY'
-        AND tc.table_name='menuOrders'
-        AND ccu.table_name <> $1;`
-        const foreignTableNameFromMenuOrders = await client.query(text, values)
-        const response = foreignTableNamesFromFK.rows.concat(
-          foreignTableNameFromMenuOrders.rows
-        )
 
-        res.json(extractForeignTableNames(response))
-      } else {
-        res.json(foreignTableNamesFromFK.rows)
-      }
+      res.json(extractForeignTableNames(foreignTableNamesFromFK.rows))
     }
   } catch (error) {
     next(error)
@@ -214,13 +139,14 @@ router.get('/:tableName/:columnName/string', async (req, res, next) => {
 })
 
 //CUSTOM QUERYING HELPER FUNCTIONS
-function translateQuery(customQueryArr, arrangementObj) {
+function translateQuery(customQueryArr) {
   const translatedQuery = {}
   const type = 'select'
   let baseTable = ''
   const columns = []
   const joinTables = [] //each table needs to be an object
   const conditions = {} //each condition will be key value pairs
+  const groupByForString = []
   customQueryArr.forEach((tableObj, idx) => {
     const currentTableName = Object.keys(tableObj)[0] //getting tableName
     if (idx === 0) {
@@ -258,6 +184,7 @@ function translateQuery(customQueryArr, arrangementObj) {
         // WHERE orders."timeOfPurchase" >= NOW() - $1::interval
         conditions.timeOfPurchase = {}
         conditions.timeOfPurchase.dataType = 'timestamp'
+        groupByForString.push(currentColumnName)
         let interval = columnObj[currentColumnName].options[0]
         let now = new Date()
         if (interval === 'year') {
@@ -272,44 +199,24 @@ function translateQuery(customQueryArr, arrangementObj) {
         //IT'S A STRING
         conditions[currentColumnName].values = []
         conditions[currentColumnName].dataType = 'string'
+        groupByForString.push(currentColumnName)
         columnObj[currentColumnName].options.forEach(condition => {
           conditions[currentColumnName].values.push(condition) //this needs to be an object
         })
       }
     })
   })
+  const copyOfJoinTablesArray = [...joinTables]
   const transformedJoinTables = {}
   if (joinTables.length) {
     joinTables.forEach((tableName, idx) => {
       if (idx === 0) {
-        if (
-          (baseTable === 'menus' && tableName === 'orders') ||
-          (baseTable === 'orders' && tableName === 'menus')
-        ) {
-          transformedJoinTables.menuOrders = {
-            on: {
-              [`${baseTable}.id`]: `"menuOrders".${baseTable.slice(
-                0,
-                baseTable.length - 1
-              )}Id`
-            }
-          }
-          transformedJoinTables[tableName] = {
-            on: {
-              [`${tableName}.id`]: `"menuOrders".${tableName.slice(
-                0,
-                tableName.length - 1
-              )}Id`
-            }
-          }
-        } else {
-          transformedJoinTables[tableName] = {
-            on: {
-              [`${tableName}.id`]: `${baseTable}.${tableName.slice(
-                0,
-                tableName.length - 1
-              )}Id`
-            }
+        transformedJoinTables[tableName] = {
+          on: {
+            [`${tableName}.id`]: `${baseTable}.${tableName.slice(
+              0,
+              tableName.length - 1
+            )}Id`
           }
         }
       } else {
@@ -396,7 +303,18 @@ function translateQuery(customQueryArr, arrangementObj) {
   translatedQuery.table = baseTable
   translatedQuery.join = transformedJoinTables //one more transformation
   translatedQuery.condition = transformedConditions //one more transformation
-  translatedQuery.group = arrangementObj.groupBy
+  translatedQuery.group = groupByForString
+
+  if (baseTable === 'menuOrders') {
+    if (copyOfJoinTablesArray.indexOf('orders') >= 0) {
+      translatedQuery.group = ['menuOrders.orderId', ...translatedQuery.group]
+      translatedQuery.fields.push('menuOrders.orderId')
+    }
+  }
+
+  if (!translatedQuery.group && !translatedQuery.group.length) {
+    delete translatedQuery.group
+  }
 
   console.log(`before translated query condition`, translatedQuery.condition)
   if (translatedQuery.condition) {
@@ -408,6 +326,7 @@ function translateQuery(customQueryArr, arrangementObj) {
       }
     }
   }
+  console.log('translated query', translatedQuery)
   return translatedQuery
 }
 
@@ -416,3 +335,79 @@ function extractForeignTableNames(array) {
     return element.foreign_table_name
   })
 }
+
+//COPIED FROM HELPER FUNCTION
+// if (joinTables.length) {
+//   joinTables.forEach((tableName, idx) => {
+//     if (idx === 0) {
+//       if (
+//         (baseTable === 'menus' && tableName === 'orders') ||
+//         (baseTable === 'orders' && tableName === 'menus')
+//       ) {
+//         transformedJoinTables.menuOrders = {
+//           on: {
+//             [`${baseTable}.id`]: `"menuOrders".${baseTable.slice(
+//               0,
+//               baseTable.length - 1
+//             )}Id`
+//           }
+//         }
+//         transformedJoinTables[tableName] = {
+//           on: {
+//             [`${tableName}.id`]: `"menuOrders".${tableName.slice(
+//               0,
+//               tableName.length - 1
+//             )}Id`
+//           }
+//         }
+//       } else {
+//         transformedJoinTables[tableName] = {
+//           on: {
+//             [`${tableName}.id`]: `${baseTable}.${tableName.slice(
+//               0,
+//               tableName.length - 1
+//             )}Id`
+//           }
+//         }
+//       }
+//     } else {
+//       transformedJoinTables[tableName] = {
+//         on: {
+//           [`${tableName}.id`]: `${joinTables[idx - 1]}.${tableName.slice(
+//             0,
+//             tableName.length - 1
+//           )}Id`
+//         }
+//       }
+//     }
+//   })
+// }
+
+//COPIED FROM FOREIGN TABLE ROUTE
+// if (
+//   req.params.tableName === 'orders' ||
+//   req.params.tableName === 'menus'
+// ) {
+//   const text = `
+//   SELECT
+//   tc.table_schema,
+//   tc.constraint_name,
+//   tc.table_name,
+//   kcu.column_name,
+//   ccu.table_schema AS foreign_table_schema,
+//   ccu.table_name AS foreign_table_name,
+//   ccu.column_name AS foreign_column_name
+//   FROM information_schema.table_constraints AS tc
+//   JOIN information_schema.key_column_usage AS kcu
+//   ON tc.constraint_name = kcu.constraint_name
+//   AND tc.table_schema = kcu.table_schema
+//   JOIN information_schema.constraint_column_usage AS ccu
+//   ON ccu.constraint_name = tc.constraint_name
+//   AND ccu.table_schema = tc.table_schema
+//   WHERE tc.constraint_type = 'FOREIGN KEY'
+//   AND tc.table_name='menuOrders'
+//   AND ccu.table_name <> $1;`
+//   const foreignTableNameFromMenuOrders = await client.query(text, values)
+//   const response = foreignTableNamesFromFK.rows.concat(
+//     foreignTableNameFromMenuOrders.rows
+//   )
