@@ -6,7 +6,8 @@ import {
   addEmptyTable,
   clearCustomQuery,
   gotCustomQueryResult,
-  getJoinTables
+  getJoinTables,
+  clearJoinTables
 } from '../../store/customizedQueryReducer'
 
 class CustomizedQueryPage extends Component {
@@ -24,6 +25,7 @@ class CustomizedQueryPage extends Component {
   handleJoinClick() {
     console.log(`hey: `, Object.keys(this.props.customQuery[0])[0])
     this.props.getJoinTables(Object.keys(this.props.customQuery[0])[0])
+
     this.props.addEmptyTable()
   }
 
@@ -31,6 +33,7 @@ class CustomizedQueryPage extends Component {
     this.props.clearCustomQuery()
     await this.props.clearQueryResults()
     this.props.addEmptyTable()
+    await this.props.clearJoinTables()
   }
 
   render() {
@@ -111,6 +114,9 @@ const mapDispatchToProps = dispatch => {
     },
     getJoinTables: selectedTable => {
       dispatch(getJoinTables(selectedTable))
+    },
+    clearJoinTables: () => {
+      dispatch(clearJoinTables())
     }
   }
 }
