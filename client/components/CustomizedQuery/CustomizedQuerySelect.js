@@ -82,6 +82,8 @@ class CustomizedQuerySelect extends Component {
     })
     if (this.state.checked) {
       this.props.updateGroupBy(this.state.selectedColumnInUse)
+    } else {
+      this.props.updateGroupBy('')
     }
   }
 
