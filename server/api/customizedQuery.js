@@ -158,7 +158,6 @@ router.get('/:tableName/foreignTableNames', async (req, res, next) => {
         WHERE tc.constraint_type = 'FOREIGN KEY'
         AND tc.table_name='menuOrders'
         AND ccu.table_name <> $1;`
-        const values = [req.params.tableName]
         const foreignTableNameFromMenuOrders = await client.query(text, values)
         res.json(
           foreignTableNamesFromFK.rows.concat(

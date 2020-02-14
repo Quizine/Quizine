@@ -26,7 +26,7 @@ class LineGraphRevenue extends Component {
     super(props)
 
     this.state = {
-      selectedOption: 'allPeriod'
+      selectedOption: 'oneYear'
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -60,53 +60,49 @@ class LineGraphRevenue extends Component {
       ]
     }
 
-    if (revenue) {
-      return (
-        <div>
-          <div className="peak-time-div">
-            <Card className={clsx('classes.root, className')}>
-              <CardHeader
-                action={
-                  <select onChange={this.handleChange} className="select-css">
-                    <option value="allPeriod">All History</option>
-                    <option value="oneYear">Last Year</option>
-                    <option value="twoYears">Last 2 Years</option>
-                  </select>
-                }
-                title="Revenue per Month ($)"
-              />
-              <Divider />
-              <CardContent>
-                <div className="classes.chartContainer">
-                  <Line
-                    data={chartData}
-                    options={{
-                      //                       title: {
-                      //                         display: true,
-                      //                         text: 'REVENUE vs TIME'
-                      //                       },
-                      scales: {
-                        yAxes: [
-                          {
-                            display: true,
-                            ticks: {
-                              suggestedMin: 50000, //revenue.min(),
-                              suggestedMax: 100000 //revenue.max()
-                            }
+    return (
+      <div>
+        <div className="peak-time-div">
+          <Card className={clsx('classes.root, className')}>
+            <CardHeader
+              action={
+                <select onChange={this.handleChange} className="select-css">
+                  <option value="oneYear">Last Year</option>
+                  <option value="twoYears">Last 2 Years</option>
+                  <option value="allPeriod">All History</option>
+                </select>
+              }
+              title="Revenue per Month ($)"
+            />
+            <Divider />
+            <CardContent>
+              <div className="classes.chartContainer">
+                <Line
+                  data={chartData}
+                  options={{
+                    //                       title: {
+                    //                         display: true,
+                    //                         text: 'REVENUE vs TIME'
+                    //                       },
+                    scales: {
+                      yAxes: [
+                        {
+                          display: true,
+                          ticks: {
+                            suggestedMin: 50000,
+                            suggestedMax: 100000
                           }
-                        ]
-                      }
-                    }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                        }
+                      ]
+                    }
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      )
-    } else {
-      return <h6>loading</h6>
-    }
+      </div>
+    )
   }
 }
 
