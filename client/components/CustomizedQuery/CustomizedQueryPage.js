@@ -5,7 +5,9 @@ import SubmitQueryButton from './SubmitQueryButton'
 import {
   addEmptyTable,
   clearCustomQuery,
-  gotCustomQueryResult
+  gotCustomQueryResult,
+  getJoinTables,
+  clearJoinTables
 } from '../../store/customizedQueryReducer'
 
 class CustomizedQueryPage extends Component {
@@ -21,6 +23,9 @@ class CustomizedQueryPage extends Component {
   }
 
   handleJoinClick() {
+    console.log(`hey: `, Object.keys(this.props.customQuery[0])[0])
+    this.props.getJoinTables(Object.keys(this.props.customQuery[0])[0])
+
     this.props.addEmptyTable()
   }
 
@@ -28,19 +33,25 @@ class CustomizedQueryPage extends Component {
     this.props.clearCustomQuery()
     await this.props.clearQueryResults()
     this.props.addEmptyTable()
+    await this.props.clearJoinTables()
   }
 
   render() {
     const customQuery = this.props.customQuery
     if (customQuery.length) {
-      let combineWithStatus = false
       //makes sure one cannot join tables before selecting a table
-      for (let i = 0; i < customQuery.length; i++) {
-        if (customQuery.length && !Object.keys(customQuery[i])[0]) {
-          combineWithStatus = false
-          break
+      let combineWithStatus = false
+
+      if (customQuery.length >= 2) {
+        combineWithStatus = false
+      } else {
+        for (let i = 0; i < customQuery.length; i++) {
+          if (customQuery.length && !Object.keys(customQuery[i])[0]) {
+            combineWithStatus = false
+            break
+          }
+          combineWithStatus = true
         }
-        combineWithStatus = true
       }
 
       return (
@@ -71,15 +82,7 @@ class CustomizedQueryPage extends Component {
                 <button type="button" onClick={() => this.handleJoinClick()}>
                   Combine With
                 </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => this.handleJoinClick()}
-                  disabled
-                >
-                  Combine With
-                </button>
-              )}
+              ) : null}
             </div>
           </div>
           <div className="submit-query">
@@ -105,6 +108,12 @@ const mapDispatchToProps = dispatch => {
     },
     clearQueryResults: () => {
       dispatch(gotCustomQueryResult([]))
+    },
+    getJoinTables: selectedTable => {
+      dispatch(getJoinTables(selectedTable))
+    },
+    clearJoinTables: () => {
+      dispatch(clearJoinTables())
     }
   }
 }

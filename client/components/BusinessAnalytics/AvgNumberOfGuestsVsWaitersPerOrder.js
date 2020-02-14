@@ -14,13 +14,14 @@ import {
   Button
 } from '@material-ui/core'
 
-Array.prototype.max = function() {
-  return Math.max.apply(null, this)
-}
+//these were used for dynamic rendering
+// Array.prototype.max = function() {
+//   return Math.max.apply(null, this)
+// }
 
-Array.prototype.min = function() {
-  return Math.min.apply(null, this)
-}
+// Array.prototype.min = function() {
+//   return Math.min.apply(null, this)
+// }
 
 class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
   constructor(props) {
@@ -66,58 +67,55 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
       ]
     }
     const avgNumberOfGuests = chartData.datasets[0].data
-    if (!avgNumberOfGuests) {
-      return <h5>loading...</h5>
-    } else {
-      return (
-        <div className="peak-time-div">
-          <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              action={
-                <div className="month-button">
-                  <select
-                    onChange={this.handleChange}
-                    className="select-css"
-                    defaultValue="month"
-                  >
-                    <option value="month">Month</option>
-                    <option value="year">Year</option>
-                    <option value="week">Week</option>
-                  </select>
-                </div>
-              }
-              title="Waiter-Client Engagement (%)"
-            />
-            <Divider />
 
-            <CardContent>
-              <div className="classes.chartContainer">
-                <Bar
-                  data={chartData}
-                  options={{
-                    title: {
-                      display: false,
-                      text: 'Waiters Tip Percentage'
-                    },
-                    scales: {
-                      yAxes: [
-                        {
-                          display: true,
-                          ticks: {
-                            suggestedMin: avgNumberOfGuests.min(),
-                            suggestedMax: avgNumberOfGuests.max()
-                          }
-                        }
-                      ]
-                    }
-                  }}
-                />
+    return (
+      <div className="peak-time-div">
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader
+            action={
+              <div className="month-button">
+                <select
+                  onChange={this.handleChange}
+                  className="select-css"
+                  defaultValue="month"
+                >
+                  <option value="month">Month</option>
+                  <option value="year">Year</option>
+                  <option value="week">Week</option>
+                </select>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      )
-    }
+            }
+            title="Waiter-Client Engagement (%)"
+          />
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Bar
+                data={chartData}
+                options={{
+                  title: {
+                    display: false,
+                    text: 'Waiters Tip Percentage'
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        display: true,
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: 5
+                        }
+                      }
+                    ]
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 }
 

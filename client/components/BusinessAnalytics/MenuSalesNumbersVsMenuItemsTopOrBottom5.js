@@ -74,57 +74,53 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
       ]
     }
 
-    if (!piePercentages) {
-      return <h6>loading...</h6>
-    } else {
-      return (
-        <div className="peak-time-div">
-          <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              action={
-                <div className="month-button">
-                  <select onChange={this.handleChange} className="select-css">
-                    <option value="month">Month</option>
-                    <option value="year">Year</option>
-                    <option value="week">Week</option>
-                  </select>
-                  <button
-                    type="button"
-                    className="button1"
-                    onClick={() => this.handleClick(event, true)}
-                  >
-                    Top 5
-                  </button>
-                  <button
-                    type="button"
-                    className="button1"
-                    onClick={() => this.handleClick(event, false)}
-                  >
-                    Bottom 5
-                  </button>
-                </div>
-              }
-              title={`${labelText} 5 Menu Items`}
-            />
-            <Divider />
-
-            <CardContent>
-              <div className="classes.chartContainer">
-                <Pie
-                  data={chartData}
-                  options={{
-                    title: {
-                      display: false,
-                      text: `${labelText} 5 Menu Items`
-                    }
-                  }}
-                />
+    return (
+      <div className="peak-time-div">
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader
+            action={
+              <div className="month-button">
+                <select onChange={this.handleChange} className="select-css">
+                  <option value="month">Month</option>
+                  <option value="year">Year</option>
+                  <option value="week">Week</option>
+                </select>
+                <button
+                  type="button"
+                  className="button1"
+                  onClick={() => this.handleClick(event, true)}
+                >
+                  Top 5
+                </button>
+                <button
+                  type="button"
+                  className="button1"
+                  onClick={() => this.handleClick(event, false)}
+                >
+                  Bottom 5
+                </button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      )
-    }
+            }
+            title={`${labelText} 5 Menu Items`}
+          />
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Pie
+                data={chartData}
+                options={{
+                  title: {
+                    display: false,
+                    text: `${labelText} 5 Menu Items`
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 }
 
