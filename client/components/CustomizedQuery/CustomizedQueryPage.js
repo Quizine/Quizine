@@ -19,8 +19,17 @@ class CustomizedQueryPage extends Component {
   }
 
   render() {
-    // console.log('PAGE STATE', this.state)
     const customQuery = this.props.customQuery
+    let combineWithStatus = false
+    //makes sure one cannot join tables before selecting a table
+    for (let i = 0; i < customQuery.length; i++) {
+      if (customQuery.length && !Object.keys(customQuery[i])[0]) {
+        combineWithStatus = false
+        break
+      }
+      combineWithStatus = true
+    }
+    // customQuery.forEach(tableObj => {})
 
     return (
       <div className="query-cont">
@@ -38,11 +47,20 @@ class CustomizedQueryPage extends Component {
               </div>
             )
           })}
-
           <div className="combine-btn">
-            <button type="button" onClick={() => this.handleJoinClick()}>
-              Combine With
-            </button>
+            {combineWithStatus ? (
+              <button type="button" onClick={() => this.handleJoinClick()}>
+                Combine With
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => this.handleJoinClick()}
+                disabled
+              >
+                Combine With
+              </button>
+            )}
           </div>
         </div>
         <div className="submit-query">
