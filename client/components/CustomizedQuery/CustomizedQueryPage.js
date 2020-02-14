@@ -5,7 +5,8 @@ import SubmitQueryButton from './SubmitQueryButton'
 import {
   addEmptyTable,
   clearCustomQuery,
-  gotCustomQueryResult
+  gotCustomQueryResult,
+  getJoinTables
 } from '../../store/customizedQueryReducer'
 
 class CustomizedQueryPage extends Component {
@@ -21,6 +22,8 @@ class CustomizedQueryPage extends Component {
   }
 
   handleJoinClick() {
+    console.log(`hey: `, Object.keys(this.props.customQuery[0])[0])
+    this.props.getJoinTables(Object.keys(this.props.customQuery[0])[0])
     this.props.addEmptyTable()
   }
 
@@ -105,6 +108,9 @@ const mapDispatchToProps = dispatch => {
     },
     clearQueryResults: () => {
       dispatch(gotCustomQueryResult([]))
+    },
+    getJoinTables: selectedTable => {
+      dispatch(getJoinTables(selectedTable))
     }
   }
 }
