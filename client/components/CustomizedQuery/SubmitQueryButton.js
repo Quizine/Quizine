@@ -11,7 +11,10 @@ export class SubmitQueryButton extends Component {
   }
 
   handleSubmit() {
-    this.props.loadQueryresults(this.props.currentQuery)
+    this.props.loadQueryresults(
+      this.props.currentQuery,
+      this.props.arrangementQuery
+    )
   }
 
   render() {
@@ -36,13 +39,15 @@ export class SubmitQueryButton extends Component {
 const mapStateToProps = state => {
   return {
     currentQuery: state.customizedQuery.customQuery,
+    arrangementQuery: state.customizedQuery.arrangementQuery,
     customQueryResult: state.customizedQuery.customQueryResult
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadQueryresults: queryArray => dispatch(getQueryResults(queryArray))
+    loadQueryresults: (queryArray, arragementQueryObj) =>
+      dispatch(getQueryResults(queryArray, arragementQueryObj))
   }
 }
 

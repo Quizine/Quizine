@@ -21,6 +21,7 @@ const REMOVE_TABLE = 'REMOVE_TABLE'
 const REMOVE_COLUMN = 'REMOVE_COLUMN'
 const REMOVE_OPTION = 'REMOVE_OPTION'
 const GET_CUSTOM_QUERY_RESULTS = 'GET_CUSTOM_QUERY_RESULTS'
+const ADD_GROUP_BY = 'ADD_GROUP_BY'
 
 /**
  * INITIAL STATE
@@ -31,7 +32,8 @@ const initialState = {
   customQueryResult: [], //Or object ?
   joinTables: [],
   metaData: [],
-  customQuery: []
+  customQuery: [],
+  arrangementQuery: {}
 }
 
 // query = [
@@ -53,6 +55,13 @@ export const gotCustomQueryResult = customQueryResult => {
   return {
     type: GET_CUSTOM_QUERY_RESULTS,
     customQueryResult
+  }
+}
+
+export const addGroupBy = groupBy => {
+  return {
+    type: ADD_GROUP_BY,
+    groupBy
   }
 }
 
@@ -219,10 +228,14 @@ export const getJoinTables = tableName => async dispatch => {
   }
 }
 
-export const getQueryResults = customQueryArr => async dispatch => {
+export const getQueryResults = (
+  customQueryArr,
+  arrangementQueryObj
+) => async dispatch => {
   try {
     const {data} = await axios.post('/api/customizedQuery/customQuery', {
-      customQueryRequest: customQueryArr
+      customQueryRequest: customQueryArr,
+      arrangementQueryRequest: arrangementQueryObj
     })
     dispatch(gotCustomQueryResult(data))
   } catch (err) {
@@ -347,6 +360,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         customQueryResult: action.customQueryResult
+      }
+    case ADD_GROUP_BY:
+      return {
+        ...state,
+        arrangementQuery: {...state.arrangementQuery, groupBy: action.groupBy}
       }
     default:
       return state
