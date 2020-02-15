@@ -39,8 +39,13 @@ export class IntegersInputField extends Component {
     )
   }
 
-  handleBetweenInputChange(event) {
-    this.setState({betweenValue: event.target.value})
+  async handleBetweenInputChange(event) {
+    await this.setState({betweenValue: event.target.value})
+    this.props.updateOptionForCustomQuery(
+      this.props.selectedTable,
+      this.props.selectedColumn,
+      [this.state.operator, +this.state.inputValue, +this.state.betweenValue]
+    )
   }
 
   render() {
@@ -66,11 +71,15 @@ export class IntegersInputField extends Component {
               onBlur={this.handleInputChange}
               type="number"
             />
-            {this.state.operator === 'BETWEEN' ? (
+            {this.state.operator === '$between' ? (
               <div>
-                <p>and</p>
+                <h3>and</h3>
                 <br />
-                <input onBlur={this.handleBetweenInputChange} type="number" />
+                <input
+                  onBlur={this.handleBetweenInputChange}
+                  type="number"
+                  className="integer-input"
+                />
               </div>
             ) : null}
           </div>

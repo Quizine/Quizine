@@ -78,14 +78,13 @@ class PeakTimeGraph extends Component {
             <div className="classes.chartContainer">
               <Bar
                 data={chartData}
-                options={
-                  {
-                    // title: {
-                    //   display: true,
-                    //   text: 'Peak Times'
-                    // }
+                options={{
+                  plugins: {
+                    datalabels: {
+                      display: false
+                    }
                   }
-                }
+                }}
               />
             </div>
           </CardContent>

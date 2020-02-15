@@ -72,6 +72,7 @@ class CustomizedQueryPage extends Component {
   }
   // END FOR LOGIC
 
+  // eslint-disable-next-line complexity
   render() {
     const {customQuery, metaData} = this.props
     if (customQuery.length) {

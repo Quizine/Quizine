@@ -84,6 +84,11 @@ class LineGraphRevenue extends Component {
                     //                         display: true,
                     //                         text: 'REVENUE vs TIME'
                     //                       },
+                    plugins: {
+                      datalabels: {
+                        display: false
+                      }
+                    },
                     scales: {
                       yAxes: [
                         {

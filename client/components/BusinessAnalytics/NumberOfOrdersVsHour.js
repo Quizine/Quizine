@@ -106,6 +106,11 @@ class NumberOfOrdersVsHour extends Component {
                     display: false,
                     text: 'Number of Orders Per Hour'
                   },
+                  plugins: {
+                    datalabels: {
+                      display: false
+                    }
+                  },
                   scales: {
                     yAxes: [
                       {

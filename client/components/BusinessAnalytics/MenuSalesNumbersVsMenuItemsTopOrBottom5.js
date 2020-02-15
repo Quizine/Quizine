@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getMenuSalesNumbersVsMenuItemsTopOrBottom5} from '../../store/businessAnalyticsReducer'
 import {Pie} from 'react-chartjs-2'
+import 'chartjs-plugin-datalabels'
 import _ from 'lodash'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
@@ -74,6 +75,32 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
       ]
     }
 
+    const options = {
+      responsive: true,
+      plugins: {
+        datalabels: {
+          display: true,
+          color: '#fff',
+          anchor: 'end',
+          align: 'start',
+          offset: -5,
+          borderWidth: 2,
+          borderColor: '#fff',
+          borderRadius: 25,
+          backgroundColor: context => {
+            return context.dataset.backgroundColor
+          },
+          font: {
+            weight: 'bold',
+            size: '8'
+          },
+          formatter: value => {
+            return value + ' %'
+          }
+        }
+      }
+    }
+
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
@@ -109,12 +136,8 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
             <div className="classes.chartContainer">
               <Pie
                 data={chartData}
-                options={{
-                  title: {
-                    display: false,
-                    text: `${labelText} 5 Menu Items`
-                  }
-                }}
+                options={options}
+                // plugins={ChartDataLabels}
               />
             </div>
           </CardContent>
