@@ -29,8 +29,12 @@ router.post('/customQuery', async (req, res, next) => {
         console.log('key', key)
         if (key.indexOf('timeOfPurchase') >= 0) {
           queryResults.rows.forEach(row => {
-            console.log('row ----> ', row[key])
             row[key] = row[key].toString().slice(0, 15)
+          })
+        } else if (key.indexOf('age') >= 0) {
+          queryResults.rows.forEach(row => {
+            console.log('row ----> ', row[key])
+            row[key] = Math.round(row[key])
           })
         }
       }
