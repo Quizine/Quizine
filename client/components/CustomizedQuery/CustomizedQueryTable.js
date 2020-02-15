@@ -62,7 +62,11 @@ export class CustomizedQueryTable extends Component {
       <div className="custom-analytics-container">
         <div className="row-query">
           <div className="select-table-name">
-            <h3>Select Category:</h3>
+            <h3>
+              {this.state.defaultValue === 'default'
+                ? 'Select Category:'
+                : 'Selected Category:'}
+            </h3>
             {this.state.defaultValue === 'default' ? (
               <select
                 onChange={() => this.handleChange(event)}
@@ -81,7 +85,7 @@ export class CustomizedQueryTable extends Component {
                 })}
               </select>
             ) : (
-              <h1>{this.state.defaultValue}</h1>
+              <h1>{formatColumnName(this.state.defaultValue)}</h1>
             )}
           </div>
 
@@ -143,3 +147,9 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQueryTable
 )
+
+function formatColumnName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
+}
