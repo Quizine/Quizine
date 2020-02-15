@@ -188,6 +188,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQuerySelect
 )
 
+//Helper functions
 function columnNameMapping(tableName, array) {
   return array
     .filter(element => {
