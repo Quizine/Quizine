@@ -174,9 +174,11 @@ class CustomizedQueryPage extends Component {
               ) : null}
             </div>
           </div>
-          <div className="submit-query">
-            <SubmitQueryButton />
-          </div>
+          {lastSelectedTable && showSubmitButton(customQuery) ? (
+            <div className="submit-query">
+              <SubmitQueryButton />
+            </div>
+          ) : null}
         </div>
       )
     } else return null
@@ -221,4 +223,39 @@ function columnArrayMapping(tableName, array) {
   return array.filter(element => {
     return Object.keys(element)[0] === tableName
   })[0][tableName]
+}
+
+function showSubmitButton(customQuery) {
+  let status = false
+  customQuery.forEach(queryObj => {
+    const tableName = Object.keys(queryObj)[0]
+    if (tableName) {
+      const tableArr = queryObj[tableName]
+      if (tableArr.length) {
+        tableArr.forEach(columnObj => {
+          for (const columnName in columnObj) {
+            if (columnObj.hasOwnProperty(columnName)) {
+              if (columnName) {
+                const columnInteriorObj = columnObj[columnName]
+                if (
+                  columnInteriorObj.dataType === 'integer' &&
+                  columnInteriorObj.funcType
+                ) {
+                  status = true
+                } else if (
+                  columnInteriorObj.dataType === 'timestamp with time zone' &&
+                  columnInteriorObj.options.length
+                ) {
+                  status = true
+                } else if (columnInteriorObj.dataType === 'character varying') {
+                  status = true
+                }
+              }
+            }
+          }
+        })
+      }
+    }
+  })
+  return status
 }
