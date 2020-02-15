@@ -96,6 +96,11 @@ class TipPercentageVsWaiters extends Component {
                       display: false,
                       text: 'Waiters Tip Percentage'
                     },
+                    plugins: {
+                      datalabels: {
+                        display: false
+                      }
+                    },
                     scales: {
                       yAxes: [
                         {
