@@ -5,6 +5,49 @@ const client = new pg.Client(config)
 client.connect()
 module.exports = router
 
+//MONTHLY REVENUE FOR LUNCH AND DINNER
+router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const text = `SELECT to_char("timeOfPurchase",'Mon') AS mon,
+      menus."mealType",
+        DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
+        EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+        SUM("total") AS "monthlyRevenue"
+        FROM orders
+        join "menuOrders" on "menuOrders"."orderId" = orders.id 
+        join menus on menus.id = "menuOrders"."menuId" 
+        WHERE orders."timeOfPurchase" >= NOW() - $1::interval 
+        AND orders."restaurantId" = $2
+        and menus."mealType" is not null
+        GROUP BY mon, m, yyyy, menus."mealType" 
+        ORDER BY m;`
+      const year = req.query.year
+      const interval = year + ' year'
+      const values = [interval, req.user.restaurantId]
+      const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
+      const allDateRevenue = {
+        lunchMonth: [],
+        lunchRevenue: [],
+        dinnerMonth: [],
+        dinnerRevenue: []
+      }
+      monthlyRevenueVsLunchVsDinner.rows.forEach((row, idx) => {
+        if (idx % 2 === 0) {
+          allDateRevenue.lunchMonth.push(`${row.mon} ${String(row.yyyy)}`)
+          allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue))
+        } else {
+          allDateRevenue.dinnerMonth.push(`${row.mon} ${String(row.yyyy)}`)
+          allDateRevenue.dinnerRevenue.push(Number(row.monthlyRevenue))
+        }
+      })
+      res.json(allDateRevenue)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
 // --average number of guests served by waiter per order within a specific time frame - AV
 router.get('/avgNumberOfGuestsVsWaitersPerOrder', async (req, res, next) => {
   try {
