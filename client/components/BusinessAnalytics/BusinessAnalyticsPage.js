@@ -5,6 +5,7 @@ import MenuSalesNumbersVsMenuItemsTopOrBottom5 from './MenuSalesNumbersVsMenuIte
 import NumberOfOrdersVsHour from './NumberOfOrdersVsHour'
 import TipPercentageVsWaiters from './TipPercentageVsWaiters'
 import AvgNumberOfGuestsVsWaitersPerOrder from './AvgNumberOfGuestsVsWaitersPerOrder'
+import LineGraphMonthlyRevenueVsLunchVsDinner from './MonthlyRevenueVsLunchVsDinner'
 
 export default class BusinessAnalyticsPage extends Component {
   render() {
@@ -16,6 +17,7 @@ export default class BusinessAnalyticsPage extends Component {
           <NumberOfOrdersVsHour />
           <TipPercentageVsWaiters />
           <AvgNumberOfGuestsVsWaitersPerOrder />
+          <LineGraphMonthlyRevenueVsLunchVsDinner />
         </div>
       </div>
     )

@@ -10,6 +10,8 @@ const GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER =
   'GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER'
 const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5 =
   'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5'
+const GET_MONTHLY_REVENUE_VS_LUNCH_VS_DINNER =
+  'GET_MONTHLY_REVENUE_VS_LUNCH_VS_DINNER'
 /**
  * INITIAL STATE
  */
@@ -42,6 +44,11 @@ const initialState = {
     year: {},
     month: {},
     week: {}
+  },
+  monthlyRevenueVsLunchVsDinner: {
+    allPeriod: {},
+    oneYear: {},
+    twoYears: {}
   }
 }
 
@@ -80,6 +87,11 @@ const gotAvgNumberOfGuestsVsWaitersPerOrder = (results, timeInterval) => ({
   type: GET_AVG_NUMBER_OF_GUESTS_VS_WAITERS_PER_ORDER,
   results,
   timeInterval
+})
+const gotMonthlyRevenueVsLunchVsDinner = (chartData, yearQty) => ({
+  type: GET_MONTHLY_REVENUE_VS_LUNCH_VS_DINNER,
+  chartData,
+  yearQty
 })
 
 /**
@@ -168,6 +180,24 @@ export const getAvgNumberOfGuestsVsWaitersPerOrder = timeInterval => async dispa
   }
 }
 
+export const getMonthlyRevenueVsLunchVsDinner = yearQty => async dispatch => {
+  let sendYear
+  if (yearQty === 'oneYear') sendYear = '1'
+  else if (yearQty === 'twoYears') sendYear = '2'
+  else sendYear = '3'
+  try {
+    const {data} = await axios.get(
+      '/api/businessAnalytics/monthlyRevenueVsLunchVsDinner',
+      {
+        params: {year: sendYear}
+      }
+    )
+    dispatch(gotMonthlyRevenueVsLunchVsDinner(data, yearQty))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 /**
  * REDUCER
  */
@@ -218,6 +248,14 @@ export default function(state = initialState, action) {
           xAxis: action.results.xAxis,
           yAxis: action.results.yAxis,
           [`${action.timeInterval}`]: action.results
+        }
+      }
+    case GET_MONTHLY_REVENUE_VS_LUNCH_VS_DINNER:
+      return {
+        ...state,
+        monthlyRevenueVsLunchVsDinner: {
+          ...state.monthlyRevenueVsLunchVsDinner,
+          [`${action.yearQty}`]: action.chartData
         }
       }
     default:

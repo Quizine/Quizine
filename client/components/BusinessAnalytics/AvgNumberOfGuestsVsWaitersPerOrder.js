@@ -103,7 +103,7 @@ class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
                       {
                         display: true,
                         ticks: {
-                          suggestedMin: 0,
+                          suggestedMin: 3.5,
                           suggestedMax: 5
                         }
                       }
