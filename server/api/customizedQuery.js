@@ -172,29 +172,23 @@ function translateQuery(customQueryArr) {
         columnObj[currentColumnName].funcType &&
         columnObj[currentColumnName].funcType.length
       ) {
-        if (columnObj[currentColumnName].funcType === 'date_trunc') {
-          let funcObj = {
-            func: {
-              name: columnObj[currentColumnName].funcType,
-              args: ['day', {field: currentColumnName}]
-            },
-            alias: `${
-              columnObj[currentColumnName].funcType
-            } ${currentColumnName}`
-          }
-          columns.push(funcObj)
-        } else {
-          let funcObj = {
-            func: {
-              name: columnObj[currentColumnName].funcType,
-              args: [{field: currentColumnName}]
-            },
-            alias: `${
-              columnObj[currentColumnName].funcType
-            } ${currentColumnName}`
-          }
-          columns.push(funcObj)
+        let funcObj = {
+          func: {
+            name: columnObj[currentColumnName].funcType,
+            args: [{field: currentColumnName}]
+          },
+          alias: `${columnObj[currentColumnName].funcType} ${currentColumnName}`
         }
+        columns.push(funcObj)
+      } else if (currentColumnName === 'timeOfPurchase') {
+        let funcObj = {
+          func: {
+            name: 'date_trunc',
+            args: ['day', {field: currentColumnName}]
+          },
+          alias: `date_trunc ${currentColumnName}`
+        }
+        columns.push(funcObj)
       } else {
         columns.push(currentColumnName)
       }

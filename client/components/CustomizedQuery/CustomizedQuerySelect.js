@@ -13,8 +13,7 @@ const funcTypeOperators = [
   {Average: 'avg'},
   {Minimum: 'min'},
   {Maximum: 'max'},
-  {Count: 'count'},
-  {Date: 'date_trunc'}
+  {Count: 'count'}
 ]
 
 class CustomizedQuerySelect extends Component {
@@ -22,7 +21,8 @@ class CustomizedQuerySelect extends Component {
     super()
     this.state = {
       selectedColumnInUse: '',
-      funcOperator: ''
+      funcOperator: '',
+      selectedDataType: ''
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
     this.handleFuncSelect = this.handleFuncSelect.bind(this)
@@ -63,11 +63,14 @@ class CustomizedQuerySelect extends Component {
       event.target.value
     )
 
-    const dataType = extractDataType(
+    const dataType = await extractDataType(
       this.props.selectedTable,
       event.target.value,
       this.props.metaData
     )
+    await this.setState({
+      selectedDataType: dataType
+    })
     this.props.updateColumn(
       this.props.selectedTable,
       event.target.value,
@@ -144,19 +147,21 @@ class CustomizedQuerySelect extends Component {
                           )
                         })}
                   </select>
-                  <select
-                    className="select-cust"
-                    onChange={() => this.handleFuncSelect(event)}
-                  >
-                    <option value="default">Please Select</option>
-                    {funcTypeOperators.map((option, idx) => {
-                      return (
-                        <option key={idx} value={Object.values(option)[0]}>
-                          {Object.keys(option)[0]}
-                        </option>
-                      )
-                    })}
-                  </select>
+                  {this.state.selectedDataType === 'integer' ? (
+                    <select
+                      className="select-cust"
+                      onChange={() => this.handleFuncSelect(event)}
+                    >
+                      <option value="default">Please Select</option>
+                      {funcTypeOperators.map((option, idx) => {
+                        return (
+                          <option key={idx} value={Object.values(option)[0]}>
+                            {Object.keys(option)[0]}
+                          </option>
+                        )
+                      })}
+                    </select>
+                  ) : null}
                 </div>
                 <div className="where-cont">
                   {Object.keys(element)[0] ? (
