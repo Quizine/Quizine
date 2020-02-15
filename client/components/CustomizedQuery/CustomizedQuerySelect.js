@@ -14,8 +14,7 @@ const funcTypeOperators = [
   {Average: 'avg'},
   {Minimum: 'min'},
   {Maximum: 'max'},
-  {Count: 'count'},
-  {Date: 'date_trunc'}
+  {Count: 'count'}
 ]
 
 class CustomizedQuerySelect extends Component {
@@ -23,7 +22,8 @@ class CustomizedQuerySelect extends Component {
     super()
     this.state = {
       selectedColumnInUse: '',
-      funcOperator: ''
+      funcOperator: '',
+      selectedDataType: ''
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
     this.handleFuncSelect = this.handleFuncSelect.bind(this)
@@ -63,11 +63,14 @@ class CustomizedQuerySelect extends Component {
       event.target.value
     )
 
-    const dataType = extractDataType(
+    const dataType = await extractDataType(
       this.props.selectedTable,
       event.target.value,
       this.props.metaData
     )
+    await this.setState({
+      selectedDataType: dataType
+    })
     this.props.updateColumn(
       this.props.selectedTable,
       event.target.value,
@@ -78,36 +81,6 @@ class CustomizedQuerySelect extends Component {
   render() {
     const {customQuery, selectedTable, metaData} = this.props
 
-    // console.log('IN SELECT', this.props, this.state)
-    // console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
-    // console.log(
-    //   'COLUMN NAME MAPPING 1111',
-    //   selectedTable && metaData && columnNameMapping(selectedTable, metaData)
-    // )
-    // console.log(
-    //   'COLUMN NAME MAPPING 2222',
-    //   selectedTable && columnNameMapping(selectedTable, customQuery)
-    // )
-    // const test =
-    //   selectedTable &&
-    //   metaData &&
-    //   columnNameMapping(selectedTable, metaData).filter(
-    //     columnNameFilter =>
-    //       columnNameMapping(selectedTable, customQuery).indexOf(
-    //         columnNameFilter
-    //       ) < 0
-    //   )
-
-    // const test =
-    //   selectedTable &&
-    //   metaData &&
-    //   columnNameMapping(selectedTable, metaData).filter(
-    //     columnNameFilter =>
-    //       this.state.selectedColumns.indexOf(columnNameFilter) < 0
-    //   )
-    // console.log('QUERY', customQuery)
-    // const arrayOfColumns = getRightTableArray(selectedTable, customQuery)
-
     return (
       <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery) &&
@@ -116,11 +89,6 @@ class CustomizedQuerySelect extends Component {
               <div key={idx} className="select-where">
                 <div className="col-cont">
                   <h3>Select Search Criteria:</h3>
-                  {/* <h3>
-                  {Object.keys(element)[0]
-                    ? formatColumnName(Object.keys(element)[0])
-                    : null}
-                </h3> */}
 
                   {checkIfColumnSelected(element) ? (
                     <div>
@@ -155,19 +123,21 @@ class CustomizedQuerySelect extends Component {
                     <h1>{formatColumnName(Object.keys(element)[0])}</h1>
                   )}
 
-                  <select
-                    className="select-cust"
-                    onChange={() => this.handleFuncSelect(event)}
-                  >
-                    <option value="default">Please Select</option>
-                    {funcTypeOperators.map((option, idx) => {
-                      return (
-                        <option key={idx} value={Object.values(option)[0]}>
-                          {Object.keys(option)[0]}
-                        </option>
-                      )
-                    })}
-                  </select>
+                 {this.state.selectedDataType === 'integer' ? (
+                    <select
+                      className="select-cust"
+                      onChange={() => this.handleFuncSelect(event)}
+                    >
+                      <option value="default">Please Select</option>
+                      {funcTypeOperators.map((option, idx) => {
+                        return (
+                          <option key={idx} value={Object.values(option)[0]}>
+                            {Object.keys(option)[0]}
+                          </option>
+                        )
+                      })}
+                    </select>
+                  ) : null}
                 </div>
                 <div className="where-cont">
                   {Object.keys(element)[0] ? (
@@ -253,36 +223,3 @@ function formatColumnName(name) {
   name = name[0].toUpperCase() + name.slice(1)
   return name
 }
-
-// render() {
-//   const selectedTable = this.props.selectedTable
-//   const columnNames = this.props.columnNames
-//   const selectedColumn = this.state.selectedColumn
-//   const valueOptionsForString = this.props.valueOptionsForString
-//   return (
-//     <div>
-//       <div>
-//         <select onChange={() => this.handleSelectedColumnChange(event)}>
-//           <option>Please Select</option>
-//           {columnNames.map((columnName, idx) => {
-//             return (
-//               <option key={idx} value={columnName.column_name}>
-//                 {formatColumnName(columnName.column_name)}
-//               </option>
-//             )
-//           })}
-//         </select>
-//       </div>
-//       {selectedColumn ? (
-//         <div>
-//           <CustomizedQueryWhere
-//             selectedTable={selectedTable}
-//             selectedColumn={selectedColumn}
-//             valueOptionsForString={valueOptionsForString}
-//           />
-//         </div>
-//       ) : null}
-//     </div>
-//   )
-// }
-// }
