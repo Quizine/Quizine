@@ -8,14 +8,7 @@ import {
   getTableFields,
   updateColumn
 } from '../../store/customizedQueryReducer'
-
-const funcTypeOperators = [
-  {Total: 'sum'}, // Questionable
-  {Average: 'avg'},
-  {Minimum: 'min'},
-  {Maximum: 'max'},
-  {Count: 'count'}
-]
+import CustomizedQueryFunc from './CustomizedQueryFunc'
 
 class CustomizedQuerySelect extends Component {
   constructor() {
@@ -122,21 +115,15 @@ class CustomizedQuerySelect extends Component {
                   ) : (
                     <h1>{formatColumnName(Object.keys(element)[0])}</h1>
                   )}
-
-                  {this.state.selectedDataType === 'integer' ? (
-                    <select
-                      className="select-cust"
-                      onChange={() => this.handleFuncSelect(event)}
-                    >
-                      <option value="default">Please Select</option>
-                      {funcTypeOperators.map((option, idx) => {
-                        return (
-                          <option key={idx} value={Object.values(option)[0]}>
-                            {Object.keys(option)[0]}
-                          </option>
-                        )
-                      })}
-                    </select>
+                  {selectedTable &&
+                  Object.keys(element)[0] &&
+                  this.state.selectedDataType === 'integer' ? (
+                    <div>
+                      <CustomizedQueryFunc
+                        selectedTable={selectedTable}
+                        selectedColumn={Object.keys(element)[0]}
+                      />
+                    </div>
                   ) : null}
                 </div>
                 <div className="where-cont">
