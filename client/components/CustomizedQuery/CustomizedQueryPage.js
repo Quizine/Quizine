@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import CustomizedQueryTable from './CustomizedQueryTable'
@@ -27,8 +28,11 @@ class CustomizedQueryPage extends Component {
   }
 
   handleJoinClick() {
-    console.log(`hey: `, Object.keys(this.props.customQuery[0])[0])
-    this.props.getJoinTables(Object.keys(this.props.customQuery[0])[0])
+    const customQuery = this.props.customQuery
+    // console.log(`hey: `, Object.keys(this.props.customQuery[0])[0])
+    this.props.getJoinTables(
+      Object.keys(customQuery[customQuery.length - 1])[0]
+    )
 
     this.props.addEmptyTable()
   }
@@ -78,17 +82,17 @@ class CustomizedQueryPage extends Component {
       //makes sure one cannot join tables before selecting a table
       let combineWithStatus = false
 
-      if (customQuery.length >= 2) {
-        combineWithStatus = false
-      } else {
-        for (let i = 0; i < customQuery.length; i++) {
-          if (customQuery.length && !Object.keys(customQuery[i])[0]) {
-            combineWithStatus = false
-            break
-          }
-          combineWithStatus = true
+      // if (customQuery.length >= 2) {
+      //   combineWithStatus = false
+      // } else {
+      for (let i = 0; i < customQuery.length; i++) {
+        if (customQuery.length && !Object.keys(customQuery[i])[0]) {
+          combineWithStatus = false
+          break
         }
+        combineWithStatus = true
       }
+      // }
 
       //Logic for Add and Remove Buttons
       const lastSelectedTable = customQuery.length
