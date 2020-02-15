@@ -24,6 +24,18 @@ router.post('/customQuery', async (req, res, next) => {
     console.log(`the values are`, sql.getValuesArray())
 
     const queryResults = await client.query(sql.query, sql.getValuesArray())
+    for (let key in queryResults.rows[0]) {
+      if (queryResults.rows[0].hasOwnProperty(key)) {
+        console.log('key', key)
+        if (key.indexOf('timeOfPurchase') >= 0) {
+          queryResults.rows.forEach(row => {
+            console.log('row ----> ', row[key])
+            row[key] = row[key].toString().slice(0, 15)
+          })
+        }
+      }
+    }
+    console.log('query results: ', queryResults)
     res.json(queryResults)
   } catch (error) {
     next(error)
@@ -168,6 +180,15 @@ function translateQuery(customQueryArr) {
           alias: `${columnObj[currentColumnName].funcType} ${currentColumnName}`
         }
         columns.push(funcObj)
+      } else if (currentColumnName === 'timeOfPurchase') {
+        let funcObj = {
+          func: {
+            name: 'date_trunc',
+            args: ['day', {field: currentColumnName}]
+          },
+          alias: `date_trunc ${currentColumnName}`
+        }
+        columns.push(funcObj)
       } else {
         columns.push(currentColumnName)
       }
@@ -184,17 +205,18 @@ function translateQuery(customQueryArr) {
         // WHERE orders."timeOfPurchase" >= NOW() - $1::interval
         conditions.timeOfPurchase = {}
         conditions.timeOfPurchase.dataType = 'timestamp'
-        groupByForString.push(currentColumnName)
+        groupByForString.push('date_trunc timeOfPurchase')
         let interval = columnObj[currentColumnName].options[0]
+        let intervalDate = new Date()
         let now = new Date()
         if (interval === 'year') {
-          now.setFullYear(now.getFullYear() - 1)
+          intervalDate.setFullYear(intervalDate.getFullYear() - 1)
         } else if (interval === 'month') {
-          now.setMonth(now.getMonth() - 1)
+          intervalDate.setMonth(intervalDate.getMonth() - 1)
         } else if (interval === 'week') {
-          now.setDate(now.getDate() - 7)
+          intervalDate.setDate(intervalDate.getDate() - 7)
         }
-        conditions.timeOfPurchase.values = ['$gte', now]
+        conditions.timeOfPurchase.values = ['$between', intervalDate, now]
       } else {
         //IT'S A STRING
         conditions[currentColumnName].values = []
@@ -254,9 +276,21 @@ function translateQuery(customQueryArr) {
             })
           }
         } else if (conditions[columnName].values.length) {
-          if (conditions[columnName].values[0] === '$is') {
+          if (
+            conditions[columnName].values[0] === '$is' ||
+            conditions[columnName].values[0] === '$isNot'
+          ) {
             transformedConditions.$and.push({
               [columnName]: conditions[columnName].values[1]
+            })
+          } else if (conditions[columnName].values[0] === '$between') {
+            transformedConditions.$and.push({
+              [columnName]: {
+                [conditions[columnName].values[0]]: [
+                  conditions[columnName].values[1],
+                  conditions[columnName].values[2]
+                ]
+              }
             })
           } else {
             transformedConditions.$and.push({
@@ -279,9 +313,21 @@ function translateQuery(customQueryArr) {
             transformedConditions.$or.push({[columnName]: condition})
           }
         })
-      } else if (conditions[columnName].values[0] === '$is') {
+      } else if (
+        conditions[columnName].values[0] === '$is' ||
+        conditions[columnName].values[0] === '$isNot'
+      ) {
         transformedConditions = {
           [columnName]: conditions[columnName].values[1]
+        }
+      } else if (conditions[columnName].values[0] === '$between') {
+        transformedConditions = {
+          [columnName]: {
+            [conditions[columnName].values[0]]: [
+              conditions[columnName].values[1],
+              conditions[columnName].values[2]
+            ]
+          }
         }
       } else {
         transformedConditions = {

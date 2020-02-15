@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import CustomizedQueryWhere from './CustomizedQueryWhere'
+import _ from 'lodash'
 import {
   getDataType,
   getValueOptionsForString,
@@ -22,7 +23,8 @@ class CustomizedQuerySelect extends Component {
     super()
     this.state = {
       selectedColumnInUse: '',
-      funcOperator: ''
+      funcOperator: '',
+      selectedDataType: ''
     }
     this.handleSelectedColumnChange = this.handleSelectedColumnChange.bind(this)
     this.handleFuncSelect = this.handleFuncSelect.bind(this)
@@ -51,16 +53,20 @@ class CustomizedQuerySelect extends Component {
       selectedColumnInUse: event.target.value
     })
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
+
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
       event.target.value
     )
 
-    const dataType = extractDataType(
+    const dataType = await extractDataType(
       this.props.selectedTable,
       event.target.value,
       this.props.metaData
     )
+    await this.setState({
+      selectedDataType: dataType
+    })
     this.props.updateColumn(
       this.props.selectedTable,
       event.target.value,
@@ -91,50 +97,55 @@ class CustomizedQuerySelect extends Component {
               <div key={idx} className="select-where">
                 <div className="col-cont">
                   <h3>Select Search Criteria:</h3>
-                  {/* <h3>
-                  {Object.keys(element)[0]
-                    ? formatColumnName(Object.keys(element)[0])
-                    : null}
-                </h3> */}
-                  <select
-                    className="select-cust"
-                    onChange={() => this.handleSelectedColumnChange(event)}
-                    disabled={!!Object.keys(element).length}
-                    value={Object.keys(element)[0]}
-                  >
-                    <option value="default">Please Select</option>
 
-                    {selectedTable &&
-                      metaData &&
-                      columnNameMapping(selectedTable, metaData)
-                        .filter(
-                          columnNameFilter =>
-                            columnNameMapping(
-                              selectedTable,
-                              customQuery
-                            ).indexOf(columnNameFilter) < 0
+                  {checkIfColumnSelected(element) ? (
+                    <div>
+                      <select
+                        className="select-cust"
+                        onChange={() => this.handleSelectedColumnChange(event)}
+                        disabled={!!Object.keys(element).length}
+                        value={Object.keys(element)[0]}
+                      >
+                        <option value="default">Please Select</option>
+
+                        {selectedTable &&
+                          metaData &&
+                          columnNameMapping(selectedTable, metaData)
+                            .filter(
+                              columnNameFilter =>
+                                columnNameMapping(
+                                  selectedTable,
+                                  customQuery
+                                ).indexOf(columnNameFilter) < 0
+                            )
+                            .map((columnName, idx) => {
+                              return (
+                                <option key={idx} value={columnName}>
+                                  {formatColumnName(columnName)}
+                                </option>
+                              )
+                            })}
+                      </select>
+                    </div>
+                  ) : (
+                    <h1>{formatColumnName(Object.keys(element)[0])}</h1>
+                  )}
+
+                  {this.state.selectedDataType === 'integer' ? (
+                    <select
+                      className="select-cust"
+                      onChange={() => this.handleFuncSelect(event)}
+                    >
+                      <option value="default">Please Select</option>
+                      {funcTypeOperators.map((option, idx) => {
+                        return (
+                          <option key={idx} value={Object.values(option)[0]}>
+                            {Object.keys(option)[0]}
+                          </option>
                         )
-                        .map((columnName, idx) => {
-                          return (
-                            <option key={idx} value={columnName}>
-                              {formatColumnName(columnName)}
-                            </option>
-                          )
-                        })}
-                  </select>
-                  <select
-                    className="select-cust"
-                    onChange={() => this.handleFuncSelect(event)}
-                  >
-                    <option value="default">Please Select</option>
-                    {funcTypeOperators.map((option, idx) => {
-                      return (
-                        <option key={idx} value={Object.values(option)[0]}>
-                          {Object.keys(option)[0]}
-                        </option>
-                      )
-                    })}
-                  </select>
+                      })}
+                    </select>
+                  ) : null}
                 </div>
                 <div className="where-cont">
                   {Object.keys(element)[0] ? (
@@ -162,12 +173,6 @@ class CustomizedQuerySelect extends Component {
       </div>
     )
   }
-}
-
-function formatColumnName(name) {
-  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
-  name = name[0].toUpperCase() + name.slice(1)
-  return name
 }
 
 /**
@@ -228,4 +233,14 @@ function columnArrayMapping(tableName, array) {
   return array.filter(element => {
     return Object.keys(element)[0] === tableName
   })[0][tableName]
+}
+
+function checkIfColumnSelected(element) {
+  return _.isEmpty(Object.keys(element)[0])
+}
+
+function formatColumnName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
 }

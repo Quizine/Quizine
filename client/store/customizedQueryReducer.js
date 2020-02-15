@@ -21,8 +21,8 @@ const REMOVE_TABLE = 'REMOVE_TABLE'
 const REMOVE_COLUMN = 'REMOVE_COLUMN'
 const REMOVE_OPTION = 'REMOVE_OPTION'
 const GET_CUSTOM_QUERY_RESULTS = 'GET_CUSTOM_QUERY_RESULTS'
-const ADD_GROUP_BY = 'ADD_GROUP_BY'
 const CLEAR_JOIN_TABLES = 'CLEAR_JOIN_TABLES'
+
 /**
  * INITIAL STATE
  */
@@ -358,11 +358,6 @@ export default function(state = initialState, action) {
       return {
         ...state,
         customQueryResult: action.customQueryResult
-      }
-    case ADD_GROUP_BY:
-      return {
-        ...state,
-        arrangementQuery: {...state.arrangementQuery, groupBy: action.groupBy}
       }
     case CLEAR_JOIN_TABLES:
       return {
