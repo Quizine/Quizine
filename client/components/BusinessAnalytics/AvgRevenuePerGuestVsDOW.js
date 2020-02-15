@@ -78,6 +78,11 @@ class AvgRevenuePerGuestVsDOW extends Component {
                     display: false,
                     text: 'Average Revenue Per Guest ($)'
                   },
+                  plugins: {
+                    datalabels: {
+                      display: false
+                    }
+                  },
                   scales: {
                     yAxes: [
                       {

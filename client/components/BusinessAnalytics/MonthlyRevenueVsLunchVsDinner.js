@@ -42,19 +42,21 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
       labels: lunchMonth,
       datasets: [
         {
+          fill: false,
           label: 'Lunch Revenue',
           data: lunchRevenue,
-          //backgroundColor: 'lightgreen',
-          borderColor: 'purple',
+          backgroundColor: 'rgba(255, 10, 13, 0.1)',
+          borderColor: 'red',
           hoverBackgroundColor: 'red',
           pointBackgroundColor: 'black',
           pointRadius: 4
         },
         {
+          fill: false,
           label: 'Dinner Revenue',
           data: dinnerRevenue,
-          //backgroundColor: 'lightgreen',
-          borderColor: 'purple',
+          backgroundColor: 'rgba(255, 10, 13, 0.1)',
+          borderColor: 'blue',
           hoverBackgroundColor: 'red',
           pointBackgroundColor: 'black',
           pointRadius: 4

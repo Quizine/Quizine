@@ -49,6 +49,7 @@
     "@material/textfield": "^4.0.0",
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
+    "chartjs-plugin-datalabels": "^0.7.0",
     "compression": "^1.7.3",
     "connect-session-sequelize": "^6.0.0",
     "express": "^4.16.4",

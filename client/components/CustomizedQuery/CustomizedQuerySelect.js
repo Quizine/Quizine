@@ -84,7 +84,11 @@ class CustomizedQuerySelect extends Component {
             return (
               <div key={idx} className="select-where">
                 <div className="col-cont">
-                  <h3>Select Search Criteria:</h3>
+                  <h3>
+                    {checkIfColumnSelected(element)
+                      ? 'Select Search Criteria:'
+                      : 'Selected Criteria:'}
+                  </h3>
 
                   {checkIfColumnSelected(element) ? (
                     <div>
