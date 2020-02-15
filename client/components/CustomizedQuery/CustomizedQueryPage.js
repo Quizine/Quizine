@@ -7,7 +7,9 @@ import {
   clearCustomQuery,
   gotCustomQueryResult,
   getJoinTables,
-  clearJoinTables
+  clearJoinTables,
+  addEmptyColumn,
+  removeColumn
 } from '../../store/customizedQueryReducer'
 
 class CustomizedQueryPage extends Component {
@@ -15,6 +17,8 @@ class CustomizedQueryPage extends Component {
     super()
 
     this.handleJoinClick = this.handleJoinClick.bind(this)
+    this.handleAddClick = this.handleAddClick.bind(this)
+    this.handleRemoveClick = this.handleRemoveClick.bind(this)
   }
   componentDidMount() {
     this.props.clearCustomQuery()
@@ -36,8 +40,40 @@ class CustomizedQueryPage extends Component {
     await this.props.clearJoinTables()
   }
 
+  //LOGIC FOR ADD REMOVE BUTTONS
+  handleAddClick() {
+    this.props.addEmptyColumn(
+      Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    )
+  }
+
+  handleRemoveClick() {
+    this.props.removeColumn(
+      Object.keys(this.props.customQuery[this.props.customQuery.length - 1])[0]
+    )
+    const {customQuery} = this.props
+    const lastSelectedTable = customQuery.length
+      ? Object.keys(customQuery[customQuery.length - 1])[0]
+      : null
+
+    const lastSelectedColumn = customQuery.length
+      ? customQuery[customQuery.length - 1][lastSelectedTable][
+          customQuery[customQuery.length - 1][lastSelectedTable].length - 1
+        ]
+      : null
+
+    if (!lastSelectedColumn) {
+      this.props.addEmptyColumn(
+        Object.keys(
+          this.props.customQuery[this.props.customQuery.length - 1]
+        )[0]
+      )
+    }
+  }
+  // END FOR LOGIC
+
   render() {
-    const customQuery = this.props.customQuery
+    const {customQuery, metaData} = this.props
     if (customQuery.length) {
       //makes sure one cannot join tables before selecting a table
       let combineWithStatus = false
@@ -53,6 +89,26 @@ class CustomizedQueryPage extends Component {
           combineWithStatus = true
         }
       }
+
+      //Logic for Add and Remove Buttons
+      const lastSelectedTable = customQuery.length
+        ? Object.keys(customQuery[customQuery.length - 1])[0]
+        : null
+      const lastSelectedColumn = customQuery.length
+        ? lastSelectedTable &&
+          customQuery[customQuery.length - 1][lastSelectedTable][
+            customQuery[customQuery.length - 1][lastSelectedTable].length - 1
+          ]
+        : null
+
+      const columnNumberForLastSelectedTableMetaData =
+        lastSelectedTable &&
+        columnArrayMapping(lastSelectedTable, metaData).length
+
+      const columnNumberForLastSelectedTableCustomQuery =
+        lastSelectedTable &&
+        columnArrayMapping(lastSelectedTable, customQuery).length
+      //End of logic for Add and Remove Buttons
 
       return (
         <div className="query-cont">
@@ -70,6 +126,34 @@ class CustomizedQueryPage extends Component {
                 </div>
               )
             })}
+            <div>
+              {customQuery.length ? (
+                <div className="row-columns">
+                  {lastSelectedColumn &&
+                  Object.keys(lastSelectedColumn).length ? (
+                    <div className="remove-add">
+                      {columnNumberForLastSelectedTableMetaData &&
+                      columnNumberForLastSelectedTableCustomQuery &&
+                      columnNumberForLastSelectedTableCustomQuery <
+                        columnNumberForLastSelectedTableMetaData ? (
+                        <button
+                          type="button"
+                          onClick={() => this.handleAddClick()}
+                        >
+                          Add Search Criteria
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => this.handleRemoveClick()}
+                      >
+                        Remove Search Criteria
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
             <button
               className="clear-btn"
               type="button"
@@ -96,7 +180,8 @@ class CustomizedQueryPage extends Component {
 
 const mapStateToProps = state => {
   return {
-    customQuery: state.customizedQuery.customQuery
+    customQuery: state.customizedQuery.customQuery,
+    metaData: state.customizedQuery.metaData
   }
 }
 
@@ -114,8 +199,21 @@ const mapDispatchToProps = dispatch => {
     },
     clearJoinTables: () => {
       dispatch(clearJoinTables())
+    },
+    addEmptyColumn: tableName => {
+      dispatch(addEmptyColumn(tableName))
+    },
+    removeColumn: tableName => {
+      dispatch(removeColumn(tableName))
     }
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomizedQueryPage)
+
+//Helper functions
+function columnArrayMapping(tableName, array) {
+  return array.filter(element => {
+    return Object.keys(element)[0] === tableName
+  })[0][tableName]
+}

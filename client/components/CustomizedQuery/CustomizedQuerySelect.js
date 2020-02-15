@@ -6,7 +6,8 @@ import {
   getDataType,
   getValueOptionsForString,
   getTableFields,
-  updateColumn
+  updateColumn,
+  addGroupBy
 } from '../../store/customizedQueryReducer'
 
 const funcTypeOperators = [
@@ -48,11 +49,6 @@ class CustomizedQuerySelect extends Component {
   }
 
   async handleSelectedColumnChange(event) {
-    // await this.setState({
-    //   //USED!!! DO NOT DELETE
-    //   selectedColumns: [...this.state.selectedColumns, event.target.value]
-    // })
-
     await this.setState({
       selectedColumnInUse: event.target.value
     })
@@ -78,12 +74,24 @@ class CustomizedQuerySelect extends Component {
     )
   }
 
+  async handleChecked(event) {
+    await this.setState(state => {
+      return {checked: !state.checked}
+    })
+    if (this.state.checked) {
+      this.props.updateGroupBy(this.state.selectedColumnInUse)
+    } else {
+      this.props.updateGroupBy('')
+    }
+  }
+
   render() {
     const {customQuery, selectedTable, metaData} = this.props
 
     return (
       <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery) &&
+          // eslint-disable-next-line complexity
           columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
             return (
               <div key={idx} className="select-where">
@@ -123,7 +131,7 @@ class CustomizedQuerySelect extends Component {
                     <h1>{formatColumnName(Object.keys(element)[0])}</h1>
                   )}
 
-                 {this.state.selectedDataType === 'integer' ? (
+                  {this.state.selectedDataType === 'integer' ? (
                     <select
                       className="select-cust"
                       onChange={() => this.handleFuncSelect(event)}
@@ -148,6 +156,16 @@ class CustomizedQuerySelect extends Component {
                       />
                     </div>
                   ) : null}
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={this.state.checked}
+                    id="groupBy"
+                    name="groupBy"
+                    onChange={() => this.handleChecked(event)}
+                  />
+                  <label htmlFor="groupBy">Group By</label>
                 </div>
               </div>
             )
@@ -180,6 +198,9 @@ const mapDispatchToProps = dispatch => {
     },
     updateColumn: (tableName, columnName, dataType, funcType) => {
       dispatch(updateColumn(tableName, columnName, dataType, funcType))
+    },
+    updateGroupBy: selectedColumn => {
+      dispatch(addGroupBy(selectedColumn))
     }
   }
 }
