@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import CustomizedQueryWhere from './CustomizedQueryWhere'
+import _ from 'lodash'
 import {
   getDataType,
   getValueOptionsForString,
@@ -55,9 +56,8 @@ class CustomizedQuerySelect extends Component {
     await this.setState({
       selectedColumnInUse: event.target.value
     })
-    console.log('IN CLICK!!!! 111', event.target.value)
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
-    // console.log('IN CLICK!!!! 222', event.target.value)
+
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
       event.target.value
@@ -81,33 +81,6 @@ class CustomizedQuerySelect extends Component {
   render() {
     const {customQuery, selectedTable, metaData} = this.props
 
-    // console.log('IN SELECT', this.props, this.state)
-    // console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
-    // console.log(
-    //   'COLUMN NAME MAPPING 1111',
-    //   selectedTable && metaData && columnNameMapping(selectedTable, metaData)
-    // )
-    // console.log(
-    //   'COLUMN NAME MAPPING 2222',
-    //   selectedTable && columnNameMapping(selectedTable, customQuery)
-    // )
-    // const test =
-    //   selectedTable &&
-    //   metaData &&
-    //   columnNameMapping(selectedTable, metaData).filter(
-    //     columnNameFilter =>
-    //       columnNameMapping(selectedTable, customQuery).indexOf(
-    //         columnNameFilter
-    //       ) < 0
-    //   )
-
-    // const test =
-    //   selectedTable &&
-    //   metaData &&
-    //   columnNameMapping(selectedTable, metaData).filter(
-    //     columnNameFilter =>
-    //       this.state.selectedColumns.indexOf(columnNameFilter) < 0
-    //   )
     return (
       <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery) &&
@@ -116,38 +89,41 @@ class CustomizedQuerySelect extends Component {
               <div key={idx} className="select-where">
                 <div className="col-cont">
                   <h3>Select Search Criteria:</h3>
-                  {/* <h3>
-                  {Object.keys(element)[0]
-                    ? formatColumnName(Object.keys(element)[0])
-                    : null}
-                </h3> */}
-                  <select
-                    className="select-cust"
-                    onChange={() => this.handleSelectedColumnChange(event)}
-                    disabled={!!Object.keys(element).length}
-                    value={Object.keys(element)[0]}
-                  >
-                    <option value="default">Please Select</option>
 
-                    {selectedTable &&
-                      metaData &&
-                      columnNameMapping(selectedTable, metaData)
-                        .filter(
-                          columnNameFilter =>
-                            columnNameMapping(
-                              selectedTable,
-                              customQuery
-                            ).indexOf(columnNameFilter) < 0
-                        )
-                        .map((columnName, idx) => {
-                          return (
-                            <option key={idx} value={columnName}>
-                              {formatColumnName(columnName)}
-                            </option>
-                          )
-                        })}
-                  </select>
-                  {this.state.selectedDataType === 'integer' ? (
+                  {checkIfColumnSelected(element) ? (
+                    <div>
+                      <select
+                        className="select-cust"
+                        onChange={() => this.handleSelectedColumnChange(event)}
+                        disabled={!!Object.keys(element).length}
+                        value={Object.keys(element)[0]}
+                      >
+                        <option value="default">Please Select</option>
+
+                        {selectedTable &&
+                          metaData &&
+                          columnNameMapping(selectedTable, metaData)
+                            .filter(
+                              columnNameFilter =>
+                                columnNameMapping(
+                                  selectedTable,
+                                  customQuery
+                                ).indexOf(columnNameFilter) < 0
+                            )
+                            .map((columnName, idx) => {
+                              return (
+                                <option key={idx} value={columnName}>
+                                  {formatColumnName(columnName)}
+                                </option>
+                              )
+                            })}
+                      </select>
+                    </div>
+                  ) : (
+                    <h1>{formatColumnName(Object.keys(element)[0])}</h1>
+                  )}
+
+                 {this.state.selectedDataType === 'integer' ? (
                     <select
                       className="select-cust"
                       onChange={() => this.handleFuncSelect(event)}
@@ -179,12 +155,6 @@ class CustomizedQuerySelect extends Component {
       </div>
     )
   }
-}
-
-function formatColumnName(name) {
-  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
-  name = name[0].toUpperCase() + name.slice(1)
-  return name
 }
 
 /**
@@ -244,35 +214,12 @@ function columnArrayMapping(tableName, array) {
   })[0][tableName]
 }
 
-// render() {
-//   const selectedTable = this.props.selectedTable
-//   const columnNames = this.props.columnNames
-//   const selectedColumn = this.state.selectedColumn
-//   const valueOptionsForString = this.props.valueOptionsForString
-//   return (
-//     <div>
-//       <div>
-//         <select onChange={() => this.handleSelectedColumnChange(event)}>
-//           <option>Please Select</option>
-//           {columnNames.map((columnName, idx) => {
-//             return (
-//               <option key={idx} value={columnName.column_name}>
-//                 {formatColumnName(columnName.column_name)}
-//               </option>
-//             )
-//           })}
-//         </select>
-//       </div>
-//       {selectedColumn ? (
-//         <div>
-//           <CustomizedQueryWhere
-//             selectedTable={selectedTable}
-//             selectedColumn={selectedColumn}
-//             valueOptionsForString={valueOptionsForString}
-//           />
-//         </div>
-//       ) : null}
-//     </div>
-//   )
-// }
-// }
+function checkIfColumnSelected(element) {
+  return _.isEmpty(Object.keys(element)[0])
+}
+
+function formatColumnName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
+}
