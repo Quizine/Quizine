@@ -126,26 +126,28 @@ class CustomizedQuerySelect extends Component {
                               )
                             })}
                       </select>
+                      {this.state.selectedDataType === 'integer' ? (
+                        <select
+                          className="select-cust"
+                          onChange={() => this.handleFuncSelect(event)}
+                        >
+                          <option value="default">Please Select</option>
+                          {funcTypeOperators.map((option, idx) => {
+                            return (
+                              <option
+                                key={idx}
+                                value={Object.values(option)[0]}
+                              >
+                                {Object.keys(option)[0]}
+                              </option>
+                            )
+                          })}
+                        </select>
+                      ) : null}
                     </div>
                   ) : (
                     <h1>{formatColumnName(Object.keys(element)[0])}</h1>
                   )}
-
-                  {this.state.selectedDataType === 'integer' ? (
-                    <select
-                      className="select-cust"
-                      onChange={() => this.handleFuncSelect(event)}
-                    >
-                      <option value="default">Please Select</option>
-                      {funcTypeOperators.map((option, idx) => {
-                        return (
-                          <option key={idx} value={Object.values(option)[0]}>
-                            {Object.keys(option)[0]}
-                          </option>
-                        )
-                      })}
-                    </select>
-                  ) : null}
                 </div>
                 <div className="where-cont">
                   {Object.keys(element)[0] ? (
