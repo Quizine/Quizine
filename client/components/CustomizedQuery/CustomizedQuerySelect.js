@@ -13,7 +13,8 @@ const funcTypeOperators = [
   {Average: 'avg'},
   {Minimum: 'min'},
   {Maximum: 'max'},
-  {Count: 'count'}
+  {Count: 'count'},
+  {Date: 'date_trunc'}
 ]
 
 class CustomizedQuerySelect extends Component {
