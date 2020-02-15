@@ -5,7 +5,8 @@ import {
   getDataType,
   getValueOptionsForString,
   getTableFields,
-  updateColumn
+  updateColumn,
+  addGroupBy
 } from '../../store/customizedQueryReducer'
 
 const funcTypeOperators = [
@@ -46,17 +47,10 @@ class CustomizedQuerySelect extends Component {
   }
 
   async handleSelectedColumnChange(event) {
-    // await this.setState({
-    //   //USED!!! DO NOT DELETE
-    //   selectedColumns: [...this.state.selectedColumns, event.target.value]
-    // })
-
     await this.setState({
       selectedColumnInUse: event.target.value
     })
-    console.log('IN CLICK!!!! 111', event.target.value)
     await this.props.loadDataType(this.props.selectedTable, event.target.value)
-    // console.log('IN CLICK!!!! 222', event.target.value)
     this.props.loadValueOptionsForString(
       this.props.selectedTable,
       event.target.value
@@ -74,39 +68,24 @@ class CustomizedQuerySelect extends Component {
     )
   }
 
+  async handleChecked(event) {
+    await this.setState(state => {
+      return {checked: !state.checked}
+    })
+    if (this.state.checked) {
+      this.props.updateGroupBy(this.state.selectedColumnInUse)
+    } else {
+      this.props.updateGroupBy('')
+    }
+  }
+
   render() {
     const {customQuery, selectedTable, metaData} = this.props
 
-    // console.log('IN SELECT', this.props, this.state)
-    // console.log('COLUMN ARRAY', columnArrayMapping(selectedTable, customQuery))
-    // console.log(
-    //   'COLUMN NAME MAPPING 1111',
-    //   selectedTable && metaData && columnNameMapping(selectedTable, metaData)
-    // )
-    // console.log(
-    //   'COLUMN NAME MAPPING 2222',
-    //   selectedTable && columnNameMapping(selectedTable, customQuery)
-    // )
-    // const test =
-    //   selectedTable &&
-    //   metaData &&
-    //   columnNameMapping(selectedTable, metaData).filter(
-    //     columnNameFilter =>
-    //       columnNameMapping(selectedTable, customQuery).indexOf(
-    //         columnNameFilter
-    //       ) < 0
-    //   )
-
-    // const test =
-    //   selectedTable &&
-    //   metaData &&
-    //   columnNameMapping(selectedTable, metaData).filter(
-    //     columnNameFilter =>
-    //       this.state.selectedColumns.indexOf(columnNameFilter) < 0
-    //   )
     return (
       <div className="select-where-cont">
         {columnArrayMapping(selectedTable, customQuery) &&
+          // eslint-disable-next-line complexity
           columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
             return (
               <div key={idx} className="select-where">
@@ -167,6 +146,16 @@ class CustomizedQuerySelect extends Component {
                     </div>
                   ) : null}
                 </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={this.state.checked}
+                    id="groupBy"
+                    name="groupBy"
+                    onChange={() => this.handleChecked(event)}
+                  />
+                  <label htmlFor="groupBy">Group By</label>
+                </div>
               </div>
             )
           })}
@@ -204,6 +193,9 @@ const mapDispatchToProps = dispatch => {
     },
     updateColumn: (tableName, columnName, dataType, funcType) => {
       dispatch(updateColumn(tableName, columnName, dataType, funcType))
+    },
+    updateGroupBy: selectedColumn => {
+      dispatch(addGroupBy(selectedColumn))
     }
   }
 }
@@ -237,36 +229,3 @@ function columnArrayMapping(tableName, array) {
     return Object.keys(element)[0] === tableName
   })[0][tableName]
 }
-
-// render() {
-//   const selectedTable = this.props.selectedTable
-//   const columnNames = this.props.columnNames
-//   const selectedColumn = this.state.selectedColumn
-//   const valueOptionsForString = this.props.valueOptionsForString
-//   return (
-//     <div>
-//       <div>
-//         <select onChange={() => this.handleSelectedColumnChange(event)}>
-//           <option>Please Select</option>
-//           {columnNames.map((columnName, idx) => {
-//             return (
-//               <option key={idx} value={columnName.column_name}>
-//                 {formatColumnName(columnName.column_name)}
-//               </option>
-//             )
-//           })}
-//         </select>
-//       </div>
-//       {selectedColumn ? (
-//         <div>
-//           <CustomizedQueryWhere
-//             selectedTable={selectedTable}
-//             selectedColumn={selectedColumn}
-//             valueOptionsForString={valueOptionsForString}
-//           />
-//         </div>
-//       ) : null}
-//     </div>
-//   )
-// }
-// }

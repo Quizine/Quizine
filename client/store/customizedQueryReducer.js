@@ -21,7 +21,8 @@ const REMOVE_TABLE = 'REMOVE_TABLE'
 const REMOVE_COLUMN = 'REMOVE_COLUMN'
 const REMOVE_OPTION = 'REMOVE_OPTION'
 const GET_CUSTOM_QUERY_RESULTS = 'GET_CUSTOM_QUERY_RESULTS'
-
+const ADD_GROUP_BY = 'ADD_GROUP_BY'
+const CLEAR_JOIN_TABLES = 'CLEAR_JOIN_TABLES'
 /**
  * INITIAL STATE
  */
@@ -159,6 +160,12 @@ export const removeOption = (tableName, columnName) => {
     type: REMOVE_OPTION,
     tableName,
     columnName
+  }
+}
+
+export const clearJoinTables = () => {
+  return {
+    type: CLEAR_JOIN_TABLES
   }
 }
 
@@ -352,7 +359,16 @@ export default function(state = initialState, action) {
         ...state,
         customQueryResult: action.customQueryResult
       }
-
+    case ADD_GROUP_BY:
+      return {
+        ...state,
+        arrangementQuery: {...state.arrangementQuery, groupBy: action.groupBy}
+      }
+    case CLEAR_JOIN_TABLES:
+      return {
+        ...state,
+        joinTables: []
+      }
     default:
       return state
   }
@@ -494,6 +510,16 @@ function removeTableFunc(customQuery) {
   }
   return updatedQuery
 }
+// function removeColumnFunc(customQuery, tableName) {
+//   const updatedQuery = customQuery.map(table => {
+//    const existingTableName = Object.keys(table)[0]
+//    if (tableName === existingTableName){
+//      if (table[existingTableName.length]){
+
+//      }
+//    }
+//   })
+// }
 
 function removeColumnFunc(customQuery, tableName) {
   const updatedQuery = customQuery.map(table => {
