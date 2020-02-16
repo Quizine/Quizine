@@ -69,7 +69,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
                   <option value="allPeriod">All Time</option>
                 </select>
               }
-              title="Monthly Lunch VS Dinner Revenue ($)"
+              title="Lunch vs Dinner Revenue Comparison ($)"
             />
             <Divider />
             <CardContent>

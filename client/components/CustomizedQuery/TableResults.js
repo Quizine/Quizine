@@ -6,7 +6,6 @@ import _ from 'lodash'
 export default class TableResults extends Component {
   render() {
     const tableData = this.props.results
-    console.log(`here is tableData:`, tableData.fields)
     const [rows, columns] = modifyEndpoint(tableData)
     const dataForCsv = [columns, ...rows]
     return (
