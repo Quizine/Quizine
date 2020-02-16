@@ -33,7 +33,8 @@ router.post('/customQuery', async (req, res, next) => {
         } else if (
           key.indexOf('name') >= 0 ||
           key.indexOf('menuItemName') >= 0 ||
-          key.indexOf('Type') >= 0
+          key.indexOf('Type') >= 0 ||
+          key.indexOf('sex') >= 0
         ) {
           queryResults.rows.forEach(row => {
             row[key] = formatItemName(row[key])
