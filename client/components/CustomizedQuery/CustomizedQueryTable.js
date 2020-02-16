@@ -77,13 +77,13 @@ export class CustomizedQueryTable extends Component {
                 {tableNamesToRender.map((element, idx) => {
                   return (
                     <option value={element} key={idx}>
-                      {_.capitalize(element)}
+                      {formatName(element)}
                     </option>
                   )
                 })}
               </select>
             ) : (
-              <h2>{formatColumnName(this.state.defaultValue)}</h2>
+              <h2>{formatName(this.state.defaultValue)}</h2>
             )}
           </div>
 
@@ -147,7 +147,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 )
 
 //Helper functions
-function formatColumnName(name) {
+function formatName(name) {
   name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
   name = name[0].toUpperCase() + name.slice(1)
   return name

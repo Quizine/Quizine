@@ -66,12 +66,6 @@ class CustomizedQueryWhere extends Component {
   }
 }
 
-function formatValueOptionName(name) {
-  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
-  name = name[0].toUpperCase() + name.slice(1)
-  return name
-}
-
 const mapStateToProps = state => {
   return {
     metaData: state.customizedQuery.metaData

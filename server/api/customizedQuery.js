@@ -17,11 +17,7 @@ module.exports = router
 router.post('/customQuery', async (req, res, next) => {
   try {
     const customQueryRequest = req.body.customQueryRequest //custom query from FE
-    console.log(`here@`, customQueryRequest)
     const sql = jsonSql.build(translateQuery(customQueryRequest)) // serialize customQueryRequest to object that can be fed into jsonSql package ---> using translateQuery helper function
-
-    console.log(`the query is: `, sql.query)
-    console.log(`the values are`, sql.getValuesArray())
 
     const queryResults = await client.query(sql.query, sql.getValuesArray())
     for (let key in queryResults.rows[0]) {
@@ -155,12 +151,11 @@ router.get('/:tableName/:columnName', async (req, res, next) => {
 router.get('/:tableName/:columnName/string', async (req, res, next) => {
   try {
     if (req.user.id) {
-      console.log('HEEEEERE', req.params.tableName)
       const text = `
       SELECT DISTINCT "${req.params.columnName}" AS aliasname
       FROM "${req.params.tableName}"
       WHERE "${req.params.columnName}" IS NOT NULL;`
-      console.log('QUERY', text)
+
       // const text = `SELECT DISTINCT $1 AS aliasname FROM $2
       // WHERE $1 IS NOT NULL;`
       const values = [req.params.columnName, req.params.tableName] //SUBSTITION NOT WORKING

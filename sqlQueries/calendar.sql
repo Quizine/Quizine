@@ -1,7 +1,7 @@
 --for calendar: https://www.npmjs.com/package/react-calendar
 --revenue:
 select
-    sum(orders.total )
+    sum(orders.revenue )
 FROM orders
 WHERE orders."timeOfPurchase" ::date = '2018-10-11';
 
