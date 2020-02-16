@@ -44,7 +44,7 @@ class CustomizedQueryFunc extends Component {
     const selectedFunc = this.props.selectedFuncType
 
     return (
-      <div>
+      <div className="math-int">
         {isInteger ? (
           <div>
             {!selectedFunc ? (
@@ -70,7 +70,7 @@ class CustomizedQueryFunc extends Component {
                 </select>
               </div>
             ) : (
-              <h2>{findKey(funcTypeOperators, selectedFunc)}</h2>
+              <h1>{findKey(funcTypeOperators, selectedFunc)}</h1>
             )}
           </div>
         ) : null}

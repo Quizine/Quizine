@@ -87,7 +87,7 @@ export class CustomizedQueryTable extends Component {
             )}
           </div>
 
-          <div>
+          <div className="where-top-cont">
             {customQuery.length ? (
               <div className="row-columns">
                 {this.props.selectedTable ? (
