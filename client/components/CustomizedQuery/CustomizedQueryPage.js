@@ -144,7 +144,7 @@ class CustomizedQueryPage extends Component {
           <div className="combine-btn">
             {joinTables.length ? (
               <button type="button" onClick={() => this.handleJoinClick()}>
-                Combine With
+                Add Search Category
               </button>
             ) : null}
           </div>

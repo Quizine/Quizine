@@ -394,7 +394,6 @@ function translateQuery(customQueryArr) {
       }
     }
   }
-  console.log('translated query', translatedQuery)
   return translatedQuery
 }
 

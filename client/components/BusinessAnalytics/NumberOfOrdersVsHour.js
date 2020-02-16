@@ -93,7 +93,7 @@ class NumberOfOrdersVsHour extends Component {
                 </select>
               </div>
             }
-            title="Orders Per Hour "
+            title="Number of Orders Per Hour"
           />
           <Divider />
 
