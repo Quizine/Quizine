@@ -375,8 +375,8 @@ function translateQuery(customQueryArr) {
   if (baseTable === 'menuItemOrders') {
     if (copyOfJoinTablesArray.indexOf('orders') >= 0) {
       translatedQuery.group = [
-        'menuItemOrders.orderId',
-        ...translatedQuery.group
+        ...translatedQuery.group,
+        'menuItemOrders.orderId'
       ]
       translatedQuery.fields.push('menuItemOrders.orderId')
     }
@@ -385,6 +385,8 @@ function translateQuery(customQueryArr) {
   if (!translatedQuery.group && !translatedQuery.group.length) {
     delete translatedQuery.group
   }
+
+  translatedQuery.sort = translatedQuery.group[0]
 
   console.log(`before translated query condition`, translatedQuery.condition)
   if (translatedQuery.condition) {
