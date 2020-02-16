@@ -31,19 +31,21 @@ router.post('/customQuery', async (req, res, next) => {
             row[key] = row[key].toString().slice(0, 15)
           })
         } else if (
-          key.indexOf('age') >= 0 ||
-          key.indexOf('numberOfGuests') >= 0 ||
-          key.indexOf('quantity') >= 0
-        ) {
-          queryResults.rows.forEach(row => {
-            row[key] = Math.round(row[key])
-          })
-        } else if (
           key.indexOf('name') >= 0 ||
-          key.indexOf('menuItemName') >= 0
+          key.indexOf('menuItemName') >= 0 ||
+          key.indexOf('Type') >= 0
         ) {
           queryResults.rows.forEach(row => {
             row[key] = formatItemName(row[key])
+          })
+        } else if (
+          key.indexOf('age') >= 0 ||
+          key.indexOf('numberOfGuests') >= 0 ||
+          key.indexOf('quantity') >= 0 ||
+          key.indexOf('Id') >= 0
+        ) {
+          queryResults.rows.forEach(row => {
+            row[key] = Math.round(row[key])
           })
         } else {
           queryResults.rows.forEach(row => {
