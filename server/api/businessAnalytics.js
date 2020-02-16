@@ -13,7 +13,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       "menuItems"."mealType",
         DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-        SUM("total") AS "monthlyRevenue"
+        SUM("revenue") AS "monthlyRevenue"
         FROM orders
         join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
         join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId" 
@@ -122,7 +122,7 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
-      ROUND((SUM(total)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
+      ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
       FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
       AND orders."restaurantId" = $2

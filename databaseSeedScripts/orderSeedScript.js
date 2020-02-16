@@ -186,7 +186,7 @@ let menu = [
   },
   {
     id: 19,
-    menuItemName: 'icecream',
+    menuItemName: 'iceCream',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -452,7 +452,7 @@ const generatePurchase = function() {
 
   purchaseData.tip = Math.floor(tipPercentage / 100 * purchaseData.subtotal)
   purchaseData.tax = Math.floor(0.1 * purchaseData.subtotal)
-  purchaseData.total =
+  purchaseData.revenue =
     purchaseData.subtotal + purchaseData.tip + purchaseData.tax
   return purchaseData
 }

@@ -13,7 +13,7 @@ router.get('/revenueByDay', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT
-      SUM(orders.total )
+      SUM(orders.revenue )
       FROM orders
       WHERE orders."timeOfPurchase" ::date = $1
       AND orders."restaurantId" = $2;`
@@ -146,7 +146,7 @@ router.get('/revenueVsTime', async (req, res, next) => {
       SELECT to_char("timeOfPurchase",'Mon') AS mon,
       DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
       EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-      SUM("total") AS "monthlyRevenue"
+      SUM("revenue") AS "monthlyRevenue"
       FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
       AND orders."restaurantId" = $2
@@ -174,7 +174,7 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
     if (req.user.id) {
       const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", 
       SUM(orders."numberOfGuests") AS "numberOfGuests", 
-      ROUND((SUM(orders.total)::numeric)/1000,2) AS "dayRevenue", 
+      ROUND((SUM(orders.revenue)::numeric)/1000,2) AS "dayRevenue", 
       SUM("summedMenuItemOrder"."summedQuantity")
             FROM orders
             JOIN (SELECT SUM("menuItemOrders".quantity) AS "summedQuantity", "menuItemOrders"."orderId"

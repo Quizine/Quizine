@@ -18,7 +18,7 @@ const Order = db.define('order', {
     type: Sequelize.INTEGER,
     allowNull: false
   },
-  total: {
+  revenue: {
     type: Sequelize.INTEGER,
     allowNull: false
   },

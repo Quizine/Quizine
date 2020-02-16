@@ -7,13 +7,13 @@
 // })
 
 // const anExample = [
-// {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
+// {orders: [{revenue: {dataType: 'integer', options: ['$lte', 50]}}]}
 // ]
 
 const ex0 = [
 {
 orders: [
-{total: {dataType: 'integer', options: ['$lte', 50]}},
+{revenue: {dataType: 'integer', options: ['$lte', 50]}},
 {
 timeOfPurchase: {
 dataType: 'timestamp with time zone',
@@ -43,7 +43,7 @@ options: ['week']
 // }
 
 // const externalObj = [
-// {orders: [{total: {dataType: 'integer', options: ['$lte', 50]}}]}
+// {orders: [{revenue: {dataType: 'integer', options: ['$lte', 50]}}]}
 // ]
 
 //console.log(`here is translate query`, translatedQuery)

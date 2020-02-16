@@ -23,7 +23,7 @@ class CheckBoxField extends Component {
   }
   render() {
     const options = this.props.options.map(option => {
-      return {value: option, label: option}
+      return {value: option, label: formatName(option)}
     })
     const {selectedOptions} = this.state
     return (
@@ -33,7 +33,9 @@ class CheckBoxField extends Component {
           isMulti
           onChange={this.handleChange}
           value={selectedOptions}
+          placeholder={`Select ${formatName(this.props.selectedColumn)}...`}
         />
+        <h5>*Leave Blank to Show All</h5>
         {/* {this.state.selectedOptions.map((o, idx) => (
           <p key={idx}>{o.value}</p>
         ))} */}
@@ -50,3 +52,9 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(null, mapDispatchToProps)(CheckBoxField)
+
+function formatName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
+}
