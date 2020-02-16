@@ -51,7 +51,7 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
-      SELECT menus."menuItem" as name,
+      SELECT menus."menuItemName" as name,
       SUM("menuOrders" .quantity) as total
       FROM "menuOrders"
       JOIN menus on menus.id = "menuOrders"."menuId"
