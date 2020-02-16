@@ -156,7 +156,7 @@ class CustomizedQueryPage extends Component {
             Clear Search
           </button>
         </div>
-        {lastSelectedTable && showSubmitButton(lastSelectedTableObj) ? (
+        {lastSelectedTable && showSubmitButton(customQuery) ? (
           <div className="submit-query">
             <SubmitQueryButton />
           </div>
@@ -204,36 +204,44 @@ function columnArrayMapping(tableName, array) {
   })[0][tableName]
 }
 
-function showSubmitButton(lastSelectedTableObj) {
+function showSubmitButton(customQuery) {
   let status = false
-  const tableName = Object.keys(lastSelectedTableObj)[0]
-  if (tableName) {
-    const tableArr = lastSelectedTableObj[tableName]
-    if (tableArr.length) {
-      tableArr.forEach(columnObj => {
-        for (const columnName in columnObj) {
-          if (columnObj.hasOwnProperty(columnName)) {
-            if (columnName) {
-              const columnInteriorObj = columnObj[columnName]
-              if (
-                columnInteriorObj.dataType === 'integer' &&
-                columnInteriorObj.funcType
-              ) {
-                status = true
-              } else if (
-                columnInteriorObj.dataType === 'timestamp with time zone' &&
-                columnInteriorObj.options.length
-              ) {
-                status = true
-              } else if (columnInteriorObj.dataType === 'character varying') {
-                status = true
+  customQuery.forEach(queryObj => {
+    const tableName = Object.keys(queryObj)[0]
+    if (tableName) {
+      const tableArr = queryObj[tableName]
+      if (tableArr.length) {
+        tableArr.forEach(columnObj => {
+          const objectStatus = Object.keys(columnObj)[0]
+          if (objectStatus) {
+            for (const columnName in columnObj) {
+              if (columnObj.hasOwnProperty(columnName)) {
+                if (columnName) {
+                  const columnInteriorObj = columnObj[columnName]
+                  if (
+                    columnInteriorObj.dataType === 'integer' &&
+                    columnInteriorObj.funcType
+                  ) {
+                    status = true
+                  } else if (
+                    columnInteriorObj.dataType === 'timestamp with time zone' &&
+                    columnInteriorObj.options.length
+                  ) {
+                    status = true
+                  } else if (
+                    columnInteriorObj.dataType === 'character varying'
+                  ) {
+                    status = true
+                  } else if (columnInteriorObj.dataType === 'USER-DEFINED') {
+                    status = true
+                  } else status = false
+                } else status = false
               }
             }
-          }
-        }
-      })
-    }
-  }
-
+          } else status = false
+        })
+      } else status = false
+    } else status = false
+  })
   return status
 }

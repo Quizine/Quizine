@@ -56,8 +56,6 @@ export class CustomizedQueryTable extends Component {
       ? joinTables
       : tableNames
 
-    console.log('TABLE NAME', selectedTable)
-
     return (
       <div className="custom-analytics-container">
         <div className="row-query">
