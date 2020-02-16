@@ -85,7 +85,7 @@ export class CustomizedQueryTable extends Component {
                 })}
               </select>
             ) : (
-              <h1>{formatColumnName(this.state.defaultValue)}</h1>
+              <h2>{formatColumnName(this.state.defaultValue)}</h2>
             )}
           </div>
 

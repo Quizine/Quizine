@@ -116,7 +116,7 @@ class CustomizedQuerySelect extends Component {
                         </select>
                       </div>
                     ) : (
-                      <h1>{formatColumnName(Object.keys(element)[0])}</h1>
+                      <h2>{formatColumnName(Object.keys(element)[0])}</h2>
                     )}
                   </div>
 

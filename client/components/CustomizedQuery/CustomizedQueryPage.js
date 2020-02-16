@@ -141,13 +141,6 @@ class CustomizedQueryPage extends Component {
             ) : null}
           </div>
 
-          <button
-            className="clear-btn"
-            type="button"
-            onClick={() => this.handleClearTableClick()}
-          >
-            Clear Search
-          </button>
           <div className="combine-btn">
             {joinTables.length ? (
               <button type="button" onClick={() => this.handleJoinClick()}>
@@ -155,6 +148,13 @@ class CustomizedQueryPage extends Component {
               </button>
             ) : null}
           </div>
+          <button
+            className="clear-btn"
+            type="button"
+            onClick={() => this.handleClearTableClick()}
+          >
+            Clear Search
+          </button>
         </div>
         {lastSelectedTable && showSubmitButton(lastSelectedTableObj) ? (
           <div className="submit-query">

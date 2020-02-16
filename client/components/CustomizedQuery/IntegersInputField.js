@@ -74,7 +74,7 @@ export class IntegersInputField extends Component {
               />
               {this.state.operator === '$between' ? (
                 <div className="int-between">
-                  <h2>and</h2>
+                  <h4>and</h4>
                   <input
                     onBlur={this.handleBetweenInputChange}
                     type="number"
