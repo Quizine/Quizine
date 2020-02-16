@@ -1,9 +1,9 @@
 // const sql = jsonSql.build({
 // type: 'select',
-// fields: ['menuItem', 'mealType'],
+// fields: ['menuItemName', 'mealType'],
 // table: 'menus',
 // join: [],
-// condition: {menuItem: 'lobster', mealType: 'dinner'}
+// condition: {menuItemName: 'lobster', mealType: 'dinner'}
 // })
 
 // const anExample = [
@@ -36,10 +36,10 @@ options: ['week']
 
 // const internalObj = {
 // type: 'select',
-// fields: ['menuItem', 'mealType'],
+// fields: ['menuItemName', 'mealType'],
 // table: 'menus',
 // join: [],
-// condition: {menuItem: 'lobster', mealType: 'dinner'}
+// condition: {menuItemName: 'lobster', mealType: 'dinner'}
 // }
 
 // const externalObj = [
@@ -50,7 +50,7 @@ options: ['week']
 //console.log(`conditions further down in the func:`, translatedQuery.condition)
 // here is translate query {
 // type: 'select',
-// fields: [ 'mealType', 'menuItem' ],
+// fields: [ 'mealType', 'menuItemName' ],
 // table: 'menus',
 // join: {},
 // condition: { '$and': [ [Object], [Object] ] }
@@ -85,7 +85,7 @@ options: ['week']
     // const ex1 = [
     //   {
     //     menus: [
-    //       {menuItem: {dataType: 'string', options: []}},
+    //       {menuItemName: {dataType: 'string', options: []}},
     //       {mealType: {dataType: 'string', options: []}}
     //     ]
     //   }
