@@ -162,7 +162,7 @@ router.get(
         const topOrBottom = req.query.topOrBottom
         if (topOrBottom === 'asc') {
           text = `
-          SELECT menus."menuItem" as name,
+          SELECT menus."menuItemName" as name,
           SUM("menuItemOrders" .quantity) as total
           FROM "menuItemOrders"
           JOIN menus on menus.id = "menuItemOrders"."menuId"
@@ -175,7 +175,7 @@ router.get(
           `
         } else if (topOrBottom === 'desc') {
           text = `
-          SELECT menus."menuItem" as name,
+          SELECT menus."menuItemName" as name,
           SUM("menuItemOrders" .quantity) as total
           FROM "menuItemOrders"
           JOIN menus on menus.id = "menuItemOrders"."menuId"

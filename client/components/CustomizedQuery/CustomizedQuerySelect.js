@@ -74,6 +74,7 @@ class CustomizedQuerySelect extends Component {
         {columnArrayMapping(selectedTable, customQuery) &&
           // eslint-disable-next-line complexity
           columnArrayMapping(selectedTable, customQuery).map((element, idx) => {
+            console.log('ELEMENT', element)
             return (
               <div key={idx} className="select-where">
                 <div className="col-cont">
@@ -117,11 +118,14 @@ class CustomizedQuerySelect extends Component {
                   )}
                   {selectedTable &&
                   Object.keys(element)[0] &&
-                  this.state.selectedDataType === 'integer' ? (
+                  element[Object.keys(element)[0]].dataType === 'integer' ? (
                     <div>
                       <CustomizedQueryFunc
                         selectedTable={selectedTable}
                         selectedColumn={Object.keys(element)[0]}
+                        selectedFuncType={
+                          element[Object.keys(element)[0]].funcType
+                        }
                       />
                     </div>
                   ) : null}

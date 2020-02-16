@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 
 const Menu = db.define('menu', {
-  menuItem: {
+  menuItemName: {
     type: Sequelize.STRING,
     allowNull: false
   },

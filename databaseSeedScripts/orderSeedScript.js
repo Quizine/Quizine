@@ -21,7 +21,7 @@ let server = [
 let menu = [
   {
     id: 1,
-    menuItem: 'lobster',
+    menuItemName: 'lobster',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -30,7 +30,7 @@ let menu = [
   },
   {
     id: 2,
-    menuItem: 'steak',
+    menuItemName: 'steak',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -39,7 +39,7 @@ let menu = [
   },
   {
     id: 3,
-    menuItem: 'chicken',
+    menuItemName: 'chicken',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -48,7 +48,7 @@ let menu = [
   },
   {
     id: 4,
-    menuItem: 'pasta',
+    menuItemName: 'pasta',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -57,7 +57,7 @@ let menu = [
   },
   {
     id: 5,
-    menuItem: 'lobster',
+    menuItemName: 'lobster',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -66,7 +66,7 @@ let menu = [
   },
   {
     id: 6,
-    menuItem: 'steak',
+    menuItemName: 'steak',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -75,7 +75,7 @@ let menu = [
   },
   {
     id: 7,
-    menuItem: 'chicken',
+    menuItemName: 'chicken',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -84,7 +84,7 @@ let menu = [
   },
   {
     id: 8,
-    menuItem: 'pasta',
+    menuItemName: 'pasta',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -93,7 +93,7 @@ let menu = [
   },
   {
     id: 9,
-    menuItem: 'springRolls',
+    menuItemName: 'springRolls',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -102,7 +102,7 @@ let menu = [
   },
   {
     id: 10,
-    menuItem: 'deviledEggs',
+    menuItemName: 'deviledEggs',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -111,7 +111,7 @@ let menu = [
   },
   {
     id: 11,
-    menuItem: 'soup',
+    menuItemName: 'soup',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -120,7 +120,7 @@ let menu = [
   },
   {
     id: 12,
-    menuItem: 'salad',
+    menuItemName: 'salad',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -129,7 +129,7 @@ let menu = [
   },
   {
     id: 13,
-    menuItem: 'springRolls',
+    menuItemName: 'springRolls',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -138,7 +138,7 @@ let menu = [
   },
   {
     id: 14,
-    menuItem: 'deviledEggs',
+    menuItemName: 'deviledEggs',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -147,7 +147,7 @@ let menu = [
   },
   {
     id: 15,
-    menuItem: 'soup',
+    menuItemName: 'soup',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -156,7 +156,7 @@ let menu = [
   },
   {
     id: 16,
-    menuItem: 'salad',
+    menuItemName: 'salad',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -165,7 +165,7 @@ let menu = [
   },
   {
     id: 17,
-    menuItem: 'chocolateCake',
+    menuItemName: 'chocolateCake',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -174,7 +174,7 @@ let menu = [
   },
   {
     id: 18,
-    menuItem: 'tiramisu',
+    menuItemName: 'tiramisu',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -183,7 +183,7 @@ let menu = [
   },
   {
     id: 19,
-    menuItem: 'icecream',
+    menuItemName: 'icecream',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -192,7 +192,7 @@ let menu = [
   },
   {
     id: 20,
-    menuItem: 'fruit',
+    menuItemName: 'fruit',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -201,7 +201,7 @@ let menu = [
   },
   {
     id: 21,
-    menuItem: 'chocolateCake',
+    menuItemName: 'chocolateCake',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -210,7 +210,7 @@ let menu = [
   },
   {
     id: 22,
-    menuItem: 'tiramisu',
+    menuItemName: 'tiramisu',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -219,7 +219,7 @@ let menu = [
   },
   {
     id: 23,
-    menuItem: 'iceCream',
+    menuItemName: 'iceCream',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -228,7 +228,7 @@ let menu = [
   },
   {
     id: 24,
-    menuItem: 'fruit',
+    menuItemName: 'fruit',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -237,7 +237,7 @@ let menu = [
   },
   {
     id: 25,
-    menuItem: 'coke',
+    menuItemName: 'coke',
     beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
@@ -246,7 +246,7 @@ let menu = [
   },
   {
     id: 26,
-    menuItem: 'sprite',
+    menuItemName: 'sprite',
     beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
@@ -255,7 +255,7 @@ let menu = [
   },
   {
     id: 27,
-    menuItem: 'redWine',
+    menuItemName: 'redWine',
     beverageType: 'alcohol',
     foodType: null,
     mealType: null,
@@ -264,7 +264,7 @@ let menu = [
   },
   {
     id: 28,
-    menuItem: 'whiteWine',
+    menuItemName: 'whiteWine',
     beverageType: 'alcohol',
     foodType: null,
     mealType: null,
@@ -311,10 +311,10 @@ let randomizeTime = function(mealType) {
   return time
 }
 
-const pickMenuItem = function(menu) {
+const pickMenuItemName = function(menu) {
   let menuIndex = Math.floor(Math.random() * menu.length)
-  let menuItem = menu[menuIndex]
-  return menuItem
+  let menuItemName = menu[menuIndex]
+  return menuItemName
 }
 
 let randomizemenuItemOrder = function(mealType, isFood, type) {
@@ -332,7 +332,7 @@ let randomizemenuItemOrder = function(mealType, isFood, type) {
       }
     }
   }
-  const selectedMenu = pickMenuItem(selectedList)
+  const selectedMenu = pickMenuItemName(selectedList)
 
   return selectedMenu.id
 }
