@@ -52,10 +52,10 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
     if (req.user.id) {
       const text = `
       SELECT menus."menuItem" as name,
-      SUM("menuOrders" .quantity) as total
-      FROM "menuOrders"
-      JOIN menus on menus.id = "menuOrders"."menuId"
-      JOIN orders on orders.id = "menuOrders"."orderId" 
+      SUM("menuItemOrders" .quantity) as total
+      FROM "menuItemOrders"
+      JOIN menus on menus.id = "menuItemOrders"."menuId"
+      JOIN orders on orders.id = "menuItemOrders"."orderId" 
       WHERE orders."timeOfPurchase" ::date = $1
       AND menus."beverageType" isnull
       AND orders."restaurantId" = $2
@@ -176,12 +176,12 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
       const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", 
       SUM(orders."numberOfGuests") AS "numberOfGuests", 
       ROUND((SUM(orders.total)::numeric)/1000,2) AS "dayRevenue", 
-      SUM("summedMenuOrder"."summedQuantity")
+      SUM("summedMenuItemOrder"."summedQuantity")
             FROM orders
-            JOIN (SELECT SUM("menuOrders".quantity) AS "summedQuantity", "menuOrders"."orderId"
-            FROM "menuOrders"
-            GROUP BY "menuOrders"."orderId") AS "summedMenuOrder"
-            ON orders.id = "summedMenuOrder"."orderId"
+            JOIN (SELECT SUM("menuItemOrders".quantity) AS "summedQuantity", "menuItemOrders"."orderId"
+            FROM "menuItemOrders"
+            GROUP BY "menuItemOrders"."orderId") AS "summedMenuItemOrder"
+            ON orders.id = "summedMenuItemOrder"."orderId"
             WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
             AND orders."restaurantId" = $1
             GROUP BY "dayOfWeek"
