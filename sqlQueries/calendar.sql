@@ -13,10 +13,10 @@ where orders."timeOfPurchase" ::date = '2018-10-11';
 
 --most popular dish on a specific day: **still need by the date...
 SELECT menus."menuItemName" as name,
-    sum("menuOrders" .quantity) as total
-from "menuOrders"
-    join menus on menus.id = "menuOrders"."menuId"
-    join orders on orders.id = "menuOrders"."orderId"
+sum("menuItemOrders" .quantity) as total
+from "menuItemOrders"
+join menus on menus.id = "menuItemOrders"."menuId"
+join orders on orders.id = "menuItemOrders"."orderId" 
 where orders."timeOfPurchase" ::date = '2018-10-11'
     and
     menus."beverageType"

@@ -49,9 +49,9 @@ from menus
 order by price desc;
 
 SELECT menus."menuItemName" as name,
-    sum("menuOrders" .quantity) as total
-from "menuOrders"
-    join menus on menus.id = "menuOrders"."menuId"
+sum("menuItemOrders" .quantity) as total
+from "menuItemOrders"
+join menus on menus.id = "menuItemOrders"."menuId"
 group by name
 order by total desc;
 
