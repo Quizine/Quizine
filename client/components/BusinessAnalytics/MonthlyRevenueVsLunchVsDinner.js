@@ -94,6 +94,11 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
                           }
                         }
                       ]
+                    },
+                    plugins: {
+                      datalabels: {
+                        display: false
+                      }
                     }
                   }}
                 />
