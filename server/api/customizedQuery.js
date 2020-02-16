@@ -152,10 +152,12 @@ router.get('/:tableName/:columnName', async (req, res, next) => {
 router.get('/:tableName/:columnName/string', async (req, res, next) => {
   try {
     if (req.user.id) {
+      console.log('HEEEEERE', req.params.tableName)
       const text = `
       SELECT DISTINCT "${req.params.columnName}" AS aliasname
-      FROM ${req.params.tableName}
+      FROM "${req.params.tableName}"
       WHERE "${req.params.columnName}" IS NOT NULL;`
+      console.log('QUERY', text)
       // const text = `SELECT DISTINCT $1 AS aliasname FROM $2
       // WHERE $1 IS NOT NULL;`
       const values = [req.params.columnName, req.params.tableName] //SUBSTITION NOT WORKING

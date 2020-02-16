@@ -12,14 +12,15 @@ from waiters
 where orders."timeOfPurchase" ::date = '2018-10-11';
 
 --most popular dish on a specific day: **still need by the date...
-SELECT menus."menuItemName" as name,
-sum("menuItemOrders" .quantity) as total
+
+SELECT "menuItems"."menuItemName" as name,
+    sum("menuItemOrders".quantity) as total
 from "menuItemOrders"
-join menus on menus.id = "menuItemOrders"."menuId"
-join orders on orders.id = "menuItemOrders"."orderId" 
+    join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+    join orders on orders.id = "menuItemOrders"."orderId"
 where orders."timeOfPurchase" ::date = '2018-10-11'
     and
-    menus."beverageType"
+    "menuItems"."beverageType"
 isnull
 group by name
 order by total desc
