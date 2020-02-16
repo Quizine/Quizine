@@ -320,7 +320,7 @@ const pickMenuItemName = function(menu) {
   return menuItemName
 }
 
-let randomizeMenuOrder = function(mealType, isFood, type) {
+let randomizeMenuItemOrder = function(mealType, isFood, type) {
   let selectedList = []
   if (isFood) {
     for (let i = 0; i < menu.length; i++) {
@@ -350,25 +350,25 @@ let randomizeSinglePersonPurchase = function(orderHour) {
   } else {
     mealType = 'dinner'
   }
-  personOrder.push(randomizeMenuOrder(mealType, true, 'main'))
+  personOrder.push(randomizeMenuItemOrder(mealType, true, 'main'))
   for (let i = 0; i < foodType.length; i++) {
     let foodRandomNumber = Math.random()
     if (foodRandomNumber < 0.5) {
-      personOrder.push(randomizeMenuOrder(mealType, true, foodType[i]))
+      personOrder.push(randomizeMenuItemOrder(mealType, true, foodType[i]))
     }
   }
   let beverageRandomNumber = Math.random()
   if (mealType === 'lunch') {
     if (beverageRandomNumber < 0.8) {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[1]))
     } else {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[0]))
     }
   } else if (mealType === 'dinner') {
     if (beverageRandomNumber < 0.2) {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[1]))
     } else {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[0]))
     }
   }
   return personOrder
@@ -429,19 +429,22 @@ const generatePurchase = function() {
     numberOfGuests = Math.floor(Math.random() * (8 - 5 + 1)) + 5
   }
   purchaseData.numberOfGuests = numberOfGuests
-  purchaseData.menuOrderList = []
+  purchaseData.menuItemOrderList = []
   for (let i = 1; i <= numberOfGuests; i++) {
-    purchaseData.menuOrderList = purchaseData.menuOrderList.concat(
+    purchaseData.menuItemOrderList = purchaseData.menuItemOrderList.concat(
       randomizeSinglePersonPurchase(hour)
     )
   }
-  let hashOfMenuOrderList = {}
+  let hashOfMenuItemOrderList = {}
   menu.forEach(item => {
-    hashOfMenuOrderList[item.id] = item.price
+    hashOfMenuItemOrderList[item.id] = item.price
   })
-  purchaseData.subtotal = purchaseData.menuOrderList.reduce((acc, currVal) => {
-    return acc + hashOfMenuOrderList[currVal]
-  }, 0)
+  purchaseData.subtotal = purchaseData.menuItemOrderList.reduce(
+    (acc, currVal) => {
+      return acc + hashOfMenuItemOrderList[currVal]
+    },
+    0
+  )
 
   let tipPercentage =
     (20 + 4 * normalDistributionFunc()) *
@@ -467,8 +470,8 @@ let orderMenuTable = []
 for (let i = 0; i < purchaseList.length; i++) {
   let singlePurchase = purchaseList[i]
   let hashOfMenuQty = {}
-  for (let j = 0; j < singlePurchase.menuOrderList.length; j++) {
-    let singleMenuId = singlePurchase.menuOrderList[j]
+  for (let j = 0; j < singlePurchase.menuItemOrderList.length; j++) {
+    let singleMenuId = singlePurchase.menuItemOrderList[j]
     let singleOrderPerMenu
     if (hashOfMenuQty[singleMenuId]) {
       for (let k = 0; k < orderMenuTable.length; k++) {
@@ -489,7 +492,7 @@ for (let i = 0; i < purchaseList.length; i++) {
       orderMenuTable.push(singleOrderPerMenu)
     }
   }
-  delete singlePurchase.menuOrderList
+  delete singlePurchase.menuItemOrderList
 }
 
 module.exports = {

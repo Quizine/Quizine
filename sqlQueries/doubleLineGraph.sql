@@ -4,8 +4,8 @@ SELECT to_char("timeOfPurchase",'Mon') AS mon,
       EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
       SUM("total") AS "monthlyRevenue"
 FROM orders
-      join "menuOrders" on "menuOrders"."orderId" = orders.id
-      join "menuItems" on "menuItems".id = "menuOrders"."menuItemId"
+      join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
+      join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
 WHERE orders."timeOfPurchase" >= NOW() - $1
 ::interval 
       AND orders."restaurantId" = $2
@@ -19,12 +19,12 @@ select "menuItems"."mealType",
       sum(orders.total) as grandtotal,
       (select sum(orders.total)
       from orders
-            join "menuOrders" on "menuOrders"."orderId" = orders.id
-            join "menuItems" on "menuItems".id = "menuOrders"."menuItemId"
+            join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
+            join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
       where "menuItems"."mealType" = 'dinner') as sum_of_sum
 from orders
-      join "menuOrders" on "menuOrders"."orderId" = orders.id
-      join "menuItems" on "menuItems".id = "menuOrders"."menuItemId"
+      join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
+      join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
 where "menuItems"."mealType" = 'dinner'
 group by "menuItems"."mealType" , orders .total
 limit 5;

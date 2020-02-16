@@ -7,7 +7,7 @@ const {
   Order,
   Waiter,
   MenuItem,
-  MenuOrder
+  MenuItemOrder
 } = require('../server/db/models')
 
 const {
@@ -57,7 +57,7 @@ async function seed() {
   const orders = await Order.bulkCreate(purchaseList)
   const users = await User.bulkCreate(userArray)
   const menus = await MenuItem.bulkCreate(menu)
-  const menuOrders = await MenuOrder.bulkCreate(orderMenuTable)
+  const menuItemOrders = await MenuItemOrder.bulkCreate(orderMenuTable)
 
   console.log(`seeded successfully`)
 }

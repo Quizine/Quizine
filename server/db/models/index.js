@@ -3,7 +3,7 @@ const Restaurant = require('./restaurant')
 const Order = require('./order')
 const Waiter = require('./waiter')
 const MenuItem = require('./menu')
-const {MenuOrder} = require('./menu_order')
+const {MenuItemOrder} = require('./menu_order')
 
 /**
  * If we had any associations to make, this would be a great place to put them!
@@ -21,8 +21,8 @@ Waiter.belongsTo(Restaurant)
 MenuItem.belongsTo(Restaurant)
 Waiter.hasMany(Order) // SO FOREIGN KEY WILL LIVE ON ORDER
 Order.belongsTo(Waiter)
-Order.belongsToMany(MenuItem, {through: MenuOrder})
-MenuItem.belongsToMany(Order, {through: MenuOrder})
+Order.belongsToMany(MenuItem, {through: MenuItemOrder})
+MenuItem.belongsToMany(Order, {through: MenuItemOrder})
 
 /**
  * We'll export all of our models here, so that any time a module needs a model,
@@ -36,5 +36,5 @@ module.exports = {
   Order,
   Waiter,
   MenuItem,
-  MenuOrder
+  MenuItemOrder
 }
