@@ -50,40 +50,41 @@ export class IntegersInputField extends Component {
 
   render() {
     return (
-      <div>
+      <div className="integer-top">
         <h3>{`Where ${formatColumnName(this.props.selectedColumn)} is:`}</h3>
-        <select
-          className="select-cust"
-          onChange={() => this.handleWhereSelect(event)}
-        >
-          {operators.map((option, idx) => {
-            return (
-              <option key={idx} value={Object.values(option)[0]}>
-                {Object.keys(option)[0]}
-              </option>
-            )
-          })}
-        </select>
-        {this.state.operator ? (
-          <div>
-            <input
-              className="integer-input"
-              onBlur={this.handleInputChange}
-              type="number"
-            />
-            {this.state.operator === '$between' ? (
-              <div>
-                <h3>and</h3>
-                <br />
-                <input
-                  onBlur={this.handleBetweenInputChange}
-                  type="number"
-                  className="integer-input"
-                />
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        <div className="integer-input">
+          <select
+            className="select-cust"
+            onChange={() => this.handleWhereSelect(event)}
+          >
+            {operators.map((option, idx) => {
+              return (
+                <option key={idx} value={Object.values(option)[0]}>
+                  {Object.keys(option)[0]}
+                </option>
+              )
+            })}
+          </select>
+          {this.state.operator ? (
+            <div className="input-field-custom">
+              <input
+                className="integer-input"
+                onBlur={this.handleInputChange}
+                type="number"
+              />
+              {this.state.operator === '$between' ? (
+                <div className="int-between">
+                  <h2>and</h2>
+                  <input
+                    onBlur={this.handleBetweenInputChange}
+                    type="number"
+                    className="integer-input"
+                  />
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       </div>
     )
   }
