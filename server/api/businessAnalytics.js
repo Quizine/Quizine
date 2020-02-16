@@ -15,8 +15,8 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
         SUM("total") AS "monthlyRevenue"
         FROM orders
-        join "menuOrders" on "menuOrders"."orderId" = orders.id 
-        join menus on menus.id = "menuOrders"."menuId" 
+        join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
+        join menus on menus.id = "menuItemOrders"."menuId" 
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval 
         AND orders."restaurantId" = $2
         and menus."mealType" is not null
@@ -162,11 +162,11 @@ router.get(
         const topOrBottom = req.query.topOrBottom
         if (topOrBottom === 'asc') {
           text = `
-          SELECT menus."menuItem" as name,
-          SUM("menuOrders" .quantity) as total
-          FROM "menuOrders"
-          JOIN menus on menus.id = "menuOrders"."menuId"
-          JOIN orders on orders.id = "menuOrders"."orderId"
+          SELECT menus."menuItemName" as name,
+          SUM("menuItemOrders" .quantity) as total
+          FROM "menuItemOrders"
+          JOIN menus on menus.id = "menuItemOrders"."menuId"
+          JOIN orders on orders.id = "menuItemOrders"."orderId"
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
           GROUP BY name
@@ -175,11 +175,11 @@ router.get(
           `
         } else if (topOrBottom === 'desc') {
           text = `
-          SELECT menus."menuItem" as name,
-          SUM("menuOrders" .quantity) as total
-          FROM "menuOrders"
-          JOIN menus on menus.id = "menuOrders"."menuId"
-          JOIN orders on orders.id = "menuOrders"."orderId"
+          SELECT menus."menuItemName" as name,
+          SUM("menuItemOrders" .quantity) as total
+          FROM "menuItemOrders"
+          JOIN menus on menus.id = "menuItemOrders"."menuId"
+          JOIN orders on orders.id = "menuItemOrders"."orderId"
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
           GROUP BY name
@@ -228,9 +228,9 @@ router.get(
 //     responseObject.waitersByTipPercentYAxis = waitersByTipPercentFormatted[1]
 
 //     const waitersByAvgServedDish = await client.query(`
-//     SELECT waiters.name, ROUND(SUM ("menuOrders".quantity) / 7)
-//     FROM "menuOrders"
-//     JOIN ORDERS ON orders.id = "menuOrders"."orderId"
+//     SELECT waiters.name, ROUND(SUM ("menuItemOrders".quantity) / 7)
+//     FROM "menuItemOrders"
+//     JOIN ORDERS ON orders.id = "menuItemOrders"."orderId"
 //     JOIN WAITERS ON orders."waiterId" = waiters.id
 //     WHERE orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
 //     GROUP BY waiters.name;`)
@@ -246,9 +246,9 @@ router.get(
 
 //     // WOULD BE NICE TO CONVERT TO %
 //     const menuItemsByOrder = await client.query(`SELECT menus."menuItem" AS "menuItem",
-//     SUM("menuOrders".quantity) AS "quantity" FROM menus
-//     JOIN "menuOrders" ON menus.id = "menuOrders"."menuId"
-//     JOIN orders ON orders.id = "menuOrders"."orderId"
+//     SUM("menuItemOrders".quantity) AS "quantity" FROM menus
+//     JOIN "menuItemOrders" ON menus.id = "menuItemOrders"."menuId"
+//     JOIN orders ON orders.id = "menuItemOrders"."orderId"
 //     WHERE menus."mealType" = '${mealType}'
 //     AND orders."timeOfPurchase" >= NOW() - interval '1 ${interval}'
 //     GROUP BY "menuItem";`)

@@ -27,24 +27,11 @@ const CLEAR_JOIN_TABLES = 'CLEAR_JOIN_TABLES'
  * INITIAL STATE
  */
 const initialState = {
-  // dataType: '',
-  // valueOptionsForString: [],
-  customQueryResult: [], //Or object ?
+  customQueryResult: {},
   joinTables: [],
   metaData: [],
   customQuery: []
 }
-
-// query = [
-//   {tableName: 'menu',
-//   menuItem: [lobster, coke],
-//    foodType: [dinner, lunch]
-//   }
-//   ,
-//   {tableName: waiters,
-//   age: [>, 25]
-//   }
-// ]
 
 /**
  * ACTION CREATORS

@@ -38,7 +38,10 @@ router.post('/customQuery', async (req, res, next) => {
           queryResults.rows.forEach(row => {
             row[key] = Math.round(row[key])
           })
-        } else if (key.indexOf('name') >= 0 || key.indexOf('menuItem') >= 0) {
+        } else if (
+          key.indexOf('name') >= 0 ||
+          key.indexOf('menuItemName') >= 0
+        ) {
           queryResults.rows.forEach(row => {
             row[key] = formatItemName(row[key])
           })
@@ -94,7 +97,7 @@ router.get('/:tableName', async (req, res, next) => {
     next(error)
   }
 })
-//GETS FOREIGN KEYS FOR A GIVEN TABLE AND THE COLUMN NAMES OF THE MENUORDERS JOIN TABLE IF APPROPRIATE
+//GETS FOREIGN KEYS FOR A GIVEN TABLE AND THE COLUMN NAMES OF THE menuItemOrders JOIN TABLE IF APPROPRIATE
 router.get('/:tableName/foreignTableNames', async (req, res, next) => {
   try {
     if (req.user.id) {
@@ -365,10 +368,13 @@ function translateQuery(customQueryArr) {
   translatedQuery.condition = transformedConditions //one more transformation
   translatedQuery.group = groupByForString
 
-  if (baseTable === 'menuOrders') {
+  if (baseTable === 'menuItemOrders') {
     if (copyOfJoinTablesArray.indexOf('orders') >= 0) {
-      translatedQuery.group = ['menuOrders.orderId', ...translatedQuery.group]
-      translatedQuery.fields.push('menuOrders.orderId')
+      translatedQuery.group = [
+        'menuItemOrders.orderId',
+        ...translatedQuery.group
+      ]
+      translatedQuery.fields.push('menuItemOrders.orderId')
     }
   }
 
@@ -410,9 +416,9 @@ function formatItemName(name) {
 //         (baseTable === 'menus' && tableName === 'orders') ||
 //         (baseTable === 'orders' && tableName === 'menus')
 //       ) {
-//         transformedJoinTables.menuOrders = {
+//         transformedJoinTables.menuItemOrders = {
 //           on: {
-//             [`${baseTable}.id`]: `"menuOrders".${baseTable.slice(
+//             [`${baseTable}.id`]: `"menuItemOrders".${baseTable.slice(
 //               0,
 //               baseTable.length - 1
 //             )}Id`
@@ -420,7 +426,7 @@ function formatItemName(name) {
 //         }
 //         transformedJoinTables[tableName] = {
 //           on: {
-//             [`${tableName}.id`]: `"menuOrders".${tableName.slice(
+//             [`${tableName}.id`]: `"menuItemOrders".${tableName.slice(
 //               0,
 //               tableName.length - 1
 //             )}Id`
@@ -471,9 +477,9 @@ function formatItemName(name) {
 //   ON ccu.constraint_name = tc.constraint_name
 //   AND ccu.table_schema = tc.table_schema
 //   WHERE tc.constraint_type = 'FOREIGN KEY'
-//   AND tc.table_name='menuOrders'
+//   AND tc.table_name='menuItemOrders'
 //   AND ccu.table_name <> $1;`
-//   const foreignTableNameFromMenuOrders = await client.query(text, values)
+//   const foreignTableNameFromMenuItemOrders = await client.query(text, values)
 //   const response = foreignTableNamesFromFK.rows.concat(
-//     foreignTableNameFromMenuOrders.rows
+//     foreignTableNameFromMenuItemOrders.rows
 //   )
