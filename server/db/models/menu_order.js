@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const MenuOrder = db.define('menuOrder', {
+const MenuItemOrder = db.define('menuItemOrder', {
   quantity: {
     type: Sequelize.INTEGER,
     defaultValue: 1
   }
 })
 
-module.exports = {MenuOrder}
+module.exports = {MenuItemOrder}

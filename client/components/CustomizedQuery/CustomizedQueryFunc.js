@@ -40,27 +40,38 @@ class CustomizedQueryFunc extends Component {
       this.props.selectedColumn,
       this.props.metaData
     )
-
     const isInteger = dataType === 'integer'
+    const selectedFunc = this.props.selectedFuncType
 
     return (
-      <div>
+      <div className="math-int">
         {isInteger ? (
           <div>
-            <h3>Select Math Operation:</h3>
-            <select
-              className="select-cust"
-              onChange={() => this.handleFuncSelect(event)}
-            >
-              <option value="default">Please Select</option>
-              {funcTypeOperators.map((option, idx) => {
-                return (
-                  <option key={idx} value={Object.values(option)[0]}>
-                    {Object.keys(option)[0]}
-                  </option>
-                )
-              })}
-            </select>
+            {!selectedFunc ? (
+              <h3>Select Math Operation:</h3>
+            ) : (
+              <h3>Selected Math Operation:</h3>
+            )}
+
+            {!selectedFunc ? (
+              <div>
+                <select
+                  className="select-cust"
+                  onChange={() => this.handleFuncSelect(event)}
+                >
+                  <option value="default">Please Select</option>
+                  {funcTypeOperators.map((option, idx) => {
+                    return (
+                      <option key={idx} value={Object.values(option)[0]}>
+                        {Object.keys(option)[0]}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+            ) : (
+              <h1>{findKey(funcTypeOperators, selectedFunc)}</h1>
+            )}
           </div>
         ) : null}
       </div>
@@ -92,4 +103,8 @@ function extractDataType(tableName, columnName, array) {
     [tableName].filter(element => {
       return Object.keys(element)[0] === columnName
     })[0][columnName].dataType
+}
+
+function findKey(arr, value) {
+  return Object.keys(arr.filter(el => Object.values(el)[0] === value)[0])[0]
 }

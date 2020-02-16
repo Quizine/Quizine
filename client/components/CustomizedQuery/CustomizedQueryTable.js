@@ -8,7 +8,8 @@ import {
   clearCustomQuery,
   addEmptyColumn,
   gotCustomQueryResult,
-  addEmptyTable
+  addEmptyTable,
+  getJoinTables
 } from '../../store/customizedQueryReducer'
 import CustomizedQuerySelect from './CustomizedQuerySelect'
 import _ from 'lodash'
@@ -33,6 +34,8 @@ export class CustomizedQueryTable extends Component {
     this.props.updateTable(event.target.value)
     this.props.addEmptyColumn(event.target.value)
 
+    this.props.getJoinTables(event.target.value)
+
     this.setState({
       //USED!!! DO NOT DELETE
       disabled: true,
@@ -42,22 +45,19 @@ export class CustomizedQueryTable extends Component {
   }
 
   render() {
-    const {tableNames, customQuery, joinTables} = this.props
+    const {tableNames, customQuery, joinTables, selectedTable} = this.props
 
-    const lastSelectedTable = customQuery.length
-      ? Object.keys(customQuery[customQuery.length - 1])[0]
-      : null
+    const penultimateSelectedTable =
+      customQuery.length > 1
+        ? Object.keys(customQuery[customQuery.length - 2])[0]
+        : null
 
-    const lastSelectedColumn = customQuery.length
-      ? lastSelectedTable &&
-        customQuery[customQuery.length - 1][lastSelectedTable][
-          customQuery[customQuery.length - 1][lastSelectedTable].length - 1
-        ]
-      : null
-
-    const tableNamesToRender = this.props.joinTables.length
+    const tableNamesToRender = penultimateSelectedTable
       ? joinTables
       : tableNames
+
+    console.log('TABLE NAME', selectedTable)
+
     return (
       <div className="custom-analytics-container">
         <div className="row-query">
@@ -89,14 +89,11 @@ export class CustomizedQueryTable extends Component {
             )}
           </div>
 
-          <div>
+          <div className="where-top-cont">
             {customQuery.length ? (
               <div className="row-columns">
                 {this.props.selectedTable ? (
-                  <CustomizedQuerySelect
-                    selectedTable={this.props.selectedTable}
-                    lastSelectedColumn={lastSelectedColumn}
-                  />
+                  <CustomizedQuerySelect selectedTable={selectedTable} />
                 ) : null}
               </div>
             ) : null}
@@ -141,6 +138,9 @@ const mapDispatchToProps = dispatch => {
     },
     addEmptyTable: () => {
       dispatch(addEmptyTable())
+    },
+    getJoinTables: selectedTable => {
+      dispatch(getJoinTables(selectedTable))
     }
   }
 }
@@ -148,6 +148,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
   CustomizedQueryTable
 )
 
+//Helper functions
 function formatColumnName(name) {
   name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
   name = name[0].toUpperCase() + name.slice(1)

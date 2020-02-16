@@ -14,10 +14,10 @@ export default class BusinessAnalyticsPage extends Component {
         <div className="bus-charts-cont">
           <AvgRevenuePerGuestVsDOW />
           <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
+          <LineGraphMonthlyRevenueVsLunchVsDinner />
           <NumberOfOrdersVsHour />
           <TipPercentageVsWaiters />
           <AvgNumberOfGuestsVsWaitersPerOrder />
-          <LineGraphMonthlyRevenueVsLunchVsDinner />
         </div>
       </div>
     )

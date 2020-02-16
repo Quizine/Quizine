@@ -38,17 +38,6 @@ class CustomizedQueryWhere extends Component {
         {options.length ? (
           <div>
             <h3>{`Where ${_.startCase(selectedColumn)} is:`}</h3>
-            {/* <select onChange={() => this.handleSelect(event)} multiple>
-              <option defaultValue>Please Select</option>
-              {options.length &&
-                options.map((valueOptionName, idx) => {
-                  return (
-                    <option type="checkbox" key={idx} value={valueOptionName}>
-                      {formatValueOptionName(valueOptionName)}
-                    </option>
-                  )
-                })}
-            </select> */}
             <CheckBoxField
               selectedTable={selectedTable}
               selectedColumn={selectedColumn}

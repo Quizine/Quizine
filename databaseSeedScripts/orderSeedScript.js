@@ -1,6 +1,9 @@
 /* eslint-disable max-statements */
 const {normalDistributionFunc} = require('./utilities')
 
+//DATABASE SEED SCRIPT VARIABLES:
+const orderNumber = 10000
+
 //for seeding waiters
 let server = [
   {id: 1, name: 'Fred Reynolds', sex: 'male', age: 27, restaurantId: 1},
@@ -21,7 +24,7 @@ let server = [
 let menu = [
   {
     id: 1,
-    menuItem: 'lobster',
+    menuItemName: 'lobster',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -30,7 +33,7 @@ let menu = [
   },
   {
     id: 2,
-    menuItem: 'steak',
+    menuItemName: 'steak',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -39,7 +42,7 @@ let menu = [
   },
   {
     id: 3,
-    menuItem: 'chicken',
+    menuItemName: 'chicken',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -48,7 +51,7 @@ let menu = [
   },
   {
     id: 4,
-    menuItem: 'pasta',
+    menuItemName: 'pasta',
     beverageType: null,
     foodType: 'main',
     mealType: 'dinner',
@@ -57,7 +60,7 @@ let menu = [
   },
   {
     id: 5,
-    menuItem: 'lobster',
+    menuItemName: 'lobster',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -66,7 +69,7 @@ let menu = [
   },
   {
     id: 6,
-    menuItem: 'steak',
+    menuItemName: 'steak',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -75,7 +78,7 @@ let menu = [
   },
   {
     id: 7,
-    menuItem: 'chicken',
+    menuItemName: 'chicken',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -84,7 +87,7 @@ let menu = [
   },
   {
     id: 8,
-    menuItem: 'pasta',
+    menuItemName: 'pasta',
     beverageType: null,
     foodType: 'main',
     mealType: 'lunch',
@@ -93,7 +96,7 @@ let menu = [
   },
   {
     id: 9,
-    menuItem: 'springRolls',
+    menuItemName: 'springRolls',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -102,7 +105,7 @@ let menu = [
   },
   {
     id: 10,
-    menuItem: 'deviledEggs',
+    menuItemName: 'deviledEggs',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -111,7 +114,7 @@ let menu = [
   },
   {
     id: 11,
-    menuItem: 'soup',
+    menuItemName: 'soup',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -120,7 +123,7 @@ let menu = [
   },
   {
     id: 12,
-    menuItem: 'salad',
+    menuItemName: 'salad',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'dinner',
@@ -129,7 +132,7 @@ let menu = [
   },
   {
     id: 13,
-    menuItem: 'springRolls',
+    menuItemName: 'springRolls',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -138,7 +141,7 @@ let menu = [
   },
   {
     id: 14,
-    menuItem: 'deviledEggs',
+    menuItemName: 'deviledEggs',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -147,7 +150,7 @@ let menu = [
   },
   {
     id: 15,
-    menuItem: 'soup',
+    menuItemName: 'soup',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -156,7 +159,7 @@ let menu = [
   },
   {
     id: 16,
-    menuItem: 'salad',
+    menuItemName: 'salad',
     beverageType: null,
     foodType: 'appetizer',
     mealType: 'lunch',
@@ -165,7 +168,7 @@ let menu = [
   },
   {
     id: 17,
-    menuItem: 'chocolateCake',
+    menuItemName: 'chocolateCake',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -174,7 +177,7 @@ let menu = [
   },
   {
     id: 18,
-    menuItem: 'tiramisu',
+    menuItemName: 'tiramisu',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -183,7 +186,7 @@ let menu = [
   },
   {
     id: 19,
-    menuItem: 'icecream',
+    menuItemName: 'icecream',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -192,7 +195,7 @@ let menu = [
   },
   {
     id: 20,
-    menuItem: 'fruit',
+    menuItemName: 'fruit',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'dinner',
@@ -201,7 +204,7 @@ let menu = [
   },
   {
     id: 21,
-    menuItem: 'chocolateCake',
+    menuItemName: 'chocolateCake',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -210,7 +213,7 @@ let menu = [
   },
   {
     id: 22,
-    menuItem: 'tiramisu',
+    menuItemName: 'tiramisu',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -219,7 +222,7 @@ let menu = [
   },
   {
     id: 23,
-    menuItem: 'iceCream',
+    menuItemName: 'iceCream',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -228,7 +231,7 @@ let menu = [
   },
   {
     id: 24,
-    menuItem: 'fruit',
+    menuItemName: 'fruit',
     beverageType: null,
     foodType: 'dessert',
     mealType: 'lunch',
@@ -237,7 +240,7 @@ let menu = [
   },
   {
     id: 25,
-    menuItem: 'coke',
+    menuItemName: 'coke',
     beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
@@ -246,7 +249,7 @@ let menu = [
   },
   {
     id: 26,
-    menuItem: 'sprite',
+    menuItemName: 'sprite',
     beverageType: 'nonAlcohol',
     foodType: null,
     mealType: null,
@@ -255,7 +258,7 @@ let menu = [
   },
   {
     id: 27,
-    menuItem: 'redWine',
+    menuItemName: 'redWine',
     beverageType: 'alcohol',
     foodType: null,
     mealType: null,
@@ -264,7 +267,7 @@ let menu = [
   },
   {
     id: 28,
-    menuItem: 'whiteWine',
+    menuItemName: 'whiteWine',
     beverageType: 'alcohol',
     foodType: null,
     mealType: null,
@@ -311,13 +314,13 @@ let randomizeTime = function(mealType) {
   return time
 }
 
-const pickMenuItem = function(menu) {
+const pickMenuItemName = function(menu) {
   let menuIndex = Math.floor(Math.random() * menu.length)
-  let menuItem = menu[menuIndex]
-  return menuItem
+  let menuItemName = menu[menuIndex]
+  return menuItemName
 }
 
-let randomizeMenuOrder = function(mealType, isFood, type) {
+let randomizeMenuItemOrder = function(mealType, isFood, type) {
   let selectedList = []
   if (isFood) {
     for (let i = 0; i < menu.length; i++) {
@@ -332,7 +335,7 @@ let randomizeMenuOrder = function(mealType, isFood, type) {
       }
     }
   }
-  const selectedMenu = pickMenuItem(selectedList)
+  const selectedMenu = pickMenuItemName(selectedList)
 
   return selectedMenu.id
 }
@@ -347,25 +350,25 @@ let randomizeSinglePersonPurchase = function(orderHour) {
   } else {
     mealType = 'dinner'
   }
-  personOrder.push(randomizeMenuOrder(mealType, true, 'main'))
+  personOrder.push(randomizeMenuItemOrder(mealType, true, 'main'))
   for (let i = 0; i < foodType.length; i++) {
     let foodRandomNumber = Math.random()
     if (foodRandomNumber < 0.5) {
-      personOrder.push(randomizeMenuOrder(mealType, true, foodType[i]))
+      personOrder.push(randomizeMenuItemOrder(mealType, true, foodType[i]))
     }
   }
   let beverageRandomNumber = Math.random()
   if (mealType === 'lunch') {
     if (beverageRandomNumber < 0.8) {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[1]))
     } else {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[0]))
     }
   } else if (mealType === 'dinner') {
     if (beverageRandomNumber < 0.2) {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[1]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[1]))
     } else {
-      personOrder.push(randomizeMenuOrder(null, false, beverageType[0]))
+      personOrder.push(randomizeMenuItemOrder(null, false, beverageType[0]))
     }
   }
   return personOrder
@@ -426,19 +429,22 @@ const generatePurchase = function() {
     numberOfGuests = Math.floor(Math.random() * (8 - 5 + 1)) + 5
   }
   purchaseData.numberOfGuests = numberOfGuests
-  purchaseData.menuOrderList = []
+  purchaseData.menuItemOrderList = []
   for (let i = 1; i <= numberOfGuests; i++) {
-    purchaseData.menuOrderList = purchaseData.menuOrderList.concat(
+    purchaseData.menuItemOrderList = purchaseData.menuItemOrderList.concat(
       randomizeSinglePersonPurchase(hour)
     )
   }
-  let hashOfMenuOrderList = {}
+  let hashOfMenuItemOrderList = {}
   menu.forEach(item => {
-    hashOfMenuOrderList[item.id] = item.price
+    hashOfMenuItemOrderList[item.id] = item.price
   })
-  purchaseData.subtotal = purchaseData.menuOrderList.reduce((acc, currVal) => {
-    return acc + hashOfMenuOrderList[currVal]
-  }, 0)
+  purchaseData.subtotal = purchaseData.menuItemOrderList.reduce(
+    (acc, currVal) => {
+      return acc + hashOfMenuItemOrderList[currVal]
+    },
+    0
+  )
 
   let tipPercentage =
     (20 + 4 * normalDistributionFunc()) *
@@ -452,7 +458,7 @@ const generatePurchase = function() {
 }
 
 let purchaseList = []
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < orderNumber; i++) {
   let potentialPurchase = generatePurchase()
   potentialPurchase.id = i + 1
   potentialPurchase.restaurantId = 1
@@ -464,13 +470,13 @@ let orderMenuTable = []
 for (let i = 0; i < purchaseList.length; i++) {
   let singlePurchase = purchaseList[i]
   let hashOfMenuQty = {}
-  for (let j = 0; j < singlePurchase.menuOrderList.length; j++) {
-    let singleMenuId = singlePurchase.menuOrderList[j]
+  for (let j = 0; j < singlePurchase.menuItemOrderList.length; j++) {
+    let singleMenuId = singlePurchase.menuItemOrderList[j]
     let singleOrderPerMenu
     if (hashOfMenuQty[singleMenuId]) {
       for (let k = 0; k < orderMenuTable.length; k++) {
         if (
-          singleMenuId === orderMenuTable[k].menuId &&
+          singleMenuId === orderMenuTable[k].menuItemId &&
           singlePurchase.id === orderMenuTable[k].orderId
         ) {
           orderMenuTable[k].quantity++
@@ -481,12 +487,12 @@ for (let i = 0; i < purchaseList.length; i++) {
       singleOrderPerMenu = {
         quantity: 1,
         orderId: singlePurchase.id,
-        menuId: singleMenuId
+        menuItemId: singleMenuId
       }
       orderMenuTable.push(singleOrderPerMenu)
     }
   }
-  delete singlePurchase.menuOrderList
+  delete singlePurchase.menuItemOrderList
 }
 
 module.exports = {
