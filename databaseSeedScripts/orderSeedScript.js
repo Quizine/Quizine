@@ -1,6 +1,9 @@
 /* eslint-disable max-statements */
 const {normalDistributionFunc} = require('./utilities')
 
+//DATABASE SEED SCRIPT VARIABLES:
+const orderNumber = 10000
+
 //for seeding waiters
 let server = [
   {id: 1, name: 'Fred Reynolds', sex: 'male', age: 27, restaurantId: 1},
@@ -452,7 +455,7 @@ const generatePurchase = function() {
 }
 
 let purchaseList = []
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < orderNumber; i++) {
   let potentialPurchase = generatePurchase()
   potentialPurchase.id = i + 1
   potentialPurchase.restaurantId = 1
@@ -470,7 +473,7 @@ for (let i = 0; i < purchaseList.length; i++) {
     if (hashOfMenuQty[singleMenuId]) {
       for (let k = 0; k < orderMenuTable.length; k++) {
         if (
-          singleMenuId === orderMenuTable[k].menuId &&
+          singleMenuId === orderMenuTable[k].menuItemId &&
           singlePurchase.id === orderMenuTable[k].orderId
         ) {
           orderMenuTable[k].quantity++
@@ -481,7 +484,7 @@ for (let i = 0; i < purchaseList.length; i++) {
       singleOrderPerMenu = {
         quantity: 1,
         orderId: singlePurchase.id,
-        menuId: singleMenuId
+        menuItemId: singleMenuId
       }
       orderMenuTable.push(singleOrderPerMenu)
     }

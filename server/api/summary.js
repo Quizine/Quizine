@@ -51,13 +51,13 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
-      SELECT menus."menuItemName" as name,
-      SUM("menuOrders" .quantity) as total
+      SELECT "menuItems"."menuItemName" as name,
+      SUM("menuOrders".quantity) as total
       FROM "menuOrders"
-      JOIN menus on menus.id = "menuOrders"."menuId"
+      JOIN "menuItems" on "menuItems".id = "menuOrders"."menuItemId"
       JOIN orders on orders.id = "menuOrders"."orderId" 
       WHERE orders."timeOfPurchase" ::date = $1
-      AND menus."beverageType" isnull
+      AND "menuItems"."beverageType" isnull
       AND orders."restaurantId" = $2
 
       GROUP BY name

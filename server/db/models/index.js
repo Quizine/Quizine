@@ -2,7 +2,7 @@ const User = require('./user')
 const Restaurant = require('./restaurant')
 const Order = require('./order')
 const Waiter = require('./waiter')
-const Menu = require('./menu')
+const MenuItem = require('./menu')
 const {MenuOrder} = require('./menu_order')
 
 /**
@@ -15,14 +15,14 @@ const {MenuOrder} = require('./menu_order')
 Restaurant.hasMany(User) //SO FOREIGN KEY WILL LIVE ON USER
 User.belongsTo(Restaurant)
 Restaurant.hasMany(Order) //SO FOREIGN KEY WILL LIVE ON ORDER
-Restaurant.hasMany(Menu) //SO FOREIGN KEY WILL LIVE ON MENU
+Restaurant.hasMany(MenuItem) //SO FOREIGN KEY WILL LIVE ON MENU
 Restaurant.hasMany(Waiter) //SO FOREIGN KEY WILL LIVE ON WAITER
 Waiter.belongsTo(Restaurant)
-Menu.belongsTo(Restaurant)
+MenuItem.belongsTo(Restaurant)
 Waiter.hasMany(Order) // SO FOREIGN KEY WILL LIVE ON ORDER
 Order.belongsTo(Waiter)
-Order.belongsToMany(Menu, {through: MenuOrder})
-Menu.belongsToMany(Order, {through: MenuOrder})
+Order.belongsToMany(MenuItem, {through: MenuOrder})
+MenuItem.belongsToMany(Order, {through: MenuOrder})
 
 /**
  * We'll export all of our models here, so that any time a module needs a model,
@@ -35,6 +35,6 @@ module.exports = {
   Restaurant,
   Order,
   Waiter,
-  Menu,
+  MenuItem,
   MenuOrder
 }

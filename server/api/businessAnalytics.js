@@ -10,17 +10,17 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT to_char("timeOfPurchase",'Mon') AS mon,
-      menus."mealType",
+      "menuItems"."mealType",
         DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
         SUM("total") AS "monthlyRevenue"
         FROM orders
         join "menuOrders" on "menuOrders"."orderId" = orders.id 
-        join menus on menus.id = "menuOrders"."menuId" 
+        join "menuItems" on "menuItems".id = "menuOrders"."menuItemId" 
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval 
         AND orders."restaurantId" = $2
-        and menus."mealType" is not null
-        GROUP BY mon, m, yyyy, menus."mealType" 
+        and "menuItems"."mealType" is not null
+        GROUP BY mon, m, yyyy, "menuItems"."mealType" 
         ORDER BY m;`
       const year = req.query.year
       const interval = year + ' year'
@@ -162,10 +162,10 @@ router.get(
         const topOrBottom = req.query.topOrBottom
         if (topOrBottom === 'asc') {
           text = `
-          SELECT menus."menuItemName" as name,
+          SELECT "menuItems"."menuItemName" as name,
           SUM("menuOrders" .quantity) as total
           FROM "menuOrders"
-          JOIN menus on menus.id = "menuOrders"."menuId"
+          JOIN "menuItems" on "menuItems".id = "menuOrders"."menuItemId"
           JOIN orders on orders.id = "menuOrders"."orderId"
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
@@ -175,10 +175,10 @@ router.get(
           `
         } else if (topOrBottom === 'desc') {
           text = `
-          SELECT menus."menuItemName" as name,
+          SELECT "menuItems"."menuItemName" as name,
           SUM("menuOrders" .quantity) as total
           FROM "menuOrders"
-          JOIN menus on menus.id = "menuOrders"."menuId"
+          JOIN "menuItems" on "menuItems".id = "menuOrders".menuItemId"
           JOIN orders on orders.id = "menuOrders"."orderId"
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
