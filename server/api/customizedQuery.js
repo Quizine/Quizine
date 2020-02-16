@@ -29,7 +29,8 @@ router.post('/customQuery', async (req, res, next) => {
         } else if (
           key.indexOf('name') >= 0 ||
           key.indexOf('menuItemName') >= 0 ||
-          key.indexOf('Type') >= 0
+          key.indexOf('Type') >= 0 ||
+          key.indexOf('sex') >= 0
         ) {
           queryResults.rows.forEach(row => {
             row[key] = formatItemName(row[key])
@@ -370,8 +371,8 @@ function translateQuery(customQueryArr) {
   if (baseTable === 'menuItemOrders') {
     if (copyOfJoinTablesArray.indexOf('orders') >= 0) {
       translatedQuery.group = [
-        'menuItemOrders.orderId',
-        ...translatedQuery.group
+        ...translatedQuery.group,
+        'menuItemOrders.orderId'
       ]
       translatedQuery.fields.push('menuItemOrders.orderId')
     }
@@ -380,6 +381,8 @@ function translateQuery(customQueryArr) {
   if (!translatedQuery.group && !translatedQuery.group.length) {
     delete translatedQuery.group
   }
+
+  translatedQuery.sort = translatedQuery.group[0]
 
   console.log(`before translated query condition`, translatedQuery.condition)
   if (translatedQuery.condition) {

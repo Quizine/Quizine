@@ -70,7 +70,7 @@ class CustomizedQueryFunc extends Component {
                 </select>
               </div>
             ) : (
-              <h1>{findKey(funcTypeOperators, selectedFunc)}</h1>
+              <h2>{findKey(funcTypeOperators, selectedFunc)}</h2>
             )}
           </div>
         ) : null}
