@@ -3,14 +3,7 @@ import {connect} from 'react-redux'
 import {Line} from 'react-chartjs-2'
 import {getMonthlyRevenueVsLunchVsDinner} from '../../store/businessAnalyticsReducer'
 import clsx from 'clsx'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Divider,
-  Button
-} from '@material-ui/core'
+import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
 class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
   constructor(props) {

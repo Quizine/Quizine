@@ -26,15 +26,25 @@ router.post('/customQuery', async (req, res, next) => {
     const queryResults = await client.query(sql.query, sql.getValuesArray())
     for (let key in queryResults.rows[0]) {
       if (queryResults.rows[0].hasOwnProperty(key)) {
-        console.log('key', key)
         if (key.indexOf('timeOfPurchase') >= 0) {
           queryResults.rows.forEach(row => {
             row[key] = row[key].toString().slice(0, 15)
           })
-        } else if (key.indexOf('age') >= 0) {
+        } else if (
+          key.indexOf('age') >= 0 ||
+          key.indexOf('numberOfGuests') >= 0 ||
+          key.indexOf('quantity') >= 0
+        ) {
           queryResults.rows.forEach(row => {
-            console.log('row ----> ', row[key])
             row[key] = Math.round(row[key])
+          })
+        } else if (key.indexOf('name') >= 0 || key.indexOf('menuItem') >= 0) {
+          queryResults.rows.forEach(row => {
+            row[key] = formatItemName(row[key])
+          })
+        } else {
+          queryResults.rows.forEach(row => {
+            row[key] = Number(row[key]).toFixed(2)
           })
         }
       }
@@ -384,6 +394,12 @@ function extractForeignTableNames(array) {
   return array.map(element => {
     return element.foreign_table_name
   })
+}
+
+function formatItemName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
 }
 
 //COPIED FROM HELPER FUNCTION
