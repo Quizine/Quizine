@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const Menu = db.define('menu', {
+const MenuItem = db.define('menuItem', {
   menuItemName: {
     type: Sequelize.STRING,
     allowNull: false
@@ -27,4 +27,4 @@ const Menu = db.define('menu', {
   }
 })
 
-module.exports = Menu
+module.exports = MenuItem

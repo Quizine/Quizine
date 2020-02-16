@@ -10,21 +10,35 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT to_char("timeOfPurchase",'Mon') AS mon,
-      menus."mealType",
+      "menuItems"."mealType",
         DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
         SUM("total") AS "monthlyRevenue"
         FROM orders
         join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
-        join menus on menus.id = "menuItemOrders"."menuId" 
+        join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId" 
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval 
         AND orders."restaurantId" = $2
-        and menus."mealType" is not null
-        GROUP BY mon, m, yyyy, menus."mealType" 
+        and "menuItems"."mealType" is not null
+        GROUP BY mon, m, yyyy, "menuItems"."mealType" 
         ORDER BY m;`
+      // const text = `SELECT to_char("timeOfPurchase",'Mon') AS mon,
+      // "menuItems"."mealType",
+      //   DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
+      //   EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+      //   SUM("total") AS "monthlyRevenue"
+      //   FROM orders
+      //   join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+      //   join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
+      //   WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      //   AND orders."restaurantId" = $2
+      //   and "menuItems"."mealType" is not null
+      //   GROUP BY mon, m, yyyy, "menuItems"."mealType"
+      //   ORDER BY m;`
       const year = req.query.year
       const interval = year + ' year'
       const values = [interval, req.user.restaurantId]
+      console.log(text, values)
       const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
       const allDateRevenue = {
         lunchMonth: [],
@@ -162,10 +176,11 @@ router.get(
         const topOrBottom = req.query.topOrBottom
         if (topOrBottom === 'asc') {
           text = `
-          SELECT menus."menuItemName" as name,
+
+          SELECT "menuItems"."menuItemName" as name,
           SUM("menuItemOrders" .quantity) as total
           FROM "menuItemOrders"
-          JOIN menus on menus.id = "menuItemOrders"."menuId"
+          JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
           JOIN orders on orders.id = "menuItemOrders"."orderId"
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
@@ -175,10 +190,10 @@ router.get(
           `
         } else if (topOrBottom === 'desc') {
           text = `
-          SELECT menus."menuItemName" as name,
-          SUM("menuItemOrders" .quantity) as total
+          SELECT "menuItems"."menuItemName" as name,
+          SUM("menuItemOrders".quantity) as total
           FROM "menuItemOrders"
-          JOIN menus on menus.id = "menuItemOrders"."menuId"
+          JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
           JOIN orders on orders.id = "menuItemOrders"."orderId"
           WHERE orders."timeOfPurchase" >= NOW() - $1::interval
           AND orders."restaurantId" = $2
@@ -192,6 +207,7 @@ router.get(
         const values = [timeInterval, restaurantId]
         //TEXT WILL BE UNDEFINED SHOULD TOP OR BOTTOM BE ANYTHING OTHER THAN ASC OR DESC
         //SO ESSENTIALLY SANITIZING THE DATA
+
         const menuSalesNumbers = await client.query(text, values)
         const [xAxis, yAxis] = axisMapping(
           menuSalesNumbers.rows,

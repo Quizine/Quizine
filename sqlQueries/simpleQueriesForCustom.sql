@@ -27,31 +27,32 @@ where sex = 'female'
 
 
 select "menuItemName"
-from menus
+from "menuItems"
 where "beverageType"
 notnull ;
 
 
 select "menuItemName"
-from menus
+from "menuItems"
 where "beverageType" = 'alcohol';
 
 select "menuItemName"
-from menus
+from "menuItems"
 where "mealType" = '${lunch}';
 
 select distinct "menuItemName"
-from menus
+from "menuItems"
 where "foodType" = '${foodType}';
 
 select "menuItemName" , price
-from menus
+from "menuItems"
 order by price desc;
 
-SELECT menus."menuItemName" as name,
-sum("menuItemOrders" .quantity) as total
+SELECT "menuItems"."menuItemName" as name,
+    sum("menuItemOrders".quantity) as total
 from "menuItemOrders"
-join menus on menus.id = "menuItemOrders"."menuId"
+    join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+
 group by name
 order by total desc;
 
