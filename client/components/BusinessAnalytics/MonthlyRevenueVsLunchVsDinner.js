@@ -66,7 +66,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
                 <select onChange={this.handleChange} className="select-css">
                   <option value="oneYear">Last Year</option>
                   <option value="twoYears">Last 2 Years</option>
-                  <option value="allPeriod">All Time</option>
+                  <option value="allPeriod">All History</option>
                 </select>
               }
               title="Lunch vs Dinner Revenue Comparison ($)"
@@ -83,7 +83,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
                           display: true,
                           ticks: {
                             suggestedMin: 30000,
-                            suggestedMax: 100000
+                            suggestedMax: 70000
                           }
                         }
                       ]

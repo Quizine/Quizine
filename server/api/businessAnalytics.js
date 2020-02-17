@@ -13,7 +13,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       "menuItems"."mealType",
         DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-        SUM("revenue") AS "monthlyRevenue"
+        SUM("revenue")/7 AS "monthlyRevenue"
         FROM orders
         join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
         join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId" 
@@ -26,7 +26,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       // "menuItems"."mealType",
       //   DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
       //   EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-      //   SUM("total") AS "monthlyRevenue"
+      //   SUM("revenue") AS "monthlyRevenue"
       //   FROM orders
       //   join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
       //   join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
@@ -36,9 +36,10 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       //   GROUP BY mon, m, yyyy, "menuItems"."mealType"
       //   ORDER BY m;`
       const year = req.query.year
+      // const interval = `${year} year`
       const interval = `${year} year + ${new Date().getDate()} days`
       const values = [interval, req.user.restaurantId]
-      console.log(text, values)
+      //console.log(text, values)
       const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
       const allDateRevenue = {
         lunchMonth: [],
