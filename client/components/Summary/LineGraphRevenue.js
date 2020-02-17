@@ -94,7 +94,7 @@ class LineGraphRevenue extends Component {
                         {
                           display: true,
                           ticks: {
-                            suggestedMin: 50000,
+                            suggestedMin: 20000,
                             suggestedMax: 100000
                           }
                         }
