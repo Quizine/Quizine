@@ -168,7 +168,6 @@ router.get('/revenueVsTime', async (req, res, next) => {
         allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
         allDateRevenue.revenue.push(Number(row.monthlyRevenue))
       })
-      console.log('ALLDATESREV', allDateRevenue)
       res.json(allDateRevenue)
     }
   } catch (error) {
