@@ -82,7 +82,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
                         {
                           display: true,
                           ticks: {
-                            suggestedMin: 30000,
+                            suggestedMin: 7000,
                             suggestedMax: 70000
                           }
                         }

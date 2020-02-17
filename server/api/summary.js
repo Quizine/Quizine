@@ -158,7 +158,9 @@ router.get('/revenueVsTime', async (req, res, next) => {
       // didn't find a way to add todays date to interval in the same query so used JS
       const year = req.query.year
       // const interval = year + ' year'
-      const interval = `${year} year + ${new Date().getDate()} days`
+      // const interval = `${year} year + ${new Date().getDate()} days`
+      const interval = `${year} year + ${new Date().getDate() - 1} days`
+
       const values = [interval, req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
       const allDateRevenue = {month: [], revenue: []}
