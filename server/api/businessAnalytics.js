@@ -13,7 +13,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       "menuItems"."mealType",
         DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-        SUM("revenue") AS "monthlyRevenue"
+        SUM("revenue")/7 AS "monthlyRevenue"
         FROM orders
         join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
         join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId" 
@@ -50,10 +50,10 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       monthlyRevenueVsLunchVsDinner.rows.forEach((row, idx) => {
         if (idx % 2 === 0) {
           allDateRevenue.lunchMonth.push(`${row.mon} ${String(row.yyyy)}`)
-          allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue / 7))
+          allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue))
         } else {
           allDateRevenue.dinnerMonth.push(`${row.mon} ${String(row.yyyy)}`)
-          allDateRevenue.dinnerRevenue.push(Number(row.monthlyRevenue / 7))
+          allDateRevenue.dinnerRevenue.push(Number(row.monthlyRevenue))
         }
       })
       res.json(allDateRevenue)
