@@ -17,7 +17,8 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
         FROM orders
         join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
         join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId" 
-        WHERE orders."timeOfPurchase" >= NOW() - $1::interval 
+        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        and orders."timeOfPurchase" <= NOW() 
         AND orders."restaurantId" = $2
         and "menuItems"."mealType" is not null
         GROUP BY mon, m, yyyy, "menuItems"."mealType" 
@@ -37,9 +38,8 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       //   ORDER BY m;`
       const year = req.query.year
       // const interval = `${year} year`
-      const interval = `${year} year + ${new Date().getDate()} days`
+      const interval = `${year} year + ${new Date().getDate() - 1} days`
       const values = [interval, req.user.restaurantId]
-      //console.log(text, values)
       const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
       const allDateRevenue = {
         lunchMonth: [],
