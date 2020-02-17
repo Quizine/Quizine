@@ -146,15 +146,19 @@ router.get('/revenueVsTime', async (req, res, next) => {
       SELECT to_char("timeOfPurchase",'Mon') AS mon,
       DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
       EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+      EXTRACT(DAY FROM NOW()) AS daynow,
       SUM("revenue") AS "monthlyRevenue"
       FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      AND orders."timeOfPurchase" <= NOW()
       AND orders."restaurantId" = $2
       GROUP BY mon, m, yyyy
       ORDER BY m;
       `
+      // didn't find a way to add todays date to interval in the same query so used JS
       const year = req.query.year
-      const interval = year + ' year'
+      // const interval = year + ' year'
+      const interval = `${year} year + ${new Date().getDate()} days`
       const values = [interval, req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
       const allDateRevenue = {month: [], revenue: []}
@@ -162,6 +166,7 @@ router.get('/revenueVsTime', async (req, res, next) => {
         allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
         allDateRevenue.revenue.push(Number(row.monthlyRevenue))
       })
+      console.log('ALLDATESREV', allDateRevenue)
       res.json(allDateRevenue)
     }
   } catch (error) {

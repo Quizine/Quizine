@@ -36,7 +36,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       //   GROUP BY mon, m, yyyy, "menuItems"."mealType"
       //   ORDER BY m;`
       const year = req.query.year
-      const interval = year + ' year'
+      const interval = `${year} year + ${new Date().getDate()} days`
       const values = [interval, req.user.restaurantId]
       console.log(text, values)
       const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
