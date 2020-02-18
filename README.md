@@ -35,3 +35,5 @@ Technical challenges:
 
 ![Technical Challenge Image](public/technicalChallenges.png)
 
+Video link:
+https://www.youtube.com/watch?v=FWVl3SgF2sc&list=PLx0iOsdUOUmkGPFdAt5kHKxGQw_YseAQI&index=18&t=0s
