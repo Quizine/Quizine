@@ -90,7 +90,6 @@ export const getRestaurantInfo = () => async dispatch => {
 export const getNumberOfWaiters = () => async dispatch => {
   try {
     const {data} = await axios.get('/api/summary/numberOfWaiters')
-    console.log('staff----->', data)
     dispatch(gotNumberOfWaiters(data))
   } catch (error) {
     console.error(error)
@@ -138,7 +137,6 @@ export const getCalendarData = date => async dispatch => {
 export const getDOWAnalysisTable = () => async dispatch => {
   try {
     const {data} = await axios.get('/api/summary/DOWAnalysisTable')
-    console.log('table data: ', data)
     const correctedDataTypeArr = data.map(row => {
       const correctedRow = {}
       for (let key in row) {
@@ -162,7 +160,6 @@ export const getYelpRating = (restaurantName, location) => async dispatch => {
   // let Promise = require("bluebird");
   try {
     if (!process.env.REACT_APP_API_KEY) {
-      console.log('YELP API KEY NOT FOUND')
       require('../../secrets')
     }
     const apiKey = process.env.REACT_APP_API_KEY
@@ -182,25 +179,6 @@ export const getYelpRating = (restaurantName, location) => async dispatch => {
   } catch (error) {
     console.error(error)
   }
-
-  // const params = {location};
-  // const urlProxy = 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search';
-  // Promise.props({
-  //   local: axios({
-  //     url: urlProxy,
-  //     params: params,
-  //     json: true,
-  //     method: 'GET',
-  //     withCredentials: true,
-  //     headers: {
-  //                 'user-key': apiKey,
-  //                 'Accept': 'application/json',
-  //                 'Content-Type': 'application/json',
-  //                 'Origin': 'http://localhost:8080/summary',
-  //                 // 'Access-Control-Allow-Headers': '*',
-  //                 'Access-Control-Allow-Origin': 'http://localhost:8080/summary',
-  //             },
-  //   })}).then(data => dispatch(gotYelpRating(data.businesses[0].rating)))
 }
 
 /**

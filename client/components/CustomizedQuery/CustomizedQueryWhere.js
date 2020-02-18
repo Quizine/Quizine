@@ -12,15 +12,7 @@ class CustomizedQueryWhere extends Component {
     this.state = {
       selectedValueOption: []
     }
-    // this.handleValueOptionChange = this.handleValueOptionChange.bind(this)
   }
-
-  // handleValueOptionChange(event) {
-  //   this.setState({
-  //     selectedValueOption: [...selectedValueOption, event.target.value]
-  //   })
-  //   this.props.updateOptionForCustomQuery(this.props.selectedTable, this.props.selectedColumn, this.state.selectedValueOption)
-  // }
 
   render() {
     const {selectedTable, selectedColumn, metaData} = this.props

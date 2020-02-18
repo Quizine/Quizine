@@ -1,7 +1,4 @@
 import React, {Component} from 'react'
-// import {connect} from 'react-redux'
-// import {getDOWAnalysisTable} from '../../store/summaryReducer'
-
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import {lighten, makeStyles} from '@material-ui/core/styles'
@@ -218,26 +215,6 @@ export default function EnhancedTable(props) {
     setSelected([])
   }
 
-  // const handleClick = (event, name) => {
-  //   const selectedIndex = selected.indexOf(name)
-  //   let newSelected = []
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name)
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1))
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1))
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1)
-  //     )
-  //   }
-
-  //   setSelected(newSelected)
-  // }
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
   }
@@ -325,10 +302,6 @@ export default function EnhancedTable(props) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
     </div>
   )
 }

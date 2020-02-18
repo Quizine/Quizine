@@ -492,16 +492,6 @@ function removeTableFunc(customQuery) {
   }
   return updatedQuery
 }
-// function removeColumnFunc(customQuery, tableName) {
-//   const updatedQuery = customQuery.map(table => {
-//    const existingTableName = Object.keys(table)[0]
-//    if (tableName === existingTableName){
-//      if (table[existingTableName.length]){
-
-//      }
-//    }
-//   })
-// }
 
 function removeColumnFunc(customQuery, tableName) {
   const updatedQuery = customQuery.map(table => {

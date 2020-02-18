@@ -19,7 +19,6 @@ class TimeFrameField extends Component {
 
   async handleChange(event) {
     await this.setState({selectedInterval: [event.target.value]})
-    console.log('TIMEFRAME----->', this.state.selectedInterval)
     this.props.updateOptionForCustomQuery(
       this.props.selectedTable,
       this.props.selectedColumn,
