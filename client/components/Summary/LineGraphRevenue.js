@@ -13,13 +13,13 @@ import {
 } from '@material-ui/core'
 
 //UTILITY FUNCTIONS:
-Array.prototype.max = function() {
-  return Math.max.apply(null, this)
-}
+// Array.prototype.max = function() {
+//   return Math.max.apply(null, this)
+// }
 
-Array.prototype.min = function() {
-  return Math.min.apply(null, this)
-}
+// Array.prototype.min = function() {
+//   return Math.min.apply(null, this)
+// }
 
 class LineGraphRevenue extends Component {
   constructor(props) {
@@ -80,10 +80,6 @@ class LineGraphRevenue extends Component {
                 <Line
                   data={chartData}
                   options={{
-                    //                       title: {
-                    //                         display: true,
-                    //                         text: 'REVENUE vs TIME'
-                    //                       },
                     plugins: {
                       datalabels: {
                         display: false

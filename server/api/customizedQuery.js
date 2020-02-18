@@ -51,7 +51,6 @@ router.post('/customQuery', async (req, res, next) => {
         }
       }
     }
-    console.log('query results: ', queryResults)
     res.json(queryResults)
   } catch (error) {
     next(error)
@@ -270,7 +269,6 @@ function translateQuery(customQueryArr) {
       }
     })
   }
-  console.log(`conditions:`, conditions)
   let transformedConditions = {}
   if (Object.keys(conditions).length > 1) {
     transformedConditions.$and = []
@@ -355,12 +353,10 @@ function translateQuery(customQueryArr) {
       }
     } else if (conditions[columnName].values.length === 1) {
       transformedConditions = {[columnName]: conditions[columnName].values[0]}
-      console.log(`what is here???`, transformedConditions)
     } else if (conditions[columnName].values.length === 0) {
       transformedConditions = {[columnName]: {$isNot: null}}
     }
   }
-  console.log('transformed condition: ', transformedConditions)
   translatedQuery.type = type
   translatedQuery.fields = columns
   translatedQuery.table = baseTable
@@ -384,7 +380,6 @@ function translateQuery(customQueryArr) {
 
   translatedQuery.sort = translatedQuery.group[0]
 
-  console.log(`before translated query condition`, translatedQuery.condition)
   if (translatedQuery.condition) {
     if (!Object.keys(translatedQuery.condition).length) {
       delete translatedQuery.condition
@@ -408,79 +403,3 @@ function formatItemName(name) {
   name = name[0].toUpperCase() + name.slice(1)
   return name
 }
-
-//COPIED FROM HELPER FUNCTION
-// if (joinTables.length) {
-//   joinTables.forEach((tableName, idx) => {
-//     if (idx === 0) {
-//       if (
-//         (baseTable === 'menus' && tableName === 'orders') ||
-//         (baseTable === 'orders' && tableName === 'menus')
-//       ) {
-//         transformedJoinTables.menuItemOrders = {
-//           on: {
-//             [`${baseTable}.id`]: `"menuItemOrders".${baseTable.slice(
-//               0,
-//               baseTable.length - 1
-//             )}Id`
-//           }
-//         }
-//         transformedJoinTables[tableName] = {
-//           on: {
-//             [`${tableName}.id`]: `"menuItemOrders".${tableName.slice(
-//               0,
-//               tableName.length - 1
-//             )}Id`
-//           }
-//         }
-//       } else {
-//         transformedJoinTables[tableName] = {
-//           on: {
-//             [`${tableName}.id`]: `${baseTable}.${tableName.slice(
-//               0,
-//               tableName.length - 1
-//             )}Id`
-//           }
-//         }
-//       }
-//     } else {
-//       transformedJoinTables[tableName] = {
-//         on: {
-//           [`${tableName}.id`]: `${joinTables[idx - 1]}.${tableName.slice(
-//             0,
-//             tableName.length - 1
-//           )}Id`
-//         }
-//       }
-//     }
-//   })
-// }
-
-//COPIED FROM FOREIGN TABLE ROUTE
-// if (
-//   req.params.tableName === 'orders' ||
-//   req.params.tableName === 'menus'
-// ) {
-//   const text = `
-//   SELECT
-//   tc.table_schema,
-//   tc.constraint_name,
-//   tc.table_name,
-//   kcu.column_name,
-//   ccu.table_schema AS foreign_table_schema,
-//   ccu.table_name AS foreign_table_name,
-//   ccu.column_name AS foreign_column_name
-//   FROM information_schema.table_constraints AS tc
-//   JOIN information_schema.key_column_usage AS kcu
-//   ON tc.constraint_name = kcu.constraint_name
-//   AND tc.table_schema = kcu.table_schema
-//   JOIN information_schema.constraint_column_usage AS ccu
-//   ON ccu.constraint_name = tc.constraint_name
-//   AND ccu.table_schema = tc.table_schema
-//   WHERE tc.constraint_type = 'FOREIGN KEY'
-//   AND tc.table_name='menuItemOrders'
-//   AND ccu.table_name <> $1;`
-//   const foreignTableNameFromMenuItemOrders = await client.query(text, values)
-//   const response = foreignTableNamesFromFK.rows.concat(
-//     foreignTableNameFromMenuItemOrders.rows
-//   )

@@ -45,24 +45,6 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-// const subPages = [
-//   {
-//     title: 'SUMMARY',
-//     href: '/businessanalytics/summary',
-//     icon: <DashboardIcon />
-//   },
-//   {
-//     title: 'BUSINESS ANALYTICS',
-//     href: '/businessanalytics',
-//     icon: <InsertChartOutlinedIcon />
-//   },
-//   {
-//     title: 'CUSTOM ANALYTICS',
-//     href: '/businessanalytics/customizedQuery',
-//     icon: <FunctionsIcon />
-//   }
-// ]
-
 const CustomRouterLink = forwardRef((props, ref) => (
   <div ref={ref} style={{flexGrow: 1}}>
     <RouterLink {...props} />
@@ -87,21 +69,6 @@ const SidebarNav = props => {
             <div className={classes.icon}>{page.icon}</div>
             {page.title}
           </Button>
-          {/* {page.subPage ? (
-            // {page.subPage.map(subPage => (
-            <ListItem className={classes.item} disableGutters key={page.title}>
-              <Button
-                activeClassName={classes.active}
-                className={classes.button}
-                component={CustomRouterLink}
-                to={page.href}
-              >
-                <div className={classes.icon}>{page.icon}</div>
-                {page.title}
-              </Button>
-            </ListItem>
-          ) : // ))}
-          null} */}
         </ListItem>
       ))}
     </List>

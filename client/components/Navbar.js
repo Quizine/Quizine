@@ -4,7 +4,6 @@ import {connect} from 'react-redux'
 import {logout} from '../store'
 
 //BELOW IS MATERIAL UI, ABOVE IS NORMAL REACT
-// import Link from '@material-ui/core/Link' //NOT WORKING FOR NOW
 import {makeStyles} from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'

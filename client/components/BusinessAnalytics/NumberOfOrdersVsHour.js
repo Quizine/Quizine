@@ -14,7 +14,7 @@ import {
   Button
 } from '@material-ui/core'
 
-//UTILITY FUNCTIONS:
+// UTILITY FUNCTIONS:
 Array.prototype.max = function() {
   return Math.max.apply(null, this)
 }

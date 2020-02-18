@@ -91,11 +91,6 @@ class CustomizedQueryPage extends Component {
       columnArrayMapping(lastSelectedTable, customQuery).length
     //End of logic for Add and Remove Buttons
 
-    //for submit button
-    const lastSelectedTableObj = customQuery.length
-      ? customQuery[customQuery.length - 1]
-      : null
-
     return (
       <div className="query-cont">
         <div className="query-table">

@@ -56,6 +56,7 @@ const AuthForm = ({name, displayName, handleSubmit, error}) => {
                 noValidate
               >
                 <TextField
+                  defaultValue="nathan@email.com"
                   variant="standard"
                   margin="normal"
                   required
@@ -67,6 +68,7 @@ const AuthForm = ({name, displayName, handleSubmit, error}) => {
                   autoFocus
                 />
                 <TextField
+                  defaultValue="123"
                   variant="standard"
                   margin="normal"
                   required

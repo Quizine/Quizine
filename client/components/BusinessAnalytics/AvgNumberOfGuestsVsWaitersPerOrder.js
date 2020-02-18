@@ -14,15 +14,6 @@ import {
   Button
 } from '@material-ui/core'
 
-//these were used for dynamic rendering
-// Array.prototype.max = function() {
-//   return Math.max.apply(null, this)
-// }
-
-// Array.prototype.min = function() {
-//   return Math.min.apply(null, this)
-// }
-
 class AvgNumberOfGuestsVsWaitersPerOrder extends Component {
   constructor(props) {
     super(props)
