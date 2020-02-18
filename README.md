@@ -32,4 +32,6 @@ Technical challenges:
 * For this reason, we developed a n ary tree like data structure to effectively query metadata that consists of table names, column names, and datatypes, and display it on the front end while maintaining the hierarchy of data. And also, we are sending a custom query from the user to backend to generate a sql query, and send the results back to front end.
 * Due to the complexity of our data structure, it was challenging to serialize custom query directly to sql code, and therefore, we developed a function to translate custom query to serializable object to sql code.
 
+
 ![Technical Challenge Image](public/technicalChallenges.png)
+
