@@ -2,7 +2,7 @@
 const {normalDistributionFunc} = require('./utilities')
 
 //DATABASE SEED SCRIPT VARIABLES:
-const orderNumber = 500
+const orderNumber = 100
 
 //for seeding waiters
 let server = [
