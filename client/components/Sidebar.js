@@ -24,6 +24,11 @@ const pages = [
     }
   },
   {
+    title: 'REVENUE ANALYTICS',
+    href: '/revenueanalytics',
+    icon: <InsertChartOutlinedIcon />
+  },
+  {
     title: 'CUSTOM ANALYTICS',
     href: '/customizedQuery',
     icon: <FunctionsIcon />
