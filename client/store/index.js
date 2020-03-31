@@ -6,12 +6,14 @@ import user from './userReducer'
 import summary from './summaryReducer'
 import businessAnalytics from './businessAnalyticsReducer'
 import customizedQuery from './customizedQueryReducer'
+import revenueAnalytics from './revenueAnalyticsReducer'
 
 const reducer = combineReducers({
   user,
   summary,
   businessAnalytics,
-  customizedQuery
+  customizedQuery,
+  revenueAnalytics
 })
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))

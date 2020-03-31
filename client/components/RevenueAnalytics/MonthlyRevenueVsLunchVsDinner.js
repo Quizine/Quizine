@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Line} from 'react-chartjs-2'
-import {getMonthlyRevenueVsLunchVsDinner} from '../../store/businessAnalyticsReducer'
+import {getMonthlyRevenueVsLunchVsDinner} from '../../store/revenueAnalyticsReducer'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
@@ -105,7 +105,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
 }
 
 const mapStateToProps = state => {
-  return {lineChartData: state.businessAnalytics.monthlyRevenueVsLunchVsDinner}
+  return {lineChartData: state.revenueAnalytics.monthlyRevenueVsLunchVsDinner}
 }
 
 const mapDispatchToProps = dispatch => {

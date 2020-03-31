@@ -17,6 +17,7 @@ router.use('/users', require('./users'))
 router.use('/businessAnalytics', require('./businessAnalytics'))
 router.use('/summary', require('./summary'))
 router.use('/customizedQuery', require('./customizedQuery'))
+router.use('/revenueAnalytics', require('./revenueAnalytics'))
 
 router.use((req, res, next) => {
   const error = new Error('Not Found')
