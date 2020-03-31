@@ -19,7 +19,7 @@ class WaiterPerformance extends Component {
     super(props)
 
     this.state = {
-      selectedOption: 'month'
+      selectedOption: '30'
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -30,18 +30,12 @@ class WaiterPerformance extends Component {
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (
-      !Object.keys(this.props.tipPercentageVsWaiters[event.target.value]).length
-    ) {
-      this.props.loadTipPercentageVsWaiters(event.target.value)
-    }
+    this.props.loadTipPercentageVsWaiters(event.target.value)
   }
 
   render() {
-    const labels = this.props.tipPercentageVsWaiters[this.state.selectedOption]
-      .xAxis
-    const yAxis = this.props.tipPercentageVsWaiters[this.state.selectedOption]
-      .yAxis
+    const labels = this.props.tipPercentageVsWaiters.days.xAxis
+    const yAxis = this.props.tipPercentageVsWaiters.days.yAxis
 
     const chartData = {
       labels: labels,
@@ -66,11 +60,11 @@ class WaiterPerformance extends Component {
                   <select
                     onChange={this.handleChange}
                     className="select-css"
-                    defaultValue="month"
+                    defaultValue="30"
                   >
-                    <option value="month">Month</option>
-                    <option value="year">Year</option>
-                    <option value="week">Week</option>
+                    <option value="365">Last 365 Days</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="7">Last 7 Days</option>
                   </select>
                 </div>
               }

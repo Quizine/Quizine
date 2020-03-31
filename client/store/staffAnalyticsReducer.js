@@ -13,9 +13,7 @@ const initialState = {
   tipPercentageVsWaiters: {
     xAxis: [],
     yAxis: [],
-    year: {},
-    month: {},
-    week: {}
+    days: {}
   }
 }
 
@@ -56,7 +54,7 @@ export default function(state = initialState, action) {
           ...state.tipPercentageVsWaiters,
           xAxis: action.results.xAxis,
           yAxis: action.results.yAxis,
-          [`${action.timeInterval}`]: action.results
+          days: action.results
         }
       }
     default:
