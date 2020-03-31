@@ -1,6 +1,7 @@
 import React from 'react'
 import {withRouter} from 'react-router-dom'
 import DashboardIcon from '@material-ui/icons/Dashboard'
+import PeopleIcon from '@material-ui/icons/People'
 import FunctionsIcon from '@material-ui/icons/Functions'
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined'
 import SidebarNav from './SidebarNav'
@@ -15,7 +16,7 @@ const pages = [
   },
   {
     title: 'BUSINESS ANALYTICS',
-    href: '/businessanalytics',
+    href: '/businessAnalytics',
     icon: <InsertChartOutlinedIcon />,
     subPage: {
       title: 'HOME',
@@ -27,6 +28,11 @@ const pages = [
     title: 'REVENUE ANALYTICS',
     href: '/revenueanalytics',
     icon: <InsertChartOutlinedIcon />
+  },{
+    title: 'STAFF ANALYTICS',
+    href: '/staffAnalytics',
+    icon: <PeopleIcon />
+
   },
   {
     title: 'CUSTOM ANALYTICS',

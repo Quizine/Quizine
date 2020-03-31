@@ -11,7 +11,11 @@ import {
   WelcomePage,
   Sidebar,
   BusinessAnalytics,
-  RevenueAnalytics
+
+  RevenueAnalytics,
+
+  StaffAnalytics
+
 } from './components'
 import {me} from './store'
 /**
@@ -34,7 +38,11 @@ class Routes extends Component {
           <Route path="/customizedQuery" component={CustomizedQueryContainer} />
           <Route path="/summary" component={Summary} />
           <Route path="/businessAnalytics" component={BusinessAnalytics} />
+
           <Route path="/revenueAnalytics" component={RevenueAnalytics} />
+
+          <Route path="/staffAnalytics" component={StaffAnalytics} />
+
         </Switch>
       </div>
     ) : (
