@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getTipPercentageVsWaiters} from '../../store/businessAnalyticsReducer'
+import {getTipPercentageVsWaiters} from '../../store/staffAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
@@ -116,7 +116,7 @@ class WaiterPerformance extends Component {
 
 const mapStateToProps = state => {
   return {
-    tipPercentageVsWaiters: state.businessAnalytics.tipPercentageVsWaiters
+    tipPercentageVsWaiters: state.staffAnalytics.tipPercentageVsWaiters
   }
 }
 
