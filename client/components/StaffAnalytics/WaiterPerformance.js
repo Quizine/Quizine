@@ -65,6 +65,7 @@ class WaiterPerformance extends Component {
                     <option value="365">Last 365 Days</option>
                     <option value="30">Last 30 Days</option>
                     <option value="7">Last 7 Days</option>
+                    <option value="custom">Custom Dates</option>
                   </select>
                 </div>
               }
@@ -91,7 +92,7 @@ class WaiterPerformance extends Component {
                         {
                           display: true,
                           ticks: {
-                            suggestedMin: tipPercentage.min() * 0.8,
+                            suggestedMin: 0,
                             suggestedMax: tipPercentage.max() * 1.1
                           }
                         }
