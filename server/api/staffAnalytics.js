@@ -15,7 +15,7 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
       AND waiters."restaurantId" = $2
       GROUP BY waiters.name
       ORDER BY "averageTipPercentage" DESC;`
-      const timeInterval = '1 ' + req.query.timeInterval
+      const timeInterval = req.query.timeInterval + ' days'
       const values = [timeInterval, req.user.restaurantId]
       const tipPercentageByWaiters = await client.query(text, values)
       const [xAxis, yAxis] = axisMapping(
