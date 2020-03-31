@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getAvgRevenuePerGuestVsDOW} from '../../store/businessAnalyticsReducer'
+import {getAvgRevenuePerGuestVsDOW} from '../../store/revenueAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
@@ -105,7 +105,7 @@ class AvgRevenuePerGuestVsDOW extends Component {
 
 const mapStateToProps = state => {
   return {
-    avgRevenuePerGuestVsDOW: state.businessAnalytics.avgRevenuePerGuestVsDOW
+    avgRevenuePerGuestVsDOW: state.revenueAnalytics.avgRevenuePerGuestVsDOW
   }
 }
 
