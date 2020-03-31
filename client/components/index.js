@@ -14,4 +14,5 @@ export {
 export {
   default as BusinessAnalytics
 } from './BusinessAnalytics/BusinessAnalyticsPage'
+export {default as StaffAnalytics} from './StaffAnalytics/StaffAnalyticsPage'
 export {Login, Signup} from './AuthForm'
