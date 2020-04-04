@@ -1,0 +1,8 @@
++ react-dom@16.13.1
++ react@16.13.1
++ moment@2.24.0
++ react-dates@21.8.0
++ react-addons-shallow-compare@15.6.2
+added 10 packages from 83 contributors, updated 4 packages and audited 14134 packages in 12.049s
+found 351 vulnerabilities (349 low, 2 moderate)
+  run `npm audit fix` to fix them, or `npm audit` for details
