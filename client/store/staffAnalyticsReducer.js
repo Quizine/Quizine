@@ -4,7 +4,8 @@ import axios from 'axios'
  * ACTION TYPES
  */
 
-const GET_TIP_PERCENTAGE_VS_WAITERS = 'GET_TIP_PERCENTAGE_VS_WAITERS'
+const GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL =
+  'GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL'
 
 /**
  * INITIAL STATE
@@ -21,8 +22,8 @@ const initialState = {
  * ACTION CREATORS
  */
 
-const gotTipPercentageVsWaiters = (results, timeInterval) => ({
-  type: GET_TIP_PERCENTAGE_VS_WAITERS,
+const gotTipPercentageVsWaitersInterval = (results, timeInterval) => ({
+  type: GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL,
   results,
   timeInterval
 })
@@ -31,12 +32,12 @@ const gotTipPercentageVsWaiters = (results, timeInterval) => ({
  * THUNK CREATORS
  */
 
-export const getTipPercentageVsWaiters = timeInterval => async dispatch => {
+export const getTipPercentageVsWaitersInterval = timeInterval => async dispatch => {
   try {
     const res = await axios.get('/api/staffAnalytics/tipPercentageVsWaiters', {
       params: {timeInterval}
     })
-    dispatch(gotTipPercentageVsWaiters(res.data, timeInterval))
+    dispatch(gotTipPercentageVsWaitersInterval(res.data, timeInterval))
   } catch (err) {
     console.error(err)
   }
@@ -47,11 +48,11 @@ export const getTipPercentageVsWaiters = timeInterval => async dispatch => {
  */
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_TIP_PERCENTAGE_VS_WAITERS:
+    case GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL:
       return {
         ...state,
         tipPercentageVsWaiters: {
-          ...state.tipPercentageVsWaiters,
+          ...state.tipPercentageVsWaitersInterval,
           xAxis: action.results.xAxis,
           yAxis: action.results.yAxis,
           days: action.results

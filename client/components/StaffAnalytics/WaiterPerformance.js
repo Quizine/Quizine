@@ -2,7 +2,7 @@ import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getTipPercentageVsWaiters} from '../../store/staffAnalyticsReducer'
+import {getTipPercentageVsWaitersInterval} from '../../store/staffAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
@@ -17,6 +17,7 @@ import {
   Button
 } from '@material-ui/core'
 import moment from 'moment'
+import {isInclusivelyBeforeDay} from 'react-dates'
 
 class WaiterPerformance extends Component {
   constructor(props) {
@@ -26,25 +27,35 @@ class WaiterPerformance extends Component {
       selectedOption: '30',
       startDate: null,
       endDate: null,
-      focusedInput: [moment('2019/04/08'), moment('2019/05/08')]
+      focusedInput: null
     }
     this.handleChange = this.handleChange.bind(this)
-    this.setDateRange = this.setDateRange.bind(globalThis)
+    this.handleDateChange = this.handleDateChange.bind(this)
   }
 
   componentDidMount() {
-    this.props.loadTipPercentageVsWaiters(this.state.selectedOption)
-  }
-
-  setDateRange() {
-    // if (this.state.endDate && this.state.endDate > moment()) {
-    return false
-    // }
+    this.props.loadTipPercentageVsWaitersInterval(this.state.selectedOption)
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    this.props.loadTipPercentageVsWaiters(event.target.value)
+    if (event.target.value !== 'custom') {
+      this.props.loadTipPercentageVsWaitersInterval(event.target.value)
+    }
+  }
+
+  async handleDateChange({startDate, endDate}) {
+    await this.setState({
+      startDate,
+      endDate
+    })
+    if (this.state.startDate && this.state.endDate) {
+      const formattedStartDate =
+        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+      const formattedEndDate =
+        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+    }
+    //thunk
   }
 
   render() {
@@ -61,8 +72,13 @@ class WaiterPerformance extends Component {
         }
       ]
     }
+
     const tipPercentage = chartData.datasets[0].data
-    console.log('STATE', this.state)
+    console.log(
+      'STATE',
+      this.state.endDate &&
+        this.state.endDate.format('YYYY-MM-DD') + ' 00:00:00'
+    )
     if (!tipPercentage) {
       return <h6>loading...</h6>
     } else {
@@ -70,19 +86,23 @@ class WaiterPerformance extends Component {
         <div className="peak-time-div">
           <div>
             <DateRangePicker
-              //   showDefaultInputIcon={true}
-              //   minimumNights={1}
+              showDefaultInputIcon={true}
               showClearDates={true}
-              isOutsideRange={() => this.setDateRange()}
+              isOutsideRange={day =>
+                day.isAfter(moment()) ||
+                day.isBefore(moment().subtract(365 * 2, 'days'))
+              }
               reopenPickerOnClearDates={true}
-              //   isOutsideRange={() => false}
               startDate={this.state.startDate} // momentPropTypes.momentObj or null,
               startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
               endDate={this.state.endDate} // momentPropTypes.momentObj or null,
               endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
               onDatesChange={({startDate, endDate}) =>
-                this.setState({startDate, endDate})
+                this.handleDateChange({startDate, endDate})
               } // PropTypes.func.isRequired,
+              //   onDatesChange={({startDate, endDate}) =>
+              //     this.setState({startDate, endDate})
+              //   } // PropTypes.func.isRequired,
               focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
               onFocusChange={focusedInput => this.setState({focusedInput})} // PropTypes.func.isRequired,
             />
@@ -153,8 +173,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadTipPercentageVsWaiters(timeInterval) {
-      dispatch(getTipPercentageVsWaiters(timeInterval))
+    loadTipPercentageVsWaitersInterval(timeInterval) {
+      dispatch(getTipPercentageVsWaitersInterval(timeInterval))
     }
   }
 }
