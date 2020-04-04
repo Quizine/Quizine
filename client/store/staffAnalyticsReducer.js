@@ -40,11 +40,9 @@ export const getTipPercentageVsWaitersInterval = (
   waiterNames = []
 ) => async dispatch => {
   try {
-    console.log('what is interval: ', waiterNames)
     const res = await axios.get('/api/staffAnalytics/tipPercentageVsWaiters', {
       params: {timeInterval, waiterNames}
     })
-    console.log('what is response: ', res.data)
     dispatch(gotTipPercentageVsWaitersInterval(res.data))
   } catch (err) {
     console.error(err)
