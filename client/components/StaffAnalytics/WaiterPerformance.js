@@ -31,6 +31,11 @@ class WaiterPerformance extends Component {
     this.state = {
       selectedOption: '30',
       selectedOptionNames: [],
+      selectedQueryTitle: 'tipPercentageVsWaiters',
+      queryTitleOptions: [
+        'tipPercentageVsWaiters',
+        'averageExpenditurePerGuestVsWaiters'
+      ],
       startDate: null,
       endDate: null,
       focusedInput: null
@@ -38,16 +43,23 @@ class WaiterPerformance extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleNameChange = this.handleNameChange.bind(this)
+    this.handleSelectedQueryChange = this.handleSelectedQueryChange.bind(this)
   }
 
   componentDidMount() {
-    this.props.loadTipPercentageVsWaitersInterval(this.state.selectedOption)
+    this.props.loadTipPercentageVsWaitersInterval(
+      this.state.selectedOption,
+      this.state.selectedQueryTitle
+    )
   }
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
     if (event.target.value !== 'custom') {
-      this.props.loadTipPercentageVsWaitersInterval(event.target.value)
+      this.props.loadTipPercentageVsWaitersInterval(
+        event.target.value,
+        this.state.selectedQueryTitle
+      )
     }
   }
 
@@ -63,7 +75,8 @@ class WaiterPerformance extends Component {
         this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
       this.props.loadTipPercentageVsWaitersDate(
         formattedStartDate,
-        formattedEndDate
+        formattedEndDate,
+        this.state.selectedQueryTitle
       )
     }
   }
@@ -81,6 +94,7 @@ class WaiterPerformance extends Component {
     if (this.state.selectedOption !== 'custom') {
       this.props.loadTipPercentageVsWaitersInterval(
         this.state.selectedOption,
+        this.state.selectedQueryTitle,
         formattedSelectedOptionNames
       )
     } else if (this.state.startDate && this.state.endDate) {
@@ -91,6 +105,41 @@ class WaiterPerformance extends Component {
       this.props.loadTipPercentageVsWaitersDate(
         formattedStartDate,
         formattedEndDate,
+        this.state.selectedQueryTitle,
+        formattedSelectedOptionNames
+      )
+    }
+  }
+
+  async handleSelectedQueryChange(event) {
+    let formattedSelectedOptionNames
+    await this.setState({
+      selectedQueryTitle: event.target.value
+    })
+    if (this.state.selectedOptionNames.length) {
+      formattedSelectedOptionNames = this.state.selectedOptionNames.map(
+        name => {
+          return name.value
+        }
+      )
+    } else {
+      formattedSelectedOptionNames = []
+    }
+    if (this.state.selectedOption !== 'custom') {
+      this.props.loadTipPercentageVsWaitersInterval(
+        this.state.selectedOption,
+        this.state.selectedQueryTitle,
+        formattedSelectedOptionNames
+      )
+    } else if (this.state.startDate && this.state.endDate) {
+      const formattedStartDate =
+        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+      const formattedEndDate =
+        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+      this.props.loadTipPercentageVsWaitersDate(
+        formattedStartDate,
+        formattedEndDate,
+        this.state.selectedQueryTitle,
         formattedSelectedOptionNames
       )
     }
@@ -112,7 +161,6 @@ class WaiterPerformance extends Component {
     }
 
     const tipPercentage = chartData.datasets[0].data
-    console.log('stateeeeeee: ', this.state)
     if (!tipPercentage) {
       return <h6>loading...</h6>
     } else {
@@ -148,7 +196,23 @@ class WaiterPerformance extends Component {
               />
             ) : null}
           </div>
+          <div>
+            <select
+              className="select-cust"
+              onChange={this.handleSelectedQueryChange}
+              //value={this.state.selectedQueryTitle}
+            >
+              <option value="default">Please Select</option>
 
+              {this.state.queryTitleOptions.map((query, idx) => {
+                return (
+                  <option key={idx} value={query}>
+                    {formatQueryName(query)}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
           <Card className={clsx('classes.root, className')}>
             <CardHeader
               action={
@@ -165,7 +229,7 @@ class WaiterPerformance extends Component {
                   </select>
                 </div>
               }
-              title="Waiter Performance (%)"
+              title={formatQueryName(this.state.selectedQueryTitle)}
             />
 
             <Divider />
@@ -215,13 +279,33 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadTipPercentageVsWaitersInterval(timeInterval, waiterNames) {
-      dispatch(getTipPercentageVsWaitersInterval(timeInterval, waiterNames))
+    loadTipPercentageVsWaitersInterval(timeInterval, queryTitle, waiterNames) {
+      dispatch(
+        getTipPercentageVsWaitersInterval(timeInterval, queryTitle, waiterNames)
+      )
     },
-    loadTipPercentageVsWaitersDate(startDate, endDate, waiterNames) {
-      dispatch(getTipPercentageVsWaitersDate(startDate, endDate, waiterNames))
+    loadTipPercentageVsWaitersDate(
+      startDate,
+      endDate,
+      queryTitle,
+      waiterNames
+    ) {
+      dispatch(
+        getTipPercentageVsWaitersDate(
+          startDate,
+          endDate,
+          queryTitle,
+          waiterNames
+        )
+      )
     }
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(WaiterPerformance)
+
+function formatQueryName(name) {
+  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
+}
