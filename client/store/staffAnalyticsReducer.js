@@ -37,10 +37,12 @@ const gotTipPercentageVsWaitersDate = results => ({
 
 export const getTipPercentageVsWaitersInterval = (
   timeInterval,
+  queryTitle,
   waiterNames = []
 ) => async dispatch => {
   try {
-    const res = await axios.get('/api/staffAnalytics/tipPercentageVsWaiters', {
+    console.log('queryTitle: ', queryTitle)
+    const res = await axios.get(`/api/staffAnalytics/${queryTitle}`, {
       params: {timeInterval, waiterNames}
     })
     dispatch(gotTipPercentageVsWaitersInterval(res.data))
@@ -52,10 +54,11 @@ export const getTipPercentageVsWaitersInterval = (
 export const getTipPercentageVsWaitersDate = (
   startDate,
   endDate,
+  queryTitle,
   waiterNames = []
 ) => async dispatch => {
   try {
-    const res = await axios.get('/api/staffAnalytics/tipPercentageVsWaiters', {
+    const res = await axios.get(`/api/staffAnalytics/${queryTitle}`, {
       params: {startDate, endDate, waiterNames}
     })
     dispatch(gotTipPercentageVsWaitersDate(res.data))
