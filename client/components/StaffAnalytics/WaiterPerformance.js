@@ -3,8 +3,8 @@ import 'react-dates/lib/css/_datepicker.css'
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
-  getTipPercentageVsWaitersInterval,
-  getTipPercentageVsWaitersDate
+  getWaiterPerformanceQueryResultsInterval,
+  getWaiterPerformanceQueryResultsDate
 } from '../../store/staffAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
@@ -20,6 +20,7 @@ import {
   Button
 } from '@material-ui/core'
 import moment from 'moment'
+import {CSVLink} from 'react-csv'
 import {isInclusivelyBeforeDay} from 'react-dates'
 import {get} from 'https'
 import StaffCheckboxField from './StaffCheckboxField'
@@ -34,7 +35,8 @@ class WaiterPerformance extends Component {
       selectedQueryTitle: 'tipPercentageVsWaiters',
       queryTitleOptions: [
         'tipPercentageVsWaiters',
-        'averageExpenditurePerGuestVsWaiters'
+        'averageExpenditurePerGuestVsWaiters',
+        'totalNumberOfGuestsServedVsWaiters'
       ],
       startDate: null,
       endDate: null,
@@ -47,7 +49,7 @@ class WaiterPerformance extends Component {
   }
 
   componentDidMount() {
-    this.props.loadTipPercentageVsWaitersInterval(
+    this.props.loadWaiterPerformanceQueryResultsInterval(
       this.state.selectedOption,
       this.state.selectedQueryTitle
     )
@@ -56,7 +58,7 @@ class WaiterPerformance extends Component {
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
     if (event.target.value !== 'custom') {
-      this.props.loadTipPercentageVsWaitersInterval(
+      this.props.loadWaiterPerformanceQueryResultsInterval(
         event.target.value,
         this.state.selectedQueryTitle
       )
@@ -73,7 +75,7 @@ class WaiterPerformance extends Component {
         this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
         this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
-      this.props.loadTipPercentageVsWaitersDate(
+      this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
         this.state.selectedQueryTitle
@@ -92,7 +94,7 @@ class WaiterPerformance extends Component {
     }
     await this.setState({selectedOptionNames})
     if (this.state.selectedOption !== 'custom') {
-      this.props.loadTipPercentageVsWaitersInterval(
+      this.props.loadWaiterPerformanceQueryResultsInterval(
         this.state.selectedOption,
         this.state.selectedQueryTitle,
         formattedSelectedOptionNames
@@ -102,7 +104,7 @@ class WaiterPerformance extends Component {
         this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
         this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
-      this.props.loadTipPercentageVsWaitersDate(
+      this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
         this.state.selectedQueryTitle,
@@ -116,7 +118,10 @@ class WaiterPerformance extends Component {
     await this.setState({
       selectedQueryTitle: event.target.value
     })
-    if (this.state.selectedOptionNames.length) {
+    if (
+      this.state.selectedOptionNames &&
+      this.state.selectedOptionNames.length
+    ) {
       formattedSelectedOptionNames = this.state.selectedOptionNames.map(
         name => {
           return name.value
@@ -126,7 +131,7 @@ class WaiterPerformance extends Component {
       formattedSelectedOptionNames = []
     }
     if (this.state.selectedOption !== 'custom') {
-      this.props.loadTipPercentageVsWaitersInterval(
+      this.props.loadWaiterPerformanceQueryResultsInterval(
         this.state.selectedOption,
         this.state.selectedQueryTitle,
         formattedSelectedOptionNames
@@ -136,7 +141,7 @@ class WaiterPerformance extends Component {
         this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
         this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
-      this.props.loadTipPercentageVsWaitersDate(
+      this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
         this.state.selectedQueryTitle,
@@ -146,8 +151,8 @@ class WaiterPerformance extends Component {
   }
 
   render() {
-    const labels = this.props.tipPercentageVsWaiters.xAxis
-    const yAxis = this.props.tipPercentageVsWaiters.yAxis
+    const labels = this.props.waiterPerformanceQueryResults.xAxis
+    const yAxis = this.props.waiterPerformanceQueryResults.yAxis
 
     const chartData = {
       labels: labels,
@@ -159,7 +164,7 @@ class WaiterPerformance extends Component {
         }
       ]
     }
-
+    console.log('PROPS', this.props)
     const tipPercentage = chartData.datasets[0].data
     if (!tipPercentage) {
       return <h6>loading...</h6>
@@ -207,7 +212,7 @@ class WaiterPerformance extends Component {
               {this.state.queryTitleOptions.map((query, idx) => {
                 return (
                   <option key={idx} value={query}>
-                    {formatQueryName(query)}
+                    {formatQueryName(query).slice(0, -11)}
                   </option>
                 )
               })}
@@ -229,7 +234,10 @@ class WaiterPerformance extends Component {
                   </select>
                 </div>
               }
-              title={formatQueryName(this.state.selectedQueryTitle)}
+              title={formatQueryName(this.state.selectedQueryTitle).slice(
+                0,
+                -11
+              )}
             />
 
             <Divider />
@@ -264,6 +272,17 @@ class WaiterPerformance extends Component {
               </div>
             </CardContent>
           </Card>
+          <button type="button" className="download-btn">
+            <CSVLink
+              data={tableDataFormatting(
+                formatQueryName(this.state.selectedQueryTitle).slice(0, -11),
+                labels,
+                yAxis
+              )}
+            >
+              Download CSV
+            </CSVLink>
+          </button>
         </div>
       )
     }
@@ -272,26 +291,35 @@ class WaiterPerformance extends Component {
 
 const mapStateToProps = state => {
   return {
-    tipPercentageVsWaiters: state.staffAnalytics.tipPercentageVsWaiters,
+    waiterPerformanceQueryResults:
+      state.staffAnalytics.waiterPerformanceQueryResults,
     allNames: state.staffAnalytics.allNames
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadTipPercentageVsWaitersInterval(timeInterval, queryTitle, waiterNames) {
+    loadWaiterPerformanceQueryResultsInterval(
+      timeInterval,
+      queryTitle,
+      waiterNames
+    ) {
       dispatch(
-        getTipPercentageVsWaitersInterval(timeInterval, queryTitle, waiterNames)
+        getWaiterPerformanceQueryResultsInterval(
+          timeInterval,
+          queryTitle,
+          waiterNames
+        )
       )
     },
-    loadTipPercentageVsWaitersDate(
+    loadWaiterPerformanceQueryResultsDate(
       startDate,
       endDate,
       queryTitle,
       waiterNames
     ) {
       dispatch(
-        getTipPercentageVsWaitersDate(
+        getWaiterPerformanceQueryResultsDate(
           startDate,
           endDate,
           queryTitle,
@@ -308,4 +336,12 @@ function formatQueryName(name) {
   name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
   name = name[0].toUpperCase() + name.slice(1)
   return name
+}
+
+function tableDataFormatting(nameYAxis, xAxis, yAxis) {
+  let result = [['Waiter', nameYAxis]]
+  for (let i = 0; i < xAxis.length; i++) {
+    result.push([xAxis[i], yAxis[i]])
+  }
+  return result
 }
