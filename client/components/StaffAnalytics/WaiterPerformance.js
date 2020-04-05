@@ -2,7 +2,10 @@ import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getTipPercentageVsWaitersInterval} from '../../store/staffAnalyticsReducer'
+import {
+  getTipPercentageVsWaitersInterval,
+  getTipPercentageVsWaitersDate
+} from '../../store/staffAnalyticsReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
@@ -18,6 +21,8 @@ import {
 } from '@material-ui/core'
 import moment from 'moment'
 import {isInclusivelyBeforeDay} from 'react-dates'
+import {get} from 'https'
+import StaffCheckboxField from './StaffCheckboxField'
 
 class WaiterPerformance extends Component {
   constructor(props) {
@@ -25,12 +30,14 @@ class WaiterPerformance extends Component {
 
     this.state = {
       selectedOption: '30',
+      selectedOptionNames: [],
       startDate: null,
       endDate: null,
       focusedInput: null
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
+    this.handleNameChange = this.handleNameChange.bind(this)
   }
 
   componentDidMount() {
@@ -54,13 +61,44 @@ class WaiterPerformance extends Component {
         this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
         this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+      this.props.loadTipPercentageVsWaitersDate(
+        formattedStartDate,
+        formattedEndDate
+      )
     }
-    //thunk
+  }
+
+  async handleNameChange(selectedOptionNames) {
+    let formattedSelectedOptionNames
+    if (selectedOptionNames) {
+      formattedSelectedOptionNames = selectedOptionNames.map(name => {
+        return name.value
+      })
+    } else {
+      formattedSelectedOptionNames = []
+    }
+    await this.setState({selectedOptionNames})
+    if (this.state.selectedOption !== 'custom') {
+      this.props.loadTipPercentageVsWaitersInterval(
+        this.state.selectedOption,
+        formattedSelectedOptionNames
+      )
+    } else if (this.state.startDate && this.state.endDate) {
+      const formattedStartDate =
+        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+      const formattedEndDate =
+        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+      this.props.loadTipPercentageVsWaitersDate(
+        formattedStartDate,
+        formattedEndDate,
+        formattedSelectedOptionNames
+      )
+    }
   }
 
   render() {
-    const labels = this.props.tipPercentageVsWaiters.days.xAxis
-    const yAxis = this.props.tipPercentageVsWaiters.days.yAxis
+    const labels = this.props.tipPercentageVsWaiters.xAxis
+    const yAxis = this.props.tipPercentageVsWaiters.yAxis
 
     const chartData = {
       labels: labels,
@@ -74,11 +112,7 @@ class WaiterPerformance extends Component {
     }
 
     const tipPercentage = chartData.datasets[0].data
-    console.log(
-      'STATE',
-      this.state.endDate &&
-        this.state.endDate.format('YYYY-MM-DD') + ' 00:00:00'
-    )
+    console.log('stateeeeeee: ', this.state)
     if (!tipPercentage) {
       return <h6>loading...</h6>
     } else {
@@ -106,6 +140,13 @@ class WaiterPerformance extends Component {
               focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
               onFocusChange={focusedInput => this.setState({focusedInput})} // PropTypes.func.isRequired,
             />
+            {this.props.allNames ? (
+              <StaffCheckboxField
+                optionNames={this.state.selectedOptionNames}
+                nameChange={this.handleNameChange}
+                allNames={this.props.allNames}
+              />
+            ) : null}
           </div>
 
           <Card className={clsx('classes.root, className')}>
@@ -167,14 +208,18 @@ class WaiterPerformance extends Component {
 
 const mapStateToProps = state => {
   return {
-    tipPercentageVsWaiters: state.staffAnalytics.tipPercentageVsWaiters
+    tipPercentageVsWaiters: state.staffAnalytics.tipPercentageVsWaiters,
+    allNames: state.staffAnalytics.allNames
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadTipPercentageVsWaitersInterval(timeInterval) {
-      dispatch(getTipPercentageVsWaitersInterval(timeInterval))
+    loadTipPercentageVsWaitersInterval(timeInterval, waiterNames) {
+      dispatch(getTipPercentageVsWaitersInterval(timeInterval, waiterNames))
+    },
+    loadTipPercentageVsWaitersDate(startDate, endDate, waiterNames) {
+      dispatch(getTipPercentageVsWaitersDate(startDate, endDate, waiterNames))
     }
   }
 }
