@@ -4,16 +4,16 @@ import axios from 'axios'
  * ACTION TYPES
  */
 
-const GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL =
-  'GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL'
+const GET_WAITER_PERFORMANCE_QUERY_INTERVAL =
+  'GET_WAITER_PERFORMANCE_QUERY_INTERVAL'
 
-const GET_TIP_PERCENTAGE_VS_WAITERS_DATE = 'GET_TIP_PERCENTAGE_VS_WAITERS_DATE'
+const GET_WAITER_PERFORMANCE_QUERY_DATE = 'GET_WAITER_PERFORMANCE_QUERY_DATE'
 
 /**
  * INITIAL STATE
  */
 const initialState = {
-  tipPercentageVsWaiters: {},
+  waiterPerformanceQueryResults: {},
   allNames: []
 }
 
@@ -21,13 +21,13 @@ const initialState = {
  * ACTION CREATORS
  */
 
-const gotTipPercentageVsWaitersInterval = results => ({
-  type: GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL,
+const gotWaiterPerformanceQueryResultsInterval = results => ({
+  type: GET_WAITER_PERFORMANCE_QUERY_INTERVAL,
   results
 })
 
-const gotTipPercentageVsWaitersDate = results => ({
-  type: GET_TIP_PERCENTAGE_VS_WAITERS_DATE,
+const gotWaiterPerformanceQueryResultsDate = results => ({
+  type: GET_WAITER_PERFORMANCE_QUERY_DATE,
   results
 })
 
@@ -35,23 +35,22 @@ const gotTipPercentageVsWaitersDate = results => ({
  * THUNK CREATORS
  */
 
-export const getTipPercentageVsWaitersInterval = (
+export const getWaiterPerformanceQueryResultsInterval = (
   timeInterval,
   queryTitle,
   waiterNames = []
 ) => async dispatch => {
   try {
-    console.log('queryTitle: ', queryTitle)
     const res = await axios.get(`/api/staffAnalytics/${queryTitle}`, {
       params: {timeInterval, waiterNames}
     })
-    dispatch(gotTipPercentageVsWaitersInterval(res.data))
+    dispatch(gotWaiterPerformanceQueryResultsInterval(res.data))
   } catch (err) {
     console.error(err)
   }
 }
 
-export const getTipPercentageVsWaitersDate = (
+export const getWaiterPerformanceQueryResultsDate = (
   startDate,
   endDate,
   queryTitle,
@@ -61,7 +60,7 @@ export const getTipPercentageVsWaitersDate = (
     const res = await axios.get(`/api/staffAnalytics/${queryTitle}`, {
       params: {startDate, endDate, waiterNames}
     })
-    dispatch(gotTipPercentageVsWaitersDate(res.data))
+    dispatch(gotWaiterPerformanceQueryResultsDate(res.data))
   } catch (err) {
     console.error(err)
   }
@@ -72,23 +71,23 @@ export const getTipPercentageVsWaitersDate = (
  */
 export default function(state = initialState, action) {
   switch (action.type) {
-    case GET_TIP_PERCENTAGE_VS_WAITERS_INTERVAL:
+    case GET_WAITER_PERFORMANCE_QUERY_INTERVAL:
       if (!state.allNames.length) {
         return {
           ...state,
-          tipPercentageVsWaiters: action.results,
+          waiterPerformanceQueryResults: action.results,
           allNames: action.results.xAxis
         }
       }
       return {
         ...state,
-        tipPercentageVsWaiters: action.results
+        waiterPerformanceQueryResults: action.results
       }
 
-    case GET_TIP_PERCENTAGE_VS_WAITERS_DATE:
+    case GET_WAITER_PERFORMANCE_QUERY_DATE:
       return {
         ...state,
-        tipPercentageVsWaiters: action.results
+        waiterPerformanceQueryResults: action.results
       }
     default:
       return state

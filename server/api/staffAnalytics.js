@@ -14,7 +14,8 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
         text = `SELECT waiters.name, ROUND (AVG (orders.tip) / AVG(orders.subtotal) * 100) as "averageTipPercentage"
         FROM ORDERS
         JOIN WAITERS ON orders."waiterId" = waiters.id
-        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        WHERE orders."timeOfPurchase" >= NOW() - $1::interval 
+        AND orders."timeOfPurchase" <= NOW() 
         ${
           req.query.waiterNames && req.query.waiterNames.length
             ? 'AND ' +
@@ -57,11 +58,11 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
         values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
       }
 
-      const tipPercentageByWaiters = await client.query(text, values)
+      const queryResults = await client.query(text, values)
       const [xAxis, yAxis] = axisMapping(
-        tipPercentageByWaiters.rows,
-        tipPercentageByWaiters.fields[0].name,
-        tipPercentageByWaiters.fields[1].name
+        queryResults.rows,
+        queryResults.fields[0].name,
+        queryResults.fields[1].name
       )
       res.json({xAxis, yAxis})
     }
@@ -76,10 +77,11 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
       let text
       let values
       if (req.query.timeInterval) {
-        text = `SELECT waiters.name, AVG(orders.revenue / orders."numberOfGuests") as "averageExpenditurePerGuest" from waiters
+        text = `SELECT waiters.name, ROUND(AVG(orders.revenue / orders."numberOfGuests"),2) as "averageExpenditurePerGuest" from waiters
         INNER JOIN orders
         ON orders."waiterId" = waiters."id"
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        AND orders."timeOfPurchase" <= NOW() 
         ${
           req.query.waiterNames && req.query.waiterNames.length
             ? 'AND ' +
@@ -99,7 +101,7 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
         const timeInterval = req.query.timeInterval + ' days'
         values = [timeInterval, req.user.restaurantId]
       } else {
-        text = `SELECT waiters.name, AVG(orders.revenue / orders."numberOfGuests") as "averageExpenditurePerGuest" from waiters
+        text = `SELECT waiters.name, ROUND(AVG(orders.revenue / orders."numberOfGuests"),2) as "averageExpenditurePerGuest" from waiters
         INNER JOIN orders
         ON orders."waiterId" = waiters."id"
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
@@ -122,11 +124,77 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
         values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
       }
 
-      const tipPercentageByWaiters = await client.query(text, values)
+      const queryResults = await client.query(text, values)
       const [xAxis, yAxis] = axisMapping(
-        tipPercentageByWaiters.rows,
-        tipPercentageByWaiters.fields[0].name,
-        tipPercentageByWaiters.fields[1].name
+        queryResults.rows,
+        queryResults.fields[0].name,
+        queryResults.fields[1].name
+      )
+      res.json({xAxis, yAxis})
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/totalNumberOfGuestsServedVsWaiters', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      let text
+      let values
+      if (req.query.timeInterval) {
+        text = `SELECT waiters.name, SUM(orders."numberOfGuests") as "totalNumOfGuestsServed" 
+          FROM waiters 
+          INNER JOIN orders ON orders."waiterId" = waiters."id"
+          WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+          AND orders."timeOfPurchase" <= NOW() 
+          ${
+            req.query.waiterNames && req.query.waiterNames.length
+              ? 'AND ' +
+                req.query.waiterNames
+                  .map((waiterName, idx) => {
+                    if (idx === 0) {
+                      return `waiters.name LIKE '${waiterName}'`
+                    }
+                    return `or waiters.name LIKE '${waiterName}'`
+                  })
+                  .join(' ')
+              : ''
+          }
+          AND waiters."restaurantId" = $2
+          GROUP BY waiters.name
+          ORDER BY "totalNumOfGuestsServed" DESC;`
+        const timeInterval = req.query.timeInterval + ' days'
+        values = [timeInterval, req.user.restaurantId]
+      } else {
+        text = `SELECT waiters.name, SUM(orders."numberOfGuests") as "totalNumOfGuestsServed" 
+          FROM waiters 
+          INNER JOIN orders ON orders."waiterId" = waiters."id"
+          WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
+          ${
+            req.query.waiterNames && req.query.waiterNames.length
+              ? 'AND ' +
+                req.query.waiterNames
+                  .map((waiterName, idx) => {
+                    if (idx === 0) {
+                      return `waiters.name LIKE '${waiterName}'`
+                    }
+                    return `or waiters.name LIKE '${waiterName}'`
+                  })
+                  .join(' ')
+              : ''
+          }
+          AND waiters."restaurantId" = $3
+          GROUP BY waiters.name
+          ORDER BY "totalNumOfGuestsServed" DESC;`
+        values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
+      }
+
+      const queryResults = await client.query(text, values)
+      const [xAxis, yAxis] = axisMapping(
+        queryResults.rows,
+        queryResults.fields[0].name,
+        queryResults.fields[1].name
       )
       res.json({xAxis, yAxis})
     }
