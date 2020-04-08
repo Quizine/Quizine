@@ -18,7 +18,7 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
         AND orders."timeOfPurchase" <= NOW() 
         ${
           req.query.waiterNames && req.query.waiterNames.length
-            ? 'AND ' +
+            ? 'AND (' +
               req.query.waiterNames
                 .map((waiterName, idx) => {
                   if (idx === 0) {
@@ -26,7 +26,8 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
                   }
                   return `or waiters.name LIKE '${waiterName}'`
                 })
-                .join(' ')
+                .join(' ') +
+              ')'
             : ''
         }
         AND waiters."restaurantId" = $2
@@ -41,7 +42,7 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
         ${
           req.query.waiterNames && req.query.waiterNames.length
-            ? 'AND ' +
+            ? 'AND (' +
               req.query.waiterNames
                 .map((waiterName, idx) => {
                   if (idx === 0) {
@@ -49,7 +50,8 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
                   }
                   return `or waiters.name LIKE '${waiterName}'`
                 })
-                .join(' ')
+                .join(' ') +
+              ')'
             : ''
         }
         AND waiters."restaurantId" = $3
@@ -84,7 +86,7 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
         AND orders."timeOfPurchase" <= NOW() 
         ${
           req.query.waiterNames && req.query.waiterNames.length
-            ? 'AND ' +
+            ? 'AND (' +
               req.query.waiterNames
                 .map((waiterName, idx) => {
                   if (idx === 0) {
@@ -92,7 +94,8 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
                   }
                   return `or waiters.name LIKE '${waiterName}'`
                 })
-                .join(' ')
+                .join(' ') +
+              ')'
             : ''
         }
         AND waiters."restaurantId" = $2
@@ -107,7 +110,7 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
         ${
           req.query.waiterNames && req.query.waiterNames.length
-            ? 'AND ' +
+            ? 'AND (' +
               req.query.waiterNames
                 .map((waiterName, idx) => {
                   if (idx === 0) {
@@ -115,7 +118,8 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
                   }
                   return `or waiters.name LIKE '${waiterName}'`
                 })
-                .join(' ')
+                .join(' ') +
+              ')'
             : ''
         }
         AND waiters."restaurantId" = $3
@@ -150,15 +154,17 @@ router.get('/totalNumberOfGuestsServedVsWaiters', async (req, res, next) => {
           AND orders."timeOfPurchase" <= NOW() 
           ${
             req.query.waiterNames && req.query.waiterNames.length
-              ? 'AND ' +
+              ? 'AND (' +
                 req.query.waiterNames
                   .map((waiterName, idx) => {
                     if (idx === 0) {
                       return `waiters.name LIKE '${waiterName}'`
+                    } else {
+                      return `or waiters.name LIKE '${waiterName}'`
                     }
-                    return `or waiters.name LIKE '${waiterName}'`
                   })
-                  .join(' ')
+                  .join(' ') +
+                ')'
               : ''
           }
           AND waiters."restaurantId" = $2
@@ -173,15 +179,17 @@ router.get('/totalNumberOfGuestsServedVsWaiters', async (req, res, next) => {
           WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
           ${
             req.query.waiterNames && req.query.waiterNames.length
-              ? 'AND ' +
+              ? 'AND (' +
                 req.query.waiterNames
                   .map((waiterName, idx) => {
                     if (idx === 0) {
                       return `waiters.name LIKE '${waiterName}'`
+                    } else {
+                      return `or waiters.name LIKE '${waiterName}'`
                     }
-                    return `or waiters.name LIKE '${waiterName}'`
                   })
-                  .join(' ')
+                  .join(' ') +
+                ')'
               : ''
           }
           AND waiters."restaurantId" = $3

@@ -83,16 +83,43 @@ class WaiterPerformance extends Component {
   }
 
   handleChange(event) {
+    let formattedSelectedOptionNames
+    if (
+      this.state.selectedOptionNames &&
+      this.state.selectedOptionNames.length
+    ) {
+      formattedSelectedOptionNames = this.state.selectedOptionNames.map(
+        name => {
+          return name.value
+        }
+      )
+    } else {
+      formattedSelectedOptionNames = []
+    }
     this.setState({selectedOption: event.target.value})
     if (event.target.value !== 'custom') {
       this.props.loadWaiterPerformanceQueryResultsInterval(
         event.target.value,
-        this.state.selectedQueryTitle
+        this.state.selectedQueryTitle,
+        formattedSelectedOptionNames
       )
     }
   }
 
   async handleDateChange({startDate, endDate}) {
+    let formattedSelectedOptionNames
+    if (
+      this.state.selectedOptionNames &&
+      this.state.selectedOptionNames.length
+    ) {
+      formattedSelectedOptionNames = this.state.selectedOptionNames.map(
+        name => {
+          return name.value
+        }
+      )
+    } else {
+      formattedSelectedOptionNames = []
+    }
     await this.setState({
       startDate,
       endDate
@@ -105,7 +132,8 @@ class WaiterPerformance extends Component {
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
-        this.state.selectedQueryTitle
+        this.state.selectedQueryTitle,
+        formattedSelectedOptionNames
       )
     }
   }
