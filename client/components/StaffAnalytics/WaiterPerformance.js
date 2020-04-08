@@ -1,5 +1,6 @@
 import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
+import styled from 'styled-components'
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
@@ -21,9 +22,35 @@ import {
 } from '@material-ui/core'
 import moment from 'moment'
 import {CSVLink} from 'react-csv'
-import {isInclusivelyBeforeDay} from 'react-dates'
 import {get} from 'https'
 import StaffCheckboxField from './StaffCheckboxField'
+
+//WRAPPER FOR OVERRIDING STYLES FOR DATERANGEPICKER COMPONENT
+const Wrapper = styled.div`
+  .DateInput_input {
+    width: 80%;
+    font-family: 'Exo', sans-serif;
+    color: hsl(0, 0%, 50%);
+    font-weight: 400;
+    font-size: 16px;
+    padding: 5.5px 10px 5.5px 10px;
+    text-align: center;
+  }
+  .DateRangePickerInput__withBorder {
+    border-radius: 4px;
+    border-color: hsl(0, 0%, 80%);
+  }
+  .DateRangePickerInput_calendarIcon {
+    padding: 5.5px 10px 11px 10px;
+  }
+  .DateRangePickerInput_clearDates_svg {
+    fill: #82888a;
+    height: 12px;
+    width: 15px;
+    vertical-align: middle;
+    cursor: default;
+  }
+`
 
 class WaiterPerformance extends Component {
   constructor(props) {
@@ -153,46 +180,61 @@ class WaiterPerformance extends Component {
   render() {
     const labels = this.props.waiterPerformanceQueryResults.xAxis
     const yAxis = this.props.waiterPerformanceQueryResults.yAxis
+    const selectedQueryTitle = this.state.selectedQueryTitle
 
     const chartData = {
       labels: labels,
       datasets: [
         {
-          label: 'Tip Percentage',
+          display: false,
+          label: '',
           data: yAxis,
           backgroundColor: 'green'
         }
       ]
     }
-    console.log('PROPS', this.props)
-    const tipPercentage = chartData.datasets[0].data
-    if (!tipPercentage) {
+    const queryData = chartData.datasets[0].data
+    console.log('STATE', this.state)
+    if (!queryData) {
       return <h6>loading...</h6>
     } else {
       return (
         <div className="peak-time-div">
           <div>
-            <DateRangePicker
-              showDefaultInputIcon={true}
-              showClearDates={true}
-              isOutsideRange={day =>
-                day.isAfter(moment()) ||
-                day.isBefore(moment().subtract(365 * 2, 'days'))
-              }
-              reopenPickerOnClearDates={true}
-              startDate={this.state.startDate} // momentPropTypes.momentObj or null,
-              startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-              endDate={this.state.endDate} // momentPropTypes.momentObj or null,
-              endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-              onDatesChange={({startDate, endDate}) =>
-                this.handleDateChange({startDate, endDate})
-              } // PropTypes.func.isRequired,
-              //   onDatesChange={({startDate, endDate}) =>
-              //     this.setState({startDate, endDate})
-              //   } // PropTypes.func.isRequired,
-              focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-              onFocusChange={focusedInput => this.setState({focusedInput})} // PropTypes.func.isRequired,
-            />
+            <div className="month-button">
+              <select
+                onChange={this.handleChange}
+                className="select-cust"
+                defaultValue="30"
+              >
+                <option value="365">Last 365 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="7">Last 7 Days</option>
+                <option value="custom">Custom Dates</option>
+              </select>
+            </div>
+            {this.state.selectedOption === 'custom' ? (
+              <Wrapper>
+                <DateRangePicker
+                  showDefaultInputIcon={true}
+                  showClearDates={true}
+                  isOutsideRange={day =>
+                    day.isAfter(moment()) ||
+                    day.isBefore(moment().subtract(365 * 2, 'days'))
+                  }
+                  reopenPickerOnClearDates={true}
+                  startDate={this.state.startDate}
+                  endDate={this.state.endDate}
+                  onDatesChange={({startDate, endDate}) =>
+                    this.handleDateChange({startDate, endDate})
+                  }
+                  focusedInput={this.state.focusedInput}
+                  onFocusChange={focusedInput => this.setState({focusedInput})}
+                />
+              </Wrapper>
+            ) : null}
+          </div>
+          <div>
             {this.props.allNames ? (
               <StaffCheckboxField
                 optionNames={this.state.selectedOptionNames}
@@ -205,10 +247,7 @@ class WaiterPerformance extends Component {
             <select
               className="select-cust"
               onChange={this.handleSelectedQueryChange}
-              //value={this.state.selectedQueryTitle}
             >
-              <option value="default">Please Select</option>
-
               {this.state.queryTitleOptions.map((query, idx) => {
                 return (
                   <option key={idx} value={query}>
@@ -218,26 +257,14 @@ class WaiterPerformance extends Component {
               })}
             </select>
           </div>
+
           <Card className={clsx('classes.root, className')}>
             <CardHeader
-              action={
-                <div className="month-button">
-                  <select
-                    onChange={this.handleChange}
-                    className="select-css"
-                    defaultValue="30"
-                  >
-                    <option value="365">Last 365 Days</option>
-                    <option value="30">Last 30 Days</option>
-                    <option value="7">Last 7 Days</option>
-                    <option value="custom">Custom Dates</option>
-                  </select>
-                </div>
-              }
               title={formatQueryName(this.state.selectedQueryTitle).slice(
                 0,
                 -11
               )}
+              style={{textAlign: 'center'}}
             />
 
             <Divider />
@@ -247,9 +274,12 @@ class WaiterPerformance extends Component {
                 <Bar
                   data={chartData}
                   options={{
+                    legend: {
+                      display: false
+                    },
                     title: {
                       display: false,
-                      text: 'Waiters Tip Percentage'
+                      text: ''
                     },
                     plugins: {
                       datalabels: {
@@ -262,7 +292,20 @@ class WaiterPerformance extends Component {
                           display: true,
                           ticks: {
                             suggestedMin: 0,
-                            suggestedMax: tipPercentage.max() * 1.1
+                            suggestedMax: queryData.max() * 1.1,
+                            callback: function(value, index, values) {
+                              if (
+                                selectedQueryTitle === 'tipPercentageVsWaiters'
+                              ) {
+                                return value + '%'
+                              } else if (
+                                selectedQueryTitle ===
+                                'averageExpenditurePerGuestVsWaiters'
+                              ) {
+                                return '$' + value
+                              }
+                              return value
+                            }
                           }
                         }
                       ]
@@ -333,7 +376,7 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(WaiterPerformance)
 
 function formatQueryName(name) {
-  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
+  name = name.replace(/([A-Z])/g, ' $1')
   name = name[0].toUpperCase() + name.slice(1)
   return name
 }

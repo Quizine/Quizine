@@ -12,7 +12,7 @@ export default class StaffCheckBoxField extends Component {
   }
   render() {
     const options = this.props.allNames.map(option => {
-      return {value: option, label: formatName(option)}
+      return {value: option, label: option}
     })
     const {optionNames} = this.props
     return (
@@ -22,28 +22,9 @@ export default class StaffCheckBoxField extends Component {
           isMulti
           onChange={this.handleChange}
           value={optionNames}
-          placeholder="Select Name..."
+          placeholder="Select Staff Name..."
         />
-        <h5>*Leave Blank to Show All</h5>
-        {/* {this.state.selectedOptions.map((o, idx) => (
-          <p key={idx}>{o.value}</p>
-        ))} */}
       </div>
     )
   }
-}
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     updateOptionForCustomQuery: (tableName, columnName, options) =>
-//       dispatch(updateOption(tableName, columnName, options))
-//   }
-// }
-
-// export default connect(null, mapDispatchToProps)(StaffCheckBoxField)
-
-function formatName(name) {
-  name = name.replace(/([A-Z])/g, ' $1') // CONVERTS NAMES OF DB COLUMNS INTO READABLE TEXT
-  name = name[0].toUpperCase() + name.slice(1)
-  return name
 }
