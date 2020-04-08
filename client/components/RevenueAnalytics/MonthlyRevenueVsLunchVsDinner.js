@@ -36,7 +36,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
       datasets: [
         {
           fill: false,
-          label: 'Lunch Revenue',
+          label: 'Dinner Revenue',
           data: lunchRevenue,
           backgroundColor: 'rgba(255, 10, 13, 0.1)',
           borderColor: 'red',
@@ -46,7 +46,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
         },
         {
           fill: false,
-          label: 'Dinner Revenue',
+          label: 'Lunch Revenue',
           data: dinnerRevenue,
           backgroundColor: 'rgba(255, 10, 13, 0.1)',
           borderColor: 'blue',
