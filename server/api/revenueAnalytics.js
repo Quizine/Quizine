@@ -8,24 +8,21 @@ module.exports = router
 router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const text = `SELECT to_char("timeOfPurchase",'Mon') AS mon,
-      "menuItems"."mealType",
-        DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
-        EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-        SUM("revenue")/7 AS "monthlyRevenue"
-        FROM orders
-        join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
-        join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
-        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-        and orders."timeOfPurchase" <= NOW()
-        AND orders."restaurantId" = $2
-        and "menuItems"."mealType" is not null
-        GROUP BY mon, m, yyyy, "menuItems"."mealType"
-        ORDER BY m;`
-
+      const text = `SELECT  to_char("timeOfPurchase",'Mon') AS mon,
+      DATE_TRUNC('month', orders."timeOfPurchase" ) as date,
+      EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
+      CASE WHEN (EXTRACT(HOUR FROM "timeOfPurchase") < '16') then 'lunch'
+         ELSE 'dinner'
+       END as "mealType",
+      SUM("revenue") AS "monthlyRevenue"
+      FROM orders
+      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      AND orders."timeOfPurchase" <= NOW()
+      AND orders."restaurantId" = $2
+      GROUP BY mon, date, yyyy, "mealType"
+      ORDER BY date;`
       const year = req.query.year
-      // const interval = `${year} year`
-      const interval = `${year} year + ${new Date().getDate() - 1} days`
+      const interval = `${year} year`
       const values = [interval, req.user.restaurantId]
       const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
       const allDateRevenue = {
