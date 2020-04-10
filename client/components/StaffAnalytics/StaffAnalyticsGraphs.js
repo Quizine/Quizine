@@ -225,138 +225,134 @@ class WaiterPerformance extends Component {
     console.log('STATE', this.state)
     if (!queryData) {
       return <h6>loading...</h6>
-    } else {
-      return (
-        <div className="peak-time-div">
-          <div>
-            <div className="month-button">
-              <select
-                onChange={this.handleChange}
-                className="select-cust"
-                defaultValue="30"
-              >
-                <option value="365">Last 365 Days</option>
-                <option value="30">Last 30 Days</option>
-                <option value="7">Last 7 Days</option>
-                <option value="custom">Custom Dates</option>
-              </select>
-            </div>
-            {this.state.selectedOption === 'custom' ? (
-              <Wrapper>
-                <DateRangePicker
-                  showDefaultInputIcon={true}
-                  showClearDates={true}
-                  isOutsideRange={day =>
-                    day.isAfter(moment()) ||
-                    day.isBefore(moment().subtract(365 * 2, 'days'))
-                  }
-                  reopenPickerOnClearDates={true}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  onDatesChange={({startDate, endDate}) =>
-                    this.handleDateChange({startDate, endDate})
-                  }
-                  focusedInput={this.state.focusedInput}
-                  onFocusChange={focusedInput => this.setState({focusedInput})}
-                />
-              </Wrapper>
-            ) : null}
-          </div>
-          <div>
-            {this.props.allNames ? (
-              <StaffCheckboxField
-                optionNames={this.state.selectedOptionNames}
-                nameChange={this.handleNameChange}
-                allNames={this.props.allNames}
-              />
-            ) : null}
-          </div>
-          <div>
+    }
+    return (
+      <div className="peak-time-div">
+        <div>
+          <div className="month-button">
             <select
+              onChange={this.handleChange}
               className="select-cust"
-              onChange={this.handleSelectedQueryChange}
+              defaultValue="30"
             >
-              {this.state.queryTitleOptions.map((query, idx) => {
-                return (
-                  <option key={idx} value={query}>
-                    {formatQueryName(query).slice(0, -11)}
-                  </option>
-                )
-              })}
+              <option value="365">Last 365 Days</option>
+              <option value="30">Last 30 Days</option>
+              <option value="7">Last 7 Days</option>
+              <option value="custom">Custom Dates</option>
             </select>
           </div>
-
-          <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              title={formatQueryName(this.state.selectedQueryTitle).slice(
-                0,
-                -11
-              )}
-              style={{textAlign: 'center'}}
+          {this.state.selectedOption === 'custom' ? (
+            <Wrapper>
+              <DateRangePicker
+                showDefaultInputIcon={true}
+                showClearDates={true}
+                isOutsideRange={day =>
+                  day.isAfter(moment()) ||
+                  day.isBefore(moment().subtract(365 * 2, 'days'))
+                }
+                reopenPickerOnClearDates={true}
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                onDatesChange={({startDate, endDate}) =>
+                  this.handleDateChange({startDate, endDate})
+                }
+                focusedInput={this.state.focusedInput}
+                onFocusChange={focusedInput => this.setState({focusedInput})}
+              />
+            </Wrapper>
+          ) : null}
+        </div>
+        <div>
+          {this.props.allNames ? (
+            <StaffCheckboxField
+              optionNames={this.state.selectedOptionNames}
+              nameChange={this.handleNameChange}
+              allNames={this.props.allNames}
             />
+          ) : null}
+        </div>
+        <div>
+          <select
+            className="select-cust"
+            onChange={this.handleSelectedQueryChange}
+          >
+            {this.state.queryTitleOptions.map((query, idx) => {
+              return (
+                <option key={idx} value={query}>
+                  {formatQueryName(query).slice(0, -11)}
+                </option>
+              )
+            })}
+          </select>
+        </div>
 
-            <Divider />
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader
+            title={formatQueryName(this.state.selectedQueryTitle).slice(0, -11)}
+            style={{textAlign: 'center'}}
+          />
 
-            <CardContent>
-              <div className="classes.chartContainer">
-                <Bar
-                  data={chartData}
-                  options={{
-                    legend: {
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Bar
+                data={chartData}
+                options={{
+                  legend: {
+                    display: false
+                  },
+                  title: {
+                    display: false,
+                    text: ''
+                  },
+                  plugins: {
+                    datalabels: {
                       display: false
-                    },
-                    title: {
-                      display: false,
-                      text: ''
-                    },
-                    plugins: {
-                      datalabels: {
-                        display: false
-                      }
-                    },
-                    scales: {
-                      yAxes: [
-                        {
-                          display: true,
-                          ticks: {
-                            suggestedMin: 0,
-                            suggestedMax: queryData.max() * 1.1,
-                            callback: function(value, index, values) {
-                              if (
-                                selectedQueryTitle === 'tipPercentageVsWaiters'
-                              ) {
-                                return value + '%'
-                              } else if (
-                                selectedQueryTitle ===
-                                'averageExpenditurePerGuestVsWaiters'
-                              ) {
-                                return '$' + value
-                              }
-                              return value
+                    }
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        display: true,
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: queryData.max() * 1.1,
+                          callback: function(value, index, values) {
+                            if (
+                              selectedQueryTitle === 'tipPercentageVsWaiters'
+                            ) {
+                              return value + '%'
+                            } else if (
+                              selectedQueryTitle ===
+                              'averageExpenditurePerGuestVsWaiters'
+                            ) {
+                              return '$' + value
                             }
+                            return value
                           }
                         }
-                      ]
-                    }
-                  }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-          <button type="button" className="download-btn">
-            <CSVLink
-              data={tableDataFormatting(
-                formatQueryName(this.state.selectedQueryTitle).slice(0, -11),
-                labels,
-                yAxis
-              )}
-            >
-              Download CSV
-            </CSVLink>
-          </button>
-        </div>
-      )
-    }
+                      }
+                    ]
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        <button type="button" className="download-btn">
+          <CSVLink
+            data={tableDataFormatting(
+              formatQueryName(this.state.selectedQueryTitle).slice(0, -11),
+              labels,
+              yAxis
+            )}
+          >
+            Download CSV
+          </CSVLink>
+        </button>
+      </div>
+    )
   }
 }
 

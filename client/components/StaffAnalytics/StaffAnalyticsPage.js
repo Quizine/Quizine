@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import WaiterPerformance from './WaiterPerformance'
+import WaiterPerformance from './StaffAnalyticsGraphs'
 
 export default class StaffAnalyticsPage extends Component {
   render() {
