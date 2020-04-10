@@ -58,13 +58,11 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
       AND orders."restaurantId" = $2
       GROUP BY day
       ORDER BY day ASC;`
-      const timeInterval = '1 ' + req.query.timeInterval
+      const timeInterval = req.query.timeInterval + ' days'
       const values = [timeInterval, req.user.restaurantId]
       const avgRevPerGuest = await client.query(text, values)
-      const avgRevPerGuestArr = avgRevPerGuest.rows.map(el =>
-        Number(el.revenue_per_guest)
-      )
-      res.json(avgRevPerGuestArr)
+      const yAxis = avgRevPerGuest.rows.map(el => Number(el.revenue_per_guest))
+      res.json({yAxis})
     }
   } catch (error) {
     next(error)
@@ -83,13 +81,13 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
       GROUP BY hour
       ORDER BY hour
       ASC;`
-      const timeInterval = '1 ' + req.query.timeInterval
+      const timeInterval = req.query.timeInterval + ' days'
       const values = [timeInterval, req.user.restaurantId]
       const numberOfOrdersPerHour = await client.query(text, values)
-      const numberOfOrdersArr = numberOfOrdersPerHour.rows.map(el =>
+      const yAxis = numberOfOrdersPerHour.rows.map(el =>
         Number(el.numberOfOrders)
       )
-      res.json(numberOfOrdersArr)
+      res.json({yAxis})
     }
   } catch (error) {
     next(error)
