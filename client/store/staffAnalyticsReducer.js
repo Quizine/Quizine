@@ -60,7 +60,6 @@ export const getWaiterPerformanceQueryResultsDate = (
     const res = await axios.get(`/api/staffAnalytics/${queryTitle}`, {
       params: {startDate, endDate, waiterNames}
     })
-    console.log('what is this data: ', res.data)
     dispatch(gotWaiterPerformanceQueryResultsDate(res.data))
   } catch (err) {
     console.error(err)

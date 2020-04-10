@@ -54,6 +54,7 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
       ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
       FROM orders
       WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+      AND orders."timeOfPurchase" <= NOW()
       AND orders."restaurantId" = $2
       GROUP BY day
       ORDER BY day ASC;`
@@ -64,6 +65,31 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         Number(el.revenue_per_guest)
       )
       res.json(avgRevPerGuestArr)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.get('/numberOfOrdersVsHour', async (req, res, next) => {
+  try {
+    if (req.user.id) {
+      const text = `SELECT EXTRACT(hour FROM "timeOfPurchase") AS hour,
+      COUNT(*) AS "numberOfOrders"
+      FROM orders
+      WHERE "timeOfPurchase" >= NOW() - $1::interval
+      AND orders."timeOfPurchase" <= NOW()
+      AND orders."restaurantId" = $2
+      GROUP BY hour
+      ORDER BY hour
+      ASC;`
+      const timeInterval = '1 ' + req.query.timeInterval
+      const values = [timeInterval, req.user.restaurantId]
+      const numberOfOrdersPerHour = await client.query(text, values)
+      const numberOfOrdersArr = numberOfOrdersPerHour.rows.map(el =>
+        Number(el.numberOfOrders)
+      )
+      res.json(numberOfOrdersArr)
     }
   } catch (error) {
     next(error)
