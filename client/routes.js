@@ -5,10 +5,8 @@ import PropTypes from 'prop-types'
 import {
   Login,
   Signup,
-  UserHome,
   Summary,
   CustomizedQueryContainer,
-  WelcomePage,
   Sidebar,
   BusinessAnalytics,
   RevenueAnalytics,
@@ -41,7 +39,7 @@ class Routes extends Component {
       </div>
     ) : (
       <Switch>
-        <Route exact path="/" component={WelcomePage} />
+        <Route exact path="/" component={Login} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
       </Switch>
