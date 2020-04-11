@@ -4,16 +4,13 @@ import {
   getRevenueQueryResultsDate,
   getRevenueQueryResultsInterval
 } from '../../store/revenueAnalyticsReducer'
-import {Bar} from 'react-chartjs-2'
-import clsx from 'clsx'
-import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
+import RevenueAnalyticsBarGraphs from './RevenueAnalyticsBarGraphs'
 
-class revenueAnalyticsGraphs extends Component {
+class RevenueAnalyticsGraphs extends Component {
   constructor(props) {
     super(props)
     this.state = {
       selectedOption: '30',
-      // eslint-disable-next-line react/no-unused-state
       queryTitleOptions: [
         'avgRevenuePerGuestVsDOW',
         'numberOfOrdersVsHour',
@@ -48,6 +45,7 @@ class revenueAnalyticsGraphs extends Component {
     await this.setState({
       selectedQueryTitle: event.target.value
     })
+
     // if (
     //   this.state.selectedOptionNames &&
     //   this.state.selectedOptionNames.length
@@ -81,44 +79,9 @@ class revenueAnalyticsGraphs extends Component {
   }
 
   render() {
-    let labels
-    if (this.state.selectedQueryTitle === 'avgRevenuePerGuestVsDOW') {
-      labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat']
-    } else if (this.state.selectedQueryTitle === 'numberOfOrdersVsHour') {
-      labels = [
-        '11am',
-        '12pm',
-        '1pm',
-        '2pm',
-        '3pm',
-        '4pm',
-        '5pm',
-        '6pm',
-        '7pm',
-        '8pm',
-        '9pm',
-        '10pm'
-      ]
-    }
-    const yAxis = this.props.revenueQueryResults.yAxis
-
-    const chartData = {
-      labels: labels,
-      datasets: [
-        {
-          display: false,
-          label: '',
-          data: yAxis,
-          backgroundColor: '#24497A'
-        }
-      ]
-    }
-    const queryData = chartData.datasets[0].data
-    if (!queryData) {
-      return <h6>loading...</h6>
-    }
+    console.log('STATE', this.state)
     return (
-      <div className="peak-time-div">
+      <div>
         <div>
           <select
             className="select-cust"
@@ -133,12 +96,12 @@ class revenueAnalyticsGraphs extends Component {
             })}
           </select>
         </div>
-        <Card className={clsx('classes.root, className')}>
-          <CardHeader
-            action={
+        {this.state.selectedQueryTitle !== 'monthlyRevenueVsLunchVsDinner' ? (
+          <div>
+            <div className="month-button">
               <select
                 onChange={this.handleChange}
-                className="select-css"
+                className="select-cust"
                 defaultValue="30"
               >
                 <option value="365">Last 365 Days</option>
@@ -146,40 +109,13 @@ class revenueAnalyticsGraphs extends Component {
                 <option value="7">Last 7 Days</option>
                 <option value="custom">Custom Dates</option>
               </select>
-            }
-            title={formatQueryName(this.state.selectedQueryTitle)}
-          />
-          <Divider />
-
-          <CardContent>
-            <div className="classes.chartContainer">
-              <Bar
-                data={chartData}
-                options={{
-                  title: {
-                    display: false,
-                    text: 'Average Revenue Per Guest ($)'
-                  },
-                  plugins: {
-                    datalabels: {
-                      display: false
-                    }
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        ticks: {
-                          suggestedMin: 0, //(guest$.min()) * .5,
-                          suggestedMax: queryData.max() * 1.1 //guest$.max()
-                        }
-                      }
-                    ]
-                  }
-                }}
-              />
             </div>
-          </CardContent>
-        </Card>
+            <RevenueAnalyticsBarGraphs
+              selectedQueryTitle={this.state.selectedQueryTitle}
+              revenueQueryResults={this.props.revenueQueryResults}
+            />
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -201,7 +137,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  revenueAnalyticsGraphs
+  RevenueAnalyticsGraphs
 )
 
 function formatQueryName(name) {

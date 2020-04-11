@@ -1,0 +1,88 @@
+import React, {Component} from 'react'
+import {Bar} from 'react-chartjs-2'
+import clsx from 'clsx'
+import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
+
+export default class RevenueAnalyticsBarGraphs extends Component {
+  render() {
+    let labels
+    if (this.props.selectedQueryTitle === 'avgRevenuePerGuestVsDOW') {
+      labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat']
+    } else if (this.props.selectedQueryTitle === 'numberOfOrdersVsHour') {
+      labels = [
+        '11am',
+        '12pm',
+        '1pm',
+        '2pm',
+        '3pm',
+        '4pm',
+        '5pm',
+        '6pm',
+        '7pm',
+        '8pm',
+        '9pm',
+        '10pm'
+      ]
+    }
+    const yAxis = this.props.revenueQueryResults.yAxis
+
+    const chartData = {
+      labels: labels,
+      datasets: [
+        {
+          display: false,
+          label: '',
+          data: yAxis,
+          backgroundColor: '#24497A'
+        }
+      ]
+    }
+    const queryData = chartData.datasets[0].data
+    console.log('BAR PROPS', this.props)
+    if (!queryData) {
+      return <h6>loading...</h6>
+    }
+    return (
+      <div className="peak-time-div">
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader title={formatQueryName(this.props.selectedQueryTitle)} />
+          <Divider />
+
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Bar
+                data={chartData}
+                options={{
+                  title: {
+                    display: false
+                  },
+                  plugins: {
+                    datalabels: {
+                      display: false
+                    }
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: queryData.max() * 1.1
+                        }
+                      }
+                    ]
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+}
+
+function formatQueryName(name) {
+  name = name.replace(/([A-Z])/g, ' $1')
+  name = name[0].toUpperCase() + name.slice(1)
+  return name
+}

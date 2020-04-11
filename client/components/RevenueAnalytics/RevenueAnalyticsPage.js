@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
-import AvgRevenuePerGuestVsDOW from './RevenueAnalyticsGraphs'
+import RevenueAnalyticsGraphs from './RevenueAnalyticsGraphs'
 
 export default class RevenuePage extends Component {
   render() {
     return (
       <div>
         <div className="bus-charts-cont">
-          <AvgRevenuePerGuestVsDOW />
+          <RevenueAnalyticsGraphs />
         </div>
       </div>
     )
