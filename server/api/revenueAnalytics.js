@@ -16,27 +16,30 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
        END as "mealType",
       SUM("revenue") AS "monthlyRevenue"
       FROM orders
-      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-      AND orders."timeOfPurchase" <= NOW()
-      AND orders."restaurantId" = $2
+      ${
+        req.query.timeInterval !== 'allPeriod'
+          ? 'WHERE orders."timeOfPurchase" >= NOW() - ' +
+            `'${req.query.timeInterval} year'` +
+            '::interval AND orders."timeOfPurchase" <= NOW()'
+          : 'WHERE orders."timeOfPurchase" <= NOW()'
+      }
+      
+      AND orders."restaurantId" = $1
       GROUP BY mon, date, yyyy, "mealType"
       ORDER BY date;`
-      const year = req.query.year
-      const interval = `${year} year`
-      const values = [interval, req.user.restaurantId]
+
+      const values = [req.user.restaurantId]
       const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
       const allDateRevenue = {
-        lunchMonth: [],
+        month: [],
         lunchRevenue: [],
-        dinnerMonth: [],
         dinnerRevenue: []
       }
       monthlyRevenueVsLunchVsDinner.rows.forEach((row, idx) => {
         if (idx % 2 === 0) {
-          allDateRevenue.lunchMonth.push(`${row.mon} ${String(row.yyyy)}`)
+          allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
           allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue))
         } else {
-          allDateRevenue.dinnerMonth.push(`${row.mon} ${String(row.yyyy)}`)
           allDateRevenue.dinnerRevenue.push(Number(row.monthlyRevenue))
         }
       })
@@ -111,10 +114,19 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
         values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
       }
       const numberOfOrdersPerHour = await client.query(text, values)
+      console.log('numberOfOrdersPerHour', numberOfOrdersPerHour)
       const yAxis = numberOfOrdersPerHour.rows.map(el =>
         Number(el.numberOfOrders)
       )
-      res.json({yAxis})
+
+      const xAxis = numberOfOrdersPerHour.rows.map(el => {
+        if (Number(el.hour) < 12) {
+          return `${el.hour}am`
+        } else {
+          return `${el.hour - 12}pm`
+        }
+      })
+      res.json({xAxis, yAxis})
     }
   } catch (error) {
     next(error)
