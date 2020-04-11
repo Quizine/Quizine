@@ -23,7 +23,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
             '::interval AND orders."timeOfPurchase" <= NOW()'
           : 'WHERE orders."timeOfPurchase" <= NOW()'
       }
-      
+
       AND orders."restaurantId" = $1
       GROUP BY mon, date, yyyy, "mealType"
       ORDER BY date;`
@@ -114,21 +114,41 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
         values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
       }
       const numberOfOrdersPerHour = await client.query(text, values)
-      console.log('numberOfOrdersPerHour', numberOfOrdersPerHour)
-      const yAxis = numberOfOrdersPerHour.rows.map(el =>
-        Number(el.numberOfOrders)
+      const formattedNumberOfOrdersPerHour = formattingNumberOfOrdersPerHour(
+        numberOfOrdersPerHour.rows
       )
-
-      const xAxis = numberOfOrdersPerHour.rows.map(el => {
-        if (Number(el.hour) < 12) {
-          return `${el.hour}am`
-        } else {
-          return `${el.hour - 12}pm`
-        }
-      })
-      res.json({xAxis, yAxis})
+      console.log(formattedNumberOfOrdersPerHour)
+      res.json(formattedNumberOfOrdersPerHour)
     }
   } catch (error) {
     next(error)
   }
 })
+
+function formattingNumberOfOrdersPerHour(arr) {
+  let currHour = 11
+  let i = 0
+  let xAxis = []
+  let yAxis = []
+  while (currHour <= 22) {
+    if (arr[i] && currHour === +arr[i].hour) {
+      if (currHour < 12) {
+        xAxis.push(currHour + 'am')
+      } else {
+        xAxis.push(currHour + 'pm')
+      }
+      yAxis.push(+arr[i].numberOfOrders)
+      currHour++
+      i++
+    } else {
+      if (currHour < 12) {
+        xAxis.push(currHour + 'am')
+      } else {
+        xAxis.push(currHour + 'pm')
+      }
+      yAxis.push(0)
+      currHour++
+    }
+  }
+  return {xAxis, yAxis}
+}

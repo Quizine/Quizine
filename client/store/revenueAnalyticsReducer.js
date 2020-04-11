@@ -40,6 +40,7 @@ export const getRevenueQueryResultsInterval = (
     const res = await axios.get(`/api/revenueAnalytics/${queryTitle}`, {
       params: {timeInterval}
     })
+    console.log('what is the response, ', res.data)
     dispatch(gotRevenueQueryResultsInterval(res.data))
   } catch (err) {
     console.error(err)
