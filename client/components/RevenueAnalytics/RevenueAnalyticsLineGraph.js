@@ -5,34 +5,32 @@ import {getMonthlyRevenueVsLunchVsDinner} from '../../store/revenueAnalyticsRedu
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
-class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
-  constructor(props) {
-    super(props)
+export default class RevenueAnalyticsLineGraph extends Component {
+  // constructor(props) {
+  //   super(props)
 
-    this.state = {
-      selectedOption: 'oneYear'
-    }
-    this.handleChange = this.handleChange.bind(this)
-  }
+  //   this.state = {
+  //     selectedOption: 'oneYear'
+  //   }
+  //   this.handleChange = this.handleChange.bind(this)
+  // }
 
-  componentDidMount() {
-    this.props.loadMonthlyRevenueVsLunchVsDinner(this.state.selectedOption)
-  }
+  // componentDidMount() {
+  //   this.props.loadMonthlyRevenueVsLunchVsDinner(this.state.selectedOption)
+  // }
 
-  handleChange(event) {
-    event.preventDefault()
-    this.setState({selectedOption: event.target.value})
-    if (!Object.keys(this.props.lineChartData[event.target.value]).length) {
-      this.props.loadMonthlyRevenueVsLunchVsDinner(event.target.value)
-    }
-  }
+  // handleChange(event) {
+  //   event.preventDefault()
+  //   this.setState({selectedOption: event.target.value})
+  //   if (!Object.keys(this.props.lineChartData[event.target.value]).length) {
+  //     this.props.loadMonthlyRevenueVsLunchVsDinner(event.target.value)
+  //   }
+  // }
 
   render() {
-    const {lunchMonth, lunchRevenue, dinnerRevenue} = this.props.lineChartData[
-      this.state.selectedOption
-    ]
+    const {month, lunchRevenue, dinnerRevenue} = this.props.revenueQueryResults
     const chartData = {
-      labels: lunchMonth,
+      labels: month,
       datasets: [
         {
           fill: false,
@@ -61,16 +59,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
       <div>
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              action={
-                <select onChange={this.handleChange} className="select-css">
-                  <option value="oneYear">Last Year</option>
-                  <option value="twoYears">Last 2 Years</option>
-                  <option value="allPeriod">All History</option>
-                </select>
-              }
-              title="Lunch vs Dinner Revenue Comparison ($)"
-            />
+            <CardHeader title="Lunch vs Dinner Revenue Comparison ($)" />
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">
@@ -82,7 +71,7 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
                         {
                           display: true,
                           ticks: {
-                            suggestedMin: 7000,
+                            suggestedMin: 0,
                             suggestedMax: 70000
                           }
                         }
@@ -104,17 +93,17 @@ class LineGraphMonthlyRevenueVsLunchVsDinner extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {lineChartData: state.revenueAnalytics.monthlyRevenueVsLunchVsDinner}
-}
+// const mapStateToProps = state => {
+//   return {lineChartData: state.revenueAnalytics.monthlyRevenueVsLunchVsDinner}
+// }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    loadMonthlyRevenueVsLunchVsDinner: timeInterval =>
-      dispatch(getMonthlyRevenueVsLunchVsDinner(timeInterval))
-  }
-}
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     loadMonthlyRevenueVsLunchVsDinner: timeInterval =>
+//       dispatch(getMonthlyRevenueVsLunchVsDinner(timeInterval))
+//   }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  LineGraphMonthlyRevenueVsLunchVsDinner
-)
+// export default connect(mapStateToProps, mapDispatchToProps)(
+//   LineGraphMonthlyRevenueVsLunchVsDinner
+// )
