@@ -57,8 +57,8 @@ class NumberOfOrdersVsHour extends Component {
       '6pm',
       '7pm',
       '8pm',
-      '9pm'
-      // '10pm'
+      '9pm',
+      '10pm'
     ]
     const arrPerc = this.props.numberOfOrdersVsHour[this.state.selectedOption]
 
