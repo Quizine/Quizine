@@ -74,21 +74,8 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         AND orders."restaurantId" = $3
         GROUP BY day
         ORDER BY day ASC;`
-        // const testDate = new Date()
-        // console.log(
-        //   'TEST!!!!!',
-        //   testDate,
-        //   new Date(req.query.endDate),
-        //   testDate > new Date(req.query.endDate)
-        // )
         const correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
-        )
-
-        console.log(
-          'CORRECT END DATE ---->',
-          correctEndDate,
-          req.query.startDate
         )
         values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
@@ -127,7 +114,9 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
         GROUP BY hour
         ORDER BY hour
         ASC;`
-        const correctEndDate = Math.min(Date.now(), req.query.endDate)
+        const correctEndDate = new Date(
+          Math.min(new Date(), new Date(req.query.endDate))
+        )
         values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
       const numberOfOrdersPerHour = await client.query(text, values)
