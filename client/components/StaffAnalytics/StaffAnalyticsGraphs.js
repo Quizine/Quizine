@@ -126,9 +126,9 @@ class WaiterPerformance extends Component {
     })
     if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + 'T00:00:00.000Z'
+        this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
+        this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
@@ -156,9 +156,9 @@ class WaiterPerformance extends Component {
       )
     } else if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + 'T00:00:00.000Z'
+        this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
+        this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
@@ -193,9 +193,9 @@ class WaiterPerformance extends Component {
       )
     } else if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + 'T00:00:00.000Z'
+        this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
+        this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
@@ -222,7 +222,6 @@ class WaiterPerformance extends Component {
       ]
     }
     const queryData = chartData.datasets[0].data
-    console.log('STATE', this.state)
     if (!queryData) {
       return <h6>loading...</h6>
     }
