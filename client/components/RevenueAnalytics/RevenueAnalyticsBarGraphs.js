@@ -5,13 +5,14 @@ import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
 export default class RevenueAnalyticsBarGraphs extends Component {
   render() {
-    let labels
-    if (this.props.selectedQueryTitle === 'avgRevenuePerGuestVsDOW') {
-      labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat']
-    } else if (this.props.selectedQueryTitle === 'numberOfOrdersVsHour') {
-      console.log('what is label: ', this.props.revenueQueryResults)
-      labels = this.props.revenueQueryResults.xAxis
-    }
+    const labels = this.props.revenueQueryResults.xAxis
+    // if (this.props.selectedQueryTitle === 'avgRevenuePerGuestVsDOW') {
+
+    // //   labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat']
+    // } else if (this.props.selectedQueryTitle === 'numberOfOrdersVsHour') {
+    //   console.log('what is label------->>>>>: ', this.props.revenueQueryResults)
+    //   labels = this.props.revenueQueryResults.xAxis
+    // }
     const yAxis = this.props.revenueQueryResults.yAxis
 
     const chartData = {

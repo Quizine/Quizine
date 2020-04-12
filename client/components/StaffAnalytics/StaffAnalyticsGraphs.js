@@ -126,9 +126,9 @@ class WaiterPerformance extends Component {
     })
     if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+        this.state.startDate.format('YYYY-MM-DD') + 'T00:00:00.000Z'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
@@ -156,9 +156,9 @@ class WaiterPerformance extends Component {
       )
     } else if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+        this.state.startDate.format('YYYY-MM-DD') + 'T00:00:00.000Z'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
@@ -193,9 +193,9 @@ class WaiterPerformance extends Component {
       )
     } else if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+        this.state.startDate.format('YYYY-MM-DD') + 'T00:00:00.000Z'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
       this.props.loadWaiterPerformanceQueryResultsDate(
         formattedStartDate,
         formattedEndDate,

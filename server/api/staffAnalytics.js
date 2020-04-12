@@ -57,7 +57,8 @@ router.get('/tipPercentageVsWaiters', async (req, res, next) => {
         AND waiters."restaurantId" = $3
         GROUP BY waiters.name
         ORDER BY "averageTipPercentage" DESC;`
-        values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
+        const correctEndDate = Math.min(Date.now(), req.query.endDate)
+        values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
 
       const queryResults = await client.query(text, values)
@@ -125,7 +126,8 @@ router.get('/averageExpenditurePerGuestVsWaiters', async (req, res, next) => {
         AND waiters."restaurantId" = $3
         GROUP BY waiters.name
         ORDER BY "averageExpenditurePerGuest" DESC;`
-        values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
+        const correctEndDate = Math.min(Date.now(), req.query.endDate)
+        values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
 
       const queryResults = await client.query(text, values)
@@ -195,7 +197,8 @@ router.get('/totalNumberOfGuestsServedVsWaiters', async (req, res, next) => {
           AND waiters."restaurantId" = $3
           GROUP BY waiters.name
           ORDER BY "totalNumOfGuestsServed" DESC;`
-        values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
+        const correctEndDate = Math.min(Date.now(), req.query.endDate)
+        values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
 
       const queryResults = await client.query(text, values)

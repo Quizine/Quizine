@@ -79,9 +79,9 @@ class RevenueAnalyticsGraphs extends Component {
     })
     if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
-        this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+        this.state.startDate.format('YYYY-MM-DD') + 'T04:00:00.000Z'
       const formattedEndDate =
-        this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+        this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
       this.props.loadRevenueQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
@@ -120,9 +120,9 @@ class RevenueAnalyticsGraphs extends Component {
         )
       } else if (this.state.startDate && this.state.endDate) {
         const formattedStartDate =
-          this.state.startDate.format('YYYY-MM-DD') + ' 00:00:00'
+          this.state.startDate.format('YYYY-MM-DD') + 'T04:00:00.000Z'
         const formattedEndDate =
-          this.state.endDate.format('YYYY-MM-DD') + ' 23:59:59'
+          this.state.endDate.format('YYYY-MM-DD') + 'T23:59:59.000Z'
         this.props.loadRevenueQueryResultsDate(
           formattedStartDate,
           formattedEndDate,
@@ -139,6 +139,7 @@ class RevenueAnalyticsGraphs extends Component {
 
   render() {
     console.log('STATE', this.state)
+    console.log('PROPS', this.props.revenueQueryResults)
     return (
       <div>
         <div>

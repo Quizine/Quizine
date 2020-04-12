@@ -74,11 +74,27 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         AND orders."restaurantId" = $3
         GROUP BY day
         ORDER BY day ASC;`
-        values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
+        // const testDate = new Date()
+        // console.log(
+        //   'TEST!!!!!',
+        //   testDate,
+        //   new Date(req.query.endDate),
+        //   testDate > new Date(req.query.endDate)
+        // )
+        const correctEndDate = new Date(
+          Math.min(new Date(), new Date(req.query.endDate))
+        )
+
+        console.log(
+          'CORRECT END DATE ---->',
+          correctEndDate,
+          req.query.startDate
+        )
+        values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
       const avgRevPerGuest = await client.query(text, values)
-      const yAxis = avgRevPerGuest.rows.map(el => Number(el.revenue_per_guest))
-      res.json({yAxis})
+      const formattedDaysOfWeek = formattingDaysOfWeek(avgRevPerGuest.rows)
+      res.json(formattedDaysOfWeek)
     }
   } catch (error) {
     next(error)
@@ -111,13 +127,14 @@ router.get('/numberOfOrdersVsHour', async (req, res, next) => {
         GROUP BY hour
         ORDER BY hour
         ASC;`
-        values = [req.query.startDate, req.query.endDate, req.user.restaurantId]
+        const correctEndDate = Math.min(Date.now(), req.query.endDate)
+        values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
       const numberOfOrdersPerHour = await client.query(text, values)
       const formattedNumberOfOrdersPerHour = formattingNumberOfOrdersPerHour(
         numberOfOrdersPerHour.rows
       )
-      console.log(formattedNumberOfOrdersPerHour)
+
       res.json(formattedNumberOfOrdersPerHour)
     }
   } catch (error) {
@@ -134,8 +151,10 @@ function formattingNumberOfOrdersPerHour(arr) {
     if (arr[i] && currHour === +arr[i].hour) {
       if (currHour < 12) {
         xAxis.push(currHour + 'am')
-      } else {
+      } else if (currHour === 12) {
         xAxis.push(currHour + 'pm')
+      } else {
+        xAxis.push(currHour - 12 + 'pm')
       }
       yAxis.push(+arr[i].numberOfOrders)
       currHour++
@@ -143,11 +162,42 @@ function formattingNumberOfOrdersPerHour(arr) {
     } else {
       if (currHour < 12) {
         xAxis.push(currHour + 'am')
-      } else {
+      } else if (currHour === 12) {
         xAxis.push(currHour + 'pm')
+      } else {
+        xAxis.push(currHour - 12 + 'pm')
       }
       yAxis.push(0)
       currHour++
+    }
+  }
+  return {xAxis, yAxis}
+}
+
+function formattingDaysOfWeek(arr) {
+  let store = {
+    0: 'Sun',
+    1: 'Mon',
+    2: 'Tue',
+    3: 'Wed',
+    4: 'Thurs',
+    5: 'Fri',
+    6: 'Sat'
+  }
+  let xAxis = []
+  let yAxis = []
+  let i = 0
+  let currDay = 0
+  while (currDay <= 6) {
+    if (arr[i] && currDay === +arr[i].day) {
+      xAxis.push(store[currDay])
+      yAxis.push(+arr[i].revenue_per_guest)
+      currDay++
+      i++
+    } else {
+      xAxis.push(store[currDay])
+      yAxis.push(0)
+      currDay++
     }
   }
   return {xAxis, yAxis}
