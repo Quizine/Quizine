@@ -5,7 +5,7 @@ const client = new pg.Client(config)
 client.connect()
 module.exports = router
 
-router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
+router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT  to_char("timeOfPurchase",'Mon') AS mon,
@@ -29,13 +29,13 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
       ORDER BY date;`
 
       const values = [req.user.restaurantId]
-      const monthlyRevenueVsLunchVsDinner = await client.query(text, values)
+      const lunchAndDinnerRevenueComparison = await client.query(text, values)
       const allDateRevenue = {
         month: [],
         lunchRevenue: [],
         dinnerRevenue: []
       }
-      monthlyRevenueVsLunchVsDinner.rows.forEach((row, idx) => {
+      lunchAndDinnerRevenueComparison.rows.forEach((row, idx) => {
         if (row.mealType === 'lunch') {
           allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
           allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue))

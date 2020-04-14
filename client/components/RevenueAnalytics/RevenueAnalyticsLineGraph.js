@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Line} from 'react-chartjs-2'
-import {getMonthlyRevenueVsLunchVsDinner} from '../../store/revenueAnalyticsReducer'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
@@ -12,27 +11,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 })
 
 export default class RevenueAnalyticsLineGraph extends Component {
-  // constructor(props) {
-  //   super(props)
-
-  //   this.state = {
-  //     selectedOption: 'oneYear'
-  //   }
-  //   this.handleChange = this.handleChange.bind(this)
-  // }
-
-  // componentDidMount() {
-  //   this.props.loadMonthlyRevenueVsLunchVsDinner(this.state.selectedOption)
-  // }
-
-  // handleChange(event) {
-  //   event.preventDefault()
-  //   this.setState({selectedOption: event.target.value})
-  //   if (!Object.keys(this.props.lineChartData[event.target.value]).length) {
-  //     this.props.loadMonthlyRevenueVsLunchVsDinner(event.target.value)
-  //   }
-  // }
-
   render() {
     const {month, lunchRevenue, dinnerRevenue} = this.props.revenueQueryResults
 
@@ -72,9 +50,14 @@ export default class RevenueAnalyticsLineGraph extends Component {
 
     return (
       <div>
+        <div>
+          <h1>TESTING</h1>
+        </div>
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
-            <CardHeader title="Lunch vs Dinner Revenue Comparison ($)" />
+            <CardHeader
+              title={formatQueryName(this.props.selectedQueryTitle)}
+            />
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">
@@ -115,17 +98,9 @@ export default class RevenueAnalyticsLineGraph extends Component {
   }
 }
 
-// const mapStateToProps = state => {
-//   return {lineChartData: state.revenueAnalytics.monthlyRevenueVsLunchVsDinner}
-// }
+function formatQueryName(name) {
+  name = name.replace(/([A-Z])/g, ' $1')
+  name = name[0].toUpperCase() + name.slice(1)
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     loadMonthlyRevenueVsLunchVsDinner: timeInterval =>
-//       dispatch(getMonthlyRevenueVsLunchVsDinner(timeInterval))
-//   }
-// }
-
-// export default connect(mapStateToProps, mapDispatchToProps)(
-//   LineGraphMonthlyRevenueVsLunchVsDinner
-// )
+  return name
+}

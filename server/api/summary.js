@@ -159,7 +159,7 @@ router.get('/revenueVsTime', async (req, res, next) => {
       const year = req.query.year
       // const interval = year + ' year'
       // const interval = `${year} year + ${new Date().getDate()} days`
-      const interval = `${year} year + ${new Date().getDate() - 1} days`
+      const interval = `${year} year`
 
       const values = [interval, req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
