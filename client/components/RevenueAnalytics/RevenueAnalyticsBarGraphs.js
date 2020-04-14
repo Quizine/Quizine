@@ -6,13 +6,6 @@ import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 export default class RevenueAnalyticsBarGraphs extends Component {
   render() {
     const labels = this.props.revenueQueryResults.xAxis
-    // if (this.props.selectedQueryTitle === 'avgRevenuePerGuestVsDOW') {
-
-    // //   labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat']
-    // } else if (this.props.selectedQueryTitle === 'numberOfOrdersVsHour') {
-    //   console.log('what is label------->>>>>: ', this.props.revenueQueryResults)
-    //   labels = this.props.revenueQueryResults.xAxis
-    // }
     const yAxis = this.props.revenueQueryResults.yAxis
 
     const chartData = {
@@ -27,14 +20,14 @@ export default class RevenueAnalyticsBarGraphs extends Component {
       ]
     }
     const queryData = chartData.datasets[0].data
-    console.log('BAR PROPS', this.props)
+    const {selectedQueryTitle} = this.props
     if (!queryData) {
       return <h6>loading...</h6>
     }
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
-          <CardHeader title={formatQueryName(this.props.selectedQueryTitle)} />
+          <CardHeader title={formatQueryName(selectedQueryTitle)} />
           <Divider />
 
           <CardContent>
@@ -55,7 +48,15 @@ export default class RevenueAnalyticsBarGraphs extends Component {
                       {
                         ticks: {
                           suggestedMin: 0,
-                          suggestedMax: queryData.max() * 1.1
+                          suggestedMax: queryData.max() * 1.1,
+                          callback: function(value) {
+                            if (
+                              selectedQueryTitle === 'avgRevenuePerGuestVsDOW'
+                            ) {
+                              return '$' + value
+                            }
+                            return value
+                          }
                         }
                       }
                     ]

@@ -36,7 +36,7 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
         dinnerRevenue: []
       }
       monthlyRevenueVsLunchVsDinner.rows.forEach((row, idx) => {
-        if (idx % 2 === 0) {
+        if (row.mealType === 'lunch') {
           allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
           allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue))
         } else {
