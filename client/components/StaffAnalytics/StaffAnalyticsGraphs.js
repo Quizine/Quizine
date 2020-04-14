@@ -317,7 +317,7 @@ class WaiterPerformance extends Component {
                         ticks: {
                           suggestedMin: 0,
                           suggestedMax: queryData.max() * 1.1,
-                          callback: function(value, index, values) {
+                          callback: function(value) {
                             if (
                               selectedQueryTitle === 'tipPercentageVsWaiters'
                             ) {

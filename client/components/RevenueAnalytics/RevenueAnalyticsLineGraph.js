@@ -5,6 +5,12 @@ import {getMonthlyRevenueVsLunchVsDinner} from '../../store/revenueAnalyticsRedu
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
 export default class RevenueAnalyticsLineGraph extends Component {
   // constructor(props) {
   //   super(props)
@@ -29,12 +35,18 @@ export default class RevenueAnalyticsLineGraph extends Component {
 
   render() {
     const {month, lunchRevenue, dinnerRevenue} = this.props.revenueQueryResults
+
+    const lunchRevenueTotal =
+      lunchRevenue && lunchRevenue.reduce((acc, curr) => acc + curr)
+    const dinnerRevenueTotal =
+      dinnerRevenue && dinnerRevenue.reduce((acc, curr) => acc + curr)
+
     const chartData = {
       labels: month,
       datasets: [
         {
           fill: false,
-          label: 'Dinner Revenue',
+          label: 'Lunch Revenue: ' + formatter.format(lunchRevenueTotal),
           data: lunchRevenue,
           backgroundColor: 'rgba(255, 10, 13, 0.1)',
           borderColor: 'red',
@@ -44,7 +56,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
         },
         {
           fill: false,
-          label: 'Lunch Revenue',
+          label: 'Dinner Revenue: ' + formatter.format(dinnerRevenueTotal),
           data: dinnerRevenue,
           backgroundColor: 'rgba(255, 10, 13, 0.1)',
           borderColor: 'blue',
@@ -53,6 +65,9 @@ export default class RevenueAnalyticsLineGraph extends Component {
           pointRadius: 4
         }
       ]
+    }
+    if (!lunchRevenue) {
+      return <div>...loading</div>
     }
 
     return (
@@ -72,7 +87,14 @@ export default class RevenueAnalyticsLineGraph extends Component {
                           display: true,
                           ticks: {
                             suggestedMin: 0,
-                            suggestedMax: 70000
+                            suggestedMax:
+                              Math.max(...lunchRevenue, ...dinnerRevenue) * 1.1,
+                            callback: function(value) {
+                              return (
+                                formatter.format(value / 1000).slice(0, -3) +
+                                'K'
+                              )
+                            }
                           }
                         }
                       ]
