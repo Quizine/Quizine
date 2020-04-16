@@ -55,29 +55,37 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
     if (req.user.id) {
       let text
       let values
-      req.query.xAxisOption = 'DOW' // UPDATE THIS!!!!
+      req.query.xAxisOption = 'hour' // UPDATE THIS!!!!
       console.log('QUERY', req.query)
       if (req.query.timeInterval) {
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
-            ? `EXTRACT($3 FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
-            : `DATE_TRUNC($3, orders."timeOfPurchase" ) as date,`
+            ? `EXTRACT('${
+                req.query.xAxisOption
+              }' FROM "timeOfPurchase") AS day,`
+            : `DATE_TRUNC('${
+                req.query.xAxisOption
+              }', orders."timeOfPurchase" ) as date,`
         }
         ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
         FROM orders
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval
         AND orders."timeOfPurchase" <= NOW()
         AND orders."restaurantId" = $2
-        GROUP BY day, date
-        ORDER BY day ASC;`
-
+        GROUP BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'}
+        ORDER BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'} ASC;`
         const timeInterval = req.query.timeInterval + ' days'
         values = [timeInterval, req.user.restaurantId]
+        console.log('what is the text: ', text)
       } else {
         text = `SELECT ${
           req.query.xAxisOptions === 'DOW'
-            ? `EXTRACT(DOW FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
-            : `DATE_TRUNC($4, orders."timeOfPurchase" ) as date,`
+            ? `EXTRACT(${
+                req.query.xAxisOption
+              } FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
+            : `DATE_TRUNC(${
+                req.query.xAxisOption
+              }, orders."timeOfPurchase" ) as date,`
         }
         ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
         FROM orders
@@ -90,11 +98,21 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         )
         values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
-
       const avgRevPerGuest = await client.query(text, values)
-      res.json(avgRevPerGuest)
-      // const formattedDaysOfWeek = formattingDaysOfWeek(avgRevPerGuest.rows)
-      // res.json(formattedDaysOfWeek)
+      console.log('from backend: ', avgRevPerGuest)
+      // res.json(avgRevPerGuest)
+      const formattedDaysOfWeek = formattingData(
+        avgRevPerGuest.rows,
+        new Date('2020-04-09T09:00:00.000Z'),
+        new Date('2020-04-16T05:00:00.000Z'),
+        'hour'
+      )
+      console.log(
+        'response from backend: ',
+        formattedDaysOfWeek,
+        formattedDaysOfWeek.xAxis.length
+      )
+      res.json(formattedDaysOfWeek)
     }
   } catch (error) {
     next(error)
@@ -176,30 +194,65 @@ function formattingNumberOfOrdersPerHour(arr) {
   return {xAxis, yAxis}
 }
 
-function formattingDaysOfWeek(arr) {
-  let store = {
-    0: 'Sun',
-    1: 'Mon',
-    2: 'Tue',
-    3: 'Wed',
-    4: 'Thurs',
-    5: 'Fri',
-    6: 'Sat'
-  }
+// function formattingDaysOfWeek(arr) {
+//   let store = {
+//     0: 'Sun',
+//     1: 'Mon',
+//     2: 'Tue',
+//     3: 'Wed',
+//     4: 'Thurs',
+//     5: 'Fri',
+//     6: 'Sat'
+//   }
+//   let xAxis = []
+//   let yAxis = []
+//   let i = 0
+//   let currDay = 0
+//   while (currDay <= 6) {
+//     if (arr[i] && currDay === +arr[i].day) {
+//       xAxis.push(store[currDay])
+//       yAxis.push(+arr[i].revenue_per_guest)
+//       currDay++
+//       i++
+//     } else {
+//       xAxis.push(store[currDay])
+//       yAxis.push(0)
+//       currDay++
+//     }
+//   }
+//   return {xAxis, yAxis}
+// }
+
+function formattingData(arr, startDate, endDate, xAxisOption) {
   let xAxis = []
   let yAxis = []
-  let i = 0
-  let currDay = 0
-  while (currDay <= 6) {
-    if (arr[i] && currDay === +arr[i].day) {
-      xAxis.push(store[currDay])
-      yAxis.push(+arr[i].revenue_per_guest)
-      currDay++
-      i++
-    } else {
-      xAxis.push(store[currDay])
-      yAxis.push(0)
-      currDay++
+  if (xAxisOption !== 'hour') {
+    for (let i = 0; i < arr.length; i++) {
+      xAxis.push(new Date(arr[i].date.toString()))
+      yAxis.push(arr[i].revenue_per_guest)
+    }
+  } else {
+    let i = 0
+    while (startDate <= endDate) {
+      if (
+        +startDate.toString().slice(16, 18) < 11 ||
+        +startDate.toString().slice(16, 18) > 22
+      ) {
+        startDate.setHours(startDate.getHours() + 1)
+      } else if (
+        arr[i] &&
+        startDate.toString().slice(0, 21) ===
+          arr[i].date.toString().slice(0, 21)
+      ) {
+        xAxis.push(arr[i].date.toString().slice(0, 21))
+        yAxis.push(+arr[i].revenue_per_guest)
+        startDate.setHours(startDate.getHours() + 1)
+        i++
+      } else {
+        xAxis.push(startDate.toString().slice(0, 21))
+        yAxis.push(0)
+        startDate.setHours(startDate.getHours() + 1)
+      }
     }
   }
   return {xAxis, yAxis}
