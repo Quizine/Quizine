@@ -55,19 +55,30 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
     if (req.user.id) {
       let text
       let values
+      req.query.xAxisOption = 'DOW' // UPDATE THIS!!!!
+      console.log('QUERY', req.query)
       if (req.query.timeInterval) {
-        text = `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
-      ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
-      FROM orders
-      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-      AND orders."timeOfPurchase" <= NOW()
-      AND orders."restaurantId" = $2
-      GROUP BY day
-      ORDER BY day ASC;`
+        text = `SELECT ${
+          req.query.xAxisOption === 'DOW'
+            ? `EXTRACT($3 FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
+            : `DATE_TRUNC($3, orders."timeOfPurchase" ) as date,`
+        }
+        ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
+        FROM orders
+        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        AND orders."timeOfPurchase" <= NOW()
+        AND orders."restaurantId" = $2
+        GROUP BY day, date
+        ORDER BY day ASC;`
+
         const timeInterval = req.query.timeInterval + ' days'
         values = [timeInterval, req.user.restaurantId]
       } else {
-        text = `SELECT EXTRACT(DOW FROM "timeOfPurchase") AS day,
+        text = `SELECT ${
+          req.query.xAxisOptions === 'DOW'
+            ? `EXTRACT(DOW FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
+            : `DATE_TRUNC($4, orders."timeOfPurchase" ) as date,`
+        }
         ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
         FROM orders
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
@@ -79,9 +90,11 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         )
         values = [req.query.startDate, correctEndDate, req.user.restaurantId]
       }
+
       const avgRevPerGuest = await client.query(text, values)
-      const formattedDaysOfWeek = formattingDaysOfWeek(avgRevPerGuest.rows)
-      res.json(formattedDaysOfWeek)
+      res.json(avgRevPerGuest)
+      // const formattedDaysOfWeek = formattingDaysOfWeek(avgRevPerGuest.rows)
+      // res.json(formattedDaysOfWeek)
     }
   } catch (error) {
     next(error)

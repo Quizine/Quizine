@@ -9,6 +9,7 @@ import {
 } from '../../store/revenueAnalyticsReducer'
 import RevenueAnalyticsBarGraphs from './RevenueAnalyticsBarGraphs'
 import RevenueAnalyticsLineGraph from './RevenueAnalyticsLineGraph'
+import RadioButtonOptions from './RadioButtonOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
 
@@ -168,6 +169,7 @@ class RevenueAnalyticsGraphs extends Component {
                 <option value="custom">Custom Dates</option>
               </select>
             </div>
+            <RadioButtonOptions />
             {this.state.selectedBarGraphIntervalOption === 'custom' ? (
               <Wrapper>
                 <DateRangePicker
