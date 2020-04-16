@@ -9,6 +9,7 @@ import {
 } from '../../store/revenueAnalyticsReducer'
 import RevenueAnalyticsBarGraphs from './RevenueAnalyticsBarGraphs'
 import RevenueAnalyticsLineGraph from './RevenueAnalyticsLineGraph'
+import RadioButtonOptions from './RadioButtonOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
 
@@ -48,7 +49,7 @@ class RevenueAnalyticsGraphs extends Component {
       queryTitleOptions: [
         'avgRevenuePerGuestVsDOW',
         'numberOfOrdersVsHour',
-        'monthlyRevenueVsLunchVsDinner'
+        'lunchAndDinnerRevenueComparison'
       ],
       selectedQueryTitle: 'avgRevenuePerGuestVsDOW',
       startDate: null,
@@ -112,7 +113,7 @@ class RevenueAnalyticsGraphs extends Component {
     await this.setState({
       selectedQueryTitle: event.target.value
     })
-    if (this.state.selectedQueryTitle !== 'monthlyRevenueVsLunchVsDinner') {
+    if (this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison') {
       if (this.state.selectedBarGraphIntervalOption !== 'custom') {
         this.props.loadRevenueQueryResultsInterval(
           this.state.selectedBarGraphIntervalOption,
@@ -154,7 +155,7 @@ class RevenueAnalyticsGraphs extends Component {
             })}
           </select>
         </div>
-        {this.state.selectedQueryTitle !== 'monthlyRevenueVsLunchVsDinner' ? (
+        {this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison' ? (
           <div>
             <div className="month-button">
               <select
@@ -168,6 +169,7 @@ class RevenueAnalyticsGraphs extends Component {
                 <option value="custom">Custom Dates</option>
               </select>
             </div>
+            <RadioButtonOptions />
             {this.state.selectedBarGraphIntervalOption === 'custom' ? (
               <Wrapper>
                 <DateRangePicker
@@ -238,7 +240,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 )
 
 function formatQueryName(name) {
+  if (name === 'avgRevenuePerGuestVsDOW') {
+    name = 'Average' + name.slice(3, -5)
+  } else if (name === 'numberOfOrdersVsHour') {
+    name = name.slice(0, -6)
+  }
   name = name.replace(/([A-Z])/g, ' $1')
   name = name[0].toUpperCase() + name.slice(1)
+
   return name
 }

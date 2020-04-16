@@ -72,7 +72,13 @@ export default class RevenueAnalyticsBarGraphs extends Component {
 }
 
 function formatQueryName(name) {
+  if (name === 'avgRevenuePerGuestVsDOW') {
+    name = 'Average' + name.slice(3, -5)
+  } else if (name === 'numberOfOrdersVsHour') {
+    name = name.slice(0, -6)
+  }
   name = name.replace(/([A-Z])/g, ' $1')
   name = name[0].toUpperCase() + name.slice(1)
+
   return name
 }
