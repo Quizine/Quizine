@@ -50,13 +50,12 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
   }
 })
 
+// eslint-disable-next-line complexity
 router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
     if (req.user.id) {
-      let text
-      let values
+      let text, values, correctStartDate, correctEndDate
       req.query.xAxisOption = 'hour' // UPDATE THIS!!!!
-      console.log('QUERY', req.query)
       if (req.query.timeInterval) {
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
@@ -76,43 +75,45 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         ORDER BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'} ASC;`
         const timeInterval = req.query.timeInterval + ' days'
         values = [timeInterval, req.user.restaurantId]
-        console.log('what is the text: ', text)
+        correctStartDate = new Date()
+        correctStartDate.setDate(
+          correctStartDate.getDate() - +req.query.timeInterval
+        )
+        correctStartDate.setMinutes(0)
+        correctEndDate = new Date()
+        correctEndDate.setMinutes(0)
       } else {
         text = `SELECT ${
           req.query.xAxisOptions === 'DOW'
-            ? `EXTRACT(${
+            ? `EXTRACT('${
                 req.query.xAxisOption
-              } FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
-            : `DATE_TRUNC(${
+              }' FROM "timeOfPurchase") AS day, DATE_TRUNC('day', orders."timeOfPurchase" ) as date,`
+            : `DATE_TRUNC('${
                 req.query.xAxisOption
-              }, orders."timeOfPurchase" ) as date,`
+              }', orders."timeOfPurchase" ) as date,`
         }
         ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) revenue_per_guest
         FROM orders
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
         AND orders."restaurantId" = $3
-        GROUP BY day
-        ORDER BY day ASC;`
-        const correctEndDate = new Date(
+        GROUP BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'}
+        ORDER BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'} ASC;`
+        correctStartDate = new Date(req.query.startDate)
+        correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
         )
-        values = [req.query.startDate, correctEndDate, req.user.restaurantId]
+        correctEndDate.setMinutes(0)
+        values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const avgRevPerGuest = await client.query(text, values)
-      console.log('from backend: ', avgRevPerGuest)
-      // res.json(avgRevPerGuest)
-      const formattedDaysOfWeek = formattingData(
+
+      const formattedData = formattingData(
         avgRevPerGuest.rows,
-        new Date('2020-04-09T09:00:00.000Z'),
-        new Date('2020-04-16T05:00:00.000Z'),
+        correctStartDate,
+        correctEndDate,
         'hour'
       )
-      console.log(
-        'response from backend: ',
-        formattedDaysOfWeek,
-        formattedDaysOfWeek.xAxis.length
-      )
-      res.json(formattedDaysOfWeek)
+      res.json(formattedData)
     }
   } catch (error) {
     next(error)
