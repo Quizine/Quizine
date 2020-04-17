@@ -55,7 +55,7 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
   try {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
-      req.query.xAxisOption = 'hour' // UPDATE THIS!!!!
+      //req.query.xAxisOption = 'day'
       if (req.query.timeInterval) {
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
@@ -106,13 +106,14 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const avgRevPerGuest = await client.query(text, values)
-
+      console.log('avgRev: ', avgRevPerGuest)
       const formattedData = formattingData(
         avgRevPerGuest.rows,
         correctStartDate,
         correctEndDate,
-        'hour'
+        req.query.xAxisOption
       )
+      console.log('formatData: ', formattedData)
       res.json(formattedData)
     }
   } catch (error) {
@@ -224,12 +225,39 @@ function formattingNumberOfOrdersPerHour(arr) {
 //   return {xAxis, yAxis}
 // }
 
+// eslint-disable-next-line complexity
 function formattingData(arr, startDate, endDate, xAxisOption) {
   let xAxis = []
   let yAxis = []
+  let xAxisOptionHashTable = {
+    year: [11, 16],
+    month: [4, 7, 10, 16],
+    week: [0, 16],
+    day: [0, 16]
+  }
   if (xAxisOption !== 'hour') {
     for (let i = 0; i < arr.length; i++) {
-      xAxis.push(new Date(arr[i].date.toString()))
+      let formattedElement =
+        xAxisOption === 'month'
+          ? arr[i].date
+              .toString()
+              .slice(
+                xAxisOptionHashTable[xAxisOption][0],
+                xAxisOptionHashTable[xAxisOption][1]
+              ) +
+            arr[i].date
+              .toString()
+              .slice(
+                xAxisOptionHashTable[xAxisOption][2],
+                xAxisOptionHashTable[xAxisOption][3]
+              )
+          : arr[i].date
+              .toString()
+              .slice(
+                xAxisOptionHashTable[xAxisOption][0],
+                xAxisOptionHashTable[xAxisOption][1]
+              )
+      xAxis.push(formattedElement)
       yAxis.push(arr[i].revenue_per_guest)
     }
   } else {
