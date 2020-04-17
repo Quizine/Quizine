@@ -34,11 +34,13 @@ const gotRevenueQueryResultsDate = results => ({
 
 export const getRevenueQueryResultsInterval = (
   timeInterval,
-  queryTitle
+  queryTitle,
+  xAxisOption
 ) => async dispatch => {
   try {
+    console.log('xAxisOption: ', xAxisOption)
     const res = await axios.get(`/api/revenueAnalytics/${queryTitle}`, {
-      params: {timeInterval}
+      params: {timeInterval, xAxisOption}
     })
     console.log('what is the response, ', res.data)
     dispatch(gotRevenueQueryResultsInterval(res.data))
@@ -50,11 +52,13 @@ export const getRevenueQueryResultsInterval = (
 export const getRevenueQueryResultsDate = (
   startDate,
   endDate,
-  queryTitle
+  queryTitle,
+  xAxisOption
 ) => async dispatch => {
   try {
+    console.log('xAxisOption: ', xAxisOption)
     const res = await axios.get(`/api/revenueAnalytics/${queryTitle}`, {
-      params: {startDate, endDate}
+      params: {startDate, endDate, xAxisOption}
     })
     dispatch(gotRevenueQueryResultsDate(res.data))
   } catch (err) {

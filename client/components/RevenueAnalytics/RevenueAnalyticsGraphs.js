@@ -9,7 +9,7 @@ import {
 } from '../../store/revenueAnalyticsReducer'
 import RevenueAnalyticsBarGraphs from './RevenueAnalyticsBarGraphs'
 import RevenueAnalyticsLineGraph from './RevenueAnalyticsLineGraph'
-import RadioButtonOptions from './RadioButtonOptions'
+import XAxisOptions from './RadioButtonOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
 
@@ -46,6 +46,7 @@ class RevenueAnalyticsGraphs extends Component {
     this.state = {
       selectedBarGraphIntervalOption: '30',
       selectedLineGraphIntervalOption: '2',
+      selectedXAxisOption: 'day',
       queryTitleOptions: [
         'avgRevenuePerGuestVsDOW',
         'numberOfOrdersVsHour',
@@ -64,12 +65,14 @@ class RevenueAnalyticsGraphs extends Component {
     )
     this.handleSelectedQueryChange = this.handleSelectedQueryChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
+    this.handleXAxisOptionChange = this.handleXAxisOptionChange.bind(this)
   }
 
   componentDidMount() {
     this.props.loadRevenueQueryResultsInterval(
       this.state.selectedBarGraphIntervalOption,
-      this.state.selectedQueryTitle
+      this.state.selectedQueryTitle,
+      this.state.selectedXAxisOption
     )
   }
 
@@ -86,7 +89,8 @@ class RevenueAnalyticsGraphs extends Component {
       this.props.loadRevenueQueryResultsDate(
         formattedStartDate,
         formattedEndDate,
-        this.state.selectedQueryTitle
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption
       )
     }
   }
@@ -96,7 +100,8 @@ class RevenueAnalyticsGraphs extends Component {
     if (this.state.selectedBarGraphIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
         this.state.selectedBarGraphIntervalOption,
-        this.state.selectedQueryTitle
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption
       )
     }
   }
@@ -117,7 +122,8 @@ class RevenueAnalyticsGraphs extends Component {
       if (this.state.selectedBarGraphIntervalOption !== 'custom') {
         this.props.loadRevenueQueryResultsInterval(
           this.state.selectedBarGraphIntervalOption,
-          this.state.selectedQueryTitle
+          this.state.selectedQueryTitle,
+          this.state.selectedXAxisOption
         )
       } else if (this.state.startDate && this.state.endDate) {
         const formattedStartDate =
@@ -127,7 +133,39 @@ class RevenueAnalyticsGraphs extends Component {
         this.props.loadRevenueQueryResultsDate(
           formattedStartDate,
           formattedEndDate,
-          this.state.selectedQueryTitle
+          this.state.selectedQueryTitle,
+          this.state.selectedXAxisOption
+        )
+      }
+    } else {
+      this.props.loadRevenueQueryResultsInterval(
+        this.state.selectedLineGraphIntervalOption,
+        this.state.selectedQueryTitle
+      )
+    }
+  }
+
+  async handleXAxisOptionChange(event) {
+    await this.setState({
+      selectedXAxisOption: event.target.value
+    })
+    if (this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison') {
+      if (this.state.selectedBarGraphIntervalOption !== 'custom') {
+        this.props.loadRevenueQueryResultsInterval(
+          this.state.selectedBarGraphIntervalOption,
+          this.state.selectedQueryTitle,
+          this.state.selectedXAxisOption
+        )
+      } else if (this.state.startDate && this.state.endDate) {
+        const formattedStartDate =
+          this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
+        const formattedEndDate =
+          this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
+        this.props.loadRevenueQueryResultsDate(
+          formattedStartDate,
+          formattedEndDate,
+          this.state.selectedQueryTitle,
+          this.state.selectedXAxisOption
         )
       }
     } else {
@@ -169,7 +207,9 @@ class RevenueAnalyticsGraphs extends Component {
                 <option value="custom">Custom Dates</option>
               </select>
             </div>
-            <RadioButtonOptions />
+            <XAxisOptions
+              handleXAxisOptionChange={this.handleXAxisOptionChange}
+            />
             {this.state.selectedBarGraphIntervalOption === 'custom' ? (
               <Wrapper>
                 <DateRangePicker
@@ -228,10 +268,19 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadRevenueQueryResultsInterval: (timeInterval, queryTitle) =>
-      dispatch(getRevenueQueryResultsInterval(timeInterval, queryTitle)),
-    loadRevenueQueryResultsDate: (startDate, endDate, queryTitle) =>
-      dispatch(getRevenueQueryResultsDate(startDate, endDate, queryTitle))
+    loadRevenueQueryResultsInterval: (timeInterval, queryTitle, xAxisOption) =>
+      dispatch(
+        getRevenueQueryResultsInterval(timeInterval, queryTitle, xAxisOption)
+      ),
+    loadRevenueQueryResultsDate: (
+      startDate,
+      endDate,
+      queryTitle,
+      xAxisOption
+    ) =>
+      dispatch(
+        getRevenueQueryResultsDate(startDate, endDate, queryTitle, xAxisOption)
+      )
   }
 }
 

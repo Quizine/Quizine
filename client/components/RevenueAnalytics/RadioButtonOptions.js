@@ -67,31 +67,40 @@ function StyledRadio(props) {
   )
 }
 
-export default function RadioButtonOptions() {
+export default function XAxisOptions(props) {
   return (
     <FormControl component="fieldset">
-      <FormLabel component="legend">Gender</FormLabel>
+      <FormLabel component="legend">Display Data</FormLabel>
       <RadioGroup
-        defaultValue="female"
-        aria-label="gender"
+        defaultValue="day"
+        aria-label="Display Data"
         name="customized-radios"
+        onChange={props.handleXAxisOptionChange}
       >
         <FormControlLabel
-          value="female"
+          value="year"
           control={<StyledRadio />}
-          label="Female"
-        />
-        <FormControlLabel value="male" control={<StyledRadio />} label="Male" />
-        <FormControlLabel
-          value="other"
-          control={<StyledRadio />}
-          label="Other"
+          label="Per Year"
         />
         <FormControlLabel
-          value="disabled"
-          disabled
+          value="month"
           control={<StyledRadio />}
-          label="(Disabled option)"
+          label="Per Month"
+        />
+        <FormControlLabel
+          value="week"
+          control={<StyledRadio />}
+          label="Per Week"
+        />
+        <FormControlLabel
+          value="day"
+          control={<StyledRadio />}
+          label="Per Day"
+        />
+        <FormControlLabel
+          value="hour"
+          control={<StyledRadio />}
+          label="Per Hour"
         />
       </RadioGroup>
     </FormControl>
