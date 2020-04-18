@@ -50,9 +50,7 @@ export default class RevenueAnalyticsBarGraphs extends Component {
                           suggestedMin: 0,
                           suggestedMax: queryData.max() * 1.1,
                           callback: function(value) {
-                            if (
-                              selectedQueryTitle === 'avgRevenuePerGuestVsDOW'
-                            ) {
+                            if (selectedQueryTitle === 'avgRevenuePerGuest') {
                               return '$' + value
                             }
                             return value
@@ -72,10 +70,8 @@ export default class RevenueAnalyticsBarGraphs extends Component {
 }
 
 function formatQueryName(name) {
-  if (name === 'avgRevenuePerGuestVsDOW') {
-    name = 'Average' + name.slice(3, -5)
-  } else if (name === 'numberOfOrdersVsHour') {
-    name = name.slice(0, -6)
+  if (name === 'avgRevenuePerGuest') {
+    name = 'Average' + name.slice(3)
   }
   name = name.replace(/([A-Z])/g, ' $1')
   name = name[0].toUpperCase() + name.slice(1)
