@@ -130,7 +130,8 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
               req.query.xAxisOption
             )
       const startDate = correctStartDate.toString().slice(0, 15)
-      res.json({...formattedData, startDate})
+      const endDate = correctEndDate.toString()
+      res.json({...formattedData, startDate, endDate})
     }
   } catch (error) {
     next(error)
