@@ -57,6 +57,14 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
       let text, values, correctStartDate, correctEndDate
 
       if (req.query.timeInterval) {
+        correctStartDate = new Date()
+        correctStartDate.setDate(
+          correctStartDate.getDate() - +req.query.timeInterval
+        )
+        correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+        correctStartDate = correctStartDate.toUTCString()
+        correctEndDate = new Date()
+        correctEndDate.setMinutes(0)
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
             ? `EXTRACT('${
@@ -70,10 +78,7 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         FROM orders
         ${
           req.query.timeInterval !== 'allPeriod'
-            ? `WHERE orders."timeOfPurchase" >= NOW() - '${
-                req.query.timeInterval
-              } days'
-              ::interval AND orders."timeOfPurchase" <= NOW()`
+            ? `WHERE orders."timeOfPurchase" >= '${correctStartDate}' AND orders."timeOfPurchase" <= NOW()`
             : 'WHERE orders."timeOfPurchase" <= NOW()'
         }
 
@@ -81,13 +86,14 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         GROUP BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'}
         ORDER BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'} ASC;`
         values = [req.user.restaurantId]
-        correctStartDate = new Date()
-        correctStartDate.setDate(
-          correctStartDate.getDate() - +req.query.timeInterval
-        )
-        correctStartDate.setMinutes(0)
-        correctEndDate = new Date()
-        correctEndDate.setMinutes(0)
+        console.log('text: ', text)
+        // correctStartDate = new Date()
+        // correctStartDate.setDate(
+        //   correctStartDate.getDate() - +req.query.timeInterval
+        // )
+        // correctStartDate.setMinutes(0)
+        // correctEndDate = new Date()
+        // correctEndDate.setMinutes(0)
       } else {
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
@@ -134,6 +140,14 @@ router.get('/numberOfOrders', async (req, res, next) => {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
       if (req.query.timeInterval) {
+        correctStartDate = new Date()
+        correctStartDate.setDate(
+          correctStartDate.getDate() - +req.query.timeInterval
+        )
+        correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+        correctStartDate = correctStartDate.toUTCString()
+        correctEndDate = new Date()
+        correctEndDate.setMinutes(0)
         text = `SELECT ${
           req.query.xAxisOption === 'avgHour'
             ? `EXTRACT('hour' FROM "timeOfPurchase") AS hour,`
@@ -145,10 +159,7 @@ router.get('/numberOfOrders', async (req, res, next) => {
       FROM orders
       ${
         req.query.timeInterval !== 'allPeriod'
-          ? `WHERE orders."timeOfPurchase" >= NOW() - '${
-              req.query.timeInterval
-            } days'
-            ::interval AND orders."timeOfPurchase" <= NOW()`
+          ? `WHERE orders."timeOfPurchase" >= '${correctStartDate}' AND orders."timeOfPurchase" <= NOW()`
           : 'WHERE orders."timeOfPurchase" <= NOW()'
       }
       AND orders."restaurantId" = $1
@@ -156,13 +167,6 @@ router.get('/numberOfOrders', async (req, res, next) => {
       ORDER BY ${req.query.xAxisOption === 'avgHour' ? 'hour' : 'date'} ASC;`
 
         values = [req.user.restaurantId]
-        correctStartDate = new Date()
-        correctStartDate.setDate(
-          correctStartDate.getDate() - +req.query.timeInterval
-        )
-        correctStartDate.setMinutes(0)
-        correctEndDate = new Date()
-        correctEndDate.setMinutes(0)
       } else {
         text = `SELECT ${
           req.query.xAxisOption === 'avgHour'
