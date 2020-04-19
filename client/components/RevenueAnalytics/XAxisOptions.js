@@ -67,38 +67,50 @@ function StyledRadio(props) {
   )
 }
 
+// eslint-disable-next-line complexity
 export default function XAxisOptions(props) {
+  const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
+  const startDate = new Date(props.revenueQueryResults.startDate)
+  const endDate = new Date(props.revenueQueryResults.endDate)
+  const diffDays = Math.floor(Math.abs((startDate - endDate) / oneDay))
+  const xAxisOption = props.selectedXAxisOption
   return (
     <FormControl component="fieldset">
       <FormLabel component="legend">Display Data</FormLabel>
       <RadioGroup
         defaultValue="day"
+        value={xAxisOption}
         aria-label="Display Data"
         name="customized-radios"
         onChange={props.handleXAxisOptionChange}
       >
         <FormControlLabel
           value="year"
+          disabled={diffDays <= 365}
           control={<StyledRadio />}
           label="Per Year"
         />
         <FormControlLabel
           value="month"
+          disabled={diffDays <= 30}
           control={<StyledRadio />}
           label="Per Month"
         />
         <FormControlLabel
           value="week"
+          disabled={diffDays <= 7}
           control={<StyledRadio />}
           label="Per Week"
         />
         <FormControlLabel
           value="day"
+          disabled={false}
           control={<StyledRadio />}
           label="Per Day"
         />
         <FormControlLabel
           value="hour"
+          disabled={diffDays >= 365}
           control={<StyledRadio />}
           label="Per Hour"
         />

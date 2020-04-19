@@ -79,7 +79,8 @@ class RevenueAnalyticsGraphs extends Component {
   async handleDateChange({startDate, endDate}) {
     await this.setState({
       startDate,
-      endDate
+      endDate,
+      selectedXAxisOption: 'day'
     })
     if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
@@ -95,8 +96,32 @@ class RevenueAnalyticsGraphs extends Component {
     }
   }
 
+  // eslint-disable-next-line complexity
   async handleBarGraphIntervalChange(event) {
     await this.setState({selectedBarGraphIntervalOption: event.target.value})
+    if (
+      this.state.selectedBarGraphIntervalOption === 'allPeriod' ||
+      +this.state.selectedBarGraphIntervalOption > 365
+    ) {
+      if (this.state.selectedXAxisOption === 'hour') {
+        await this.setState({selectedXAxisOption: 'day'})
+      }
+    } else if (+this.state.selectedBarGraphIntervalOption === 365) {
+      if (this.state.selectedXAxisOption === 'year') {
+        await this.setState({selectedXAxisOption: 'month'})
+      }
+    } else if (
+      +this.state.selectedBarGraphIntervalOption <= 30 &&
+      +this.state.selectedBarGraphIntervalOption > 7
+    ) {
+      if (this.state.selectedXAxisOption === 'month') {
+        await this.setState({selectedXAxisOption: 'week'})
+      }
+    } else if (+this.state.selectedBarGraphIntervalOption <= 7) {
+      if (this.state.selectedXAxisOption === 'week') {
+        await this.setState({selectedXAxisOption: 'day'})
+      }
+    }
     if (this.state.selectedBarGraphIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
         this.state.selectedBarGraphIntervalOption,
@@ -146,6 +171,7 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleXAxisOptionChange(event) {
+    console.log('TRACKING DISABLED: ', event.target.disabled)
     await this.setState({
       selectedXAxisOption: event.target.value
     })
@@ -211,6 +237,8 @@ class RevenueAnalyticsGraphs extends Component {
             <XAxisOptions
               handleXAxisOptionChange={this.handleXAxisOptionChange}
               selectedQueryTitle={this.state.selectedQueryTitle}
+              revenueQueryResults={this.props.revenueQueryResults}
+              selectedXAxisOption={this.state.selectedXAxisOption}
             />
             {this.state.selectedBarGraphIntervalOption === 'custom' ? (
               <Wrapper>
