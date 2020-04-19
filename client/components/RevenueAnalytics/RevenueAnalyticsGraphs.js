@@ -179,7 +179,6 @@ class RevenueAnalyticsGraphs extends Component {
   render() {
     return (
       <div className="bus-charts-cont">
-        {/* <div> */}
         <select
           className="select-cust"
           onChange={this.handleSelectedQueryChange}
@@ -192,7 +191,7 @@ class RevenueAnalyticsGraphs extends Component {
             )
           })}
         </select>
-        {/* </div> */}
+
         {this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison' ? (
           <div className="revenue-graphs-cont">
             <div className="month-button">
@@ -237,6 +236,7 @@ class RevenueAnalyticsGraphs extends Component {
             <RevenueAnalyticsBarGraphs
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
+              selectedXAxisOption={this.state.selectedXAxisOption}
             />
           </div>
         ) : (

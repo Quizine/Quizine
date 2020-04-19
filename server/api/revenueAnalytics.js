@@ -57,12 +57,22 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
       let text, values, correctStartDate, correctEndDate
 
       if (req.query.timeInterval) {
-        correctStartDate = new Date()
-        correctStartDate.setDate(
-          correctStartDate.getDate() - +req.query.timeInterval
-        )
-        correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
-        correctStartDate = correctStartDate.toUTCString()
+        if (req.query.timeInterval !== 'allPeriod') {
+          correctStartDate = new Date()
+          correctStartDate.setDate(
+            correctStartDate.getDate() - +req.query.timeInterval
+          )
+          correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+        } else {
+          const startDateText =
+            'SELECT "timeOfPurchase" as date FROM orders WHERE orders."restaurantId" = $1 ORDER BY date ASC LIMIT 1;'
+          const startDateValues = [req.user.restaurantId]
+          const startDateData = await client.query(
+            startDateText,
+            startDateValues
+          )
+          correctStartDate = startDateData.rows[0].date
+        }
         correctEndDate = new Date()
         correctEndDate.setMinutes(0)
         text = `SELECT ${
@@ -78,7 +88,7 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         FROM orders
         ${
           req.query.timeInterval !== 'allPeriod'
-            ? `WHERE orders."timeOfPurchase" >= '${correctStartDate}' AND orders."timeOfPurchase" <= NOW()`
+            ? `WHERE orders."timeOfPurchase" >= '${correctStartDate.toUTCString()}' AND orders."timeOfPurchase" <= NOW()`
             : 'WHERE orders."timeOfPurchase" <= NOW()'
         }
 
@@ -86,14 +96,6 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         GROUP BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'}
         ORDER BY ${req.query.xAxisOption === 'DOW' ? 'day' : 'date'} ASC;`
         values = [req.user.restaurantId]
-        console.log('text: ', text)
-        // correctStartDate = new Date()
-        // correctStartDate.setDate(
-        //   correctStartDate.getDate() - +req.query.timeInterval
-        // )
-        // correctStartDate.setMinutes(0)
-        // correctEndDate = new Date()
-        // correctEndDate.setMinutes(0)
       } else {
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
@@ -127,7 +129,8 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
               correctEndDate,
               req.query.xAxisOption
             )
-      res.json(formattedData)
+      const startDate = correctStartDate.toString().slice(0, 15)
+      res.json({...formattedData, startDate})
     }
   } catch (error) {
     next(error)
@@ -140,12 +143,22 @@ router.get('/numberOfOrders', async (req, res, next) => {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
       if (req.query.timeInterval) {
-        correctStartDate = new Date()
-        correctStartDate.setDate(
-          correctStartDate.getDate() - +req.query.timeInterval
-        )
-        correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
-        correctStartDate = correctStartDate.toUTCString()
+        if (req.query.timeInterval !== 'allPeriod') {
+          correctStartDate = new Date()
+          correctStartDate.setDate(
+            correctStartDate.getDate() - +req.query.timeInterval
+          )
+          correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+        } else {
+          const startDateText =
+            'SELECT "timeOfPurchase" as date FROM orders WHERE orders."restaurantId" = $1 ORDER BY date ASC LIMIT 1;'
+          const startDateValues = [req.user.restaurantId]
+          const startDateData = await client.query(
+            startDateText,
+            startDateValues
+          )
+          correctStartDate = startDateData.rows[0].date
+        }
         correctEndDate = new Date()
         correctEndDate.setMinutes(0)
         text = `SELECT ${
@@ -159,7 +172,7 @@ router.get('/numberOfOrders', async (req, res, next) => {
       FROM orders
       ${
         req.query.timeInterval !== 'allPeriod'
-          ? `WHERE orders."timeOfPurchase" >= '${correctStartDate}' AND orders."timeOfPurchase" <= NOW()`
+          ? `WHERE orders."timeOfPurchase" >= '${correctStartDate.toUTCString()}' AND orders."timeOfPurchase" <= NOW()`
           : 'WHERE orders."timeOfPurchase" <= NOW()'
       }
       AND orders."restaurantId" = $1
@@ -198,7 +211,8 @@ router.get('/numberOfOrders', async (req, res, next) => {
               correctEndDate,
               req.query.xAxisOption
             )
-      res.json(formattedData)
+      const startDate = correctStartDate.toString().slice(0, 15)
+      res.json({...formattedData, startDate})
     }
   } catch (error) {
     next(error)
@@ -278,26 +292,45 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
   }
   if (xAxisOption !== 'hour') {
     for (let i = 0; i < arr.length; i++) {
-      let formattedElement =
-        xAxisOption === 'month'
-          ? arr[i].date
-              .toString()
-              .slice(
-                xAxisOptionHashTable[xAxisOption][0],
-                xAxisOptionHashTable[xAxisOption][1]
-              ) +
-            arr[i].date
-              .toString()
-              .slice(
-                xAxisOptionHashTable[xAxisOption][2],
-                xAxisOptionHashTable[xAxisOption][3]
-              )
-          : arr[i].date
-              .toString()
-              .slice(
-                xAxisOptionHashTable[xAxisOption][0],
-                xAxisOptionHashTable[xAxisOption][1]
-              )
+      let formattedElement
+      if (xAxisOption === 'month') {
+        formattedElement =
+          arr[i].date
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][0],
+              xAxisOptionHashTable[xAxisOption][1]
+            ) +
+          arr[i].date
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][2],
+              xAxisOptionHashTable[xAxisOption][3]
+            )
+      } else if (xAxisOption === 'week') {
+        if (i === 0) {
+          formattedElement = startDate
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][0],
+              xAxisOptionHashTable[xAxisOption][1]
+            )
+        } else {
+          formattedElement = arr[i].date
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][0],
+              xAxisOptionHashTable[xAxisOption][1]
+            )
+        }
+      } else {
+        formattedElement = arr[i].date
+          .toString()
+          .slice(
+            xAxisOptionHashTable[xAxisOption][0],
+            xAxisOptionHashTable[xAxisOption][1]
+          )
+      }
       xAxis.push(formattedElement)
       yAxis.push(arr[i].yAxisData)
     }

@@ -7,6 +7,8 @@ export default class RevenueAnalyticsBarGraphs extends Component {
   render() {
     const labels = this.props.revenueQueryResults.xAxis
     const yAxis = this.props.revenueQueryResults.yAxis
+    const startDate = this.props.revenueQueryResults.startDate
+    const selectedXAxisOption = this.props.selectedXAxisOption
 
     const chartData = {
       labels: labels,
@@ -63,6 +65,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
               />
             </div>
           </CardContent>
+          {selectedXAxisOption === 'month' || selectedXAxisOption === 'year' ? (
+            <h5>Shown data starting from {startDate}</h5>
+          ) : null}
         </Card>
       </div>
     )
