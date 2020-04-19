@@ -178,23 +178,23 @@ class RevenueAnalyticsGraphs extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <select
-            className="select-cust"
-            onChange={this.handleSelectedQueryChange}
-          >
-            {this.state.queryTitleOptions.map((query, idx) => {
-              return (
-                <option key={idx} value={query}>
-                  {formatQueryName(query)}
-                </option>
-              )
-            })}
-          </select>
-        </div>
+      <div className="bus-charts-cont">
+        {/* <div> */}
+        <select
+          className="select-cust"
+          onChange={this.handleSelectedQueryChange}
+        >
+          {this.state.queryTitleOptions.map((query, idx) => {
+            return (
+              <option key={idx} value={query}>
+                {formatQueryName(query)}
+              </option>
+            )
+          })}
+        </select>
+        {/* </div> */}
         {this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison' ? (
-          <div>
+          <div className="revenue-graphs-cont">
             <div className="month-button">
               <select
                 onChange={this.handleBarGraphIntervalChange}
@@ -240,7 +240,7 @@ class RevenueAnalyticsGraphs extends Component {
             />
           </div>
         ) : (
-          <div>
+          <div className="revenue-graphs-cont">
             <div className="month-button">
               <select
                 onChange={this.handleLineGraphIntervalChange}

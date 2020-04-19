@@ -108,6 +108,12 @@ form div {
   /* justify-content: center; */
 }
 
+.revenue-graphs-cont {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 /* ------CALENDAR CONTAINER ---------- */
 .calendar-container {
   display: flex;
