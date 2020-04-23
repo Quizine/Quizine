@@ -120,6 +120,8 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const avgRevPerGuest = await client.query(text, values)
+      const startDate = correctStartDate.toString().slice(0, 15)
+      const endDate = correctEndDate.toString()
       const formattedData =
         req.query.xAxisOption === 'DOW'
           ? formattingDaysOfWeek(avgRevPerGuest.rows)
@@ -129,8 +131,6 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
               correctEndDate,
               req.query.xAxisOption
             )
-      const startDate = correctStartDate.toString().slice(0, 15)
-      const endDate = correctEndDate.toString()
       res.json({...formattedData, startDate, endDate})
     }
   } catch (error) {
@@ -203,6 +203,8 @@ router.get('/numberOfOrders', async (req, res, next) => {
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const numberOfOrders = await client.query(text, values)
+      const startDate = correctStartDate.toString().slice(0, 15)
+      const endDate = correctEndDate.toString()
       const formattedData =
         req.query.xAxisOption === 'avgHour'
           ? formattingNumberOfOrdersPerHour(numberOfOrders.rows)
@@ -212,8 +214,8 @@ router.get('/numberOfOrders', async (req, res, next) => {
               correctEndDate,
               req.query.xAxisOption
             )
-      const startDate = correctStartDate.toString().slice(0, 15)
-      res.json({...formattedData, startDate})
+
+      res.json({...formattedData, startDate, endDate})
     }
   } catch (error) {
     next(error)

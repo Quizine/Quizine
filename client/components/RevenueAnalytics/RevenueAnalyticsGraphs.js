@@ -114,11 +114,18 @@ class RevenueAnalyticsGraphs extends Component {
       +this.state.selectedBarGraphIntervalOption <= 30 &&
       +this.state.selectedBarGraphIntervalOption > 7
     ) {
-      if (this.state.selectedXAxisOption === 'month') {
+      if (
+        this.state.selectedXAxisOption === 'month' ||
+        this.state.selectedXAxisOption === 'year'
+      ) {
         await this.setState({selectedXAxisOption: 'week'})
       }
     } else if (+this.state.selectedBarGraphIntervalOption <= 7) {
-      if (this.state.selectedXAxisOption === 'week') {
+      if (
+        this.state.selectedXAxisOption === 'week' ||
+        this.state.selectedXAxisOption === 'month' ||
+        this.state.selectedXAxisOption === 'year'
+      ) {
         await this.setState({selectedXAxisOption: 'day'})
       }
     }
@@ -139,11 +146,23 @@ class RevenueAnalyticsGraphs extends Component {
     )
   }
 
+  // eslint-disable-next-line complexity
   async handleSelectedQueryChange(event) {
     await this.setState({
       selectedQueryTitle: event.target.value
     })
+
     if (this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison') {
+      if (
+        (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
+          this.state.selectedXAxisOption === 'avgHour') ||
+        (this.state.selectedQueryTitle === 'numberOfOrders' &&
+          this.state.selectedXAxisOption === 'DOW')
+      ) {
+        await this.setState({
+          selectedXAxisOption: 'day'
+        })
+      }
       if (this.state.selectedBarGraphIntervalOption !== 'custom') {
         this.props.loadRevenueQueryResultsInterval(
           this.state.selectedBarGraphIntervalOption,
