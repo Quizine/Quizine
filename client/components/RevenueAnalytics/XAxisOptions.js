@@ -73,7 +73,6 @@ export default function XAxisOptions(props) {
   const startDate = new Date(props.revenueQueryResults.startDate)
   const endDate = new Date(props.revenueQueryResults.endDate)
   const diffDays = Math.floor(Math.abs((startDate - endDate) / oneDay))
-  console.log('start date:', startDate, 'end date:', endDate, 'diff:', diffDays)
   const xAxisOption = props.selectedXAxisOption
   return (
     <FormControl component="fieldset">

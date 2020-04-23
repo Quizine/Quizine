@@ -109,6 +109,8 @@ class RevenueAnalyticsGraphs extends Component {
     } else if (+this.state.selectedBarGraphIntervalOption === 365) {
       if (this.state.selectedXAxisOption === 'year') {
         await this.setState({selectedXAxisOption: 'month'})
+      } else if (this.state.selectedXAxisOption === 'hour') {
+        await this.setState({selectedXAxisOption: 'day'})
       }
     } else if (
       +this.state.selectedBarGraphIntervalOption <= 30 &&
@@ -190,7 +192,6 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleXAxisOptionChange(event) {
-    console.log('TRACKING DISABLED: ', event.target.disabled)
     await this.setState({
       selectedXAxisOption: event.target.value
     })

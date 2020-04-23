@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 const router = require('express').Router()
 const pg = require('pg')
 const config = 'postgres://yourname:yourpassword@localhost:5432/nestegg'
@@ -8,42 +9,98 @@ module.exports = router
 router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const text = `SELECT  to_char("timeOfPurchase",'Mon') AS mon,
-      DATE_TRUNC('month', orders."timeOfPurchase" ) as date,
-      EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-      CASE WHEN (EXTRACT(HOUR FROM "timeOfPurchase") < '16') then 'lunch'
-         ELSE 'dinner'
-       END as "mealType",
-      SUM("revenue") AS "monthlyRevenue"
-      FROM orders
-      ${
-        req.query.timeInterval !== 'allPeriod'
-          ? 'WHERE orders."timeOfPurchase" >= NOW() - ' +
-            `'${req.query.timeInterval} year'` +
-            '::interval AND orders."timeOfPurchase" <= NOW()'
-          : 'WHERE orders."timeOfPurchase" <= NOW()'
-      }
-
-      AND orders."restaurantId" = $1
-      GROUP BY mon, date, yyyy, "mealType"
-      ORDER BY date;`
-
-      const values = [req.user.restaurantId]
-      const lunchAndDinnerRevenueComparison = await client.query(text, values)
-      const allDateRevenue = {
-        month: [],
-        lunchRevenue: [],
-        dinnerRevenue: []
-      }
-      lunchAndDinnerRevenueComparison.rows.forEach((row, idx) => {
-        if (row.mealType === 'lunch') {
-          allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-          allDateRevenue.lunchRevenue.push(Number(row.monthlyRevenue))
+      let text, values, correctStartDate, correctEndDate
+      req.query.timeInterval = '60'
+      req.query.xAxisOption = 'week'
+      if (req.query.timeInterval) {
+        if (req.query.timeInterval !== 'allPeriod') {
+          correctStartDate = new Date()
+          correctStartDate.setDate(
+            correctStartDate.getDate() - +req.query.timeInterval
+          )
+          correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
         } else {
-          allDateRevenue.dinnerRevenue.push(Number(row.monthlyRevenue))
+          const startDateText =
+            'SELECT "timeOfPurchase" as date FROM orders WHERE orders."restaurantId" = $1 ORDER BY date ASC LIMIT 1;'
+          const startDateValues = [req.user.restaurantId]
+          const startDateData = await client.query(
+            startDateText,
+            startDateValues
+          )
+          correctStartDate = startDateData.rows[0].date
         }
-      })
-      res.json(allDateRevenue)
+        correctEndDate = new Date()
+        correctEndDate.setMinutes(0)
+        text = `SELECT DATE_TRUNC('${
+          req.query.xAxisOption
+        }', orders."timeOfPurchase" ) as date,
+        CASE WHEN (EXTRACT(HOUR FROM "timeOfPurchase") < '16') then 'lunch'
+          ELSE 'dinner'
+        END as "mealType",
+        SUM("revenue") AS revenue
+        FROM orders
+        ${
+          req.query.timeInterval !== 'allPeriod'
+            ? `WHERE orders."timeOfPurchase" >= '${correctStartDate.toUTCString()}' AND orders."timeOfPurchase" <= NOW()`
+            : 'WHERE orders."timeOfPurchase" <= NOW()'
+        }
+        AND orders."restaurantId" = $1
+        GROUP BY date, "mealType"
+        ORDER BY date;`
+        values = [req.user.restaurantId]
+      } else {
+        text = `SELECT DATE_TRUNC('${
+          req.query.xAxisOption
+        }', orders."timeOfPurchase" ) as date,
+        CASE WHEN (EXTRACT(HOUR FROM "timeOfPurchase") < '16') then 'lunch'
+          ELSE 'dinner'
+        END as "mealType",
+        SUM("revenue") AS revenue
+        FROM orders
+        WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
+        AND orders."restaurantId" = $3
+        GROUP BY date, "mealType"
+        ORDER BY date;`
+        correctStartDate = new Date(req.query.startDate)
+        correctEndDate = new Date(
+          Math.min(new Date(), new Date(req.query.endDate))
+        )
+        correctEndDate.setMinutes(0)
+        values = [correctStartDate, correctEndDate, req.user.restaurantId]
+      }
+      console.log('text: ', text)
+      const lunchAndDinnerRevenueComparison = await client.query(text, values)
+      console.log('what is this: ', lunchAndDinnerRevenueComparison)
+      const test = formattingLineGraphData(
+        lunchAndDinnerRevenueComparison.rows,
+        correctStartDate,
+        correctEndDate,
+        req.query.xAxisOption
+      )
+      console.log(
+        'test ------------------> ',
+        test,
+        'xAxis: ',
+        test.xAxis.length,
+        'lunch',
+        test.lunchRevenue.length,
+        'dinner ',
+        test.dinnerRevenue.length
+      )
+      // const allDateRevenue = {
+      //   month: [],
+      //   lunchRevenue: [],
+      //   dinnerRevenue: []
+      // }
+      // lunchAndDinnerRevenueComparison.rows.forEach((row, idx) => {
+      //   if (row.mealType === 'lunch') {
+      //     allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
+      //     allDateRevenue.lunchRevenue.push(Number(row.revenue))
+      //   } else {
+      //     allDateRevenue.dinnerRevenue.push(Number(row.revenue))
+      //   }
+      // })
+      res.json(test)
     }
   } catch (error) {
     next(error)
@@ -362,4 +419,100 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
     }
   }
   return {xAxis, yAxis}
+}
+
+// eslint-disable-next-line complexity
+function formattingLineGraphData(arr, startDate, endDate, xAxisOption) {
+  let xAxis = []
+  let lunchRevenue = []
+  let dinnerRevenue = []
+  let xAxisOptionHashTable = {
+    year: [11, 16],
+    month: [4, 7, 10, 16],
+    week: [0, 16],
+    day: [0, 16]
+  }
+  if (xAxisOption !== 'hour' && xAxisOption !== 'day') {
+    for (let i = 0; i < arr.length; i++) {
+      let formattedElement
+      if (xAxisOption === 'month') {
+        formattedElement =
+          arr[i].date
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][0],
+              xAxisOptionHashTable[xAxisOption][1]
+            ) +
+          arr[i].date
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][2],
+              xAxisOptionHashTable[xAxisOption][3]
+            )
+      } else if (xAxisOption === 'week') {
+        if (i === 0) {
+          formattedElement = startDate
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][0],
+              xAxisOptionHashTable[xAxisOption][1]
+            )
+        } else {
+          formattedElement = arr[i].date
+            .toString()
+            .slice(
+              xAxisOptionHashTable[xAxisOption][0],
+              xAxisOptionHashTable[xAxisOption][1]
+            )
+        }
+      } else {
+        formattedElement = arr[i].date
+          .toString()
+          .slice(
+            xAxisOptionHashTable[xAxisOption][0],
+            xAxisOptionHashTable[xAxisOption][1]
+          )
+      }
+      if (xAxis[xAxis.length - 1] !== formattedElement) {
+        xAxis.push(formattedElement)
+      }
+      if (arr[i].mealType === 'lunch') {
+        lunchRevenue.push(arr[i].revenue)
+      } else {
+        dinnerRevenue.push(arr[i].revenue)
+      }
+    }
+  } else if (xAxisOption === 'hour') {
+    let i = 0
+    while (startDate <= endDate) {
+      if (
+        +startDate.toString().slice(16, 18) < 11 ||
+        +startDate.toString().slice(16, 18) > 22
+      ) {
+        startDate.setHours(startDate.getHours() + 1)
+      } else if (
+        arr[i] &&
+        startDate.toString().slice(0, 21) ===
+          arr[i].date.toString().slice(0, 21)
+      ) {
+        xAxis.push(arr[i].date.toString().slice(0, 21))
+        if (arr[i].mealType === 'lunch') {
+          lunchRevenue.push(+arr[i].revenue)
+          dinnerRevenue.push(0)
+        } else {
+          dinnerRevenue.push(+arr[i].revenue)
+          lunchRevenue.push(0)
+        }
+
+        startDate.setHours(startDate.getHours() + 1)
+        i++
+      } else {
+        xAxis.push(startDate.toString().slice(0, 21))
+        lunchRevenue.push(0)
+        dinnerRevenue.push(0)
+        startDate.setHours(startDate.getHours() + 1)
+      }
+    }
+  }
+  return {xAxis, lunchRevenue, dinnerRevenue}
 }
