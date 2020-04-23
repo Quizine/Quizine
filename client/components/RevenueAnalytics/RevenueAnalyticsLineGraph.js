@@ -12,7 +12,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default class RevenueAnalyticsLineGraph extends Component {
   render() {
-    const {month, lunchRevenue, dinnerRevenue} = this.props.revenueQueryResults
+    const {xAxis, lunchRevenue, dinnerRevenue} = this.props.revenueQueryResults
 
     const lunchRevenueTotal =
       lunchRevenue && lunchRevenue.reduce((acc, curr) => acc + curr)
@@ -20,7 +20,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
       dinnerRevenue && dinnerRevenue.reduce((acc, curr) => acc + curr)
 
     const chartData = {
-      labels: month,
+      labels: xAxis,
       datasets: [
         {
           fill: false,
@@ -91,6 +91,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
                 />
               </div>
             </CardContent>
+            <h5>Shown data starting from </h5>
           </Card>
         </div>
       </div>
