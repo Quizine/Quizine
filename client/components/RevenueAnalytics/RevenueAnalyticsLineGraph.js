@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Line} from 'react-chartjs-2'
+import {Line, Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
+import GraphOptionButtons from './GraphOptionButtons'
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -36,7 +37,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
           borderColor: 'red',
           hoverBackgroundColor: 'red',
           pointBackgroundColor: 'black',
-          pointRadius: 4
+          pointRadius: 0
         },
         {
           fill: false,
@@ -46,7 +47,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
           borderColor: 'blue',
           hoverBackgroundColor: 'red',
           pointBackgroundColor: 'black',
-          pointRadius: 4
+          pointRadius: 0
         }
       ]
     }
@@ -56,14 +57,13 @@ export default class RevenueAnalyticsLineGraph extends Component {
 
     return (
       <div>
-        <div>
-          <h1>TESTING</h1>
-        </div>
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
             <CardHeader
               title={formatQueryName(this.props.selectedQueryTitle)}
             />
+
+            <GraphOptionButtons />
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">
