@@ -1,7 +1,5 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 
@@ -23,23 +21,16 @@ export default function GraphOptionButtons(props) {
   const [graphOption, setGraphOption] = React.useState(selectedGraphOption)
 
   const handleChange = (event, newGraphOption) => {
-    setGraphOption(newGraphOption)
-    handleGraphOptionChange(event)
+    if (newGraphOption !== null) {
+      setGraphOption(newGraphOption)
+      handleGraphOptionChange(event)
+    }
   }
 
   return (
-    <ToggleButtonGroup
-      value={graphOption}
-      exclusive
-      onChange={handleChange}
-      aria-label="text alignment"
-    >
-      <ToggleButton value="Bar" aria-label="center">
-        Bar Graph
-      </ToggleButton>
-      <ToggleButton value="Line" aria-label="center">
-        Line Graph
-      </ToggleButton>
+    <ToggleButtonGroup value={graphOption} exclusive onChange={handleChange}>
+      <ToggleButton value="bar">Bar Graph</ToggleButton>
+      <ToggleButton value="line">Line Graph</ToggleButton>
     </ToggleButtonGroup>
   )
 }
