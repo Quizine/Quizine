@@ -44,8 +44,7 @@ class RevenueAnalyticsGraphs extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedBarGraphIntervalOption: '30',
-      selectedLineGraphIntervalOption: '2',
+      selectedIntervalOption: '30',
       selectedXAxisOption: 'day',
       queryTitleOptions: [
         'avgRevenuePerGuest',
@@ -57,12 +56,7 @@ class RevenueAnalyticsGraphs extends Component {
       endDate: null,
       focusedInput: null
     }
-    this.handleBarGraphIntervalChange = this.handleBarGraphIntervalChange.bind(
-      this
-    )
-    this.handleLineGraphIntervalChange = this.handleLineGraphIntervalChange.bind(
-      this
-    )
+    this.handleGraphIntervalChange = this.handleGraphIntervalChange.bind(this)
     this.handleSelectedQueryChange = this.handleSelectedQueryChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleXAxisOptionChange = this.handleXAxisOptionChange.bind(this)
@@ -70,7 +64,7 @@ class RevenueAnalyticsGraphs extends Component {
 
   componentDidMount() {
     this.props.loadRevenueQueryResultsInterval(
-      this.state.selectedBarGraphIntervalOption,
+      this.state.selectedIntervalOption,
       this.state.selectedQueryTitle,
       this.state.selectedXAxisOption
     )
@@ -97,24 +91,24 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   // eslint-disable-next-line complexity
-  async handleBarGraphIntervalChange(event) {
-    await this.setState({selectedBarGraphIntervalOption: event.target.value})
+  async handleGraphIntervalChange(event) {
+    await this.setState({selectedIntervalOption: event.target.value})
     if (
-      this.state.selectedBarGraphIntervalOption === 'allPeriod' ||
-      +this.state.selectedBarGraphIntervalOption > 365
+      this.state.selectedIntervalOption === 'allPeriod' ||
+      +this.state.selectedIntervalOption > 365
     ) {
       if (this.state.selectedXAxisOption === 'hour') {
         await this.setState({selectedXAxisOption: 'day'})
       }
-    } else if (+this.state.selectedBarGraphIntervalOption === 365) {
+    } else if (+this.state.selectedIntervalOption === 365) {
       if (this.state.selectedXAxisOption === 'year') {
         await this.setState({selectedXAxisOption: 'month'})
       } else if (this.state.selectedXAxisOption === 'hour') {
         await this.setState({selectedXAxisOption: 'day'})
       }
     } else if (
-      +this.state.selectedBarGraphIntervalOption <= 30 &&
-      +this.state.selectedBarGraphIntervalOption > 7
+      +this.state.selectedIntervalOption <= 30 &&
+      +this.state.selectedIntervalOption > 7
     ) {
       if (
         this.state.selectedXAxisOption === 'month' ||
@@ -122,7 +116,7 @@ class RevenueAnalyticsGraphs extends Component {
       ) {
         await this.setState({selectedXAxisOption: 'week'})
       }
-    } else if (+this.state.selectedBarGraphIntervalOption <= 7) {
+    } else if (+this.state.selectedIntervalOption <= 7) {
       if (
         this.state.selectedXAxisOption === 'week' ||
         this.state.selectedXAxisOption === 'month' ||
@@ -131,21 +125,13 @@ class RevenueAnalyticsGraphs extends Component {
         await this.setState({selectedXAxisOption: 'day'})
       }
     }
-    if (this.state.selectedBarGraphIntervalOption !== 'custom') {
+    if (this.state.selectedIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
-        this.state.selectedBarGraphIntervalOption,
+        this.state.selectedIntervalOption,
         this.state.selectedQueryTitle,
         this.state.selectedXAxisOption
       )
     }
-  }
-
-  async handleLineGraphIntervalChange(event) {
-    await this.setState({selectedLineGraphIntervalOption: event.target.value})
-    this.props.loadRevenueQueryResultsInterval(
-      this.state.selectedLineGraphIntervalOption,
-      this.state.selectedQueryTitle
-    )
   }
 
   // eslint-disable-next-line complexity
@@ -153,40 +139,32 @@ class RevenueAnalyticsGraphs extends Component {
     await this.setState({
       selectedQueryTitle: event.target.value
     })
-
-    if (this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison') {
-      if (
-        (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
-          this.state.selectedXAxisOption === 'avgHour') ||
-        (this.state.selectedQueryTitle === 'numberOfOrders' &&
-          this.state.selectedXAxisOption === 'DOW')
-      ) {
-        await this.setState({
-          selectedXAxisOption: 'day'
-        })
-      }
-      if (this.state.selectedBarGraphIntervalOption !== 'custom') {
-        this.props.loadRevenueQueryResultsInterval(
-          this.state.selectedBarGraphIntervalOption,
-          this.state.selectedQueryTitle,
-          this.state.selectedXAxisOption
-        )
-      } else if (this.state.startDate && this.state.endDate) {
-        const formattedStartDate =
-          this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
-        const formattedEndDate =
-          this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
-        this.props.loadRevenueQueryResultsDate(
-          formattedStartDate,
-          formattedEndDate,
-          this.state.selectedQueryTitle,
-          this.state.selectedXAxisOption
-        )
-      }
-    } else {
+    if (
+      (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
+        this.state.selectedXAxisOption === 'avgHour') ||
+      (this.state.selectedQueryTitle === 'numberOfOrders' &&
+        this.state.selectedXAxisOption === 'DOW')
+    ) {
+      await this.setState({
+        selectedXAxisOption: 'day'
+      })
+    }
+    if (this.state.selectedIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
-        this.state.selectedLineGraphIntervalOption,
-        this.state.selectedQueryTitle
+        this.state.selectedIntervalOption,
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption
+      )
+    } else if (this.state.startDate && this.state.endDate) {
+      const formattedStartDate =
+        this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
+      const formattedEndDate =
+        this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
+      this.props.loadRevenueQueryResultsDate(
+        formattedStartDate,
+        formattedEndDate,
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption
       )
     }
   }
@@ -195,29 +173,22 @@ class RevenueAnalyticsGraphs extends Component {
     await this.setState({
       selectedXAxisOption: event.target.value
     })
-    if (this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison') {
-      if (this.state.selectedBarGraphIntervalOption !== 'custom') {
-        this.props.loadRevenueQueryResultsInterval(
-          this.state.selectedBarGraphIntervalOption,
-          this.state.selectedQueryTitle,
-          this.state.selectedXAxisOption
-        )
-      } else if (this.state.startDate && this.state.endDate) {
-        const formattedStartDate =
-          this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
-        const formattedEndDate =
-          this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
-        this.props.loadRevenueQueryResultsDate(
-          formattedStartDate,
-          formattedEndDate,
-          this.state.selectedQueryTitle,
-          this.state.selectedXAxisOption
-        )
-      }
-    } else {
+    if (this.state.selectedIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
-        this.state.selectedLineGraphIntervalOption,
-        this.state.selectedQueryTitle
+        this.state.selectedIntervalOption,
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption
+      )
+    } else if (this.state.startDate && this.state.endDate) {
+      const formattedStartDate =
+        this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
+      const formattedEndDate =
+        this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
+      this.props.loadRevenueQueryResultsDate(
+        formattedStartDate,
+        formattedEndDate,
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption
       )
     }
   }
@@ -240,7 +211,7 @@ class RevenueAnalyticsGraphs extends Component {
 
         <div className="month-button">
           <select
-            onChange={this.handleBarGraphIntervalChange}
+            onChange={this.handleGraphIntervalChange}
             className="select-cust"
             defaultValue="30"
           >
@@ -258,7 +229,7 @@ class RevenueAnalyticsGraphs extends Component {
           revenueQueryResults={this.props.revenueQueryResults}
           selectedXAxisOption={this.state.selectedXAxisOption}
         />
-        {this.state.selectedBarGraphIntervalOption === 'custom' ? (
+        {this.state.selectedIntervalOption === 'custom' ? (
           <Wrapper>
             <DateRangePicker
               showDefaultInputIcon={true}
@@ -288,20 +259,10 @@ class RevenueAnalyticsGraphs extends Component {
           </div>
         ) : (
           <div className="revenue-graphs-cont">
-            {/* <div className="month-button">
-              <select
-                onChange={this.handleLineGraphIntervalChange}
-                className="select-cust"
-                defaultValue="2"
-              >
-                <option value="1">Last Year</option>
-                <option value="2">Last 2 Years</option>
-                <option value="allPeriod">All History</option>
-              </select>
-            </div> */}
             <RevenueAnalyticsLineGraph
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
+              selectedXAxisOption={this.state.selectedXAxisOption}
             />
           </div>
         )}

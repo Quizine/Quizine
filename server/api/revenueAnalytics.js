@@ -10,8 +10,7 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
   try {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
-      req.query.timeInterval = '20'
-      req.query.xAxisOption = 'day'
+      console.log('WHAT IS XAXIS OPTION: ', req.query.xAxisOption)
       if (req.query.timeInterval) {
         if (req.query.timeInterval !== 'allPeriod') {
           correctStartDate = new Date()
@@ -70,6 +69,8 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
       }
       console.log('text: ', text)
       const lunchAndDinnerRevenueComparison = await client.query(text, values)
+      const startDate = correctStartDate.toString().slice(0, 15)
+      const endDate = correctEndDate.toString()
       console.log('what is this: ', lunchAndDinnerRevenueComparison)
       const formattedLineGraphData = formattingLineGraphData(
         lunchAndDinnerRevenueComparison.rows,
@@ -77,7 +78,7 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
         correctEndDate,
         req.query.xAxisOption
       )
-      res.json(formattedLineGraphData)
+      res.json({...formattedLineGraphData, startDate, endDate})
     }
   } catch (error) {
     next(error)
@@ -369,7 +370,7 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
           )
       }
       xAxis.push(formattedElement)
-      yAxis.push(arr[i].yAxisData)
+      yAxis.push(+arr[i].yAxisData)
     }
   } else {
     let i = 0
@@ -427,7 +428,7 @@ function formattingLineGraphData(arr, startDate, endDate, xAxisOption) {
               xAxisOptionHashTable[xAxisOption][3]
             )
       } else if (xAxisOption === 'week') {
-        if (i === 0) {
+        if (i === 0 || i === 1) {
           formattedElement = startDate
             .toString()
             .slice(
@@ -450,13 +451,13 @@ function formattingLineGraphData(arr, startDate, endDate, xAxisOption) {
             xAxisOptionHashTable[xAxisOption][1]
           )
       }
-      if (xAxis[xAxis.length - 1] !== formattedElement) {
+      if (xAxis.length === 0 || xAxis[xAxis.length - 1] !== formattedElement) {
         xAxis.push(formattedElement)
       }
       if (arr[i].mealType === 'lunch') {
-        lunchRevenue.push(arr[i].revenue)
+        lunchRevenue.push(+arr[i].revenue)
       } else {
-        dinnerRevenue.push(arr[i].revenue)
+        dinnerRevenue.push(+arr[i].revenue)
       }
     }
   } else if (xAxisOption === 'hour') {
