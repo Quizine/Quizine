@@ -238,49 +238,48 @@ class RevenueAnalyticsGraphs extends Component {
           })}
         </select>
 
+        <div className="month-button">
+          <select
+            onChange={this.handleBarGraphIntervalChange}
+            className="select-cust"
+            defaultValue="30"
+          >
+            <option value="allPeriod">All History</option>
+            <option value="730">Last 2 Years</option>
+            <option value="365">Last 1 Year</option>
+            <option value="30">Last 30 Days</option>
+            <option value="7">Last 7 Days</option>
+            <option value="custom">Custom Dates</option>
+          </select>
+        </div>
+        <XAxisOptions
+          handleXAxisOptionChange={this.handleXAxisOptionChange}
+          selectedQueryTitle={this.state.selectedQueryTitle}
+          revenueQueryResults={this.props.revenueQueryResults}
+          selectedXAxisOption={this.state.selectedXAxisOption}
+        />
+        {this.state.selectedBarGraphIntervalOption === 'custom' ? (
+          <Wrapper>
+            <DateRangePicker
+              showDefaultInputIcon={true}
+              showClearDates={true}
+              isOutsideRange={day =>
+                day.isAfter(moment()) ||
+                day.isBefore(moment().subtract(365 * 2, 'days'))
+              }
+              reopenPickerOnClearDates={true}
+              startDate={this.state.startDate}
+              endDate={this.state.endDate}
+              onDatesChange={({startDate, endDate}) =>
+                this.handleDateChange({startDate, endDate})
+              }
+              focusedInput={this.state.focusedInput}
+              onFocusChange={focusedInput => this.setState({focusedInput})}
+            />
+          </Wrapper>
+        ) : null}
         {this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison' ? (
           <div className="revenue-graphs-cont">
-            <div className="month-button">
-              <select
-                onChange={this.handleBarGraphIntervalChange}
-                className="select-cust"
-                defaultValue="30"
-              >
-                <option value="allPeriod">All History</option>
-                <option value="730">Last 2 Years</option>
-                <option value="365">Last 1 Year</option>
-                <option value="30">Last 30 Days</option>
-                <option value="7">Last 7 Days</option>
-                <option value="custom">Custom Dates</option>
-              </select>
-            </div>
-            <XAxisOptions
-              handleXAxisOptionChange={this.handleXAxisOptionChange}
-              selectedQueryTitle={this.state.selectedQueryTitle}
-              revenueQueryResults={this.props.revenueQueryResults}
-              selectedXAxisOption={this.state.selectedXAxisOption}
-            />
-            {this.state.selectedBarGraphIntervalOption === 'custom' ? (
-              <Wrapper>
-                <DateRangePicker
-                  showDefaultInputIcon={true}
-                  showClearDates={true}
-                  isOutsideRange={day =>
-                    day.isAfter(moment()) ||
-                    day.isBefore(moment().subtract(365 * 2, 'days'))
-                  }
-                  reopenPickerOnClearDates={true}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  onDatesChange={({startDate, endDate}) =>
-                    this.handleDateChange({startDate, endDate})
-                  }
-                  focusedInput={this.state.focusedInput}
-                  onFocusChange={focusedInput => this.setState({focusedInput})}
-                />
-              </Wrapper>
-            ) : null}
-
             <RevenueAnalyticsBarGraphs
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
@@ -289,7 +288,7 @@ class RevenueAnalyticsGraphs extends Component {
           </div>
         ) : (
           <div className="revenue-graphs-cont">
-            <div className="month-button">
+            {/* <div className="month-button">
               <select
                 onChange={this.handleLineGraphIntervalChange}
                 className="select-cust"
@@ -299,7 +298,7 @@ class RevenueAnalyticsGraphs extends Component {
                 <option value="2">Last 2 Years</option>
                 <option value="allPeriod">All History</option>
               </select>
-            </div>
+            </div> */}
             <RevenueAnalyticsLineGraph
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
