@@ -20,6 +20,11 @@ export default class RevenueAnalyticsLineGraph extends Component {
       startDate
     } = this.props.revenueQueryResults
     const selectedXAxisOption = this.props.selectedXAxisOption
+    const SelectedGraphOption = this.props.selectedGraphOption
+    const handleGraphOptionChange = this.props.handleGraphOptionChange
+    const selectedQueryTitle = this.props.selectedQueryTitle
+    console.log('WHAT IS THE PROP:', this.props)
+    const Test = 'h1'
 
     const lunchRevenueTotal =
       lunchRevenue && lunchRevenue.reduce((acc, curr) => acc + curr)
@@ -57,13 +62,16 @@ export default class RevenueAnalyticsLineGraph extends Component {
 
     return (
       <div>
+        <Test>HI</Test>
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              title={formatQueryName(this.props.selectedQueryTitle)}
-            />
+            <CardHeader title={formatQueryName(selectedQueryTitle)} />
 
-            <GraphOptionButtons />
+            <GraphOptionButtons
+              handleGraphOptionChange={handleGraphOptionChange}
+              selectedQueryTitle={selectedQueryTitle}
+              SelectedGraphOption={SelectedGraphOption}
+            />
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">

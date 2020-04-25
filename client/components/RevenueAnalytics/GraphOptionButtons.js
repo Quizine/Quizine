@@ -1,47 +1,45 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'row'
     // width: 150,
-    fontWeight: theme.typography.fontWeightMedium
+    //fontWeight: theme.typography.fontWeightMedium
   }
 }))
 
-export default function TextButtons() {
+export default function GraphOptionButtons(props) {
   const classes = useStyles()
+  const handleGraphOptionChange = props.handleGraphOptionChange
+  const selectedQueryTitle = props.selectedQueryTitle
+  const selectedGraphOption = props.selectedGraphOption
+
+  const [graphOption, setGraphOption] = React.useState(selectedGraphOption)
+
+  const handleChange = (event, newGraphOption) => {
+    setGraphOption(newGraphOption)
+    handleGraphOptionChange(event)
+  }
 
   return (
-    <div className={classes.root}>
-      <Button>Default</Button>
-      <Button>Primary</Button>
-      <Button>Secondary</Button>
-    </div>
-    // <List className={clsx(classes.root)}>
-    //   <ListItem className={classes.item} disableGutters>
-    //     <Button className={classes.button} activeClassName="selected">
-    //       Primary Button
-    //     </Button>
-    //   </ListItem>
-    //   <ListItem className={classes.item} disableGutters>
-    //     <Button className={classes.button} activeClassName="selected">
-    //       Secondary Button
-    //     </Button>
-    //   </ListItem>
-    // </List>
-    // // <div>
-    // //   <button type="button" selected="false" activeClassName="selected">
-    // //     Default
-    // //   </button>
-    // //   <button type="button" selected="true" activeClassName="selected">
-    // //     Primary
-    // //   </button>
-    // //   <button type="button" selected="false" activeClassName="selected">
-    // //     Primary
-    // //   </button>
-    // // </div>
+    <ToggleButtonGroup
+      value={graphOption}
+      exclusive
+      onChange={handleChange}
+      aria-label="text alignment"
+    >
+      <ToggleButton value="Bar" aria-label="center">
+        Bar Graph
+      </ToggleButton>
+      <ToggleButton value="Line" aria-label="center">
+        Line Graph
+      </ToggleButton>
+    </ToggleButtonGroup>
   )
 }
