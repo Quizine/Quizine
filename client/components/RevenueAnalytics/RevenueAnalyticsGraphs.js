@@ -12,6 +12,7 @@ import RevenueAnalyticsLineGraph from './RevenueAnalyticsLineGraph'
 import XAxisOptions from './XAxisOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
+import TestToggleButtons from './TestToggleButtons'
 
 //WRAPPER FOR OVERRIDING STYLES FOR DATERANGEPICKER COMPONENT
 const Wrapper = styled.div`
@@ -44,13 +45,14 @@ class RevenueAnalyticsGraphs extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedIntervalOption: '30',
-      selectedXAxisOption: 'day',
       queryTitleOptions: [
         'avgRevenuePerGuest',
         'numberOfOrders',
         'lunchAndDinnerRevenueComparison'
       ],
+      selectedIntervalOption: '30',
+      selectedXAxisOption: 'day',
+      selectedGraphOption: 'Bar',
       selectedQueryTitle: 'avgRevenuePerGuest',
       startDate: null,
       endDate: null,
@@ -60,6 +62,7 @@ class RevenueAnalyticsGraphs extends Component {
     this.handleSelectedQueryChange = this.handleSelectedQueryChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleXAxisOptionChange = this.handleXAxisOptionChange.bind(this)
+    this.handleGraphOptionChange = this.handleGraphOptionChange.bind(this)
   }
 
   componentDidMount() {
@@ -193,6 +196,13 @@ class RevenueAnalyticsGraphs extends Component {
     }
   }
 
+  async handleGraphOptionChange(event) {
+    console.log('EVENT TARGET: ', event, event.target, event.target.innerText)
+    await this.setState({
+      selectedGraphOption: event.target.value
+    })
+  }
+
   render() {
     return (
       <div className="bus-charts-cont">
@@ -208,7 +218,9 @@ class RevenueAnalyticsGraphs extends Component {
             )
           })}
         </select>
-
+        <TestToggleButtons
+          handleGraphOptionChange={this.handleGraphOptionChange}
+        />
         <div className="month-button">
           <select
             onChange={this.handleGraphIntervalChange}
@@ -255,6 +267,8 @@ class RevenueAnalyticsGraphs extends Component {
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
               selectedXAxisOption={this.state.selectedXAxisOption}
+              selectedGraphOption={this.state.selectedGraphOption}
+              handleGraphOptionChange={this.handleGraphOptionChange}
             />
           </div>
         ) : (
@@ -263,6 +277,8 @@ class RevenueAnalyticsGraphs extends Component {
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
               selectedXAxisOption={this.state.selectedXAxisOption}
+              selectedGraphOption={this.state.selectedGraphOption}
+              handleGraphOptionChange={this.handleGraphOptionChange}
             />
           </div>
         )}
