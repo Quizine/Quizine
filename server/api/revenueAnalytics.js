@@ -10,8 +10,8 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
   try {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
-      req.query.timeInterval = '60'
-      req.query.xAxisOption = 'week'
+      req.query.timeInterval = '20'
+      req.query.xAxisOption = 'day'
       if (req.query.timeInterval) {
         if (req.query.timeInterval !== 'allPeriod') {
           correctStartDate = new Date()
@@ -71,36 +71,13 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
       console.log('text: ', text)
       const lunchAndDinnerRevenueComparison = await client.query(text, values)
       console.log('what is this: ', lunchAndDinnerRevenueComparison)
-      const test = formattingLineGraphData(
+      const formattedLineGraphData = formattingLineGraphData(
         lunchAndDinnerRevenueComparison.rows,
         correctStartDate,
         correctEndDate,
         req.query.xAxisOption
       )
-      console.log(
-        'test ------------------> ',
-        test,
-        'xAxis: ',
-        test.xAxis.length,
-        'lunch',
-        test.lunchRevenue.length,
-        'dinner ',
-        test.dinnerRevenue.length
-      )
-      // const allDateRevenue = {
-      //   month: [],
-      //   lunchRevenue: [],
-      //   dinnerRevenue: []
-      // }
-      // lunchAndDinnerRevenueComparison.rows.forEach((row, idx) => {
-      //   if (row.mealType === 'lunch') {
-      //     allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-      //     allDateRevenue.lunchRevenue.push(Number(row.revenue))
-      //   } else {
-      //     allDateRevenue.dinnerRevenue.push(Number(row.revenue))
-      //   }
-      // })
-      res.json(test)
+      res.json(formattedLineGraphData)
     }
   } catch (error) {
     next(error)
@@ -345,10 +322,10 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
   let xAxis = []
   let yAxis = []
   let xAxisOptionHashTable = {
-    year: [11, 16],
-    month: [4, 7, 10, 16],
-    week: [0, 16],
-    day: [0, 16]
+    year: [11, 15],
+    month: [4, 7, 10, 15],
+    week: [0, 15],
+    day: [0, 15]
   }
   if (xAxisOption !== 'hour') {
     for (let i = 0; i < arr.length; i++) {
@@ -427,10 +404,10 @@ function formattingLineGraphData(arr, startDate, endDate, xAxisOption) {
   let lunchRevenue = []
   let dinnerRevenue = []
   let xAxisOptionHashTable = {
-    year: [11, 16],
-    month: [4, 7, 10, 16],
-    week: [0, 16],
-    day: [0, 16]
+    year: [11, 15],
+    month: [4, 7, 10, 15],
+    week: [0, 15],
+    day: [0, 15]
   }
   if (xAxisOption !== 'hour' && xAxisOption !== 'day') {
     for (let i = 0; i < arr.length; i++) {
@@ -511,6 +488,47 @@ function formattingLineGraphData(arr, startDate, endDate, xAxisOption) {
         lunchRevenue.push(0)
         dinnerRevenue.push(0)
         startDate.setHours(startDate.getHours() + 1)
+      }
+    }
+  } else if (xAxisOption === 'day') {
+    let i = 0
+    while (startDate <= endDate) {
+      if (
+        arr[i] &&
+        startDate.toString().slice(0, 15) ===
+          arr[i].date.toString().slice(0, 15)
+      ) {
+        if (
+          xAxis.length === 0 ||
+          arr[i].date.toString().slice(0, 15) !== xAxis[xAxis.length - 1]
+        ) {
+          xAxis.push(arr[i].date.toString().slice(0, 15))
+        }
+        if (arr[i].mealType === 'lunch') {
+          if (xAxis.length - 1 !== lunchRevenue.length) {
+            lunchRevenue.push(0)
+          }
+          lunchRevenue.push(+arr[i].revenue)
+        } else {
+          if (xAxis.length - 1 !== dinnerRevenue.length) {
+            dinnerRevenue.push(0)
+          }
+          dinnerRevenue.push(+arr[i].revenue)
+        }
+
+        if (
+          !arr[i + 1] ||
+          (arr[i + 1] &&
+            xAxis[xAxis.length - 1] !== arr[i + 1].date.toString().slice(0, 15))
+        ) {
+          startDate.setDate(startDate.getDate() + 1)
+        }
+        i++
+      } else {
+        xAxis.push(startDate.toString().slice(0, 15))
+        lunchRevenue.push(0)
+        dinnerRevenue.push(0)
+        startDate.setDate(startDate.getDate() + 1)
       }
     }
   }
