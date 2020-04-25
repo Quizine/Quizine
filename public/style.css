@@ -886,3 +886,8 @@ body {
 .makeStyles-item-244 {
   width: 150px !important;
 }
+
+.selected {
+  color: red;
+  background-color: blue;
+}
