@@ -49,6 +49,7 @@ class RevenueAnalyticsGraphs extends Component {
         'numberOfOrders',
         'lunchAndDinnerRevenueComparison'
       ],
+      selectedAggOptionName: 'Total Revenue',
       selectedIntervalOption: '30',
       selectedXAxisOption: 'day',
       selectedGraphOption: 'bar',
@@ -150,12 +151,31 @@ class RevenueAnalyticsGraphs extends Component {
       (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
         this.state.selectedXAxisOption === 'avgHour') ||
       (this.state.selectedQueryTitle === 'numberOfOrders' &&
+        this.state.selectedXAxisOption === 'DOW') ||
+      (this.state.selectedQueryTitle === 'lunchAndDinnerRevenueComparison' &&
+        this.state.selectedXAxisOption === 'avgHour') ||
+      (this.state.selectedQueryTitle === 'lunchAndDinnerRevenueComparison' &&
         this.state.selectedXAxisOption === 'DOW')
     ) {
       await this.setState({
         selectedXAxisOption: 'day'
       })
     }
+    if (
+      (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
+        this.state.selectedAggOption === 'numberOfOrders') ||
+      (this.state.selectedQueryTitle === 'numberOfOrders' &&
+        this.state.selectedAggOption === 'avgRevenuePerGuest')
+    ) {
+      await this.setState({
+        selectedAggOption: 'sum',
+        selectedAggOptionName:
+          this.state.selectedQueryTitle === 'avgRevenuePerGuest'
+            ? 'Total Revenue'
+            : 'Total Number of Menu Items'
+      })
+    }
+
     if (this.state.selectedIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
         this.state.selectedIntervalOption,
@@ -205,8 +225,17 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleAggOptionChange(event) {
+    console.log(
+      'LABEL:',
+      event.target,
+      'EVENT',
+      event,
+      'NAME',
+      event.target.name
+    )
     await this.setState({
-      selectedAggOption: event.target.value
+      selectedAggOption: event.target.value,
+      selectedAggOptionName: event.target.name
     })
     if (this.state.selectedIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
@@ -305,6 +334,7 @@ class RevenueAnalyticsGraphs extends Component {
               handleGraphOptionChange={this.handleGraphOptionChange}
               selectedAggOption={this.state.selectedAggOption}
               handleAggOptionChange={this.handleAggOptionChange}
+              selectedAggOptionName={this.state.selectedAggOptionName}
             />
           </div>
         ) : (
