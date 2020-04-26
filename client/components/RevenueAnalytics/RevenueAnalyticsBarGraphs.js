@@ -5,6 +5,7 @@ import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 import GraphOptionButtons from './GraphOptionButtons'
 
 export default class RevenueAnalyticsBarGraphs extends Component {
+  // eslint-disable-next-line complexity
   render() {
     const labels = this.props.revenueQueryResults.xAxis
     const yAxis = this.props.revenueQueryResults.yAxis
@@ -14,14 +15,25 @@ export default class RevenueAnalyticsBarGraphs extends Component {
     const handleGraphOptionChange = this.props.handleGraphOptionChange
     const selectedQueryTitle = this.props.selectedQueryTitle
 
+    //const aggYAxis = selectedQueryTitle ==='numberOfOrders' ?
+
     const chartData = {
       labels: labels,
       datasets: [
         {
           display: false,
+          fill: false,
           label: '',
           data: yAxis,
-          backgroundColor: '#24497A'
+          backgroundColor:
+            selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
+          borderColor:
+            selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
+          hoverBackgroundColor:
+            selectedQueryTitle === 'numberOfOrders' ? '#FA744f' : '#024249',
+          pointBackgroundColor:
+            selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
+          pointRadius: 2
         }
       ]
     }
@@ -47,6 +59,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
                 data={chartData}
                 options={{
                   title: {
+                    display: false
+                  },
+                  legend: {
                     display: false
                   },
                   plugins: {
