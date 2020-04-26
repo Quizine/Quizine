@@ -3,6 +3,7 @@ import {Line, Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 import GraphOptionButtons from './GraphOptionButtons'
+import AggOptions from './AggOptions'
 
 export default class RevenueAnalyticsBarGraphs extends Component {
   // eslint-disable-next-line complexity
@@ -14,6 +15,8 @@ export default class RevenueAnalyticsBarGraphs extends Component {
     const selectedGraphOption = this.props.selectedGraphOption
     const handleGraphOptionChange = this.props.handleGraphOptionChange
     const selectedQueryTitle = this.props.selectedQueryTitle
+    const selectedAggOption = this.props.selectedAggOption
+    const handleAggOptionChange = this.props.handleAggOptionChange
 
     //const aggYAxis = selectedQueryTitle ==='numberOfOrders' ?
 
@@ -46,6 +49,11 @@ export default class RevenueAnalyticsBarGraphs extends Component {
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
           <CardHeader title={formatQueryName(selectedQueryTitle)} />
+          <AggOptions
+            selectedAggOption={selectedAggOption}
+            selectedQueryTitle={selectedQueryTitle}
+            handleAggOptionChange={handleAggOptionChange}
+          />
           <GraphOptionButtons
             handleGraphOptionChange={handleGraphOptionChange}
             selectedQueryTitle={selectedQueryTitle}
