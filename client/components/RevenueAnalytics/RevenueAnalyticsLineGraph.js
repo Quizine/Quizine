@@ -12,6 +12,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 })
 
 export default class RevenueAnalyticsLineGraph extends Component {
+  // eslint-disable-next-line complexity
   render() {
     const lunchRevenue = this.props.revenueQueryResults.lunchRevenue
     const dinnerRevenue = this.props.revenueQueryResults.dinnerRevenue
@@ -27,14 +28,18 @@ export default class RevenueAnalyticsLineGraph extends Component {
     const dinnerRevenueTotal =
       dinnerRevenue && dinnerRevenue.reduce((acc, curr) => acc + curr)
 
+    const revenueTotal = formatter.format(
+      lunchRevenueTotal + dinnerRevenueTotal
+    )
+
     const chartData = {
       labels: xAxis,
       datasets: [
         {
           fill: false,
-          label: 'Lunch Revenue: ' + formatter.format(lunchRevenueTotal),
+          label: 'Lunch Revenue', //+ formatter.format(lunchRevenueTotal),
           data: lunchRevenue,
-          backgroundColor: '#E58A8A', //'rgba(255, 10, 13, 0.1)',
+          backgroundColor: '#E58A8A',
           borderColor: '#E58A8A',
           hoverBackgroundColor: '#D8345F',
           pointBackgroundColor: '#E58A8A',
@@ -42,7 +47,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
         },
         {
           fill: false,
-          label: 'Dinner Revenue: ' + formatter.format(dinnerRevenueTotal),
+          label: 'Dinner Revenue', //+ formatter.format(dinnerRevenueTotal),
           data: dinnerRevenue,
           backgroundColor: '#588DA8',
           borderColor: '#588DA8',
@@ -61,7 +66,11 @@ export default class RevenueAnalyticsLineGraph extends Component {
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
             <CardHeader title={formatQueryName(selectedQueryTitle)} />
-
+            <h4>Revenue Total: {revenueTotal}</h4>
+            <h4>Lunch Revenue Total: {formatter.format(lunchRevenueTotal)}</h4>
+            <h4>
+              Dinner Revenue Total: {formatter.format(dinnerRevenueTotal)}
+            </h4>
             <GraphOptionButtons
               handleGraphOptionChange={handleGraphOptionChange}
               selectedQueryTitle={selectedQueryTitle}
@@ -74,9 +83,17 @@ export default class RevenueAnalyticsLineGraph extends Component {
                   data={chartData}
                   options={{
                     scales: {
+                      xAxes: [
+                        {
+                          stacked:
+                            selectedGraphOption === 'stacked bar'
+                        }
+                      ],
                       yAxes: [
                         {
                           display: true,
+                          stacked:
+                            selectedGraphOption === 'stacked bar',
                           ticks: {
                             suggestedMin: 0,
                             suggestedMax:

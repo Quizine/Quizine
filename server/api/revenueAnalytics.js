@@ -10,7 +10,6 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
   try {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
-      console.log('WHAT IS XAXIS OPTION: ', req.query.xAxisOption)
       if (req.query.timeInterval) {
         if (req.query.timeInterval !== 'allPeriod') {
           correctStartDate = new Date()
@@ -67,11 +66,9 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
         correctEndDate.setMinutes(0)
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
-      console.log('text: ', text)
       const lunchAndDinnerRevenueComparison = await client.query(text, values)
       const startDate = correctStartDate.toString().slice(0, 15)
       const endDate = correctEndDate.toString()
-      console.log('what is this: ', lunchAndDinnerRevenueComparison)
       const formattedLineGraphData = formattingLineGraphData(
         lunchAndDinnerRevenueComparison.rows,
         correctStartDate,

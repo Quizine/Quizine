@@ -30,6 +30,9 @@ export default function GraphOptionButtons(props) {
   return (
     <ToggleButtonGroup value={graphOption} exclusive onChange={handleChange}>
       <ToggleButton value="bar">Bar Graph</ToggleButton>
+      {selectedQueryTitle === 'lunchAndDinnerRevenueComparison' ? (
+        <ToggleButton value="stacked bar">Stacked Bar Graph</ToggleButton>
+      ) : null}
       <ToggleButton value="line">Line Graph</ToggleButton>
     </ToggleButtonGroup>
   )
