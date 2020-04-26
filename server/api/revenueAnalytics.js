@@ -116,7 +116,11 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
                 req.query.xAxisOption
               }', orders."timeOfPurchase" ) as date,`
         }
-        ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) "yAxisData"
+        ${
+          req.query.aggOption === 'avgRevenuePerGuest'
+            ? 'ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) "yAxisData"'
+            : `${req.query.aggOption}(revenue) as "yAxisData"`
+        }
         FROM orders
         ${
           req.query.timeInterval !== 'allPeriod'
@@ -138,7 +142,11 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
                 req.query.xAxisOption
               }', orders."timeOfPurchase" ) as date,`
         }
-        ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) "yAxisData"
+        ${
+          req.query.aggOption === 'avgRevenuePerGuest'
+            ? 'ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) "yAxisData"'
+            : `${req.query.aggOption}(revenue) as "yAxisData"`
+        }
         FROM orders
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
         AND orders."restaurantId" = $3
@@ -201,8 +209,15 @@ router.get('/numberOfOrders', async (req, res, next) => {
                 req.query.xAxisOption
               }', orders."timeOfPurchase" ) as date,`
         }
-      COUNT(*) AS "yAxisData"
-      FROM orders
+      ${
+        req.query.aggOption === 'numberOfOrders'
+          ? 'COUNT(*) AS "yAxisData" FROM orders'
+          : `${
+              req.query.aggOption
+            }("aggQuantity".quantity) as "yAxisData" FROM orders INNER JOIN (SELECT SUM(quantity) as quantity, "orderId" FROM "menuItemOrders"
+      GROUP BY "orderId") as "aggQuantity"
+      ON orders.id = "aggQuantity"."orderId"`
+      }
       ${
         req.query.timeInterval !== 'allPeriod'
           ? `WHERE orders."timeOfPurchase" >= '${correctStartDate.toUTCString()}' AND orders."timeOfPurchase" <= NOW()`
@@ -221,8 +236,15 @@ router.get('/numberOfOrders', async (req, res, next) => {
                 req.query.xAxisOption
               }', orders."timeOfPurchase" ) as date,`
         }
-        COUNT(*) AS "yAxisData"
-        FROM orders
+        ${
+          req.query.aggOption === 'numberOfOrders'
+            ? 'COUNT(*) AS "yAxisData" FROM orders'
+            : `${
+                req.query.aggOption
+              }("aggQuantity".quantity) as "yAxisData" FROM orders INNER JOIN (SELECT SUM(quantity) as quantity, "orderId" FROM "menuItemOrders"
+        GROUP BY "orderId") as "aggQuantity"
+        ON orders.id = "aggQuantity"."orderId"`
+        }
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
         AND orders."restaurantId" = $3
         GROUP BY ${req.query.xAxisOption === 'avgHour' ? 'hour' : 'date'}

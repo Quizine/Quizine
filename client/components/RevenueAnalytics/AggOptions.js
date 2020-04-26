@@ -68,6 +68,7 @@ function StyledRadio(props) {
 }
 
 export default function AggOptions(props) {
+  const selectedQueryTitle = props.selectedQueryTitle
   const selectedAggOption = props.selectedAggOption
   const handleAggOptionChange = props.handleAggOptionChange
   return (
@@ -84,13 +85,35 @@ export default function AggOptions(props) {
           value="sum"
           //   disabled={diffDays <= 365}
           control={<StyledRadio />}
-          label="Total"
+          label={
+            selectedQueryTitle === 'avgRevenuePerGuest'
+              ? 'Total Revenue'
+              : 'Total Number of Menu Items'
+          }
         />
         <FormControlLabel
           value="avg"
           //   disabled={diffDays <= 30}
           control={<StyledRadio />}
-          label="Average "
+          label={
+            selectedQueryTitle === 'avgRevenuePerGuest'
+              ? 'Average Renevue Per Table Served'
+              : 'Average Number of Menu Items Per Table Served'
+          }
+        />
+        <FormControlLabel
+          value={
+            selectedQueryTitle === 'avgRevenuePerGuest'
+              ? 'avgRevenuePerGuest'
+              : 'numberOfOrders'
+          }
+          //   disabled={diffDays <= 30}
+          control={<StyledRadio />}
+          label={
+            selectedQueryTitle === 'avgRevenuePerGuest'
+              ? 'Average Revenue Per Guest'
+              : 'Total Number of Tables Served'
+          }
         />
       </RadioGroup>
     </FormControl>
