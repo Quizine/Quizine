@@ -18,7 +18,6 @@ export default class RevenueAnalyticsBarGraphs extends Component {
     const selectedQueryTitle = this.props.selectedQueryTitle
     const selectedAggOption = this.props.selectedAggOption
     const handleAggOptionChange = this.props.handleAggOptionChange
-    const selectedAggOptionName = this.props.selectedAggOptionName
 
     const chartData = {
       labels: labels,
@@ -53,7 +52,6 @@ export default class RevenueAnalyticsBarGraphs extends Component {
             selectedAggOption={selectedAggOption}
             selectedQueryTitle={selectedQueryTitle}
             handleAggOptionChange={handleAggOptionChange}
-            selectedAggOptionName={selectedAggOptionName}
           />
           <GraphOptionButtons
             handleGraphOptionChange={handleGraphOptionChange}
@@ -106,7 +104,8 @@ export default class RevenueAnalyticsBarGraphs extends Component {
           <CSVLink
             data={tableDataFormatting(
               selectedXAxisOption,
-              formatQueryName(selectedAggOptionName),
+              selectedAggOption,
+              selectedQueryTitle,
               labels,
               yAxis
             )}
@@ -129,10 +128,30 @@ function formatQueryName(name) {
   return name
 }
 
-function tableDataFormatting(nameXAxis, nameYAxis, xAxis, yAxis) {
+// eslint-disable-next-line complexity
+function tableDataFormatting(nameXAxis, aggOption, queryTitle, xAxis, yAxis) {
+  let nameYAxis
+  if (queryTitle === 'avgRevenuePerGuest') {
+    if (aggOption === 'sum') {
+      nameYAxis = 'Total Revenue'
+    } else if (aggOption === 'avg') {
+      nameYAxis = 'Average Renevue Per Table Served'
+    } else if (aggOption === 'avgRevenuePerGuest') {
+      nameYAxis = 'Average Revenue Per Guest'
+    }
+  } else if (queryTitle === 'numberOfOrders') {
+    if (aggOption === 'sum') {
+      nameYAxis = 'Total Number of Menu Items'
+    } else if (aggOption === 'avg') {
+      nameYAxis = 'Average Number of Menu Items Per Table Served'
+    } else if (aggOption === 'numberOfOrders') {
+      nameYAxis = 'Total Number of Tables Served'
+    }
+  }
   let result = [[nameXAxis, nameYAxis]]
   for (let i = 0; i < xAxis.length; i++) {
     result.push([xAxis[i], yAxis[i]])
   }
+  console.log('BAR GRAPH RESULT: ', result)
   return result
 }
