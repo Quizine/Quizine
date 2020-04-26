@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 import GraphOptionButtons from './GraphOptionButtons'
 import AggOptions from './AggOptions'
+import {CSVLink} from 'react-csv'
 
 export default class RevenueAnalyticsBarGraphs extends Component {
   // eslint-disable-next-line complexity
@@ -17,8 +18,7 @@ export default class RevenueAnalyticsBarGraphs extends Component {
     const selectedQueryTitle = this.props.selectedQueryTitle
     const selectedAggOption = this.props.selectedAggOption
     const handleAggOptionChange = this.props.handleAggOptionChange
-
-    //const aggYAxis = selectedQueryTitle ==='numberOfOrders' ?
+    const selectedAggOptionName = this.props.selectedAggOptionName
 
     const chartData = {
       labels: labels,
@@ -53,6 +53,7 @@ export default class RevenueAnalyticsBarGraphs extends Component {
             selectedAggOption={selectedAggOption}
             selectedQueryTitle={selectedQueryTitle}
             handleAggOptionChange={handleAggOptionChange}
+            selectedAggOptionName={selectedAggOptionName}
           />
           <GraphOptionButtons
             handleGraphOptionChange={handleGraphOptionChange}
@@ -101,6 +102,18 @@ export default class RevenueAnalyticsBarGraphs extends Component {
             <h5>Shown data starting from {startDate}</h5>
           ) : null}
         </Card>
+        <button type="button" className="download-btn">
+          <CSVLink
+            data={tableDataFormatting(
+              selectedXAxisOption,
+              formatQueryName(selectedAggOptionName),
+              labels,
+              yAxis
+            )}
+          >
+            Download CSV
+          </CSVLink>
+        </button>
       </div>
     )
   }
@@ -114,4 +127,12 @@ function formatQueryName(name) {
   name = name[0].toUpperCase() + name.slice(1)
 
   return name
+}
+
+function tableDataFormatting(nameXAxis, nameYAxis, xAxis, yAxis) {
+  let result = [[nameXAxis, nameYAxis]]
+  for (let i = 0; i < xAxis.length; i++) {
+    result.push([xAxis[i], yAxis[i]])
+  }
+  return result
 }
