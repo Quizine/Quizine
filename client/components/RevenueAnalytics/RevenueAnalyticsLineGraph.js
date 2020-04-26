@@ -3,6 +3,7 @@ import {Line, Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 import GraphOptionButtons from './GraphOptionButtons'
+import {CSVLink} from 'react-csv'
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -57,6 +58,18 @@ export default class RevenueAnalyticsLineGraph extends Component {
       ]
     }
     const GraphOption = selectedGraphOption === 'line' ? Line : Bar
+
+    console.log(
+      'DATA: ',
+      'XAXIS Option-> ',
+      selectedXAxisOption,
+      'X-Axis -> ',
+      xAxis,
+      'Lunch -> ',
+      lunchRevenue,
+      'dinner -> ',
+      dinnerRevenue
+    )
     if (!lunchRevenue) {
       return <div>...loading</div>
     }
@@ -119,6 +132,18 @@ export default class RevenueAnalyticsLineGraph extends Component {
               <h5>Shown data starting from {startDate}</h5>
             ) : null}
           </Card>
+          <button type="button" className="download-btn">
+            <CSVLink
+              data={tableDataFormatting(
+                selectedXAxisOption,
+                xAxis,
+                lunchRevenue,
+                dinnerRevenue
+              )}
+            >
+              Download CSV
+            </CSVLink>
+          </button>
         </div>
       </div>
     )
@@ -130,4 +155,12 @@ function formatQueryName(name) {
   name = name[0].toUpperCase() + name.slice(1)
 
   return name
+}
+
+function tableDataFormatting(nameXAxis, xAxis, yAxis1, yAxis2) {
+  let result = [[nameXAxis, 'Lunch Revenue', 'Dinner Revenue']]
+  for (let i = 0; i < xAxis.length; i++) {
+    result.push([xAxis[i], yAxis1[i], yAxis2[i]])
+  }
+  return result
 }

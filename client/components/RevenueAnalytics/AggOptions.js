@@ -71,7 +71,6 @@ export default function AggOptions(props) {
   const selectedQueryTitle = props.selectedQueryTitle
   const selectedAggOption = props.selectedAggOption
   const handleAggOptionChange = props.handleAggOptionChange
-  const selectedAggOptionName = props.selectedAggOptionName
 
   return (
     <FormControl component="fieldset">
@@ -80,18 +79,12 @@ export default function AggOptions(props) {
         defaultValue="sum"
         value={selectedAggOption}
         aria-label="Aggregate Option"
-        name={selectedAggOptionName}
         onChange={handleAggOptionChange}
       >
         <FormControlLabel
           value="sum"
           control={<StyledRadio />}
           label={
-            selectedQueryTitle === 'avgRevenuePerGuest'
-              ? 'Total Revenue'
-              : 'Total Number of Menu Items'
-          }
-          name={
             selectedQueryTitle === 'avgRevenuePerGuest'
               ? 'Total Revenue'
               : 'Total Number of Menu Items'
@@ -105,11 +98,6 @@ export default function AggOptions(props) {
               ? 'Average Renevue Per Table Served'
               : 'Average Number of Menu Items Per Table Served'
           }
-          name={
-            selectedQueryTitle === 'avgRevenuePerGuest'
-              ? 'Average Renevue Per Table Served'
-              : 'Average Number of Menu Items Per Table Served'
-          }
         />
         <FormControlLabel
           value={
@@ -119,11 +107,6 @@ export default function AggOptions(props) {
           }
           control={<StyledRadio />}
           label={
-            selectedQueryTitle === 'avgRevenuePerGuest'
-              ? 'Average Revenue Per Guest'
-              : 'Total Number of Tables Served'
-          }
-          name={
             selectedQueryTitle === 'avgRevenuePerGuest'
               ? 'Average Revenue Per Guest'
               : 'Total Number of Tables Served'

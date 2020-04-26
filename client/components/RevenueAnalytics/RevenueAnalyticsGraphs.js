@@ -49,7 +49,6 @@ class RevenueAnalyticsGraphs extends Component {
         'numberOfOrders',
         'lunchAndDinnerRevenueComparison'
       ],
-      selectedAggOptionName: 'Total Revenue',
       selectedIntervalOption: '30',
       selectedXAxisOption: 'day',
       selectedGraphOption: 'bar',
@@ -168,11 +167,7 @@ class RevenueAnalyticsGraphs extends Component {
         this.state.selectedAggOption === 'avgRevenuePerGuest')
     ) {
       await this.setState({
-        selectedAggOption: 'sum',
-        selectedAggOptionName:
-          this.state.selectedQueryTitle === 'avgRevenuePerGuest'
-            ? 'Total Revenue'
-            : 'Total Number of Menu Items'
+        selectedAggOption: 'sum'
       })
     }
 
@@ -225,17 +220,8 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleAggOptionChange(event) {
-    console.log(
-      'LABEL:',
-      event.target,
-      'EVENT',
-      event,
-      'NAME',
-      event.target.name
-    )
     await this.setState({
-      selectedAggOption: event.target.value,
-      selectedAggOptionName: event.target.name
+      selectedAggOption: event.target.value
     })
     if (this.state.selectedIntervalOption !== 'custom') {
       this.props.loadRevenueQueryResultsInterval(
@@ -334,7 +320,6 @@ class RevenueAnalyticsGraphs extends Component {
               handleGraphOptionChange={this.handleGraphOptionChange}
               selectedAggOption={this.state.selectedAggOption}
               handleAggOptionChange={this.handleAggOptionChange}
-              selectedAggOptionName={this.state.selectedAggOptionName}
             />
           </div>
         ) : (
