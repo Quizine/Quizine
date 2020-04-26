@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
 import {Line, Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
@@ -85,15 +84,13 @@ export default class RevenueAnalyticsLineGraph extends Component {
                     scales: {
                       xAxes: [
                         {
-                          stacked:
-                            selectedGraphOption === 'stacked bar'
+                          stacked: selectedGraphOption === 'stacked bar'
                         }
                       ],
                       yAxes: [
                         {
                           display: true,
-                          stacked:
-                            selectedGraphOption === 'stacked bar',
+                          stacked: selectedGraphOption === 'stacked bar',
                           ticks: {
                             suggestedMin: 0,
                             suggestedMax:

@@ -52,6 +52,7 @@ class RevenueAnalyticsGraphs extends Component {
       selectedIntervalOption: '30',
       selectedXAxisOption: 'day',
       selectedGraphOption: 'bar',
+      selectedAggOption: 'sum',
       selectedQueryTitle: 'avgRevenuePerGuest',
       startDate: null,
       endDate: null,
@@ -62,13 +63,15 @@ class RevenueAnalyticsGraphs extends Component {
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleXAxisOptionChange = this.handleXAxisOptionChange.bind(this)
     this.handleGraphOptionChange = this.handleGraphOptionChange.bind(this)
+    this.handleAggOptionChange = this.handleAggOptionChange.bind(this)
   }
 
   componentDidMount() {
     this.props.loadRevenueQueryResultsInterval(
       this.state.selectedIntervalOption,
       this.state.selectedQueryTitle,
-      this.state.selectedXAxisOption
+      this.state.selectedXAxisOption,
+      this.state.selectedAggOption
     )
   }
 
@@ -87,7 +90,8 @@ class RevenueAnalyticsGraphs extends Component {
         formattedStartDate,
         formattedEndDate,
         this.state.selectedQueryTitle,
-        this.state.selectedXAxisOption
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
       )
     }
   }
@@ -131,7 +135,8 @@ class RevenueAnalyticsGraphs extends Component {
       this.props.loadRevenueQueryResultsInterval(
         this.state.selectedIntervalOption,
         this.state.selectedQueryTitle,
-        this.state.selectedXAxisOption
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
       )
     }
   }
@@ -155,7 +160,8 @@ class RevenueAnalyticsGraphs extends Component {
       this.props.loadRevenueQueryResultsInterval(
         this.state.selectedIntervalOption,
         this.state.selectedQueryTitle,
-        this.state.selectedXAxisOption
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
       )
     } else if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
@@ -166,7 +172,8 @@ class RevenueAnalyticsGraphs extends Component {
         formattedStartDate,
         formattedEndDate,
         this.state.selectedQueryTitle,
-        this.state.selectedXAxisOption
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
       )
     }
   }
@@ -179,7 +186,8 @@ class RevenueAnalyticsGraphs extends Component {
       this.props.loadRevenueQueryResultsInterval(
         this.state.selectedIntervalOption,
         this.state.selectedQueryTitle,
-        this.state.selectedXAxisOption
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
       )
     } else if (this.state.startDate && this.state.endDate) {
       const formattedStartDate =
@@ -190,7 +198,34 @@ class RevenueAnalyticsGraphs extends Component {
         formattedStartDate,
         formattedEndDate,
         this.state.selectedQueryTitle,
-        this.state.selectedXAxisOption
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
+      )
+    }
+  }
+
+  async handleAggOptionChange(event) {
+    await this.setState({
+      selectedAggOption: event.target.value
+    })
+    if (this.state.selectedIntervalOption !== 'custom') {
+      this.props.loadRevenueQueryResultsInterval(
+        this.state.selectedIntervalOption,
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
+      )
+    } else if (this.state.startDate && this.state.endDate) {
+      const formattedStartDate =
+        this.state.startDate.clone().format('YYYY-MM-DD') + ' 00:00:00'
+      const formattedEndDate =
+        this.state.endDate.clone().format('YYYY-MM-DD') + ' 23:59:59'
+      this.props.loadRevenueQueryResultsDate(
+        formattedStartDate,
+        formattedEndDate,
+        this.state.selectedQueryTitle,
+        this.state.selectedXAxisOption,
+        this.state.selectedAggOption
       )
     }
   }
@@ -268,6 +303,8 @@ class RevenueAnalyticsGraphs extends Component {
               selectedXAxisOption={this.state.selectedXAxisOption}
               selectedGraphOption={this.state.selectedGraphOption}
               handleGraphOptionChange={this.handleGraphOptionChange}
+              selectedAggOption={this.state.selectedAggOption}
+              handleAggOptionChange={this.handleAggOptionChange}
             />
           </div>
         ) : (
@@ -294,18 +331,35 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadRevenueQueryResultsInterval: (timeInterval, queryTitle, xAxisOption) =>
+    loadRevenueQueryResultsInterval: (
+      timeInterval,
+      queryTitle,
+      xAxisOption,
+      aggOption
+    ) =>
       dispatch(
-        getRevenueQueryResultsInterval(timeInterval, queryTitle, xAxisOption)
+        getRevenueQueryResultsInterval(
+          timeInterval,
+          queryTitle,
+          xAxisOption,
+          aggOption
+        )
       ),
     loadRevenueQueryResultsDate: (
       startDate,
       endDate,
       queryTitle,
-      xAxisOption
+      xAxisOption,
+      aggOption
     ) =>
       dispatch(
-        getRevenueQueryResultsDate(startDate, endDate, queryTitle, xAxisOption)
+        getRevenueQueryResultsDate(
+          startDate,
+          endDate,
+          queryTitle,
+          xAxisOption,
+          aggOption
+        )
       )
   }
 }
