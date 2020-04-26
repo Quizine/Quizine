@@ -12,7 +12,6 @@ import RevenueAnalyticsLineGraph from './RevenueAnalyticsLineGraph'
 import XAxisOptions from './XAxisOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
-import TestToggleButtons from './TestToggleButtons'
 
 //WRAPPER FOR OVERRIDING STYLES FOR DATERANGEPICKER COMPONENT
 const Wrapper = styled.div`
@@ -52,7 +51,7 @@ class RevenueAnalyticsGraphs extends Component {
       ],
       selectedIntervalOption: '30',
       selectedXAxisOption: 'day',
-      selectedGraphOption: 'Bar',
+      selectedGraphOption: 'bar',
       selectedQueryTitle: 'avgRevenuePerGuest',
       startDate: null,
       endDate: null,
@@ -197,9 +196,11 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleGraphOptionChange(event) {
-    console.log('EVENT TARGET: ', event, event.target, event.target.innerText)
+    const formattedGraphOption = event.target.innerText
+      .slice(0, -6)
+      .toLowerCase()
     await this.setState({
-      selectedGraphOption: event.target.value
+      selectedGraphOption: formattedGraphOption
     })
   }
 
@@ -218,9 +219,7 @@ class RevenueAnalyticsGraphs extends Component {
             )
           })}
         </select>
-        <TestToggleButtons
-          handleGraphOptionChange={this.handleGraphOptionChange}
-        />
+
         <div className="month-button">
           <select
             onChange={this.handleGraphIntervalChange}

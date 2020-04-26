@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import {Bar} from 'react-chartjs-2'
+import {Line, Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
+import GraphOptionButtons from './GraphOptionButtons'
 
 export default class RevenueAnalyticsBarGraphs extends Component {
   render() {
@@ -9,6 +10,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
     const yAxis = this.props.revenueQueryResults.yAxis
     const startDate = this.props.revenueQueryResults.startDate
     const selectedXAxisOption = this.props.selectedXAxisOption
+    const selectedGraphOption = this.props.selectedGraphOption
+    const handleGraphOptionChange = this.props.handleGraphOptionChange
+    const selectedQueryTitle = this.props.selectedQueryTitle
 
     const chartData = {
       labels: labels,
@@ -22,7 +26,7 @@ export default class RevenueAnalyticsBarGraphs extends Component {
       ]
     }
     const queryData = chartData.datasets[0].data
-    const {selectedQueryTitle} = this.props
+    const GraphOption = selectedGraphOption === 'line' ? Line : Bar
     if (!queryData) {
       return <h6>loading...</h6>
     }
@@ -30,11 +34,16 @@ export default class RevenueAnalyticsBarGraphs extends Component {
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
           <CardHeader title={formatQueryName(selectedQueryTitle)} />
+          <GraphOptionButtons
+            handleGraphOptionChange={handleGraphOptionChange}
+            selectedQueryTitle={selectedQueryTitle}
+            selectedGraphOption={selectedGraphOption}
+          />
           <Divider />
 
           <CardContent>
             <div className="classes.chartContainer">
-              <Bar
+              <GraphOption
                 data={chartData}
                 options={{
                   title: {

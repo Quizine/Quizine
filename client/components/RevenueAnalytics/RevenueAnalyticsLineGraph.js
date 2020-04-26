@@ -13,18 +13,14 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default class RevenueAnalyticsLineGraph extends Component {
   render() {
-    const {
-      xAxis,
-      lunchRevenue,
-      dinnerRevenue,
-      startDate
-    } = this.props.revenueQueryResults
+    const lunchRevenue = this.props.revenueQueryResults.lunchRevenue
+    const dinnerRevenue = this.props.revenueQueryResults.dinnerRevenue
+    const xAxis = this.props.revenueQueryResults.xAxis
+    const startDate = this.props.revenueQueryResults.startDate
     const selectedXAxisOption = this.props.selectedXAxisOption
-    const SelectedGraphOption = this.props.selectedGraphOption
+    const selectedGraphOption = this.props.selectedGraphOption
     const handleGraphOptionChange = this.props.handleGraphOptionChange
     const selectedQueryTitle = this.props.selectedQueryTitle
-    console.log('WHAT IS THE PROP:', this.props)
-    const Test = 'h1'
 
     const lunchRevenueTotal =
       lunchRevenue && lunchRevenue.reduce((acc, curr) => acc + curr)
@@ -38,31 +34,30 @@ export default class RevenueAnalyticsLineGraph extends Component {
           fill: false,
           label: 'Lunch Revenue: ' + formatter.format(lunchRevenueTotal),
           data: lunchRevenue,
-          backgroundColor: 'rgba(255, 10, 13, 0.1)',
-          borderColor: 'red',
-          hoverBackgroundColor: 'red',
-          pointBackgroundColor: 'black',
-          pointRadius: 0
+          backgroundColor: '#E58A8A', //'rgba(255, 10, 13, 0.1)',
+          borderColor: '#E58A8A',
+          hoverBackgroundColor: '#D8345F',
+          pointBackgroundColor: '#E58A8A',
+          pointRadius: 2
         },
         {
           fill: false,
           label: 'Dinner Revenue: ' + formatter.format(dinnerRevenueTotal),
           data: dinnerRevenue,
-          backgroundColor: 'rgba(255, 10, 13, 0.1)',
-          borderColor: 'blue',
-          hoverBackgroundColor: 'red',
-          pointBackgroundColor: 'black',
-          pointRadius: 0
+          backgroundColor: '#588DA8',
+          borderColor: '#588DA8',
+          hoverBackgroundColor: '#1D3557',
+          pointBackgroundColor: '#588DA8',
+          pointRadius: 2
         }
       ]
     }
+    const GraphOption = selectedGraphOption === 'line' ? Line : Bar
     if (!lunchRevenue) {
       return <div>...loading</div>
     }
-
     return (
       <div>
-        <Test>HI</Test>
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
             <CardHeader title={formatQueryName(selectedQueryTitle)} />
@@ -70,12 +65,12 @@ export default class RevenueAnalyticsLineGraph extends Component {
             <GraphOptionButtons
               handleGraphOptionChange={handleGraphOptionChange}
               selectedQueryTitle={selectedQueryTitle}
-              SelectedGraphOption={SelectedGraphOption}
+              selectedGraphOption={selectedGraphOption}
             />
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">
-                <Line
+                <GraphOption
                   data={chartData}
                   options={{
                     scales: {
