@@ -5,7 +5,7 @@ import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 import GraphOptionButtons from './GraphOptionButtons'
 import {CSVLink} from 'react-csv'
 
-const formatter = new Intl.NumberFormat('en-US', {
+const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
   minimumFractionDigits: 2
@@ -28,7 +28,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
     const dinnerRevenueTotal =
       dinnerRevenue && dinnerRevenue.reduce((acc, curr) => acc + curr)
 
-    const revenueTotal = formatter.format(
+    const revenueTotal = currencyFormatter.format(
       lunchRevenueTotal + dinnerRevenueTotal
     )
 
@@ -37,7 +37,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
       datasets: [
         {
           fill: false,
-          label: 'Lunch Revenue', //+ formatter.format(lunchRevenueTotal),
+          label: 'Lunch Revenue', //+ currencyFormatter.format(lunchRevenueTotal),
           data: lunchRevenue,
           backgroundColor: '#E58A8A',
           borderColor: '#E58A8A',
@@ -47,7 +47,7 @@ export default class RevenueAnalyticsLineGraph extends Component {
         },
         {
           fill: false,
-          label: 'Dinner Revenue', //+ formatter.format(dinnerRevenueTotal),
+          label: 'Dinner Revenue', //+ currencyFormatter.format(dinnerRevenueTotal),
           data: dinnerRevenue,
           backgroundColor: '#588DA8',
           borderColor: '#588DA8',
@@ -79,9 +79,12 @@ export default class RevenueAnalyticsLineGraph extends Component {
           <Card className={clsx('classes.root, className')}>
             <CardHeader title={formatQueryName(selectedQueryTitle)} />
             <h4>Revenue Total: {revenueTotal}</h4>
-            <h4>Lunch Revenue Total: {formatter.format(lunchRevenueTotal)}</h4>
             <h4>
-              Dinner Revenue Total: {formatter.format(dinnerRevenueTotal)}
+              Lunch Revenue Total: {currencyFormatter.format(lunchRevenueTotal)}
+            </h4>
+            <h4>
+              Dinner Revenue Total:{' '}
+              {currencyFormatter.format(dinnerRevenueTotal)}
             </h4>
             <GraphOptionButtons
               handleGraphOptionChange={handleGraphOptionChange}
@@ -109,10 +112,9 @@ export default class RevenueAnalyticsLineGraph extends Component {
                             suggestedMax:
                               Math.max(...lunchRevenue, ...dinnerRevenue) * 1.1,
                             callback: function(value) {
-                              return (
-                                formatter.format(value / 1000).slice(0, -3) +
-                                'K'
-                              )
+                              return currencyFormatter
+                                .format(value)
+                                .slice(0, -3)
                             }
                           }
                         }
@@ -158,7 +160,7 @@ function formatQueryName(name) {
 }
 
 function tableDataFormatting(nameXAxis, xAxis, yAxis1, yAxis2) {
-  let result = [[nameXAxis, 'Lunch Revenue', 'Dinner Revenue']]
+  let result = [[nameXAxis, 'Lunch Revenue ($)', 'Dinner Revenue ($)']]
   for (let i = 0; i < xAxis.length; i++) {
     result.push([xAxis[i], yAxis1[i], yAxis2[i]])
   }

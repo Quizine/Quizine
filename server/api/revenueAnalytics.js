@@ -119,7 +119,7 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         ${
           req.query.aggOption === 'avgRevenuePerGuest'
             ? 'ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) "yAxisData"'
-            : `${req.query.aggOption}(revenue) as "yAxisData"`
+            : `ROUND(${req.query.aggOption}(revenue), 2) as "yAxisData"`
         }
         FROM orders
         ${
@@ -145,7 +145,7 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         ${
           req.query.aggOption === 'avgRevenuePerGuest'
             ? 'ROUND((SUM(revenue)::numeric)/SUM("numberOfGuests"), 2) "yAxisData"'
-            : `${req.query.aggOption}(revenue) as "yAxisData"`
+            : `ROUND(${req.query.aggOption}(revenue), 2) as "yAxisData"`
         }
         FROM orders
         WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
@@ -212,9 +212,9 @@ router.get('/numberOfOrders', async (req, res, next) => {
       ${
         req.query.aggOption === 'numberOfOrders'
           ? 'COUNT(*) AS "yAxisData" FROM orders'
-          : `${
+          : `ROUND(${
               req.query.aggOption
-            }("aggQuantity".quantity) as "yAxisData" FROM orders INNER JOIN (SELECT SUM(quantity) as quantity, "orderId" FROM "menuItemOrders"
+            }("aggQuantity".quantity),2) as "yAxisData" FROM orders INNER JOIN (SELECT SUM(quantity) as quantity, "orderId" FROM "menuItemOrders"
       GROUP BY "orderId") as "aggQuantity"
       ON orders.id = "aggQuantity"."orderId"`
       }
@@ -239,9 +239,9 @@ router.get('/numberOfOrders', async (req, res, next) => {
         ${
           req.query.aggOption === 'numberOfOrders'
             ? 'COUNT(*) AS "yAxisData" FROM orders'
-            : `${
+            : `ROUND(${
                 req.query.aggOption
-              }("aggQuantity".quantity) as "yAxisData" FROM orders INNER JOIN (SELECT SUM(quantity) as quantity, "orderId" FROM "menuItemOrders"
+              }("aggQuantity".quantity),2) as "yAxisData" FROM orders INNER JOIN (SELECT SUM(quantity) as quantity, "orderId" FROM "menuItemOrders"
         GROUP BY "orderId") as "aggQuantity"
         ON orders.id = "aggQuantity"."orderId"`
         }

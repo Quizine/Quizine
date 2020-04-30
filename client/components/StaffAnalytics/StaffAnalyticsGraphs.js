@@ -52,6 +52,8 @@ const Wrapper = styled.div`
   }
 `
 
+const numberFormatter = new Intl.NumberFormat('en-US')
+
 class WaiterPerformance extends Component {
   constructor(props) {
     super(props)
@@ -234,7 +236,7 @@ class WaiterPerformance extends Component {
               className="select-cust"
               defaultValue="30"
             >
-              <option value="365">Last 365 Days</option>
+              <option value="365">Last 1 Year</option>
               <option value="30">Last 30 Days</option>
               <option value="7">Last 7 Days</option>
               <option value="custom">Custom Dates</option>
@@ -328,7 +330,7 @@ class WaiterPerformance extends Component {
                             ) {
                               return '$' + value
                             }
-                            return value
+                            return numberFormatter.format(value)
                           }
                         }
                       }
