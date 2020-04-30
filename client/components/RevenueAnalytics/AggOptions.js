@@ -95,7 +95,7 @@ export default function AggOptions(props) {
           control={<StyledRadio />}
           label={
             selectedQueryTitle === 'avgRevenuePerGuest'
-              ? 'Average Renevue Per Table Served'
+              ? 'Average Revenue Per Table Served'
               : 'Average Number of Menu Items Per Table Served'
           }
         />

@@ -220,6 +220,17 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleAggOptionChange(event) {
+    console.log('AGG OPTION TARGET 11111', event.target)
+    console.log(
+      'AGG OPTION TARGET 22222',
+      event.target.label,
+      event.target.innerText
+    )
+    console.log(
+      'AGG OPTION TARGET 3333',
+
+      event.target.innerText
+    )
     await this.setState({
       selectedAggOption: event.target.value
     })
