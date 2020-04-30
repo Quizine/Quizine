@@ -9,7 +9,7 @@ import {CSVLink} from 'react-csv'
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
-  minimumFractionDigits: 0
+  minimumFractionDigits: 2
 })
 
 const numberFormatter = new Intl.NumberFormat('en-US')
@@ -47,6 +47,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
         }
       ]
     }
+    const aggValue =
+      yAxis && aggValueFormatting(selectedAggOption, selectedQueryTitle, yAxis)
+
     const queryData = chartData.datasets[0].data
     const GraphOption = selectedGraphOption === 'line' ? Line : Bar
     if (!queryData) {
@@ -67,7 +70,7 @@ export default class RevenueAnalyticsBarGraphs extends Component {
             selectedGraphOption={selectedGraphOption}
           />
           <Divider />
-
+          <h5>{aggValue}</h5>
           <CardContent>
             <div className="classes.chartContainer">
               <GraphOption
@@ -136,30 +139,49 @@ function formatQueryName(name) {
   return name
 }
 
-// eslint-disable-next-line complexity
 function tableDataFormatting(nameXAxis, aggOption, queryTitle, xAxis, yAxis) {
-  let nameYAxis
-  if (queryTitle === 'avgRevenuePerGuest') {
-    if (aggOption === 'sum') {
-      nameYAxis = 'Total Revenue ($)'
-    } else if (aggOption === 'avg') {
-      nameYAxis = 'Average Renevue Per Table Served ($)'
-    } else if (aggOption === 'avgRevenuePerGuest') {
-      nameYAxis = 'Average Revenue Per Guest ($)'
-    }
-  } else if (queryTitle === 'numberOfOrders') {
-    if (aggOption === 'sum') {
-      nameYAxis = 'Total Number of Menu Items'
-    } else if (aggOption === 'avg') {
-      nameYAxis = 'Average Number of Menu Items Per Table Served'
-    } else if (aggOption === 'numberOfOrders') {
-      nameYAxis = 'Total Number of Tables Served'
-    }
-  }
+  const nameYAxis = graphTitleFormatting(aggOption, queryTitle)
   let result = [[nameXAxis, nameYAxis]]
   for (let i = 0; i < xAxis.length; i++) {
     result.push([xAxis[i], yAxis[i]])
   }
-  console.log('BAR GRAPH RESULT: ', result)
   return result
+}
+
+// eslint-disable-next-line complexity
+function graphTitleFormatting(aggOption, queryTitle) {
+  let graphTitle
+  if (queryTitle === 'avgRevenuePerGuest') {
+    if (aggOption === 'sum') {
+      graphTitle = 'Total Revenue'
+    } else if (aggOption === 'avg') {
+      graphTitle = 'Average Renevue Per Table Served'
+    } else if (aggOption === 'avgRevenuePerGuest') {
+      graphTitle = 'Average Revenue Per Guest'
+    }
+  } else if (queryTitle === 'numberOfOrders') {
+    if (aggOption === 'sum') {
+      graphTitle = 'Total Number of Menu Items'
+    } else if (aggOption === 'avg') {
+      graphTitle = 'Average Number of Menu Items Per Table Served'
+    } else if (aggOption === 'numberOfOrders') {
+      graphTitle = 'Total Number of Tables Served'
+    }
+  }
+  return graphTitle
+}
+
+function aggValueFormatting(aggOption, queryTitle, yAxis) {
+  let aggValue
+  let sumYAxis = yAxis.reduce((acc, curr) => acc + curr)
+  if (queryTitle === 'avgRevenuePerGuest' && aggOption === 'sum') {
+    aggValue = currencyFormatter.format(sumYAxis)
+  } else if (queryTitle === 'avgRevenuePerGuest' && aggOption !== 'sum') {
+    aggValue = currencyFormatter.format(sumYAxis / yAxis.length)
+  } else if (queryTitle === 'numberOfOrders' && aggOption !== 'avg') {
+    aggValue = numberFormatter.format(sumYAxis)
+  } else {
+    aggValue = numberFormatter.format((sumYAxis / yAxis.length).toFixed(2))
+  }
+  return aggValue
 }
