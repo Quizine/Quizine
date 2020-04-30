@@ -6,6 +6,14 @@ import GraphOptionButtons from './GraphOptionButtons'
 import AggOptions from './AggOptions'
 import {CSVLink} from 'react-csv'
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0
+})
+
+const numberFormatter = new Intl.NumberFormat('en-US')
+
 export default class RevenueAnalyticsBarGraphs extends Component {
   // eslint-disable-next-line complexity
   render() {
@@ -32,7 +40,7 @@ export default class RevenueAnalyticsBarGraphs extends Component {
           borderColor:
             selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
           hoverBackgroundColor:
-            selectedQueryTitle === 'numberOfOrders' ? '#FA744f' : '#024249',
+            selectedQueryTitle === 'numberOfOrders' ? '#BB3B0E' : '#024249',
           pointBackgroundColor:
             selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
           pointRadius: 2
@@ -84,9 +92,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
                           suggestedMax: queryData.max() * 1.1,
                           callback: function(value) {
                             if (selectedQueryTitle === 'avgRevenuePerGuest') {
-                              return '$' + value
+                              return currencyFormatter.format(value)
                             }
-                            return value
+                            return numberFormatter.format(value)
                           }
                         }
                       }
@@ -133,11 +141,11 @@ function tableDataFormatting(nameXAxis, aggOption, queryTitle, xAxis, yAxis) {
   let nameYAxis
   if (queryTitle === 'avgRevenuePerGuest') {
     if (aggOption === 'sum') {
-      nameYAxis = 'Total Revenue'
+      nameYAxis = 'Total Revenue ($)'
     } else if (aggOption === 'avg') {
-      nameYAxis = 'Average Renevue Per Table Served'
+      nameYAxis = 'Average Renevue Per Table Served ($)'
     } else if (aggOption === 'avgRevenuePerGuest') {
-      nameYAxis = 'Average Revenue Per Guest'
+      nameYAxis = 'Average Revenue Per Guest ($)'
     }
   } else if (queryTitle === 'numberOfOrders') {
     if (aggOption === 'sum') {
