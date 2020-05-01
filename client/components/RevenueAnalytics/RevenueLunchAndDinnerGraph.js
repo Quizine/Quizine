@@ -11,7 +11,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2
 })
 
-export default class RevenueAnalyticsLineGraph extends Component {
+export default class RevenueLunchAndDinnerGraph extends Component {
   // eslint-disable-next-line complexity
   render() {
     const lunchRevenue = this.props.revenueQueryResults.lunchRevenue
@@ -59,17 +59,6 @@ export default class RevenueAnalyticsLineGraph extends Component {
     }
     const GraphOption = selectedGraphOption === 'line' ? Line : Bar
 
-    console.log(
-      'DATA: ',
-      'XAXIS Option-> ',
-      selectedXAxisOption,
-      'X-Axis -> ',
-      xAxis,
-      'Lunch -> ',
-      lunchRevenue,
-      'dinner -> ',
-      dinnerRevenue
-    )
     if (!lunchRevenue) {
       return <div>...loading</div>
     }
