@@ -14,7 +14,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 const numberFormatter = new Intl.NumberFormat('en-US')
 
-export default class RevenueAnalyticsBarGraphs extends Component {
+export default class RevenueAndOrdersGraphs extends Component {
   // eslint-disable-next-line complexity
   render() {
     const labels = this.props.revenueQueryResults.xAxis
@@ -36,13 +36,21 @@ export default class RevenueAnalyticsBarGraphs extends Component {
           label: '',
           data: yAxis,
           backgroundColor:
-            selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
+            selectedQueryTitle === 'detailedOrderAnalysis'
+              ? '#F79071'
+              : '#16817A',
           borderColor:
-            selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
+            selectedQueryTitle === 'detailedOrderAnalysis'
+              ? '#F79071'
+              : '#16817A',
           hoverBackgroundColor:
-            selectedQueryTitle === 'numberOfOrders' ? '#BB3B0E' : '#024249',
+            selectedQueryTitle === 'detailedOrderAnalysis'
+              ? '#BB3B0E'
+              : '#024249',
           pointBackgroundColor:
-            selectedQueryTitle === 'numberOfOrders' ? '#F79071' : '#16817A',
+            selectedQueryTitle === 'detailedOrderAnalysis'
+              ? '#F79071'
+              : '#16817A',
           pointRadius: 2
         }
       ]
@@ -58,7 +66,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
-          <CardHeader title={formatQueryName(selectedQueryTitle)} />
+          <CardHeader
+            title={graphTitleFormatting(selectedAggOption, selectedQueryTitle)}
+          />
           <AggOptions
             selectedAggOption={selectedAggOption}
             selectedQueryTitle={selectedQueryTitle}
@@ -70,7 +80,10 @@ export default class RevenueAnalyticsBarGraphs extends Component {
             selectedGraphOption={selectedGraphOption}
           />
           <Divider />
-          <h5>{aggValue}</h5>
+          <h5>{`${graphTitleFormatting(
+            selectedAggOption,
+            selectedQueryTitle
+          )} For Selected Time Interval: ${aggValue}`}</h5>
           <CardContent>
             <div className="classes.chartContainer">
               <GraphOption
@@ -94,7 +107,9 @@ export default class RevenueAnalyticsBarGraphs extends Component {
                           suggestedMin: 0,
                           suggestedMax: queryData.max() * 1.1,
                           callback: function(value) {
-                            if (selectedQueryTitle === 'avgRevenuePerGuest') {
+                            if (
+                              selectedQueryTitle === 'detailedRevenueAnalysis'
+                            ) {
                               return currencyFormatter.format(value)
                             }
                             return numberFormatter.format(value)
@@ -129,16 +144,6 @@ export default class RevenueAnalyticsBarGraphs extends Component {
   }
 }
 
-function formatQueryName(name) {
-  if (name === 'avgRevenuePerGuest') {
-    name = 'Average' + name.slice(3)
-  }
-  name = name.replace(/([A-Z])/g, ' $1')
-  name = name[0].toUpperCase() + name.slice(1)
-
-  return name
-}
-
 function tableDataFormatting(nameXAxis, aggOption, queryTitle, xAxis, yAxis) {
   const nameYAxis = graphTitleFormatting(aggOption, queryTitle)
   let result = [[nameXAxis, nameYAxis]]
@@ -151,7 +156,7 @@ function tableDataFormatting(nameXAxis, aggOption, queryTitle, xAxis, yAxis) {
 // eslint-disable-next-line complexity
 function graphTitleFormatting(aggOption, queryTitle) {
   let graphTitle
-  if (queryTitle === 'avgRevenuePerGuest') {
+  if (queryTitle === 'detailedRevenueAnalysis') {
     if (aggOption === 'sum') {
       graphTitle = 'Total Revenue'
     } else if (aggOption === 'avg') {
@@ -159,13 +164,13 @@ function graphTitleFormatting(aggOption, queryTitle) {
     } else if (aggOption === 'avgRevenuePerGuest') {
       graphTitle = 'Average Revenue Per Guest'
     }
-  } else if (queryTitle === 'numberOfOrders') {
+  } else if (queryTitle === 'detailedOrderAnalysis') {
     if (aggOption === 'sum') {
-      graphTitle = 'Total Number of Menu Items'
+      graphTitle = 'Total Number Of Menu Items'
     } else if (aggOption === 'avg') {
-      graphTitle = 'Average Number of Menu Items Per Table Served'
+      graphTitle = 'Average Number Of Menu Items Per Table Served'
     } else if (aggOption === 'numberOfOrders') {
-      graphTitle = 'Total Number of Tables Served'
+      graphTitle = 'Total Number Of Tables Served'
     }
   }
   return graphTitle
@@ -174,11 +179,11 @@ function graphTitleFormatting(aggOption, queryTitle) {
 function aggValueFormatting(aggOption, queryTitle, yAxis) {
   let aggValue
   let sumYAxis = yAxis.reduce((acc, curr) => acc + curr)
-  if (queryTitle === 'avgRevenuePerGuest' && aggOption === 'sum') {
+  if (queryTitle === 'detailedRevenueAnalysis' && aggOption === 'sum') {
     aggValue = currencyFormatter.format(sumYAxis)
-  } else if (queryTitle === 'avgRevenuePerGuest' && aggOption !== 'sum') {
+  } else if (queryTitle === 'detailedRevenueAnalysis' && aggOption !== 'sum') {
     aggValue = currencyFormatter.format(sumYAxis / yAxis.length)
-  } else if (queryTitle === 'numberOfOrders' && aggOption !== 'avg') {
+  } else if (queryTitle === 'detailedOrderAnalysis' && aggOption !== 'avg') {
     aggValue = numberFormatter.format(sumYAxis)
   } else {
     aggValue = numberFormatter.format((sumYAxis / yAxis.length).toFixed(2))

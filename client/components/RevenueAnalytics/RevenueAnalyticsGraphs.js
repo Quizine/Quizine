@@ -7,8 +7,8 @@ import {
   getRevenueQueryResultsDate,
   getRevenueQueryResultsInterval
 } from '../../store/revenueAnalyticsReducer'
-import RevenueAnalyticsBarGraphs from './RevenueAnalyticsBarGraphs'
-import RevenueAnalyticsLineGraph from './RevenueAnalyticsLineGraph'
+import RevenueAndOrdersGraphs from './RevenueAndOrdersGraphs'
+import RevenueLunchAndDinnerGraph from './RevenueLunchAndDinnerGraph'
 import XAxisOptions from './XAxisOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
@@ -45,15 +45,15 @@ class RevenueAnalyticsGraphs extends Component {
     super(props)
     this.state = {
       queryTitleOptions: [
-        'avgRevenuePerGuest',
-        'numberOfOrders',
+        'detailedRevenueAnalysis',
+        'detailedOrderAnalysis',
         'lunchAndDinnerRevenueComparison'
       ],
       selectedIntervalOption: '30',
       selectedXAxisOption: 'day',
       selectedGraphOption: 'bar',
       selectedAggOption: 'sum',
-      selectedQueryTitle: 'avgRevenuePerGuest',
+      selectedQueryTitle: 'detailedRevenueAnalysis',
       startDate: null,
       endDate: null,
       focusedInput: null
@@ -147,9 +147,9 @@ class RevenueAnalyticsGraphs extends Component {
       selectedQueryTitle: event.target.value
     })
     if (
-      (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
+      (this.state.selectedQueryTitle === 'detailedRevenueAnalysis' &&
         this.state.selectedXAxisOption === 'avgHour') ||
-      (this.state.selectedQueryTitle === 'numberOfOrders' &&
+      (this.state.selectedQueryTitle === 'detailedOrderAnalysis' &&
         this.state.selectedXAxisOption === 'DOW') ||
       (this.state.selectedQueryTitle === 'lunchAndDinnerRevenueComparison' &&
         this.state.selectedXAxisOption === 'avgHour') ||
@@ -161,9 +161,9 @@ class RevenueAnalyticsGraphs extends Component {
       })
     }
     if (
-      (this.state.selectedQueryTitle === 'avgRevenuePerGuest' &&
+      (this.state.selectedQueryTitle === 'detailedRevenueAnalysis' &&
         this.state.selectedAggOption === 'numberOfOrders') ||
-      (this.state.selectedQueryTitle === 'numberOfOrders' &&
+      (this.state.selectedQueryTitle === 'detailedOrderAnalysis' &&
         this.state.selectedAggOption === 'avgRevenuePerGuest')
     ) {
       await this.setState({
@@ -220,17 +220,6 @@ class RevenueAnalyticsGraphs extends Component {
   }
 
   async handleAggOptionChange(event) {
-    console.log('AGG OPTION TARGET 11111', event.target)
-    console.log(
-      'AGG OPTION TARGET 22222',
-      event.target.label,
-      event.target.innerText
-    )
-    console.log(
-      'AGG OPTION TARGET 3333',
-
-      event.target.innerText
-    )
     await this.setState({
       selectedAggOption: event.target.value
     })
@@ -323,7 +312,7 @@ class RevenueAnalyticsGraphs extends Component {
         ) : null}
         {this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison' ? (
           <div className="revenue-graphs-cont">
-            <RevenueAnalyticsBarGraphs
+            <RevenueAndOrdersGraphs
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
               selectedXAxisOption={this.state.selectedXAxisOption}
@@ -335,7 +324,7 @@ class RevenueAnalyticsGraphs extends Component {
           </div>
         ) : (
           <div className="revenue-graphs-cont">
-            <RevenueAnalyticsLineGraph
+            <RevenueLunchAndDinnerGraph
               selectedQueryTitle={this.state.selectedQueryTitle}
               revenueQueryResults={this.props.revenueQueryResults}
               selectedXAxisOption={this.state.selectedXAxisOption}
@@ -395,9 +384,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(
 )
 
 function formatQueryName(name) {
-  if (name === 'avgRevenuePerGuest') {
-    name = 'Average' + name.slice(3)
-  }
   name = name.replace(/([A-Z])/g, ' $1')
   name = name[0].toUpperCase() + name.slice(1)
 

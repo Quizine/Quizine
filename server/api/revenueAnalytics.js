@@ -69,7 +69,7 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
       const lunchAndDinnerRevenueComparison = await client.query(text, values)
       const startDate = correctStartDate.toString().slice(0, 15)
       const endDate = correctEndDate.toString()
-      const formattedLineGraphData = formattingLineGraphData(
+      const formattedLineGraphData = formattingLunchAndDinnerData(
         lunchAndDinnerRevenueComparison.rows,
         correctStartDate,
         correctEndDate,
@@ -83,7 +83,7 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
 })
 
 // eslint-disable-next-line complexity
-router.get('/avgRevenuePerGuest', async (req, res, next) => {
+router.get('/detailedRevenueAnalysis', async (req, res, next) => {
   try {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
@@ -159,14 +159,14 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
         correctEndDate.setMinutes(0)
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
-      const avgRevPerGuest = await client.query(text, values)
+      const queriedData = await client.query(text, values)
       const startDate = correctStartDate.toString().slice(0, 15)
       const endDate = correctEndDate.toString()
       const formattedData =
         req.query.xAxisOption === 'DOW'
-          ? formattingDaysOfWeek(avgRevPerGuest.rows)
+          ? formattingDaysOfWeek(queriedData.rows)
           : formattingData(
-              avgRevPerGuest.rows,
+              queriedData.rows,
               correctStartDate,
               correctEndDate,
               req.query.xAxisOption
@@ -179,7 +179,7 @@ router.get('/avgRevenuePerGuest', async (req, res, next) => {
 })
 
 // eslint-disable-next-line complexity
-router.get('/numberOfOrders', async (req, res, next) => {
+router.get('/detailedOrderAnalysis', async (req, res, next) => {
   try {
     if (req.user.id) {
       let text, values, correctStartDate, correctEndDate
@@ -256,14 +256,14 @@ router.get('/numberOfOrders', async (req, res, next) => {
         correctEndDate.setMinutes(0)
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
-      const numberOfOrders = await client.query(text, values)
+      const queriedData = await client.query(text, values)
       const startDate = correctStartDate.toString().slice(0, 15)
       const endDate = correctEndDate.toString()
       const formattedData =
         req.query.xAxisOption === 'avgHour'
-          ? formattingNumberOfOrdersPerHour(numberOfOrders.rows)
+          ? formattingOrdersData(queriedData.rows)
           : formattingData(
-              numberOfOrders.rows,
+              queriedData.rows,
               correctStartDate,
               correctEndDate,
               req.query.xAxisOption
@@ -276,7 +276,7 @@ router.get('/numberOfOrders', async (req, res, next) => {
   }
 })
 
-function formattingNumberOfOrdersPerHour(arr) {
+function formattingOrdersData(arr) {
   let currHour = 11
   let i = 0
   let xAxis = []
@@ -419,7 +419,7 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
 }
 
 // eslint-disable-next-line complexity
-function formattingLineGraphData(arr, startDate, endDate, xAxisOption) {
+function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
   let xAxis = []
   let lunchRevenue = []
   let dinnerRevenue = []

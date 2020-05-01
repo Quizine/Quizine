@@ -114,14 +114,14 @@ export default function XAxisOptions(props) {
           control={<StyledRadio />}
           label="Per Hour"
         />
-        {props.selectedQueryTitle === 'avgRevenuePerGuest' ? (
+        {props.selectedQueryTitle === 'detailedRevenueAnalysis' ? (
           <FormControlLabel
             value="DOW"
             control={<StyledRadio />}
             label="Average Per Day Of Week"
           />
         ) : null}
-        {props.selectedQueryTitle === 'numberOfOrders' ? (
+        {props.selectedQueryTitle === 'detailedOrderAnalysis' ? (
           <FormControlLabel
             value="avgHour"
             control={<StyledRadio />}

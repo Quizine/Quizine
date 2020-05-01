@@ -85,31 +85,31 @@ export default function AggOptions(props) {
           value="sum"
           control={<StyledRadio />}
           label={
-            selectedQueryTitle === 'avgRevenuePerGuest'
+            selectedQueryTitle === 'detailedRevenueAnalysis'
               ? 'Total Revenue'
-              : 'Total Number of Menu Items'
+              : 'Total Number Of Menu Items'
           }
         />
         <FormControlLabel
           value="avg"
           control={<StyledRadio />}
           label={
-            selectedQueryTitle === 'avgRevenuePerGuest'
+            selectedQueryTitle === 'detailedRevenueAnalysis'
               ? 'Average Revenue Per Table Served'
-              : 'Average Number of Menu Items Per Table Served'
+              : 'Average Number Of Menu Items Per Table Served'
           }
         />
         <FormControlLabel
           value={
-            selectedQueryTitle === 'avgRevenuePerGuest'
+            selectedQueryTitle === 'detailedRevenueAnalysis'
               ? 'avgRevenuePerGuest'
               : 'numberOfOrders'
           }
           control={<StyledRadio />}
           label={
-            selectedQueryTitle === 'avgRevenuePerGuest'
+            selectedQueryTitle === 'detailedRevenueAnalysis'
               ? 'Average Revenue Per Guest'
-              : 'Total Number of Tables Served'
+              : 'Total Number Of Tables Served'
           }
         />
       </RadioGroup>

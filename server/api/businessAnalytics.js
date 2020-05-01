@@ -15,13 +15,13 @@ router.get('/monthlyRevenueVsLunchVsDinner', async (req, res, next) => {
         EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
         SUM("revenue")/7 AS "monthlyRevenue"
         FROM orders
-        join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id 
-        join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId" 
+        join "menuItemOrders" on "menuItemOrders"."orderId" = orders.id
+        join "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
         WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-        and orders."timeOfPurchase" <= NOW() 
+        and orders."timeOfPurchase" <= NOW()
         AND orders."restaurantId" = $2
         and "menuItems"."mealType" is not null
-        GROUP BY mon, m, yyyy, "menuItems"."mealType" 
+        GROUP BY mon, m, yyyy, "menuItems"."mealType"
         ORDER BY m;`
 
       const year = req.query.year
@@ -119,11 +119,11 @@ router.get('/avgRevenuePerGuestVsDOW', async (req, res, next) => {
       ORDER BY day ASC;`
       const timeInterval = '1 ' + req.query.timeInterval
       const values = [timeInterval, req.user.restaurantId]
-      const avgRevPerGuest = await client.query(text, values)
-      const avgRevPerGuestArr = avgRevPerGuest.rows.map(el =>
+      const queriedData = await client.query(text, values)
+      const queriedDataArr = queriedData.rows.map(el =>
         Number(el.revenue_per_guest)
       )
-      res.json(avgRevPerGuestArr)
+      res.json(queriedDataArr)
     }
   } catch (error) {
     next(error)
