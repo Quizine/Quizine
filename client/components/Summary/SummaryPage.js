@@ -35,9 +35,7 @@ class SummaryPage extends Component {
   }
 
   getTotalRevenue(arr) {
-    return (
-      arr.reduce((acc, currentVal) => acc + currentVal, 0) / 1000
-    ).toFixed(2)
+    return arr.reduce((acc, currentVal) => acc + currentVal, 0)
   }
 
   render() {

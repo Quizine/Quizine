@@ -12,15 +12,6 @@ import {
   Button
 } from '@material-ui/core'
 
-//UTILITY FUNCTIONS:
-// Array.prototype.max = function() {
-//   return Math.max.apply(null, this)
-// }
-
-// Array.prototype.min = function() {
-//   return Math.min.apply(null, this)
-// }
-
 class LineGraphRevenue extends Component {
   constructor(props) {
     super(props)
@@ -51,6 +42,7 @@ class LineGraphRevenue extends Component {
         {
           label: 'Revenue',
           data: revenue,
+          fill: false,
           backgroundColor: 'lightgreen',
           borderColor: 'yellow',
           hoverBackgroundColor: 'red',
@@ -90,7 +82,7 @@ class LineGraphRevenue extends Component {
                         {
                           display: true,
                           ticks: {
-                            suggestedMin: 20000,
+                            suggestedMin: 0,
                             suggestedMax: 100000
                           }
                         }

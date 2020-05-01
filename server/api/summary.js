@@ -15,10 +15,14 @@ router.get('/revenueByDay', async (req, res, next) => {
       const text = `SELECT
       SUM(orders.revenue )
       FROM orders
-      WHERE orders."timeOfPurchase" ::date = $1
-      AND orders."restaurantId" = $2;`
-      const date = req.query.date
-      const values = [date, req.user.restaurantId]
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
+      AND orders."restaurantId" = $3;`
+      const correctStartDate = new Date(req.query.date)
+      const correctEndDate = new Date(
+        Math.min(new Date(), new Date(req.query.date + ' 23:59'))
+      )
+
+      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
       const revenueByDay = await client.query(text, values)
       res.json(revenueByDay.rows[0].sum) //RETURNS JUST THE #
     }
@@ -144,31 +148,26 @@ router.get('/revenueVsTime', async (req, res, next) => {
     if (req.user.id) {
       const text = `
       SELECT to_char("timeOfPurchase",'Mon') AS mon,
-      DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
       EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-      EXTRACT(DAY FROM NOW()) AS daynow,
-      SUM("revenue") AS "monthlyRevenue"
-      FROM orders
-      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-      AND orders."timeOfPurchase" <= NOW()
-      AND orders."restaurantId" = $2
-      GROUP BY mon, m, yyyy
-      ORDER BY m;
-      `
-      // didn't find a way to add todays date to interval in the same query so used JS
-      const year = req.query.year
-      // const interval = year + ' year'
-      // const interval = `${year} year + ${new Date().getDate()} days`
-      const interval = `${year} year`
+        DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
+        SUM("revenue") AS "monthlyRevenue"
+        FROM orders
+        WHERE orders."timeOfPurchase" <= NOW()
+        AND orders."restaurantId" = $1
+        GROUP BY mon, m, yyyy
+        ORDER BY m;`
 
-      const values = [interval, req.user.restaurantId]
+      const values = [req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
-      const allDateRevenue = {month: [], revenue: []}
-      revenueVsTime.rows.forEach(row => {
-        allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-        allDateRevenue.revenue.push(Number(row.monthlyRevenue))
-      })
-      res.json(allDateRevenue)
+      const formattedData = revenueVsTimeFormatting(revenueVsTime.rows)
+      // console.log('REVENUE VS TIME', revenueVsTime)
+      console.log('FORMATTED DATA', formattedData)
+      // const allDateRevenue = {month: [], revenue: []}
+      // revenueVsTime.rows.forEach((row) => {
+      //   allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
+      //   allDateRevenue.revenue.push(Number(row.monthlyRevenue))
+      // })
+      res.json(formattedData)
     }
   } catch (error) {
     next(error)
@@ -215,4 +214,31 @@ function tableFormatting(array) {
     element.dayOfWeek = DOWconversion[element.dayOfWeek]
   })
   return array
+}
+
+function revenueVsTimeFormatting(arr) {
+  let xAxis = []
+  let year2018 = []
+  let year2019 = []
+  let year2020 = []
+
+  for (let i = 0; i < arr.length; i++) {
+    if (i <= 11) {
+      xAxis.push(arr[i].mon)
+    }
+    if (arr[i].yyyy === 2018) {
+      year2018.push(+arr[i].monthlyRevenue)
+    }
+    if (arr[i].yyyy === 2019) {
+      year2019.push(+arr[i].monthlyRevenue)
+    }
+    if (arr[i].yyyy === 2020) {
+      year2020.push(+arr[i].monthlyRevenue)
+    }
+  }
+  while (year2020.length < 12) {
+    year2020.push(0)
+  }
+
+  return {xAxis, year2018, year2019, year2020}
 }
