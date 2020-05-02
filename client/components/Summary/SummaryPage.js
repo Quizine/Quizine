@@ -43,7 +43,7 @@ class SummaryPage extends Component {
       <div className="summary-page-container">
         {this.props.DOWAnalysisTable &&
         this.props.restaurantInfo[0] &&
-        this.props.revenueVsTime.oneYear.revenue &&
+        this.props.revenueVsTime.xAxis &&
         this.props.numberOfWaiters ? (
           <div className="card-container">
             <Grid container spacing={4}>
@@ -53,7 +53,7 @@ class SummaryPage extends Component {
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <TotalRevenue
                   totalRevenue={this.getTotalRevenue(
-                    this.props.revenueVsTime.oneYear.revenue
+                    this.props.revenueVsTime.year2019
                   )}
                 />
               </Grid>

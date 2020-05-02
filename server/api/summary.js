@@ -35,7 +35,7 @@ router.get('/waitersOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
-      SELECT 
+      SELECT
       DISTINCT waiters."name"
       FROM waiters
       JOIN orders on orders."waiterId" = waiters.id
@@ -59,7 +59,7 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
       SUM("menuItemOrders".quantity) as total
       FROM "menuItemOrders"
       JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
-      JOIN orders on orders.id = "menuItemOrders"."orderId" 
+      JOIN orders on orders.id = "menuItemOrders"."orderId"
       WHERE orders."timeOfPurchase" ::date = $1
       AND "menuItems"."beverageType" isnull
       AND orders."restaurantId" = $2
@@ -160,13 +160,6 @@ router.get('/revenueVsTime', async (req, res, next) => {
       const values = [req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
       const formattedData = revenueVsTimeFormatting(revenueVsTime.rows)
-      // console.log('REVENUE VS TIME', revenueVsTime)
-      console.log('FORMATTED DATA', formattedData)
-      // const allDateRevenue = {month: [], revenue: []}
-      // revenueVsTime.rows.forEach((row) => {
-      //   allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-      //   allDateRevenue.revenue.push(Number(row.monthlyRevenue))
-      // })
       res.json(formattedData)
     }
   } catch (error) {
@@ -177,9 +170,9 @@ router.get('/revenueVsTime', async (req, res, next) => {
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", 
-      SUM(orders."numberOfGuests") AS "numberOfGuests", 
-      ROUND((SUM(orders.revenue)::numeric)/1000,2) AS "dayRevenue", 
+      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek",
+      SUM(orders."numberOfGuests") AS "numberOfGuests",
+      ROUND((SUM(orders.revenue)::numeric)/1000,2) AS "dayRevenue",
       SUM("summedMenuItemOrder"."summedQuantity")
             FROM orders
             JOIN (SELECT SUM("menuItemOrders".quantity) AS "summedQuantity", "menuItemOrders"."orderId"

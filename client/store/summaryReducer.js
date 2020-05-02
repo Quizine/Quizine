@@ -22,11 +22,7 @@ const initialState = {
     month: [],
     week: []
   },
-  revenueVsTime: {
-    allPeriod: {},
-    oneYear: {},
-    twoYears: {}
-  },
+  revenueVsTime: {},
   calendarData: {
     revenue: '',
     listOfWaiters: [],
@@ -55,10 +51,9 @@ const gotPeakTimeOrders = (orders, timeInterval) => ({
   orders,
   timeInterval
 })
-const gotRevenueVsTime = (chartData, yearQty) => ({
+const gotRevenueVsTime = revenueSummaryData => ({
   type: GET_REVENUE_VS_TIME,
-  chartData,
-  yearQty
+  revenueSummaryData
 })
 const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
   type: GET_DOW_ANALYSIS_TABLE,
@@ -107,16 +102,10 @@ export const getPeakTimeOrders = timeInterval => async dispatch => {
   }
 }
 
-export const getRevenueVsTime = yearQty => async dispatch => {
-  let sendYear
-  if (yearQty === 'oneYear') sendYear = '1'
-  else if (yearQty === 'twoYears') sendYear = '2'
-  else sendYear = '3'
+export const getRevenueVsTime = () => async dispatch => {
   try {
-    const {data} = await axios.get('/api/summary/revenueVsTime', {
-      params: {year: sendYear}
-    })
-    dispatch(gotRevenueVsTime(data, yearQty))
+    const {data} = await axios.get('/api/summary/revenueVsTime')
+    dispatch(gotRevenueVsTime(data))
   } catch (error) {
     console.error(error)
   }
@@ -207,10 +196,7 @@ export default function(state = initialState, action) {
     case GET_REVENUE_VS_TIME:
       return {
         ...state,
-        revenueVsTime: {
-          ...state.revenueVsTime,
-          [`${action.yearQty}`]: action.chartData
-        }
+        revenueVsTime: action.revenueSummaryData
       }
     case GET_CALENDAR_DATA:
       return {

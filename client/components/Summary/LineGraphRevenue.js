@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Line} from 'react-chartjs-2'
+import {Bar} from 'react-chartjs-2'
 import {getRevenueVsTime} from '../../store/summaryReducer'
 import clsx from 'clsx'
 import {
@@ -13,43 +13,49 @@ import {
 } from '@material-ui/core'
 
 class LineGraphRevenue extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      selectedOption: 'oneYear'
-    }
-    this.handleChange = this.handleChange.bind(this)
-  }
-
   componentDidMount() {
-    this.props.loadRevenueVsTime(this.state.selectedOption)
-  }
-
-  handleChange(event) {
-    event.preventDefault()
-    this.setState({selectedOption: event.target.value})
-    if (!Object.keys(this.props.lineChartData[event.target.value]).length) {
-      this.props.loadRevenueVsTime(event.target.value)
-    }
+    this.props.loadRevenueVsTime()
   }
 
   render() {
-    const {month, revenue} = this.props.lineChartData[this.state.selectedOption]
+    const {xAxis, year2018, year2019, year2020} = this.props.revenueSummaryData
     const chartData = {
-      labels: month,
+      labels: xAxis,
       datasets: [
         {
-          label: 'Revenue',
-          data: revenue,
+          label: 'Year 2018',
+          data: year2018,
           fill: false,
-          backgroundColor: 'lightgreen',
+          backgroundColor: 'green',
+          borderColor: 'yellow',
+          hoverBackgroundColor: 'red',
+          pointBackgroundColor: 'black',
+          pointRadius: 4
+        },
+        {
+          label: 'Year 2019',
+          data: year2019,
+          fill: false,
+          backgroundColor: 'blue',
+          borderColor: 'yellow',
+          hoverBackgroundColor: 'red',
+          pointBackgroundColor: 'black',
+          pointRadius: 4
+        },
+        {
+          label: 'Year 2020',
+          data: year2020,
+          fill: false,
+          backgroundColor: 'red',
           borderColor: 'yellow',
           hoverBackgroundColor: 'red',
           pointBackgroundColor: 'black',
           pointRadius: 4
         }
       ]
+    }
+    if (!year2018) {
+      return <div>...loading</div>
     }
 
     return (
@@ -69,7 +75,7 @@ class LineGraphRevenue extends Component {
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">
-                <Line
+                <Bar
                   data={chartData}
                   options={{
                     plugins: {
@@ -78,12 +84,20 @@ class LineGraphRevenue extends Component {
                       }
                     },
                     scales: {
+                      xAxes: [
+                        {
+                          stacked: true
+                        }
+                      ],
                       yAxes: [
                         {
                           display: true,
+                          stacked: true,
                           ticks: {
                             suggestedMin: 0,
-                            suggestedMax: 100000
+                            suggestedMax:
+                              Math.max(...year2018, ...year2019, ...year2020) *
+                              1.1
                           }
                         }
                       ]
@@ -100,12 +114,12 @@ class LineGraphRevenue extends Component {
 }
 
 const mapStateToProps = state => {
-  return {lineChartData: state.summary.revenueVsTime}
+  return {revenueSummaryData: state.summary.revenueVsTime}
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadRevenueVsTime: timeInterval => dispatch(getRevenueVsTime(timeInterval))
+    loadRevenueVsTime: () => dispatch(getRevenueVsTime())
   }
 }
 

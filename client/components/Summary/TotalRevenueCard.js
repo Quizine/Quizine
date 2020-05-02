@@ -76,7 +76,7 @@ const TotalRevenue = props => {
         </Grid>
         <div className={classes.difference}>
           <Typography className={classes.caption} variant="caption">
-            for the last year
+            in year 2019
           </Typography>
         </div>
       </CardContent>
