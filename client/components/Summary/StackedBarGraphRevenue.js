@@ -3,14 +3,7 @@ import {connect} from 'react-redux'
 import {Bar} from 'react-chartjs-2'
 import {getRevenueVsTime} from '../../store/summaryReducer'
 import clsx from 'clsx'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Divider,
-  Button
-} from '@material-ui/core'
+import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -18,7 +11,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2
 })
 
-class LineGraphRevenue extends Component {
+class StackedBarGraphRevenue extends Component {
   componentDidMount() {
     this.props.loadRevenueVsTime()
   }
@@ -125,4 +118,6 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineGraphRevenue)
+export default connect(mapStateToProps, mapDispatchToProps)(
+  StackedBarGraphRevenue
+)

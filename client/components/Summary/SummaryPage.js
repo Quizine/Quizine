@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PeakTimeGraph from './PeakTimeGraph'
-import LineGraphRevenue from './LineGraphRevenue'
+import StackedBarGraphRevenue from './StackedBarGraphRevenue'
 import EnhancedTable from './DOWAnalysisTable'
 import CalendarContainer from './Calendar/Calendar'
 import {
@@ -73,7 +73,7 @@ class SummaryPage extends Component {
           <Divider />
         </div>
         <div className="summary-chart-container">
-          <LineGraphRevenue />
+          <StackedBarGraphRevenue />
           <PeakTimeGraph />
           <Divider />
         </div>
