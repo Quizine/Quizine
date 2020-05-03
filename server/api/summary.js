@@ -116,32 +116,41 @@ router.get('/numberOfWaiters', async (req, res, next) => {
     next(error)
   }
 })
+
+//WORK ON THIS
 router.get('/numberOfGuestsVsHour', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
       SELECT
-    EXTRACT(hour from orders."timeOfPurchase") AS hours,
-    SUM(orders."numberOfGuests"),
-    ROUND( 100.0 * (
+      EXTRACT(hour from orders."timeOfPurchase") AS hours,
+      SUM(orders."numberOfGuests"),
+      ROUND( 100.0 * (
       SUM(orders."numberOfGuests")::DECIMAL / (
         SELECT SUM(orders."numberOfGuests")
         FROM orders
-        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-        AND orders."restaurantId" = $2
+        WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
+        AND orders."restaurantId" = $3
       )), 1) AS percentage
-  FROM ORDERS
-  WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-  AND orders."restaurantId" = $2
-  GROUP BY hours
-  ORDER BY hours;`
-      const interval = 1 + ' ' + req.query.interval
-      const values = [interval, req.user.restaurantId]
-      const numberOfGuestsVsHour = await client.query(text, values)
-      const percentageArr = numberOfGuestsVsHour.rows.map(el =>
-        Number(el.percentage)
+      FROM ORDERS
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
+      AND orders."restaurantId" = $3
+      GROUP BY hours
+      ORDER BY hours;`
+      let correctStartDate = new Date()
+      correctStartDate.setDate(
+        correctStartDate.getDate() - +req.query.timeInterval
       )
-      res.json(percentageArr)
+      correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+      let correctEndDate = new Date()
+      correctEndDate.setMinutes(0)
+      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
+      const numberOfGuestsVsHour = await client.query(text, values)
+      const formattedData = numberOfGuestsVsHourFormatting(
+        numberOfGuestsVsHour.rows
+      )
+      console.log('WHAT IS PERCENT ARR: ', formattedData)
+      res.json(formattedData)
     }
   } catch (error) {
     next(error)
@@ -172,6 +181,7 @@ router.get('/revenueVsTime', async (req, res, next) => {
   }
 })
 
+//WORK ON THIS
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
     if (req.user.id) {
@@ -239,4 +249,39 @@ function revenueVsTimeFormatting(arr) {
   }
 
   return {xAxis, year2018, year2019, year2020}
+}
+
+function numberOfGuestsVsHourFormatting(arr) {
+  const xAxis = []
+  const yAxis = []
+  let hourConversion = {
+    11: '11am',
+    12: '12pm',
+    13: '1pm',
+    14: '2pm',
+    15: '3pm',
+    16: '4pm',
+    17: '5pm',
+    18: '6pm',
+    19: '7pm',
+    20: '8pm',
+    21: '9pm',
+    22: '10pm'
+  }
+  let hourTracking = 11
+  let end = 22
+  let i = 0
+  while (hourTracking <= end) {
+    if (hourTracking === arr[i].hours) {
+      xAxis.push(hourConversion[hourTracking])
+      yAxis.push(arr[i].percentage)
+      i++
+      hourTracking++
+    } else {
+      xAxis.push(hourConversion[hourTracking])
+      yAxis.push(0)
+      hourTracking++
+    }
+  }
+  return {xAxis, yAxis}
 }

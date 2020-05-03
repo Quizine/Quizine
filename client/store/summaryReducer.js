@@ -17,11 +17,7 @@ const GET_YELP_RATING = 'GET_YELP_RATING'
 const initialState = {
   restaurantInfo: {},
   numberOfWaiters: '',
-  peakTimeOrdersVsTime: {
-    year: [],
-    month: [],
-    week: []
-  },
+  peakTimeOrdersVsTime: [],
   revenueVsTime: {},
   calendarData: {
     revenue: '',
@@ -46,10 +42,9 @@ const gotNumberOfWaiters = numOfWaiters => ({
   numOfWaiters
 })
 
-const gotPeakTimeOrders = (orders, timeInterval) => ({
+const gotPeakTimeOrders = peakTimeData => ({
   type: GET_PEAK_TIME_VS_ORDERS,
-  orders,
-  timeInterval
+  peakTimeData
 })
 const gotRevenueVsTime = revenueSummaryData => ({
   type: GET_REVENUE_VS_TIME,
@@ -93,10 +88,11 @@ export const getNumberOfWaiters = () => async dispatch => {
 
 export const getPeakTimeOrders = timeInterval => async dispatch => {
   try {
+    console.log('WHAT IS TIME INTERVAL: ', timeInterval)
     const {data} = await axios.get('/api/summary/numberOfGuestsVsHour', {
-      params: {interval: timeInterval}
+      params: {timeInterval}
     })
-    dispatch(gotPeakTimeOrders(data, timeInterval))
+    dispatch(gotPeakTimeOrders(data))
   } catch (err) {
     console.error(err)
   }
@@ -188,10 +184,7 @@ export default function(state = initialState, action) {
     case GET_PEAK_TIME_VS_ORDERS:
       return {
         ...state,
-        peakTimeOrdersVsTime: {
-          ...state.peakTimeOrdersVsTime,
-          [`${action.timeInterval}`]: action.orders
-        }
+        peakTimeOrdersVsTime: action.peakTimeData
       }
     case GET_REVENUE_VS_TIME:
       return {
