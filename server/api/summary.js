@@ -117,7 +117,6 @@ router.get('/numberOfWaiters', async (req, res, next) => {
   }
 })
 
-//WORK ON THIS
 router.get('/numberOfGuestsVsHour', async (req, res, next) => {
   try {
     if (req.user.id) {
@@ -149,7 +148,6 @@ router.get('/numberOfGuestsVsHour', async (req, res, next) => {
       const formattedData = numberOfGuestsVsHourFormatting(
         numberOfGuestsVsHour.rows
       )
-      console.log('WHAT IS PERCENT ARR: ', formattedData)
       res.json(formattedData)
     }
   } catch (error) {
@@ -181,25 +179,30 @@ router.get('/revenueVsTime', async (req, res, next) => {
   }
 })
 
-//WORK ON THIS
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek",
       SUM(orders."numberOfGuests") AS "numberOfGuests",
-      ROUND((SUM(orders.revenue)::numeric)/1000,2) AS "dayRevenue",
-      SUM("summedMenuItemOrder"."summedQuantity")
+      ROUND((SUM(orders.revenue)::numeric),2) AS "dayRevenue",
+      SUM("summedMenuItemOrder"."summedQuantity") AS "menuItemsSold"
             FROM orders
             JOIN (SELECT SUM("menuItemOrders".quantity) AS "summedQuantity", "menuItemOrders"."orderId"
             FROM "menuItemOrders"
             GROUP BY "menuItemOrders"."orderId") AS "summedMenuItemOrder"
             ON orders.id = "summedMenuItemOrder"."orderId"
-            WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
-            AND orders."restaurantId" = $1
+            WHERE orders."timeOfPurchase" >= $1
+            AND orders."timeOfPurchase" <= $2
+            AND orders."restaurantId" = $3
             GROUP BY "dayOfWeek"
             ORDER by "dayOfWeek" ASC;
         `
-      const values = [req.user.restaurantId]
+      let correctStartDate = new Date()
+      correctStartDate.setDate(correctStartDate.getDate() - 365)
+      correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+      let correctEndDate = new Date()
+      correctEndDate.setMinutes(0)
+      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
       const DOWAnalysisTable = await client.query(text, values)
       res.json(tableFormatting(DOWAnalysisTable.rows))
     }
@@ -208,6 +211,7 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
   }
 })
 
+//HELPER FUNCTIONS
 function tableFormatting(array) {
   let DOWconversion = {
     0: 'Sunday',

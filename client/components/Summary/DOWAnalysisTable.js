@@ -16,6 +16,14 @@ import Paper from '@material-ui/core/Paper'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
+const numberFormatter = new Intl.NumberFormat('en-US')
+
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1
@@ -59,10 +67,10 @@ const headCells = [
     id: 'dayRevenue',
     numeric: true,
     disablePadding: false,
-    label: 'Revenue ($, K)'
+    label: 'Revenue'
   },
   {
-    id: 'sum',
+    id: 'menuItemsSold',
     numeric: true,
     disablePadding: false,
     label: 'Menu Items Sold (qty)'
@@ -107,7 +115,6 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
@@ -134,37 +141,6 @@ const useToolbarStyles = makeStyles(theme => ({
     flex: '1 1 100%'
   }
 }))
-
-const EnhancedTableToolbar = props => {
-  const classes = useToolbarStyles()
-  const {numSelected} = props
-
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="subtitle1"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle">
-          Summary Analysis by Day of Week for the Last Year
-        </Typography>
-      )}
-    </Toolbar>
-  )
-}
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired
-}
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -195,10 +171,6 @@ export default function EnhancedTable(props) {
   const classes = useStyles()
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('calories')
-  const [selected, setSelected] = React.useState([])
-  const [page, setPage] = React.useState(0)
-  const [dense, setDense] = React.useState(true)
-  const [rowsPerPage, setRowsPerPage] = React.useState(7)
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -206,69 +178,33 @@ export default function EnhancedTable(props) {
     setOrderBy(property)
   }
 
-  const handleSelectAllClick = event => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map(n => n.dayOfWeek)
-      setSelected(newSelecteds)
-      return
-    }
-    setSelected([])
-  }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
-  const handleChangeDense = event => {
-    setDense(event.target.checked)
-  }
-
-  const isSelected = name => selected.indexOf(name) !== -1
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage)
-
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
+          <Typography className={classes.title} variant="h6" id="tableTitle">
+            Summary Analysis by Day of Week For the Last Year
+          </Typography>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size="small"
             aria-label="enhanced table"
           >
             <EnhancedTableHead
               classes={classes}
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
             <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.dayOfWeek)
+              {stableSort(rows, getSorting(order, orderBy)).map(
+                (row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
-                    <TableRow
-                      hover
-                      onClick={event => handleClick(event, row.dayOfWeek)}
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.dayOfWeek}
-                      selected={isItemSelected}
-                    >
+                    <TableRow hover tabIndex={-1} key={row.dayOfWeek}>
                       <TableCell padding="checkbox" />
                       <TableCell
                         component="th"
@@ -278,29 +214,22 @@ export default function EnhancedTable(props) {
                       >
                         {row.dayOfWeek}
                       </TableCell>
-                      <TableCell align="right">{row.numberOfGuests}</TableCell>
-                      <TableCell align="right">{row.dayRevenue}</TableCell>
-                      <TableCell align="right">{row.sum}</TableCell>
+                      <TableCell align="right">
+                        {numberFormatter.format(row.numberOfGuests)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {currencyFormatter.format(row.dayRevenue)}
+                      </TableCell>
+                      <TableCell align="right">
+                        {numberFormatter.format(row.menuItemsSold)}
+                      </TableCell>
                     </TableRow>
                   )
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{height: (dense ? 33 : 53) * emptyRows}}>
-                  <TableCell colSpan={6} />
-                </TableRow>
+                }
               )}
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[7]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
       </Paper>
     </div>
   )

@@ -35,7 +35,7 @@ class SummaryPage extends Component {
   }
 
   getTotalRevenue(arr) {
-    return arr.reduce((acc, currentVal) => acc + currentVal, 0)
+    return arr.reduce((acc, currentVal) => acc + currentVal.dayRevenue, 0)
   }
 
   render() {
@@ -52,9 +52,10 @@ class SummaryPage extends Component {
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <TotalRevenue
-                  totalRevenue={this.getTotalRevenue(
-                    this.props.revenueVsTime.year2019
-                  )}
+                  totalRevenue={
+                    this.props.DOWAnalysisTable &&
+                    this.getTotalRevenue(this.props.DOWAnalysisTable)
+                  }
                 />
               </Grid>
               <Grid item lg={3} sm={6} xl={3} xs={12}>
@@ -109,7 +110,7 @@ const mapDispatchToProps = dispatch => {
   return {
     loadDOWAnalysisTable: () => dispatch(getDOWAnalysisTable()),
     loadRestaurantInfo: () => dispatch(getRestaurantInfo()),
-    loadRevenueVsTime: () => dispatch(getRevenueVsTime('oneYear')),
+    loadRevenueVsTime: () => dispatch(getRevenueVsTime()),
     loadNumberOfWaiters: () => dispatch(getNumberOfWaiters()),
     loadYelpRating: (restaurantName, location) =>
       dispatch(getYelpRating(restaurantName, location))
