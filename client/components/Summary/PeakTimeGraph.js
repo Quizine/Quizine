@@ -45,8 +45,8 @@ class PeakTimeGraph extends Component {
       '6pm',
       '7pm',
       '8pm',
-      '9pm'
-      // '10pm' NO ORDERS AT 10PM IN CURRENT DB
+      '9pm',
+      '10pm'
     ]
     const arrPerc = this.props.peakTimeOrders[this.state.selectedOption]
 

@@ -21,10 +21,9 @@ router.get('/revenueByDay', async (req, res, next) => {
       const correctEndDate = new Date(
         Math.min(new Date(), new Date(req.query.date + ' 23:59'))
       )
-
       const values = [correctStartDate, correctEndDate, req.user.restaurantId]
       const revenueByDay = await client.query(text, values)
-      res.json(revenueByDay.rows[0].sum) //RETURNS JUST THE #
+      revenueByDay.rows[0] ? res.json(revenueByDay.rows[0].sum) : res.json(0)
     }
   } catch (error) {
     next(error)
@@ -44,13 +43,13 @@ router.get('/waitersOnADay', async (req, res, next) => {
       const date = req.query.date
       const values = [date, req.user.restaurantId]
       const waitersOnADay = await client.query(text, values)
-      res.json(waitersOnADay.rows) //RETURNS AN ARRAY OF OBJS WITH NAMES
+      res.json(waitersOnADay.rows)
     }
   } catch (error) {
     next(error)
   }
 })
-//--most popular dish on a specific day: **still need by the date...
+//--most popular dish on a specific day
 router.get('/mostPopularDishOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
@@ -60,17 +59,23 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
       FROM "menuItemOrders"
       JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
       JOIN orders on orders.id = "menuItemOrders"."orderId"
-      WHERE orders."timeOfPurchase" ::date = $1
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
       AND "menuItems"."beverageType" isnull
-      AND orders."restaurantId" = $2
+      AND orders."restaurantId" = $3
       GROUP BY name
       ORDER BY total desc
       limit 1;
       `
-      const date = req.query.date
-      const values = [date, req.user.restaurantId]
+
+      const correctStartDate = new Date(req.query.date)
+      const correctEndDate = new Date(
+        Math.min(new Date(), new Date(req.query.date + ' 23:59'))
+      )
+      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
       const mostPopularDishOnADay = await client.query(text, values)
-      res.json(mostPopularDishOnADay.rows[0].name)
+      mostPopularDishOnADay.rows[0]
+        ? res.json(mostPopularDishOnADay.rows[0].name)
+        : res.json('No Dishes Served Yet')
     }
   } catch (error) {
     next(error)

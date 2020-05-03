@@ -12,6 +12,12 @@ import {
   Button
 } from '@material-ui/core'
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
 class LineGraphRevenue extends Component {
   componentDidMount() {
     this.props.loadRevenueVsTime()
@@ -62,16 +68,7 @@ class LineGraphRevenue extends Component {
       <div>
         <div className="peak-time-div">
           <Card className={clsx('classes.root, className')}>
-            <CardHeader
-              action={
-                <select onChange={this.handleChange} className="select-css">
-                  <option value="oneYear">Last Year</option>
-                  <option value="twoYears">Last 2 Years</option>
-                  <option value="allPeriod">All History</option>
-                </select>
-              }
-              title="Revenue per Month ($)"
-            />
+            <CardHeader title="Revenue per Month" />
             <Divider />
             <CardContent>
               <div className="classes.chartContainer">
@@ -97,7 +94,12 @@ class LineGraphRevenue extends Component {
                             suggestedMin: 0,
                             suggestedMax:
                               Math.max(...year2018, ...year2019, ...year2020) *
-                              1.1
+                              1.1,
+                            callback: function(value) {
+                              return currencyFormatter
+                                .format(value)
+                                .slice(0, -3)
+                            }
                           }
                         }
                       ]
