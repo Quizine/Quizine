@@ -1,20 +1,15 @@
-import React, {Component} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import clsx from 'clsx'
-import {lighten, makeStyles} from '@material-ui/core/styles'
+import {makeStyles} from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
-import TablePagination from '@material-ui/core/TablePagination'
 import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
-import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -24,13 +19,33 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 const numberFormatter = new Intl.NumberFormat('en-US')
 
+const hashOfDOW = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6
+}
+
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1
+  if (orderBy === 'dayOfWeek') {
+    if (hashOfDOW[b[orderBy]] < hashOfDOW[a[orderBy]]) {
+      return -1
+    }
+    if (hashOfDOW[b[orderBy]] > hashOfDOW[a[orderBy]]) {
+      return 1
+    }
+  } else {
+    if (b[orderBy] < a[orderBy]) {
+      return -1
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1
+    }
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1
-  }
+
   return 0
 }
 
@@ -53,26 +68,18 @@ function getSorting(order, orderBy) {
 const headCells = [
   {
     id: 'dayOfWeek',
-    numeric: false,
-    disablePadding: true,
     label: 'Day of the Week'
   },
   {
     id: 'numberOfGuests',
-    numeric: true,
-    disablePadding: false,
     label: 'Guests (ppl)'
   },
   {
     id: 'dayRevenue',
-    numeric: true,
-    disablePadding: false,
     label: 'Revenue'
   },
   {
     id: 'menuItemsSold',
-    numeric: true,
-    disablePadding: false,
     label: 'Menu Items Sold (qty)'
   }
 ]
@@ -90,8 +97,7 @@ function EnhancedTableHead(props) {
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'default'}
+            align="center"
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -116,31 +122,9 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired
+  orderBy: PropTypes.string.isRequired
 }
-
-const useToolbarStyles = makeStyles(theme => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1)
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85)
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark
-        },
-  title: {
-    flex: '1 1 100%'
-  }
-}))
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -170,7 +154,7 @@ export default function EnhancedTable(props) {
   const rows = props.DOWAnalysisTable
   const classes = useStyles()
   const [order, setOrder] = React.useState('asc')
-  const [orderBy, setOrderBy] = React.useState('calories')
+  const [orderBy, setOrderBy] = React.useState('dayOfWeek')
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -196,7 +180,6 @@ export default function EnhancedTable(props) {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
             />
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy)).map(
@@ -211,16 +194,17 @@ export default function EnhancedTable(props) {
                         id={labelId}
                         scope="row"
                         padding="none"
+                        align="center"
                       >
                         {row.dayOfWeek}
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell align="center">
                         {numberFormatter.format(row.numberOfGuests)}
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell align="center">
                         {currencyFormatter.format(row.dayRevenue)}
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell align="center">
                         {numberFormatter.format(row.menuItemsSold)}
                       </TableCell>
                     </TableRow>

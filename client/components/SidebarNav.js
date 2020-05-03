@@ -37,19 +37,19 @@ const useStyles = makeStyles(theme => ({
   },
   active: {
     color: 'inherit',
-    // fontWeight: 'bolder',
     '& $icon': {
       color: 'inherit'
     }
-    // backgroundColor: 'black'
   }
 }))
 
-const CustomRouterLink = forwardRef((props, ref) => (
-  <div ref={ref} style={{flexGrow: 1}}>
-    <RouterLink {...props} />
-  </div>
-))
+const CustomRouterLink = forwardRef((props, ref) => {
+  return (
+    <div ref={ref} style={{flexGrow: 1}}>
+      <RouterLink {...props} />
+    </div>
+  )
+})
 
 const SidebarNav = props => {
   const {pages, className, ...rest} = props
@@ -77,8 +77,7 @@ const SidebarNav = props => {
 
 SidebarNav.propTypes = {
   className: PropTypes.string,
-  pages: PropTypes.array.isRequired,
-  handleClick: PropTypes.func.isRequired
+  pages: PropTypes.array.isRequired
 }
 
 export default SidebarNav
