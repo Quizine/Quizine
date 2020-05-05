@@ -62,9 +62,11 @@ const YelpRating = props => {
             </Typography>
             <Box component="fieldset" mb={3} borderColor="transparent">
               <Typography variant="h6">
-                {props.yelpRating.toFixed(1)}/5.0
+                {/* {props.yelpRating.toFixed(1)}/5.0 */}
+                4.0/5.0
               </Typography>
-              <Rating name="yelp-rating" value={props.yelpRating} />
+              {/* <Rating name="yelp-rating" value={props.yelpRating} /> */}
+              <Rating name="yelp-rating" value={4} />
             </Box>
           </Grid>
           <Grid item>
@@ -73,11 +75,6 @@ const YelpRating = props => {
             </Avatar>
           </Grid>
         </Grid>
-        {/* <div className={classes.difference}>
-          <Typography className={classes.caption} variant="caption">
-            current rating
-          </Typography>
-        </div> */}
       </CardContent>
     </Card>
   )

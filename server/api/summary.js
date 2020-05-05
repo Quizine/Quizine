@@ -207,6 +207,65 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
   }
 })
 
+//TOP 5 MENU ITEMS FOR PIE GRAPH
+router.get(
+  '/menuSalesNumbersVsMenuItemsTopOrBottom5',
+  async (req, res, next) => {
+    try {
+      if (req.user.id) {
+        let text
+        const topOrBottom = req.query.topOrBottom
+        if (topOrBottom === 'asc') {
+          text = `
+
+          SELECT "menuItems"."menuItemName" as name,
+          SUM("menuItemOrders" .quantity) as total
+          FROM "menuItemOrders"
+          JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+          JOIN orders on orders.id = "menuItemOrders"."orderId"
+          WHERE orders."timeOfPurchase" >= $1
+          AND orders."timeOfPurchase" <= NOW()
+          AND orders."restaurantId" = $2
+          GROUP BY name
+          ORDER BY total ASC
+          LIMIT 5;
+          `
+        } else if (topOrBottom === 'desc') {
+          text = `
+          SELECT "menuItems"."menuItemName" as name,
+          SUM("menuItemOrders".quantity) as total
+          FROM "menuItemOrders"
+          JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+          JOIN orders on orders.id = "menuItemOrders"."orderId"
+          WHERE orders."timeOfPurchase" >= $1
+          AND orders."timeOfPurchase" <= NOW()
+          AND orders."restaurantId" = $2
+          GROUP BY name
+          ORDER BY total DESC
+          LIMIT 5;
+          `
+        }
+        let correctStartDate = new Date()
+        correctStartDate.setDate(
+          correctStartDate.getDate() - +req.query.timeInterval
+        )
+        correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+        const restaurantId = req.user.restaurantId
+        const values = [correctStartDate, restaurantId]
+        const menuSalesNumbers = await client.query(text, values)
+        const [xAxis, yAxis] = axisMapping(
+          menuSalesNumbers.rows,
+          menuSalesNumbers.fields[0].name,
+          menuSalesNumbers.fields[1].name
+        )
+        res.json({xAxis, yAxis})
+      }
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
 //HELPER FUNCTIONS
 function tableFormatting(array) {
   let DOWconversion = {
@@ -284,4 +343,15 @@ function numberOfGuestsVsHourFormatting(arr) {
     }
   }
   return {xAxis, yAxis}
+}
+
+function axisMapping(arr, xAxisName, yAxisName) {
+  const xAxis = []
+  const yAxis = []
+  arr.forEach(el => {
+    xAxis.push(el[xAxisName])
+    yAxis.push(+el[yAxisName])
+  })
+
+  return [xAxis, yAxis]
 }

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {getMenuSalesNumbersVsMenuItemsTopOrBottom5} from '../../store/businessAnalyticsReducer'
-import {Pie} from 'react-chartjs-2'
+import {getMenuSalesNumbersVsMenuItemsTopOrBottom5} from '../../store/summaryReducer'
+import {Doughnut} from 'react-chartjs-2'
 import 'chartjs-plugin-datalabels'
 import _ from 'lodash'
 import clsx from 'clsx'
@@ -12,7 +12,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
     super(props)
 
     this.state = {
-      selectedOption: 'month',
+      selectedOption: '30',
       top: true
     }
     this.handleChange = this.handleChange.bind(this)
@@ -25,9 +25,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (!Object.hasOwnProperty('top5')) {
-      this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)
-    }
+    this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)
   }
 
   handleClick(event, value) {
@@ -35,18 +33,18 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
     this.setState({top: value})
   }
 
+  // eslint-disable-next-line complexity
   render() {
-    const currTimeOption = this.state.selectedOption
     const topOrBottom = this.state.top ? 'top5' : 'bottom5'
     let labels = []
     let yAxis = []
     const labelText = this.state.top ? 'Top' : 'Bottom'
-
-    if (this.props.topAndBottom5[currTimeOption][topOrBottom]) {
-      labels = modifyArrOfStrings(
-        this.props.topAndBottom5[currTimeOption][topOrBottom].xAxis
-      )
-      yAxis = this.props.topAndBottom5[currTimeOption][topOrBottom].yAxis
+    if (
+      this.props.topAndBottom5[topOrBottom] &&
+      this.props.topAndBottom5[topOrBottom].xAxis
+    ) {
+      labels = modifyArrOfStrings(this.props.topAndBottom5[topOrBottom].xAxis)
+      yAxis = this.props.topAndBottom5[topOrBottom].yAxis
     }
     function financial(x) {
       return Number(Number.parseFloat(x).toFixed(2))
@@ -100,17 +98,20 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
         }
       }
     }
-
     return (
       <div className="peak-time-div">
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             action={
               <div className="month-button">
-                <select onChange={this.handleChange} className="select-css">
-                  <option value="month">Month</option>
-                  <option value="year">Year</option>
-                  <option value="week">Week</option>
+                <select
+                  onChange={this.handleChange}
+                  className="select-css"
+                  defaultValue="30"
+                >
+                  <option value="365">Last 1 Year</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="7">Last 7 Days</option>
                 </select>
                 <button
                   type="button"
@@ -134,7 +135,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
 
           <CardContent>
             <div className="classes.chartContainer">
-              <Pie
+              <Doughnut
                 data={chartData}
                 options={options}
                 // plugins={ChartDataLabels}
@@ -149,8 +150,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
 
 const mapStateToProps = state => {
   return {
-    topAndBottom5:
-      state.businessAnalytics.menuSalesNumbersVsMenuItemsTopOrBottom5
+    topAndBottom5: state.summary.menuSalesNumbersVsMenuItemsTopOrBottom5
   }
 }
 
