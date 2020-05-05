@@ -128,12 +128,12 @@ router.get('/numberOfGuestsVsHour', async (req, res, next) => {
       SUM(orders."numberOfGuests")::DECIMAL / (
         SELECT SUM(orders."numberOfGuests")
         FROM orders
-        WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
-        AND orders."restaurantId" = $3
+        WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" <= NOW()
+        AND orders."restaurantId" = $2
       )), 1) AS percentage
       FROM ORDERS
-      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
-      AND orders."restaurantId" = $3
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" <= NOW()
+      AND orders."restaurantId" = $2
       GROUP BY hours
       ORDER BY hours;`
       let correctStartDate = new Date()
@@ -141,9 +141,7 @@ router.get('/numberOfGuestsVsHour', async (req, res, next) => {
         correctStartDate.getDate() - +req.query.timeInterval
       )
       correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
-      let correctEndDate = new Date()
-      correctEndDate.setMinutes(0)
-      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
+      const values = [correctStartDate, req.user.restaurantId]
       const numberOfGuestsVsHour = await client.query(text, values)
       const formattedData = numberOfGuestsVsHourFormatting(
         numberOfGuestsVsHour.rows
@@ -192,17 +190,15 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
             GROUP BY "menuItemOrders"."orderId") AS "summedMenuItemOrder"
             ON orders.id = "summedMenuItemOrder"."orderId"
             WHERE orders."timeOfPurchase" >= $1
-            AND orders."timeOfPurchase" <= $2
-            AND orders."restaurantId" = $3
+            AND orders."timeOfPurchase" <= NOW()
+            AND orders."restaurantId" = $2
             GROUP BY "dayOfWeek"
             ORDER by "dayOfWeek" ASC;
         `
       let correctStartDate = new Date()
       correctStartDate.setDate(correctStartDate.getDate() - 365)
       correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
-      let correctEndDate = new Date()
-      correctEndDate.setMinutes(0)
-      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
+      const values = [correctStartDate, req.user.restaurantId]
       const DOWAnalysisTable = await client.query(text, values)
       res.json(tableFormatting(DOWAnalysisTable.rows))
     }

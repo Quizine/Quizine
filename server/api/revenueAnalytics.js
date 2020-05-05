@@ -28,7 +28,6 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
           correctStartDate = startDateData.rows[0].date
         }
         correctEndDate = new Date()
-        correctEndDate.setMinutes(0)
         text = `SELECT DATE_TRUNC('${
           req.query.xAxisOption
         }', orders."timeOfPurchase" ) as date,
@@ -63,7 +62,6 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
         correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
         )
-        correctEndDate.setMinutes(0)
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const lunchAndDinnerRevenueComparison = await client.query(text, values)
@@ -106,7 +104,6 @@ router.get('/detailedRevenueAnalysis', async (req, res, next) => {
           correctStartDate = startDateData.rows[0].date
         }
         correctEndDate = new Date()
-        correctEndDate.setMinutes(0)
         text = `SELECT ${
           req.query.xAxisOption === 'DOW'
             ? `EXTRACT('${
@@ -124,7 +121,9 @@ router.get('/detailedRevenueAnalysis', async (req, res, next) => {
         FROM orders
         ${
           req.query.timeInterval !== 'allPeriod'
-            ? `WHERE orders."timeOfPurchase" >= '${correctStartDate.toUTCString()}' AND orders."timeOfPurchase" <= NOW()`
+            ? `WHERE orders."timeOfPurchase" >= '${correctStartDate
+                .toUTCString()
+                .slice(0, 16)}' AND orders."timeOfPurchase" <= NOW()`
             : 'WHERE orders."timeOfPurchase" <= NOW()'
         }
 
@@ -156,7 +155,6 @@ router.get('/detailedRevenueAnalysis', async (req, res, next) => {
         correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
         )
-        correctEndDate.setMinutes(0)
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const queriedData = await client.query(text, values)
@@ -201,7 +199,6 @@ router.get('/detailedOrderAnalysis', async (req, res, next) => {
           correctStartDate = startDateData.rows[0].date
         }
         correctEndDate = new Date()
-        correctEndDate.setMinutes(0)
         text = `SELECT ${
           req.query.xAxisOption === 'avgHour'
             ? `EXTRACT('hour' FROM "timeOfPurchase") AS hour,`
@@ -253,7 +250,6 @@ router.get('/detailedOrderAnalysis', async (req, res, next) => {
         correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
         )
-        correctEndDate.setMinutes(0)
         values = [correctStartDate, correctEndDate, req.user.restaurantId]
       }
       const queriedData = await client.query(text, values)
