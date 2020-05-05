@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router-dom'
 // import AvgRevenuePerGuestVsDOW from './AvgRevenuePerGuestVsDOW'
-import MenuSalesNumbersVsMenuItemsTopOrBottom5 from './MenuSalesNumbersVsMenuItemsTopOrBottom5'
 import NumberOfOrdersVsHour from './NumberOfOrdersVsHour'
 import TipPercentageVsWaiters from './TipPercentageVsWaiters'
 import AvgNumberOfGuestsVsWaitersPerOrder from './AvgNumberOfGuestsVsWaitersPerOrder'
@@ -13,7 +12,6 @@ export default class BusinessAnalyticsPage extends Component {
       <div>
         <div className="bus-charts-cont">
           {/* <AvgRevenuePerGuestVsDOW /> */}
-          <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
           {/* <LineGraphMonthlyRevenueVsLunchVsDinner /> */}
           <NumberOfOrdersVsHour />
           <TipPercentageVsWaiters />
