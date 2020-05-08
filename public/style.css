@@ -290,8 +290,23 @@ form div {
   min-width: 200px;
 }
 
+/* customized query select-cust */
 .select-cust {
   width: 150px;
+  font-size: 14px;
+  height: 38px;
+}
+
+/* time interval select-cust */
+.select-cust-time-interval {
+  width: 120px;
+  font-size: 14px;
+  height: 38px;
+}
+
+/* query select-cust */
+.select-cust-query {
+  width: 290px;
   font-size: 14px;
   height: 38px;
 }

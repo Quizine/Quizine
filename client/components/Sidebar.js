@@ -4,6 +4,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import PeopleIcon from '@material-ui/icons/People'
 import FunctionsIcon from '@material-ui/icons/Functions'
 import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined'
+import LocalAtmIcon from '@material-ui/icons/LocalAtm'
 import SidebarNav from './SidebarNav'
 import UserProfile from './UserProfile'
 
@@ -26,7 +27,7 @@ const pages = [
   {
     title: 'REVENUE ANALYTICS',
     href: '/revenueanalytics',
-    icon: <InsertChartOutlinedIcon />
+    icon: <LocalAtmIcon />
   },
   {
     title: 'STAFF ANALYTICS',
