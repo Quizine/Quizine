@@ -92,8 +92,9 @@ form div {
 .peak-time-div {
   min-height: 300px;
   min-width: 450px;
-  width: 50%;
+  width: 80%;
   margin: 1em;
+  align-content: center;
 }
 
 .chart-header {
@@ -112,6 +113,7 @@ form div {
   display: flex;
   flex-direction: column;
   width: 100%;
+  align-items: center;
 }
 
 /* ------CALENDAR CONTAINER ---------- */
@@ -290,8 +292,21 @@ form div {
   min-width: 200px;
 }
 
+.query-selector {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.agg-options {
+  display: flex;
+  width: 100%;
+  align-content: center;
+}
+
 .select-cust {
-  width: 150px;
+  width: 300px;
   font-size: 14px;
   height: 38px;
 }

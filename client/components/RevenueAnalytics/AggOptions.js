@@ -73,7 +73,7 @@ export default function AggOptions(props) {
   const handleAggOptionChange = props.handleAggOptionChange
 
   return (
-    <FormControl component="fieldset">
+    <FormControl component="fieldset" className="agg-options">
       <FormLabel component="legend">Aggregate Option</FormLabel>
       <RadioGroup
         defaultValue="sum"

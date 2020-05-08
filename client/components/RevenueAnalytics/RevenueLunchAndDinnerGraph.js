@@ -63,79 +63,73 @@ export default class RevenueLunchAndDinnerGraph extends Component {
       return <div>...loading</div>
     }
     return (
-      <div>
-        <div className="peak-time-div">
-          <Card className={clsx('classes.root, className')}>
-            <CardHeader title={formatQueryName(selectedQueryTitle)} />
-            <h4>Revenue Total: {revenueTotal}</h4>
-            <h4>
-              Lunch Revenue Total: {currencyFormatter.format(lunchRevenueTotal)}
-            </h4>
-            <h4>
-              Dinner Revenue Total:{' '}
-              {currencyFormatter.format(dinnerRevenueTotal)}
-            </h4>
-            <GraphOptionButtons
-              handleGraphOptionChange={handleGraphOptionChange}
-              selectedQueryTitle={selectedQueryTitle}
-              selectedGraphOption={selectedGraphOption}
-            />
-            <Divider />
-            <CardContent>
-              <div className="classes.chartContainer">
-                <GraphOption
-                  data={chartData}
-                  options={{
-                    scales: {
-                      xAxes: [
-                        {
-                          stacked: selectedGraphOption === 'stacked bar'
-                        }
-                      ],
-                      yAxes: [
-                        {
-                          display: true,
-                          stacked: selectedGraphOption === 'stacked bar',
-                          ticks: {
-                            suggestedMin: 0,
-                            suggestedMax:
-                              Math.max(...lunchRevenue, ...dinnerRevenue) * 1.1,
-                            callback: function(value) {
-                              return currencyFormatter
-                                .format(value)
-                                .slice(0, -3)
-                            }
+      <div className="peak-time-div">
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader title={formatQueryName(selectedQueryTitle)} />
+          <h4>Revenue Total: {revenueTotal}</h4>
+          <h4>
+            Lunch Revenue Total: {currencyFormatter.format(lunchRevenueTotal)}
+          </h4>
+          <h4>
+            Dinner Revenue Total: {currencyFormatter.format(dinnerRevenueTotal)}
+          </h4>
+          <GraphOptionButtons
+            handleGraphOptionChange={handleGraphOptionChange}
+            selectedQueryTitle={selectedQueryTitle}
+            selectedGraphOption={selectedGraphOption}
+          />
+          <Divider />
+          <CardContent>
+            <div className="classes.chartContainer">
+              <GraphOption
+                data={chartData}
+                options={{
+                  scales: {
+                    xAxes: [
+                      {
+                        stacked: selectedGraphOption === 'stacked bar'
+                      }
+                    ],
+                    yAxes: [
+                      {
+                        display: true,
+                        stacked: selectedGraphOption === 'stacked bar',
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax:
+                            Math.max(...lunchRevenue, ...dinnerRevenue) * 1.1,
+                          callback: function(value) {
+                            return currencyFormatter.format(value).slice(0, -3)
                           }
                         }
-                      ]
-                    },
-                    plugins: {
-                      datalabels: {
-                        display: false
                       }
+                    ]
+                  },
+                  plugins: {
+                    datalabels: {
+                      display: false
                     }
-                  }}
-                />
-              </div>
-            </CardContent>
-            {selectedXAxisOption === 'month' ||
-            selectedXAxisOption === 'year' ? (
-              <h5>Shown data starting from {startDate}</h5>
-            ) : null}
-          </Card>
-          <button type="button" className="download-btn">
-            <CSVLink
-              data={tableDataFormatting(
-                selectedXAxisOption,
-                xAxis,
-                lunchRevenue,
-                dinnerRevenue
-              )}
-            >
-              Download CSV
-            </CSVLink>
-          </button>
-        </div>
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+          {selectedXAxisOption === 'month' || selectedXAxisOption === 'year' ? (
+            <h5>Shown data starting from {startDate}</h5>
+          ) : null}
+        </Card>
+        <button type="button" className="download-btn">
+          <CSVLink
+            data={tableDataFormatting(
+              selectedXAxisOption,
+              xAxis,
+              lunchRevenue,
+              dinnerRevenue
+            )}
+          >
+            Download CSV
+          </CSVLink>
+        </button>
       </div>
     )
   }
