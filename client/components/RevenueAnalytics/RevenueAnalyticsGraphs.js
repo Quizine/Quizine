@@ -259,7 +259,7 @@ class RevenueAnalyticsGraphs extends Component {
       <div className="bus-charts-cont">
         <div className="query-selector">
           <select
-            className="select-cust"
+            className="select-cust-query"
             onChange={this.handleSelectedQueryChange}
           >
             {this.state.queryTitleOptions.map((query, idx) => {
@@ -274,7 +274,7 @@ class RevenueAnalyticsGraphs extends Component {
           <div className="month-button">
             <select
               onChange={this.handleGraphIntervalChange}
-              className="select-cust"
+              className="select-cust-time-interval"
               defaultValue="30"
             >
               <option value="allPeriod">All History</option>

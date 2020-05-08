@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
   active: {
     color: 'inherit',
+    fontWeight: 'bold',
     '& $icon': {
       color: 'inherit'
     }

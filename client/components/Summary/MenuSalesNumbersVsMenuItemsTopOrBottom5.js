@@ -63,11 +63,11 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
         {
           data: piePercentages,
           backgroundColor: [
-            '#b2b2b2',
-            '#ecade6',
-            '#aa57d0',
-            '#3e4cbd',
-            '#474747'
+            '#035AA6',
+            '#0779E4',
+            '#4CBBB9',
+            '#77D8D8',
+            '#8566AA'
           ]
         }
       ]
@@ -90,7 +90,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
           },
           font: {
             weight: 'bold',
-            size: '8'
+            size: '11'
           },
           formatter: value => {
             return value + ' %'
@@ -106,7 +106,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
               <div className="month-button">
                 <select
                   onChange={this.handleChange}
-                  className="select-css"
+                  className="select-cust-time-interval"
                   defaultValue="30"
                 >
                   <option value="365">Last 1 Year</option>

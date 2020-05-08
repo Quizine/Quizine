@@ -34,7 +34,9 @@ class PeakTimeGraph extends Component {
         {
           label: 'Percentage',
           data: arrPerc,
-          backgroundColor: 'yellow'
+          backgroundColor: '#A6B1E1',
+          hoverBackgroundColor: '#424874',
+          borderColor: '#424874'
         }
       ]
     }
@@ -46,15 +48,17 @@ class PeakTimeGraph extends Component {
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             action={
-              <select
-                onChange={this.handleChange}
-                className="select-css"
-                defaultValue="30"
-              >
-                <option value="365">Last 1 Year</option>
-                <option value="30">Last 30 Days</option>
-                <option value="7">Last 7 Days</option>
-              </select>
+              <div className="month-button">
+                <select
+                  onChange={this.handleChange}
+                  className="select-cust-time-interval"
+                  defaultValue="30"
+                >
+                  <option value="365">Last 1 Year</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="7">Last 7 Days</option>
+                </select>
+              </div>
             }
             title="Guest Distribution Percentage Per Hour"
           />

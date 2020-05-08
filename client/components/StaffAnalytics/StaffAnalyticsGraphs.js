@@ -219,7 +219,9 @@ class WaiterPerformance extends Component {
           display: false,
           label: '',
           data: yAxis,
-          backgroundColor: 'green'
+          backgroundColor: '#AF8BAF',
+          hoverBackgroundColor: '#584153',
+          borderColor: '#584153'
         }
       ]
     }
@@ -233,7 +235,7 @@ class WaiterPerformance extends Component {
           <div className="month-button">
             <select
               onChange={this.handleChange}
-              className="select-cust"
+              className="select-cust-time-interval"
               defaultValue="30"
             >
               <option value="365">Last 1 Year</option>
@@ -274,7 +276,7 @@ class WaiterPerformance extends Component {
         </div>
         <div>
           <select
-            className="select-cust"
+            className="select-cust-query"
             onChange={this.handleSelectedQueryChange}
           >
             {this.state.queryTitleOptions.map((query, idx) => {

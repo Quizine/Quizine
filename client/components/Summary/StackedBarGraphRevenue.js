@@ -25,31 +25,22 @@ class StackedBarGraphRevenue extends Component {
           label: 'Year 2018',
           data: year2018,
           fill: false,
-          backgroundColor: 'green',
-          borderColor: 'yellow',
-          hoverBackgroundColor: 'red',
-          pointBackgroundColor: 'black',
-          pointRadius: 4
+          backgroundColor: '#6886C5',
+          borderColor: '#6886C5'
         },
         {
           label: 'Year 2019',
           data: year2019,
           fill: false,
-          backgroundColor: 'blue',
-          borderColor: 'yellow',
-          hoverBackgroundColor: 'red',
-          pointBackgroundColor: 'black',
-          pointRadius: 4
+          backgroundColor: '#FFE0AC',
+          borderColor: '#FFC38B'
         },
         {
           label: 'Year 2020',
           data: year2020,
           fill: false,
-          backgroundColor: 'red',
-          borderColor: 'yellow',
-          hoverBackgroundColor: 'red',
-          pointBackgroundColor: 'black',
-          pointRadius: 4
+          backgroundColor: '#FFACB7',
+          borderColor: '#FFACB7'
         }
       ]
     }
