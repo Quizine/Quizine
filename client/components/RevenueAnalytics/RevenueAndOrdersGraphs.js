@@ -65,14 +65,14 @@ export default class RevenueAndOrdersGraphs extends Component {
     }
     return (
       <div className="peak-time-div">
+        <AggOptions
+          selectedAggOption={selectedAggOption}
+          selectedQueryTitle={selectedQueryTitle}
+          handleAggOptionChange={handleAggOptionChange}
+        />
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             title={graphTitleFormatting(selectedAggOption, selectedQueryTitle)}
-          />
-          <AggOptions
-            selectedAggOption={selectedAggOption}
-            selectedQueryTitle={selectedQueryTitle}
-            handleAggOptionChange={handleAggOptionChange}
           />
           <GraphOptionButtons
             handleGraphOptionChange={handleGraphOptionChange}

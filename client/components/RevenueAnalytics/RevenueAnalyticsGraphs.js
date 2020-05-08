@@ -257,59 +257,61 @@ class RevenueAnalyticsGraphs extends Component {
   render() {
     return (
       <div className="bus-charts-cont">
-        <select
-          className="select-cust-query"
-          onChange={this.handleSelectedQueryChange}
-        >
-          {this.state.queryTitleOptions.map((query, idx) => {
-            return (
-              <option key={idx} value={query}>
-                {formatQueryName(query)}
-              </option>
-            )
-          })}
-        </select>
-
-        <div className="month-button">
+        <div className="query-selector">
           <select
-            onChange={this.handleGraphIntervalChange}
-            className="select-cust-time-interval"
-            defaultValue="30"
+            className="select-cust-query"
+            onChange={this.handleSelectedQueryChange}
           >
-            <option value="allPeriod">All History</option>
-            <option value="730">Last 2 Years</option>
-            <option value="365">Last 1 Year</option>
-            <option value="30">Last 30 Days</option>
-            <option value="7">Last 7 Days</option>
-            <option value="custom">Custom Dates</option>
+            {this.state.queryTitleOptions.map((query, idx) => {
+              return (
+                <option key={idx} value={query}>
+                  {formatQueryName(query)}
+                </option>
+              )
+            })}
           </select>
+
+          <div className="month-button">
+            <select
+              onChange={this.handleGraphIntervalChange}
+              className="select-cust-time-interval"
+              defaultValue="30"
+            >
+              <option value="allPeriod">All History</option>
+              <option value="730">Last 2 Years</option>
+              <option value="365">Last 1 Year</option>
+              <option value="30">Last 30 Days</option>
+              <option value="7">Last 7 Days</option>
+              <option value="custom">Custom Dates</option>
+            </select>
+          </div>
+          <XAxisOptions
+            handleXAxisOptionChange={this.handleXAxisOptionChange}
+            selectedQueryTitle={this.state.selectedQueryTitle}
+            revenueQueryResults={this.props.revenueQueryResults}
+            selectedXAxisOption={this.state.selectedXAxisOption}
+          />
+          {this.state.selectedIntervalOption === 'custom' ? (
+            <Wrapper>
+              <DateRangePicker
+                showDefaultInputIcon={true}
+                showClearDates={true}
+                isOutsideRange={day =>
+                  day.isAfter(moment()) ||
+                  day.isBefore(moment().subtract(365 * 2, 'days'))
+                }
+                reopenPickerOnClearDates={true}
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                onDatesChange={({startDate, endDate}) =>
+                  this.handleDateChange({startDate, endDate})
+                }
+                focusedInput={this.state.focusedInput}
+                onFocusChange={focusedInput => this.setState({focusedInput})}
+              />
+            </Wrapper>
+          ) : null}
         </div>
-        <XAxisOptions
-          handleXAxisOptionChange={this.handleXAxisOptionChange}
-          selectedQueryTitle={this.state.selectedQueryTitle}
-          revenueQueryResults={this.props.revenueQueryResults}
-          selectedXAxisOption={this.state.selectedXAxisOption}
-        />
-        {this.state.selectedIntervalOption === 'custom' ? (
-          <Wrapper>
-            <DateRangePicker
-              showDefaultInputIcon={true}
-              showClearDates={true}
-              isOutsideRange={day =>
-                day.isAfter(moment()) ||
-                day.isBefore(moment().subtract(365 * 2, 'days'))
-              }
-              reopenPickerOnClearDates={true}
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
-              onDatesChange={({startDate, endDate}) =>
-                this.handleDateChange({startDate, endDate})
-              }
-              focusedInput={this.state.focusedInput}
-              onFocusChange={focusedInput => this.setState({focusedInput})}
-            />
-          </Wrapper>
-        ) : null}
         {this.state.selectedQueryTitle !== 'lunchAndDinnerRevenueComparison' ? (
           <div className="revenue-graphs-cont">
             <RevenueAndOrdersGraphs
