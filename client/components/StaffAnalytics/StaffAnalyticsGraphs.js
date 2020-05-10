@@ -230,129 +230,164 @@ class WaiterPerformance extends Component {
       return <h6>loading...</h6>
     }
     return (
-      <div className="peak-time-div">
-        <div>
-          <div className="month-button">
-            <select
-              onChange={this.handleChange}
-              className="select-cust-time-interval"
-              defaultValue="30"
-            >
-              <option value="365">Last 1 Year</option>
-              <option value="30">Last 30 Days</option>
-              <option value="7">Last 7 Days</option>
-              <option value="custom">Custom Dates</option>
-            </select>
-          </div>
-          {this.state.selectedOption === 'custom' ? (
-            <Wrapper>
-              <DateRangePicker
-                showDefaultInputIcon={true}
-                showClearDates={true}
-                isOutsideRange={day =>
-                  day.isAfter(moment()) ||
-                  day.isBefore(moment().subtract(365 * 2, 'days'))
-                }
-                reopenPickerOnClearDates={true}
-                startDate={this.state.startDate}
-                endDate={this.state.endDate}
-                onDatesChange={({startDate, endDate}) =>
-                  this.handleDateChange({startDate, endDate})
-                }
-                focusedInput={this.state.focusedInput}
-                onFocusChange={focusedInput => this.setState({focusedInput})}
-              />
-            </Wrapper>
-          ) : null}
-        </div>
-        <div>
-          {this.props.allNames ? (
-            <StaffCheckboxField
-              optionNames={this.state.selectedOptionNames}
-              nameChange={this.handleNameChange}
-              allNames={this.props.allNames}
-            />
-          ) : null}
-        </div>
-        <div>
-          <select
-            className="select-cust-query"
-            onChange={this.handleSelectedQueryChange}
-          >
-            {this.state.queryTitleOptions.map((query, idx) => {
-              return (
-                <option key={idx} value={query}>
-                  {formatQueryName(query).slice(0, -11)}
-                </option>
-              )
-            })}
-          </select>
-        </div>
-        <Card className={clsx('classes.root, className')}>
-          <CardHeader
-            title={formatQueryName(this.state.selectedQueryTitle).slice(0, -11)}
-            style={{textAlign: 'center'}}
-          />
-
-          <Divider />
-
-          <CardContent>
-            <div className="classes.chartContainer">
-              <Bar
-                data={chartData}
-                options={{
-                  legend: {
-                    display: false
-                  },
-                  title: {
-                    display: false,
-                    text: ''
-                  },
-                  plugins: {
-                    datalabels: {
-                      display: false
-                    }
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        display: true,
-                        ticks: {
-                          suggestedMin: 0,
-                          suggestedMax: queryData.max() * 1.1,
-                          callback: function(value) {
-                            if (
-                              selectedQueryTitle === 'tipPercentageVsWaiters'
-                            ) {
-                              return value + '%'
-                            } else if (
-                              selectedQueryTitle ===
-                              'averageExpenditurePerGuestVsWaiters'
-                            ) {
-                              return '$' + value
-                            }
-                            return numberFormatter.format(value)
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }}
-              />
+      <div className="bus-charts-cont">
+        <div className="analytics-page-cont">
+          <div className="staff-query-selector">
+            <div className="staff-query-selector">
+              <h3 style={{marginBottom: '10px'}}>Data Analysis Category:</h3>
+              <select
+                className="select-cust-query"
+                onChange={this.handleSelectedQueryChange}
+              >
+                {this.state.queryTitleOptions.map((query, idx) => {
+                  return (
+                    <option key={idx} value={query}>
+                      {formatQueryName(query).slice(0, -11)}
+                    </option>
+                  )
+                })}
+              </select>
             </div>
-          </CardContent>
-        </Card>
-        <button type="button" className="download-btn">
-          <CSVLink
-            data={tableDataFormatting(
-              formatQueryName(this.state.selectedQueryTitle).slice(0, -11),
-              labels,
-              yAxis
-            )}
-          >
-            Download CSV
-          </CSVLink>
-        </button>
+            <div className="staff-time-selector">
+              <h3 style={{marginTop: '30px', marginBottom: '10px'}}>
+                Time Period:
+              </h3>
+              <div className="month-button">
+                <select
+                  onChange={this.handleChange}
+                  className="select-cust-time-interval"
+                  defaultValue="30"
+                >
+                  <option value="365">Last 1 Year</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="custom">Custom Dates</option>
+                </select>
+              </div>
+              {this.state.selectedOption === 'custom' ? (
+                <Wrapper>
+                  <DateRangePicker
+                    showDefaultInputIcon={true}
+                    showClearDates={true}
+                    isOutsideRange={day =>
+                      day.isAfter(moment()) ||
+                      day.isBefore(moment().subtract(365 * 2, 'days'))
+                    }
+                    reopenPickerOnClearDates={true}
+                    startDate={this.state.startDate}
+                    endDate={this.state.endDate}
+                    onDatesChange={({startDate, endDate}) =>
+                      this.handleDateChange({startDate, endDate})
+                    }
+                    focusedInput={this.state.focusedInput}
+                    onFocusChange={focusedInput =>
+                      this.setState({focusedInput})
+                    }
+                  />
+                </Wrapper>
+              ) : null}
+            </div>
+            <div className="staff-name-selector">
+              <h3
+                style={{marginTop: '30px', marginBottom: '10px'}}
+                align="center"
+              >
+                Staff Names:
+              </h3>
+              {this.props.allNames ? (
+                <StaffCheckboxField
+                  optionNames={this.state.selectedOptionNames}
+                  nameChange={this.handleNameChange}
+                  allNames={this.props.allNames}
+                />
+              ) : null}
+            </div>
+          </div>
+          <div className="analytics-divider">
+            <Divider />
+          </div>
+          <div className="revenue-graphs-cont">
+            <div className="revenue-graph-div">
+              <Card className={clsx('classes.root, className')}>
+                <CardHeader
+                  title={formatQueryName(this.state.selectedQueryTitle).slice(
+                    0,
+                    -11
+                  )}
+                  style={{textAlign: 'center'}}
+                />
+
+                <Divider />
+
+                <CardContent>
+                  <div className="classes.chartContainer">
+                    <Bar
+                      data={chartData}
+                      options={{
+                        legend: {
+                          display: false
+                        },
+                        title: {
+                          display: false,
+                          text: ''
+                        },
+                        plugins: {
+                          datalabels: {
+                            display: false
+                          }
+                        },
+                        scales: {
+                          yAxes: [
+                            {
+                              display: true,
+                              ticks: {
+                                suggestedMin: 0,
+                                suggestedMax: queryData.max() * 1.1,
+                                callback: function(value) {
+                                  if (
+                                    selectedQueryTitle ===
+                                    'tipPercentageVsWaiters'
+                                  ) {
+                                    return value + '%'
+                                  } else if (
+                                    selectedQueryTitle ===
+                                    'averageExpenditurePerGuestVsWaiters'
+                                  ) {
+                                    return '$' + value
+                                  }
+                                  return numberFormatter.format(value)
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+              <div className="csv-btn-div">
+                <button type="button" className="download-btn">
+                  <CSVLink
+                    data={tableDataFormatting(
+                      formatQueryName(this.state.selectedQueryTitle).slice(
+                        0,
+                        -11
+                      ),
+                      labels,
+                      yAxis
+                    )}
+                  >
+                    Download CSV
+                  </CSVLink>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="analytics-divider">
+            <Divider />
+          </div>
+        </div>
       </div>
     )
   }
