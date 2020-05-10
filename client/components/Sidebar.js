@@ -3,7 +3,6 @@ import {withRouter} from 'react-router-dom'
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import PeopleIcon from '@material-ui/icons/People'
 import FunctionsIcon from '@material-ui/icons/Functions'
-import InsertChartOutlinedIcon from '@material-ui/icons/InsertChartOutlined'
 import LocalAtmIcon from '@material-ui/icons/LocalAtm'
 import SidebarNav from './SidebarNav'
 import UserProfile from './UserProfile'
@@ -13,16 +12,6 @@ const pages = [
     title: 'SUMMARY',
     href: '/summary',
     icon: <DashboardIcon />
-  },
-  {
-    title: 'BUSINESS ANALYTICS',
-    href: '/businessAnalytics',
-    icon: <InsertChartOutlinedIcon />,
-    subPage: {
-      title: 'HOME',
-      href: '/home',
-      icon: <InsertChartOutlinedIcon />
-    }
   },
   {
     title: 'REVENUE ANALYTICS',
