@@ -288,7 +288,6 @@ class WaiterPerformance extends Component {
             })}
           </select>
         </div>
-
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             title={formatQueryName(this.state.selectedQueryTitle).slice(0, -11)}

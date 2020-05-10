@@ -99,9 +99,10 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
       }
     }
     return (
-      <div className="peak-time-div">
+      <div className="summary-top-bottom-menu-items">
         <Card className={clsx('classes.root, className')}>
           <CardHeader
+            align="center"
             action={
               <div className="month-button">
                 <select
@@ -113,24 +114,24 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
                   <option value="30">Last 30 Days</option>
                   <option value="7">Last 7 Days</option>
                 </select>
-                <button
-                  type="button"
-                  className="button1"
-                  onClick={() => this.handleClick(event, true)}
-                >
-                  Top 5
-                </button>
-                <button
-                  type="button"
-                  className="button1"
-                  onClick={() => this.handleClick(event, false)}
-                >
-                  Bottom 5
-                </button>
               </div>
             }
             title={`${labelText} 5 Menu Items`}
           />
+          <button
+            type="button"
+            className="button1"
+            onClick={() => this.handleClick(event, true)}
+          >
+            Top 5
+          </button>
+          <button
+            type="button"
+            className="button1"
+            onClick={() => this.handleClick(event, false)}
+          >
+            Bottom 5
+          </button>
           <Divider />
 
           <CardContent>
