@@ -49,51 +49,47 @@ class StackedBarGraphRevenue extends Component {
     }
 
     return (
-      <div>
-        <div className="peak-time-div">
-          <Card className={clsx('classes.root, className')}>
-            <CardHeader title="Revenue per Month" />
-            <Divider />
-            <CardContent>
-              <div className="classes.chartContainer">
-                <Bar
-                  data={chartData}
-                  options={{
-                    plugins: {
-                      datalabels: {
-                        display: false
+      <div className="summary-charts-div">
+        <Card className={clsx('classes.root, className')}>
+          <CardHeader align="center" title="Revenue per Month" />
+          <Divider />
+          <CardContent>
+            <div className="classes.chartContainer">
+              <Bar
+                data={chartData}
+                options={{
+                  plugins: {
+                    datalabels: {
+                      display: false
+                    }
+                  },
+                  scales: {
+                    xAxes: [
+                      {
+                        stacked: true
                       }
-                    },
-                    scales: {
-                      xAxes: [
-                        {
-                          stacked: true
-                        }
-                      ],
-                      yAxes: [
-                        {
-                          display: true,
-                          stacked: true,
-                          ticks: {
-                            suggestedMin: 0,
-                            suggestedMax:
-                              Math.max(...year2018, ...year2019, ...year2020) *
-                              1.1,
-                            callback: function(value) {
-                              return currencyFormatter
-                                .format(value)
-                                .slice(0, -3)
-                            }
+                    ],
+                    yAxes: [
+                      {
+                        display: true,
+                        stacked: true,
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax:
+                            Math.max(...year2018, ...year2019, ...year2020) *
+                            1.1,
+                          callback: function(value) {
+                            return currencyFormatter.format(value).slice(0, -3)
                           }
                         }
-                      ]
-                    }
-                  }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                      }
+                    ]
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
