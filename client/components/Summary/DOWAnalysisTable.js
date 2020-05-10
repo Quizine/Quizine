@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
+// import {red} from '@material-ui/core/colors'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -93,7 +94,6 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" />
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
@@ -128,14 +128,14 @@ EnhancedTableHead.propTypes = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%'
+    width: '50%'
   },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2)
   },
   table: {
-    minWidth: 750
+    minWidth: 600
   },
   visuallyHidden: {
     border: 0,
@@ -166,9 +166,11 @@ export default function EnhancedTable(props) {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <TableContainer>
-          <Typography className={classes.title} variant="h6" id="tableTitle">
-            Summary Analysis by Day of Week For the Last Year
-          </Typography>
+          <div className="summary-table-title">
+            <Typography className={classes.title} variant="h5" id="tableTitle">
+              Summary Analysis by Day of Week For the Last Year
+            </Typography>
+          </div>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
@@ -188,7 +190,6 @@ export default function EnhancedTable(props) {
 
                   return (
                     <TableRow hover tabIndex={-1} key={row.dayOfWeek}>
-                      <TableCell padding="checkbox" />
                       <TableCell
                         component="th"
                         id={labelId}

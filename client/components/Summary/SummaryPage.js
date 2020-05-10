@@ -42,45 +42,56 @@ class SummaryPage extends Component {
   render() {
     return (
       <div className="summary-page-container">
-        {this.props.DOWAnalysisTable &&
-        this.props.restaurantInfo[0] &&
-        this.props.revenueVsTime.xAxis &&
-        this.props.numberOfWaiters ? (
-          <div className="card-container">
-            <Grid container spacing={4}>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <RestaurantInfo restaurantInfo={this.props.restaurantInfo[0]} />
+        <div className="summary-subcontainter">
+          {this.props.DOWAnalysisTable &&
+          this.props.restaurantInfo[0] &&
+          this.props.revenueVsTime.xAxis &&
+          this.props.numberOfWaiters ? (
+            <div className="card-container">
+              <Grid container spacing={4}>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <RestaurantInfo
+                    restaurantInfo={this.props.restaurantInfo[0]}
+                  />
+                </Grid>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <TotalRevenue
+                    totalRevenue={
+                      this.props.DOWAnalysisTable &&
+                      this.getTotalRevenue(this.props.DOWAnalysisTable)
+                    }
+                  />
+                </Grid>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <NumberOfWaiters
+                    numberOfWaiters={this.props.numberOfWaiters}
+                  />
+                </Grid>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <YelpRating yelpRating={this.props.yelpRating} />
+                </Grid>
               </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <TotalRevenue
-                  totalRevenue={
-                    this.props.DOWAnalysisTable &&
-                    this.getTotalRevenue(this.props.DOWAnalysisTable)
-                  }
-                />
-              </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <NumberOfWaiters numberOfWaiters={this.props.numberOfWaiters} />
-              </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <YelpRating yelpRating={this.props.yelpRating} />
-              </Grid>
-            </Grid>
+            </div>
+          ) : null}
+          <div>
+            <CalendarContainer />
+            <div className="summary-divider">
+              <Divider />
+            </div>
           </div>
-        ) : null}
-        <Divider />
-        <div>
-          <CalendarContainer />
+          <div className="summary-chart-container">
+            <StackedBarGraphRevenue />
+            <PeakTimeGraph />
+          </div>
+
+          <div className="summary-table-container">
+            <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
+            <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
+          </div>
+          <div className="summary-divider-bottom">
+            <Divider />
+          </div>
           <Divider />
-        </div>
-        <div className="summary-chart-container">
-          <StackedBarGraphRevenue />
-          <PeakTimeGraph />
-          <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
-          <Divider />
-        </div>
-        <div className="summary-table-container">
-          <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
         </div>
       </div>
     )

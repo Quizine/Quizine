@@ -5,9 +5,7 @@ export default class RevenuePage extends Component {
   render() {
     return (
       <div className="analytics-page-container">
-        <div className="bus-charts-cont">
-          <RevenueAnalyticsGraphs />
-        </div>
+        <RevenueAnalyticsGraphs />
       </div>
     )
   }

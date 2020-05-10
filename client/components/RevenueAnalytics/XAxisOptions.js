@@ -67,6 +67,11 @@ function StyledRadio(props) {
   )
 }
 
+const xAxisGroupStyle = {
+  display: 'flex',
+  flexDirection: 'row'
+}
+
 // eslint-disable-next-line complexity
 export default function XAxisOptions(props) {
   const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
@@ -77,58 +82,63 @@ export default function XAxisOptions(props) {
   return (
     <FormControl component="fieldset">
       {/* <FormLabel component="legend">Display Data</FormLabel> */}
-      <h3>X-Axis Option:</h3>
+      <h3 style={{marginBottom: '10px'}}>X-Axis Option:</h3>
       <RadioGroup
         defaultValue="day"
         value={xAxisOption}
         aria-label="Display Data"
         name="customized-radios"
         onChange={props.handleXAxisOptionChange}
+        style={xAxisGroupStyle}
       >
-        <FormControlLabel
-          value="year"
-          disabled={diffDays <= 365}
-          control={<StyledRadio />}
-          label="Per Year"
-        />
-        <FormControlLabel
-          value="month"
-          disabled={diffDays <= 30}
-          control={<StyledRadio />}
-          label="Per Month"
-        />
-        <FormControlLabel
-          value="week"
-          disabled={diffDays <= 7}
-          control={<StyledRadio />}
-          label="Per Week"
-        />
-        <FormControlLabel
-          value="day"
-          disabled={false}
-          control={<StyledRadio />}
-          label="Per Day"
-        />
-        <FormControlLabel
-          value="hour"
-          disabled={diffDays >= 365}
-          control={<StyledRadio />}
-          label="Per Hour"
-        />
-        {props.selectedQueryTitle === 'detailedRevenueAnalysis' ? (
+        <div className="x-axis-option-row-1">
           <FormControlLabel
-            value="DOW"
+            value="year"
+            disabled={diffDays <= 365}
             control={<StyledRadio />}
-            label="Average Per Day Of Week"
+            label="Per Year"
           />
-        ) : null}
-        {props.selectedQueryTitle === 'detailedOrderAnalysis' ? (
           <FormControlLabel
-            value="avgHour"
+            value="month"
+            disabled={diffDays <= 30}
             control={<StyledRadio />}
-            label="Average Per Hour"
+            label="Per Month"
           />
-        ) : null}
+          <FormControlLabel
+            value="week"
+            disabled={diffDays <= 7}
+            control={<StyledRadio />}
+            label="Per Week"
+          />
+        </div>
+        <div className="x-axis-option-row-2">
+          <FormControlLabel
+            value="day"
+            disabled={false}
+            control={<StyledRadio />}
+            label="Per Day"
+          />
+          <FormControlLabel
+            value="hour"
+            disabled={diffDays >= 365}
+            control={<StyledRadio />}
+            label="Per Hour"
+          />
+          {props.selectedQueryTitle === 'detailedRevenueAnalysis' ? (
+            <FormControlLabel
+              value="DOW"
+              control={<StyledRadio />}
+              label="Average Per Day Of Week"
+            />
+          ) : null}
+          {props.selectedQueryTitle === 'detailedOrderAnalysis' ? (
+            <FormControlLabel
+              value="avgHour"
+              control={<StyledRadio />}
+              label="Average Per Hour"
+            />
+          ) : null}
+        </div>
       </RadioGroup>
     </FormControl>
   )

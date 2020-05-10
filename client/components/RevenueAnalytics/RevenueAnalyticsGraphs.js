@@ -10,6 +10,7 @@ import {
 import RevenueAndOrdersGraphs from './RevenueAndOrdersGraphs'
 import RevenueLunchAndDinnerGraph from './RevenueLunchAndDinnerGraph'
 import XAxisOptions from './XAxisOptions'
+import AggOptions from './AggOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
 
@@ -259,8 +260,9 @@ class RevenueAnalyticsGraphs extends Component {
       <div className="bus-charts-cont">
         <div className="analytics-page-cont">
           <div className="query-selector">
-            <div className="category-time-selector">
-              <h3>Data Analysis Category:</h3>
+            {/* <div className="category-time-selector"> */}
+            <div className="category-selector">
+              <h3 style={{marginBottom: '10px'}}>Data Analysis Category:</h3>
               <select
                 className="select-cust-query"
                 onChange={this.handleSelectedQueryChange}
@@ -273,50 +275,67 @@ class RevenueAnalyticsGraphs extends Component {
                   )
                 })}
               </select>
-              <h3>Time Period:</h3>
-              <div className="month-button">
-                <select
-                  onChange={this.handleGraphIntervalChange}
-                  className="select-cust-time-interval"
-                  defaultValue="30"
-                >
-                  <option value="allPeriod">All History</option>
-                  <option value="730">Last 2 Years</option>
-                  <option value="365">Last 1 Year</option>
-                  <option value="30">Last 30 Days</option>
-                  <option value="7">Last 7 Days</option>
-                  <option value="custom">Custom Dates</option>
-                </select>
+            </div>
+            {/* </div> */}
+            <div className="axis-time-selector">
+              {this.state.selectedQueryTitle !==
+              'lunchAndDinnerRevenueComparison' ? (
+                <div className="y-Axis-selector">
+                  <AggOptions
+                    selectedAggOption={this.state.selectedAggOption}
+                    selectedQueryTitle={this.state.selectedQueryTitle}
+                    handleAggOptionChange={this.handleAggOptionChange}
+                  />
+                </div>
+              ) : null}
+              <div className="x-Axis-selector">
+                <XAxisOptions
+                  handleXAxisOptionChange={this.handleXAxisOptionChange}
+                  selectedQueryTitle={this.state.selectedQueryTitle}
+                  revenueQueryResults={this.props.revenueQueryResults}
+                  selectedXAxisOption={this.state.selectedXAxisOption}
+                />
+              </div>
+              <div className="time-selector">
+                <h3 style={{marginBottom: '10px'}}>Time Period:</h3>
+                <div className="month-button">
+                  <select
+                    onChange={this.handleGraphIntervalChange}
+                    className="select-cust-time-interval"
+                    defaultValue="30"
+                  >
+                    <option value="allPeriod">All History</option>
+                    <option value="730">Last 2 Years</option>
+                    <option value="365">Last 1 Year</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="7">Last 7 Days</option>
+                    <option value="custom">Custom Dates</option>
+                  </select>
+                </div>
+                {this.state.selectedIntervalOption === 'custom' ? (
+                  <Wrapper>
+                    <DateRangePicker
+                      showDefaultInputIcon={true}
+                      showClearDates={true}
+                      isOutsideRange={day =>
+                        day.isAfter(moment()) ||
+                        day.isBefore(moment().subtract(365 * 2, 'days'))
+                      }
+                      reopenPickerOnClearDates={true}
+                      startDate={this.state.startDate}
+                      endDate={this.state.endDate}
+                      onDatesChange={({startDate, endDate}) =>
+                        this.handleDateChange({startDate, endDate})
+                      }
+                      focusedInput={this.state.focusedInput}
+                      onFocusChange={focusedInput =>
+                        this.setState({focusedInput})
+                      }
+                    />
+                  </Wrapper>
+                ) : null}
               </div>
             </div>
-            <div className="x-Axis-selector">
-              <XAxisOptions
-                handleXAxisOptionChange={this.handleXAxisOptionChange}
-                selectedQueryTitle={this.state.selectedQueryTitle}
-                revenueQueryResults={this.props.revenueQueryResults}
-                selectedXAxisOption={this.state.selectedXAxisOption}
-              />
-            </div>
-            {this.state.selectedIntervalOption === 'custom' ? (
-              <Wrapper>
-                <DateRangePicker
-                  showDefaultInputIcon={true}
-                  showClearDates={true}
-                  isOutsideRange={day =>
-                    day.isAfter(moment()) ||
-                    day.isBefore(moment().subtract(365 * 2, 'days'))
-                  }
-                  reopenPickerOnClearDates={true}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                  onDatesChange={({startDate, endDate}) =>
-                    this.handleDateChange({startDate, endDate})
-                  }
-                  focusedInput={this.state.focusedInput}
-                  onFocusChange={focusedInput => this.setState({focusedInput})}
-                />
-              </Wrapper>
-            ) : null}
           </div>
           {this.state.selectedQueryTitle !==
           'lunchAndDinnerRevenueComparison' ? (
