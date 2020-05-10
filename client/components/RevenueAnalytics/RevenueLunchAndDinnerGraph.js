@@ -126,19 +126,21 @@ export default class RevenueLunchAndDinnerGraph extends Component {
             <h5>Shown data starting from {startDate}</h5>
           ) : null}
         </Card>
-        <button type="button" className="download-btn">
-          <CSVLink
-            data={tableDataFormatting(
-              selectedXAxisOption,
-              xAxis,
-              lunchRevenue,
-              dinnerRevenue
-            )}
-            align="center"
-          >
-            Download CSV
-          </CSVLink>
-        </button>
+        <div className="csv-btn-div">
+          <button type="button" className="download-btn">
+            <CSVLink
+              data={tableDataFormatting(
+                selectedXAxisOption,
+                xAxis,
+                lunchRevenue,
+                dinnerRevenue
+              )}
+              align="center"
+            >
+              Download CSV
+            </CSVLink>
+          </button>
+        </div>
       </div>
     )
   }
