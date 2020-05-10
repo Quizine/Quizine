@@ -11,6 +11,11 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2
 })
 
+const h4Style = {
+  marginBottom: '20px',
+  marginLeft: '20px'
+}
+
 export default class RevenueLunchAndDinnerGraph extends Component {
   // eslint-disable-next-line complexity
   render() {
@@ -63,14 +68,17 @@ export default class RevenueLunchAndDinnerGraph extends Component {
       return <div>...loading</div>
     }
     return (
-      <div className="peak-time-div">
+      <div className="revenue-graph-div">
         <Card className={clsx('classes.root, className')}>
-          <CardHeader title={formatQueryName(selectedQueryTitle)} />
-          <h4>Revenue Total: {revenueTotal}</h4>
-          <h4>
+          <CardHeader
+            title={formatQueryName(selectedQueryTitle)}
+            align="center"
+          />
+          <h4 style={h4Style}>Revenue Total: {revenueTotal}</h4>
+          <h4 style={h4Style}>
             Lunch Revenue Total: {currencyFormatter.format(lunchRevenueTotal)}
           </h4>
-          <h4>
+          <h4 style={h4Style}>
             Dinner Revenue Total: {currencyFormatter.format(dinnerRevenueTotal)}
           </h4>
           <GraphOptionButtons
@@ -126,6 +134,7 @@ export default class RevenueLunchAndDinnerGraph extends Component {
               lunchRevenue,
               dinnerRevenue
             )}
+            align="center"
           >
             Download CSV
           </CSVLink>

@@ -10,7 +10,7 @@ import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
-import {red} from '@material-ui/core/colors'
+// import {red} from '@material-ui/core/colors'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',

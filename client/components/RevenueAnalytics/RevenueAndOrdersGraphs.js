@@ -3,7 +3,7 @@ import {Line, Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 import GraphOptionButtons from './GraphOptionButtons'
-import AggOptions from './AggOptions'
+// import AggOptions from './AggOptions'
 import {CSVLink} from 'react-csv'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
@@ -13,6 +13,11 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 })
 
 const numberFormatter = new Intl.NumberFormat('en-US')
+
+const h4Style = {
+  marginBottom: '20px',
+  marginLeft: '20px'
+}
 
 export default class RevenueAndOrdersGraphs extends Component {
   // eslint-disable-next-line complexity
@@ -25,7 +30,7 @@ export default class RevenueAndOrdersGraphs extends Component {
     const handleGraphOptionChange = this.props.handleGraphOptionChange
     const selectedQueryTitle = this.props.selectedQueryTitle
     const selectedAggOption = this.props.selectedAggOption
-    const handleAggOptionChange = this.props.handleAggOptionChange
+    // const handleAggOptionChange = this.props.handleAggOptionChange
 
     const chartData = {
       labels: labels,
@@ -64,26 +69,22 @@ export default class RevenueAndOrdersGraphs extends Component {
       return <h6>loading...</h6>
     }
     return (
-      <div className="peak-time-div">
-        <AggOptions
-          selectedAggOption={selectedAggOption}
-          selectedQueryTitle={selectedQueryTitle}
-          handleAggOptionChange={handleAggOptionChange}
-        />
+      <div className="revenue-graph-div">
         <Card className={clsx('classes.root, className')}>
           <CardHeader
             title={graphTitleFormatting(selectedAggOption, selectedQueryTitle)}
+            align="center"
           />
+          <h4 style={h4Style}>{`${graphTitleFormatting(
+            selectedAggOption,
+            selectedQueryTitle
+          )} For Selected Time Interval: ${aggValue}`}</h4>
           <GraphOptionButtons
             handleGraphOptionChange={handleGraphOptionChange}
             selectedQueryTitle={selectedQueryTitle}
             selectedGraphOption={selectedGraphOption}
           />
           <Divider />
-          <h5>{`${graphTitleFormatting(
-            selectedAggOption,
-            selectedQueryTitle
-          )} For Selected Time Interval: ${aggValue}`}</h5>
           <CardContent>
             <div className="classes.chartContainer">
               <GraphOption
@@ -126,19 +127,21 @@ export default class RevenueAndOrdersGraphs extends Component {
             <h5>Shown data starting from {startDate}</h5>
           ) : null}
         </Card>
-        <button type="button" className="download-btn">
-          <CSVLink
-            data={tableDataFormatting(
-              selectedXAxisOption,
-              selectedAggOption,
-              selectedQueryTitle,
-              labels,
-              yAxis
-            )}
-          >
-            Download CSV
-          </CSVLink>
-        </button>
+        <div className="csv-btn-div">
+          <button type="button" className="download-btn">
+            <CSVLink
+              data={tableDataFormatting(
+                selectedXAxisOption,
+                selectedAggOption,
+                selectedQueryTitle,
+                labels,
+                yAxis
+              )}
+            >
+              Download CSV
+            </CSVLink>
+          </button>
+        </div>
       </div>
     )
   }
