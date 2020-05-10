@@ -97,6 +97,14 @@ form div {
   align-content: center;
 }
 
+.revenue-graph-div {
+  min-height: 300px;
+  min-width: 450px;
+  width: 80%;
+  margin: 1em;
+  align-content: center;
+}
+
 .chart-header {
   display: flex;
 }
@@ -106,12 +114,31 @@ form div {
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
-  /* justify-content: center; */
+  justify-content: center;
+}
+
+.analytics-page-cont {
+  margin-top: 2em;
+  margin-bottom: 3em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* margin: 2em; */
+  /* min-width: 600px; */
+  /* width: 100vw; */
+  width: 90%;
+  /* max-width: 90%; */
+  background-color: #f8f8f8;
+  box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
 }
 
 .revenue-graphs-cont {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 100%;
   align-items: center;
 }
@@ -300,6 +327,23 @@ form div {
   align-items: center;
 }
 
+.category-time-selector {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  justify-items: center;
+  align-items: center;
+  margin-left: 30%;
+  margin-right: 30%;
+}
+
+.x-Axis-selector {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-left: 20%;
+}
+
 .agg-options {
   display: flex;
   width: 100%;
@@ -321,7 +365,7 @@ form div {
 
 /* query select-cust */
 .select-cust-query {
-  width: 290px;
+  width: 280px;
   font-size: 14px;
   height: 38px;
 }

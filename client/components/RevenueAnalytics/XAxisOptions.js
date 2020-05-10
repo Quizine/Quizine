@@ -76,7 +76,8 @@ export default function XAxisOptions(props) {
   const xAxisOption = props.selectedXAxisOption
   return (
     <FormControl component="fieldset">
-      <FormLabel component="legend">Display Data</FormLabel>
+      {/* <FormLabel component="legend">Display Data</FormLabel> */}
+      <h3>X-Axis Option:</h3>
       <RadioGroup
         defaultValue="day"
         value={xAxisOption}

@@ -63,7 +63,7 @@ export default class RevenueLunchAndDinnerGraph extends Component {
       return <div>...loading</div>
     }
     return (
-      <div className="peak-time-div">
+      <div className="revenue-graph-div">
         <Card className={clsx('classes.root, className')}>
           <CardHeader title={formatQueryName(selectedQueryTitle)} />
           <h4>Revenue Total: {revenueTotal}</h4>

@@ -74,7 +74,8 @@ export default function AggOptions(props) {
 
   return (
     <FormControl component="fieldset" className="agg-options">
-      <FormLabel component="legend">Aggregate Option</FormLabel>
+      {/* <FormLabel component="legend"></FormLabel> */}
+      <h3>Y-Axis Option:</h3>
       <RadioGroup
         defaultValue="sum"
         value={selectedAggOption}

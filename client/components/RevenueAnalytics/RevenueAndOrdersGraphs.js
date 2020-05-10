@@ -64,7 +64,7 @@ export default class RevenueAndOrdersGraphs extends Component {
       return <h6>loading...</h6>
     }
     return (
-      <div className="peak-time-div">
+      <div className="revenue-graph-div">
         <AggOptions
           selectedAggOption={selectedAggOption}
           selectedQueryTitle={selectedQueryTitle}
