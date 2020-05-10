@@ -13,6 +13,7 @@ import XAxisOptions from './XAxisOptions'
 import AggOptions from './AggOptions'
 import {DateRangePicker} from 'react-dates'
 import moment from 'moment'
+import {Divider} from '@material-ui/core'
 
 //WRAPPER FOR OVERRIDING STYLES FOR DATERANGEPICKER COMPONENT
 const Wrapper = styled.div`
@@ -337,6 +338,9 @@ class RevenueAnalyticsGraphs extends Component {
               </div>
             </div>
           </div>
+          <div className="analytics-divider">
+            <Divider />
+          </div>
           {this.state.selectedQueryTitle !==
           'lunchAndDinnerRevenueComparison' ? (
             <div className="revenue-graphs-cont">
@@ -361,6 +365,9 @@ class RevenueAnalyticsGraphs extends Component {
               />
             </div>
           )}
+          <div className="analytics-divider">
+            <Divider />
+          </div>
         </div>
       </div>
     )
