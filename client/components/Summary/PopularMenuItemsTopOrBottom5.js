@@ -6,8 +6,9 @@ import 'chartjs-plugin-datalabels'
 import _ from 'lodash'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
+import PopularMenuItemsTopOrBottom5Buttons from './PopularMenuItemsTopOrBottom5Buttons'
 
-class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
+class PopularMenuItemsTopOrBottom5 extends Component {
   constructor(props) {
     super(props)
 
@@ -16,7 +17,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
       top: true
     }
     this.handleChange = this.handleChange.bind(this)
-    this.handleClick = this.handleClick.bind(this)
+    this.handleChangeButton = this.handleChangeButton.bind(this)
   }
 
   componentDidMount() {
@@ -28,9 +29,13 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
     this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)
   }
 
-  handleClick(event, value) {
+  handleChangeButton(event) {
     event.preventDefault()
-    this.setState({top: value})
+    if (event.target.innerText.slice(0, 3) === 'Top') {
+      this.setState({top: true})
+    } else {
+      this.setState({top: false})
+    }
   }
 
   // eslint-disable-next-line complexity
@@ -98,6 +103,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
         }
       }
     }
+
     return (
       <div className="summary-top-bottom-menu-items">
         <Card className={clsx('classes.root, className')}>
@@ -118,29 +124,16 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
             }
             title={`${labelText} 5 Menu Items`}
           />
-          <button
-            type="button"
-            className="button1"
-            onClick={() => this.handleClick(event, true)}
-          >
-            Top 5
-          </button>
-          <button
-            type="button"
-            className="button1"
-            onClick={() => this.handleClick(event, false)}
-          >
-            Bottom 5
-          </button>
+          <PopularMenuItemsTopOrBottom5Buttons
+            handleChangeButton={this.handleChangeButton}
+            handleClick={this.handleClick}
+            topGraphOption={this.state.top}
+          />
           <Divider />
 
           <CardContent>
             <div className="classes.chartContainer">
-              <Doughnut
-                data={chartData}
-                options={options}
-                // plugins={ChartDataLabels}
-              />
+              <Doughnut data={chartData} options={options} />
             </div>
           </CardContent>
         </Card>
@@ -164,7 +157,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  MenuSalesNumbersVsMenuItemsTopOrBottom5
+  PopularMenuItemsTopOrBottom5
 )
 
 function modifyArrOfStrings(arr) {

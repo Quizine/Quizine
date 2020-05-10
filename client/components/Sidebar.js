@@ -15,16 +15,6 @@ const pages = [
     icon: <DashboardIcon />
   },
   {
-    title: 'BUSINESS ANALYTICS',
-    href: '/businessAnalytics',
-    icon: <InsertChartOutlinedIcon />,
-    subPage: {
-      title: 'HOME',
-      href: '/home',
-      icon: <InsertChartOutlinedIcon />
-    }
-  },
-  {
     title: 'REVENUE ANALYTICS',
     href: '/revenueanalytics',
     icon: <LocalAtmIcon />
