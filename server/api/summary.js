@@ -207,7 +207,7 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
   }
 })
 
-//TOP 5 MENU ITEMS FOR PIE GRAPH
+//TOP 5 MENU ITEMS FOR DOUGHNUT GRAPH
 router.get(
   '/menuSalesNumbersVsMenuItemsTopOrBottom5',
   async (req, res, next) => {
@@ -227,8 +227,7 @@ router.get(
           AND orders."timeOfPurchase" <= NOW()
           AND orders."restaurantId" = $2
           GROUP BY name
-          ORDER BY total ASC
-          LIMIT 5;
+          ORDER BY total ASC;
           `
         } else if (topOrBottom === 'desc') {
           text = `
@@ -241,8 +240,7 @@ router.get(
           AND orders."timeOfPurchase" <= NOW()
           AND orders."restaurantId" = $2
           GROUP BY name
-          ORDER BY total DESC
-          LIMIT 5;
+          ORDER BY total DESC;
           `
         }
         let correctStartDate = new Date()
@@ -348,10 +346,18 @@ function numberOfGuestsVsHourFormatting(arr) {
 function axisMapping(arr, xAxisName, yAxisName) {
   const xAxis = []
   const yAxis = []
-  arr.forEach(el => {
-    xAxis.push(el[xAxisName])
-    yAxis.push(+el[yAxisName])
-  })
+  let sumOfOthers = 0
+  for (let i = 0; i <= 4; i++) {
+    xAxis.push(arr[i][xAxisName])
+    yAxis.push(+arr[i][yAxisName])
+  }
+
+  for (let i = 5; i < arr.length; i++) {
+    sumOfOthers += +arr[i][yAxisName]
+  }
+
+  xAxis.push('allOtherMenuItems')
+  yAxis.push(sumOfOthers)
 
   return [xAxis, yAxis]
 }
