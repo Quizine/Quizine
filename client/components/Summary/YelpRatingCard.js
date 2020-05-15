@@ -62,11 +62,9 @@ const YelpRating = props => {
             </Typography>
             <Box component="fieldset" mb={3} borderColor="transparent">
               <Typography variant="h6">
-                {/* {props.yelpRating.toFixed(1)}/5.0 */}
-                4.0/5.0
+                {props.yelpRating.toFixed(1)}/5.0
               </Typography>
-              {/* <Rating name="yelp-rating" value={props.yelpRating} /> */}
-              <Rating name="yelp-rating" value={4} />
+              <Rating name="yelp-rating" value={props.yelpRating} readOnly />
             </Box>
           </Grid>
           <Grid item>

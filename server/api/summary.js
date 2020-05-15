@@ -327,7 +327,7 @@ function numberOfGuestsVsHourFormatting(arr) {
   let end = 22
   let i = 0
   while (hourTracking <= end) {
-    if (hourTracking === arr[i].hours) {
+    if (arr[i] && hourTracking === arr[i].hours) {
       xAxis.push(hourConversion[hourTracking])
       yAxis.push(arr[i].percentage)
       i++
