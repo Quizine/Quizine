@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import PeakTimeGraph from './PeakTimeGraph'
 import StackedBarGraphRevenue from './StackedBarGraphRevenue'
 import EnhancedTable from './DOWAnalysisTable'
-import MenuSalesNumbersVsMenuItemsTopOrBottom5 from './MenuSalesNumbersVsMenuItemsTopOrBottom5'
+import PopularMenuItemsTopOrBottom5 from './PopularMenuItemsTopOrBottom5'
 import CalendarContainer from './Calendar/Calendar'
 import {
   getDOWAnalysisTable,
@@ -85,7 +85,7 @@ class SummaryPage extends Component {
           </div>
 
           <div className="summary-table-container">
-            <MenuSalesNumbersVsMenuItemsTopOrBottom5 />
+            <PopularMenuItemsTopOrBottom5 />
             <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
           </div>
           <div className="summary-divider-bottom">

@@ -120,7 +120,7 @@ form div {
 
 .summary-table-title {
   line-height: 64px;
-  padding: 16px;
+  padding: 21px;
   text-align: center;
 }
 
@@ -405,7 +405,7 @@ form div {
 
 /* query select-cust */
 .select-cust-query {
-  width: 310px;
+  width: 320px;
   font-size: 16px;
   height: 38px;
 }
@@ -529,10 +529,10 @@ form div {
   /* box-sizing: border-box; */
   text-decoration: none;
   font-family: 'Roboto', sans-serif;
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: 400;
-  color: #ffffff;
-  background-color: #24497a;
+  color: black;
+  background-color: white;
   box-shadow: inset 0 -0.6em 0 -0.35em rgba(0, 0, 0, 0.17);
   text-align: center;
   position: relative;
@@ -769,11 +769,16 @@ body {
   z-index: 1;
 }
 
-.context h1,
-.context h2 {
+.context h1 {
   text-align: center;
   color: #fff;
   font-size: 50px;
+}
+
+.context h3 {
+  text-align: center;
+  color: #fff;
+  font-size: 30px;
 }
 
 .area {

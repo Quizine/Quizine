@@ -6,8 +6,9 @@ import 'chartjs-plugin-datalabels'
 import _ from 'lodash'
 import clsx from 'clsx'
 import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
+import PopularMenuItemsTopOrBottom5Buttons from './PopularMenuItemsTopOrBottom5Buttons'
 
-class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
+class PopularMenuItemsTopOrBottom5 extends Component {
   constructor(props) {
     super(props)
 
@@ -16,7 +17,7 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
       top: true
     }
     this.handleChange = this.handleChange.bind(this)
-    this.handleClick = this.handleClick.bind(this)
+    this.handleChangeButton = this.handleChangeButton.bind(this)
   }
 
   componentDidMount() {
@@ -28,34 +29,41 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
     this.props.loadMenuSalesNumbersVsMenuItems(event.target.value)
   }
 
-  handleClick(event, value) {
+  handleChangeButton(event) {
     event.preventDefault()
-    this.setState({top: value})
+    if (event.target.innerText.slice(0, 3) === 'Top') {
+      this.setState({top: true})
+    } else {
+      this.setState({top: false})
+    }
   }
 
   // eslint-disable-next-line complexity
   render() {
     const topOrBottom = this.state.top ? 'top5' : 'bottom5'
     let labels = []
+    let xAxis = []
     let yAxis = []
+    let piePercentages = []
     const labelText = this.state.top ? 'Top' : 'Bottom'
     if (
       this.props.topAndBottom5[topOrBottom] &&
       this.props.topAndBottom5[topOrBottom].xAxis
     ) {
-      labels = modifyArrOfStrings(this.props.topAndBottom5[topOrBottom].xAxis)
+      xAxis = this.props.topAndBottom5[topOrBottom].xAxis
       yAxis = this.props.topAndBottom5[topOrBottom].yAxis
-    }
-    function financial(x) {
-      return Number(Number.parseFloat(x).toFixed(2))
+      const sum = yAxis.reduce((acc, currVal) => {
+        return acc + currVal
+      }, 0)
+      piePercentages = yAxis.map(number => {
+        return percentageFormatting(100 * (number / sum))
+      })
+      labels = modifyArrOfStrings(xAxis, piePercentages)
     }
 
-    const sum = yAxis.reduce((acc, reducer) => {
-      return acc + reducer
-    }, 0)
-    const piePercentages = yAxis.map(number => {
-      return financial(100 * (number / sum))
-    })
+    function percentageFormatting(x) {
+      return Number(Number.parseFloat(x).toFixed(2))
+    }
 
     const chartData = {
       labels: labels,
@@ -77,27 +85,14 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
       responsive: true,
       plugins: {
         datalabels: {
-          display: true,
-          color: '#fff',
-          anchor: 'end',
-          align: 'start',
-          offset: -5,
-          borderWidth: 2,
-          borderColor: '#fff',
-          borderRadius: 25,
-          backgroundColor: context => {
-            return context.dataset.backgroundColor
-          },
-          font: {
-            weight: 'bold',
-            size: '11'
-          },
-          formatter: value => {
-            return value + ' %'
-          }
+          display: false
         }
+      },
+      tooltips: {
+        enabled: false
       }
     }
+
     return (
       <div className="summary-top-bottom-menu-items">
         <Card className={clsx('classes.root, className')}>
@@ -118,29 +113,16 @@ class MenuSalesNumbersVsMenuItemsTopOrBottom5 extends Component {
             }
             title={`${labelText} 5 Menu Items`}
           />
-          <button
-            type="button"
-            className="button1"
-            onClick={() => this.handleClick(event, true)}
-          >
-            Top 5
-          </button>
-          <button
-            type="button"
-            className="button1"
-            onClick={() => this.handleClick(event, false)}
-          >
-            Bottom 5
-          </button>
+          <PopularMenuItemsTopOrBottom5Buttons
+            handleChangeButton={this.handleChangeButton}
+            handleClick={this.handleClick}
+            topGraphOption={this.state.top}
+          />
           <Divider />
 
           <CardContent>
             <div className="classes.chartContainer">
-              <Doughnut
-                data={chartData}
-                options={options}
-                // plugins={ChartDataLabels}
-              />
+              <Doughnut data={chartData} options={options} />
             </div>
           </CardContent>
         </Card>
@@ -164,9 +146,9 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  MenuSalesNumbersVsMenuItemsTopOrBottom5
+  PopularMenuItemsTopOrBottom5
 )
 
-function modifyArrOfStrings(arr) {
-  return arr.map(str => _.startCase(str))
+function modifyArrOfStrings(xAxis, yAxis) {
+  return xAxis.map((str, idx) => `${_.startCase(str)} : ${yAxis[idx]}%`)
 }
