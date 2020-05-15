@@ -120,7 +120,7 @@ form div {
 
 .summary-table-title {
   line-height: 64px;
-  padding: 16px;
+  padding: 21px;
   text-align: center;
 }
 
@@ -769,11 +769,16 @@ body {
   z-index: 1;
 }
 
-.context h1,
-.context h2 {
+.context h1 {
   text-align: center;
   color: #fff;
   font-size: 50px;
+}
+
+.context h3 {
+  text-align: center;
+  color: #fff;
+  font-size: 30px;
 }
 
 .area {
