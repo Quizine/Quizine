@@ -58,6 +58,7 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
         AND orders."restaurantId" = $3
         GROUP BY date, "mealType"
         ORDER BY date;`
+        console.log('TEXT--->', text)
         correctStartDate = new Date(req.query.startDate)
         correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
@@ -416,6 +417,7 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
 
 // eslint-disable-next-line complexity
 function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
+  console.log('ARR--->', arr)
   let xAxis = []
   let lunchRevenue = []
   let dinnerRevenue = []
@@ -425,9 +427,12 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
     week: [0, 15],
     day: [0, 15]
   }
+
   if (xAxisOption !== 'hour' && xAxisOption !== 'day') {
     for (let i = 0; i < arr.length; i++) {
       let formattedElement
+
+      //Slicing date based on the x-axis option
       if (xAxisOption === 'month') {
         formattedElement =
           arr[i].date
@@ -459,6 +464,7 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
             )
         }
       } else {
+        //Formatting for year
         formattedElement = arr[i].date
           .toString()
           .slice(
@@ -466,9 +472,13 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
             xAxisOptionHashTable[xAxisOption][1]
           )
       }
+
+      //Creating x-axis for front end
       if (xAxis.length === 0 || xAxis[xAxis.length - 1] !== formattedElement) {
         xAxis.push(formattedElement)
       }
+
+      //Separating data based on meal type (lunch or dinner)
       if (arr[i].mealType === 'lunch') {
         lunchRevenue.push(+arr[i].revenue)
       } else {
