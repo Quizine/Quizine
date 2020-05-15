@@ -217,7 +217,6 @@ router.get(
         const topOrBottom = req.query.topOrBottom
         if (topOrBottom === 'asc') {
           text = `
-
           SELECT "menuItems"."menuItemName" as name,
           SUM("menuItemOrders" .quantity) as total
           FROM "menuItemOrders"
@@ -227,8 +226,7 @@ router.get(
           AND orders."timeOfPurchase" <= NOW()
           AND orders."restaurantId" = $2
           GROUP BY name
-          ORDER BY total ASC;
-          `
+          ORDER BY total ASC;`
         } else if (topOrBottom === 'desc') {
           text = `
           SELECT "menuItems"."menuItemName" as name,
