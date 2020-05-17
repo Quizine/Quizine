@@ -547,6 +547,12 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
         startDate.setDate(startDate.getDate() + 1)
       }
     }
+    if (lunchRevenue.length < dinnerRevenue.length) {
+      lunchRevenue.push(0)
+    }
+    if (lunchRevenue.length > dinnerRevenue.length) {
+      dinnerRevenue.push(0)
+    }
   }
   return {xAxis, lunchRevenue, dinnerRevenue}
 }
