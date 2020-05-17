@@ -100,7 +100,12 @@ class RevenueAnalyticsGraphs extends Component {
 
   // eslint-disable-next-line complexity
   async handleGraphIntervalChange(event) {
-    await this.setState({selectedIntervalOption: event.target.value})
+    await this.setState({
+      selectedIntervalOption: event.target.value,
+      startDate: null,
+      endDate: null,
+      focusedInput: null
+    })
     if (
       this.state.selectedIntervalOption === 'allPeriod' ||
       +this.state.selectedIntervalOption > 365
@@ -146,7 +151,8 @@ class RevenueAnalyticsGraphs extends Component {
   // eslint-disable-next-line complexity
   async handleSelectedQueryChange(event) {
     await this.setState({
-      selectedQueryTitle: event.target.value
+      selectedQueryTitle: event.target.value,
+      selectedGraphOption: 'bar'
     })
     if (
       (this.state.selectedQueryTitle === 'detailedRevenueAnalysis' &&
