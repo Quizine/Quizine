@@ -100,7 +100,6 @@ export const getNumberOfWaiters = () => async dispatch => {
 
 export const getPeakTimeOrders = timeInterval => async dispatch => {
   try {
-    console.log('WHAT IS TIME INTERVAL: ', timeInterval)
     const {data} = await axios.get('/api/summary/numberOfGuestsVsHour', {
       params: {timeInterval}
     })
