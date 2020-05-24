@@ -40,6 +40,12 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
 const TotalRevenue = props => {
   const {className, ...rest} = props
 
@@ -58,7 +64,9 @@ const TotalRevenue = props => {
             >
               TOTAL REVENUE
             </Typography>
-            <Typography variant="h5">$ {props.totalRevenue} K</Typography>
+            <Typography variant="h5">
+              {currencyFormatter.format(props.totalRevenue)}
+            </Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>

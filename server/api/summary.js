@@ -15,12 +15,15 @@ router.get('/revenueByDay', async (req, res, next) => {
       const text = `SELECT
       SUM(orders.revenue )
       FROM orders
-      WHERE orders."timeOfPurchase" ::date = $1
-      AND orders."restaurantId" = $2;`
-      const date = req.query.date
-      const values = [date, req.user.restaurantId]
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
+      AND orders."restaurantId" = $3;`
+      const correctStartDate = new Date(req.query.date)
+      const correctEndDate = new Date(
+        Math.min(new Date(), new Date(req.query.date + ' 23:59'))
+      )
+      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
       const revenueByDay = await client.query(text, values)
-      res.json(revenueByDay.rows[0].sum) //RETURNS JUST THE #
+      revenueByDay.rows[0] ? res.json(revenueByDay.rows[0].sum) : res.json(0)
     }
   } catch (error) {
     next(error)
@@ -31,7 +34,7 @@ router.get('/waitersOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
-      SELECT 
+      SELECT
       DISTINCT waiters."name"
       FROM waiters
       JOIN orders on orders."waiterId" = waiters.id
@@ -40,13 +43,13 @@ router.get('/waitersOnADay', async (req, res, next) => {
       const date = req.query.date
       const values = [date, req.user.restaurantId]
       const waitersOnADay = await client.query(text, values)
-      res.json(waitersOnADay.rows) //RETURNS AN ARRAY OF OBJS WITH NAMES
+      res.json(waitersOnADay.rows)
     }
   } catch (error) {
     next(error)
   }
 })
-//--most popular dish on a specific day: **still need by the date...
+//--most popular dish on a specific day
 router.get('/mostPopularDishOnADay', async (req, res, next) => {
   try {
     if (req.user.id) {
@@ -55,18 +58,24 @@ router.get('/mostPopularDishOnADay', async (req, res, next) => {
       SUM("menuItemOrders".quantity) as total
       FROM "menuItemOrders"
       JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
-      JOIN orders on orders.id = "menuItemOrders"."orderId" 
-      WHERE orders."timeOfPurchase" ::date = $1
+      JOIN orders on orders.id = "menuItemOrders"."orderId"
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" < $2
       AND "menuItems"."beverageType" isnull
-      AND orders."restaurantId" = $2
+      AND orders."restaurantId" = $3
       GROUP BY name
       ORDER BY total desc
       limit 1;
       `
-      const date = req.query.date
-      const values = [date, req.user.restaurantId]
+
+      const correctStartDate = new Date(req.query.date)
+      const correctEndDate = new Date(
+        Math.min(new Date(), new Date(req.query.date + ' 23:59'))
+      )
+      const values = [correctStartDate, correctEndDate, req.user.restaurantId]
       const mostPopularDishOnADay = await client.query(text, values)
-      res.json(mostPopularDishOnADay.rows[0].name)
+      mostPopularDishOnADay.rows[0]
+        ? res.json(mostPopularDishOnADay.rows[0].name)
+        : res.json('No Dishes Served Yet')
     }
   } catch (error) {
     next(error)
@@ -107,32 +116,37 @@ router.get('/numberOfWaiters', async (req, res, next) => {
     next(error)
   }
 })
+
 router.get('/numberOfGuestsVsHour', async (req, res, next) => {
   try {
     if (req.user.id) {
       const text = `
       SELECT
-    EXTRACT(hour from orders."timeOfPurchase") AS hours,
-    SUM(orders."numberOfGuests"),
-    ROUND( 100.0 * (
+      EXTRACT(hour from orders."timeOfPurchase") AS hours,
+      SUM(orders."numberOfGuests"),
+      ROUND( 100.0 * (
       SUM(orders."numberOfGuests")::DECIMAL / (
         SELECT SUM(orders."numberOfGuests")
         FROM orders
-        WHERE orders."timeOfPurchase" >= NOW() - $1::interval
+        WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" <= NOW()
         AND orders."restaurantId" = $2
       )), 1) AS percentage
-  FROM ORDERS
-  WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-  AND orders."restaurantId" = $2
-  GROUP BY hours
-  ORDER BY hours;`
-      const interval = 1 + ' ' + req.query.interval
-      const values = [interval, req.user.restaurantId]
-      const numberOfGuestsVsHour = await client.query(text, values)
-      const percentageArr = numberOfGuestsVsHour.rows.map(el =>
-        Number(el.percentage)
+      FROM ORDERS
+      WHERE orders."timeOfPurchase" > $1 AND orders."timeOfPurchase" <= NOW()
+      AND orders."restaurantId" = $2
+      GROUP BY hours
+      ORDER BY hours;`
+      let correctStartDate = new Date()
+      correctStartDate.setDate(
+        correctStartDate.getDate() - +req.query.timeInterval
       )
-      res.json(percentageArr)
+      correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+      const values = [correctStartDate, req.user.restaurantId]
+      const numberOfGuestsVsHour = await client.query(text, values)
+      const formattedData = numberOfGuestsVsHourFormatting(
+        numberOfGuestsVsHour.rows
+      )
+      res.json(formattedData)
     }
   } catch (error) {
     next(error)
@@ -144,31 +158,19 @@ router.get('/revenueVsTime', async (req, res, next) => {
     if (req.user.id) {
       const text = `
       SELECT to_char("timeOfPurchase",'Mon') AS mon,
-      DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
       EXTRACT(YEAR FROM "timeOfPurchase") AS yyyy,
-      EXTRACT(DAY FROM NOW()) AS daynow,
-      SUM("revenue") AS "monthlyRevenue"
-      FROM orders
-      WHERE orders."timeOfPurchase" >= NOW() - $1::interval
-      AND orders."timeOfPurchase" <= NOW()
-      AND orders."restaurantId" = $2
-      GROUP BY mon, m, yyyy
-      ORDER BY m;
-      `
-      // didn't find a way to add todays date to interval in the same query so used JS
-      const year = req.query.year
-      // const interval = year + ' year'
-      // const interval = `${year} year + ${new Date().getDate()} days`
-      const interval = `${year} year + ${new Date().getDate() - 1} days`
+        DATE_TRUNC('month', orders."timeOfPurchase" ) as m,
+        SUM("revenue") AS "monthlyRevenue"
+        FROM orders
+        WHERE orders."timeOfPurchase" <= NOW()
+        AND orders."restaurantId" = $1
+        GROUP BY mon, m, yyyy
+        ORDER BY m;`
 
-      const values = [interval, req.user.restaurantId]
+      const values = [req.user.restaurantId]
       const revenueVsTime = await client.query(text, values)
-      const allDateRevenue = {month: [], revenue: []}
-      revenueVsTime.rows.forEach(row => {
-        allDateRevenue.month.push(`${row.mon} ${String(row.yyyy)}`)
-        allDateRevenue.revenue.push(Number(row.monthlyRevenue))
-      })
-      res.json(allDateRevenue)
+      const formattedData = revenueVsTimeFormatting(revenueVsTime.rows)
+      res.json(formattedData)
     }
   } catch (error) {
     next(error)
@@ -178,21 +180,25 @@ router.get('/revenueVsTime', async (req, res, next) => {
 router.get('/DOWAnalysisTable', async (req, res, next) => {
   try {
     if (req.user.id) {
-      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek", 
-      SUM(orders."numberOfGuests") AS "numberOfGuests", 
-      ROUND((SUM(orders.revenue)::numeric)/1000,2) AS "dayRevenue", 
-      SUM("summedMenuItemOrder"."summedQuantity")
+      const text = `SELECT EXTRACT(DOW FROM orders."timeOfPurchase") AS "dayOfWeek",
+      SUM(orders."numberOfGuests") AS "numberOfGuests",
+      ROUND((SUM(orders.revenue)::numeric),2) AS "dayRevenue",
+      SUM("summedMenuItemOrder"."summedQuantity") AS "menuItemsSold"
             FROM orders
             JOIN (SELECT SUM("menuItemOrders".quantity) AS "summedQuantity", "menuItemOrders"."orderId"
             FROM "menuItemOrders"
             GROUP BY "menuItemOrders"."orderId") AS "summedMenuItemOrder"
             ON orders.id = "summedMenuItemOrder"."orderId"
-            WHERE orders."timeOfPurchase" >= NOW() - interval '1 year'
-            AND orders."restaurantId" = $1
+            WHERE orders."timeOfPurchase" >= $1
+            AND orders."timeOfPurchase" <= NOW()
+            AND orders."restaurantId" = $2
             GROUP BY "dayOfWeek"
             ORDER by "dayOfWeek" ASC;
         `
-      const values = [req.user.restaurantId]
+      let correctStartDate = new Date()
+      correctStartDate.setDate(correctStartDate.getDate() - 365)
+      correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+      const values = [correctStartDate, req.user.restaurantId]
       const DOWAnalysisTable = await client.query(text, values)
       res.json(tableFormatting(DOWAnalysisTable.rows))
     }
@@ -201,6 +207,62 @@ router.get('/DOWAnalysisTable', async (req, res, next) => {
   }
 })
 
+//TOP 5 MENU ITEMS FOR DOUGHNUT GRAPH
+router.get(
+  '/menuSalesNumbersVsMenuItemsTopOrBottom5',
+  async (req, res, next) => {
+    try {
+      if (req.user.id) {
+        let text
+        const topOrBottom = req.query.topOrBottom
+        if (topOrBottom === 'asc') {
+          text = `
+          SELECT "menuItems"."menuItemName" as name,
+          SUM("menuItemOrders" .quantity) as total
+          FROM "menuItemOrders"
+          JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+          JOIN orders on orders.id = "menuItemOrders"."orderId"
+          WHERE orders."timeOfPurchase" >= $1
+          AND orders."timeOfPurchase" <= NOW()
+          AND orders."restaurantId" = $2
+          GROUP BY name
+          ORDER BY total ASC;`
+        } else if (topOrBottom === 'desc') {
+          text = `
+          SELECT "menuItems"."menuItemName" as name,
+          SUM("menuItemOrders".quantity) as total
+          FROM "menuItemOrders"
+          JOIN "menuItems" on "menuItems".id = "menuItemOrders"."menuItemId"
+          JOIN orders on orders.id = "menuItemOrders"."orderId"
+          WHERE orders."timeOfPurchase" >= $1
+          AND orders."timeOfPurchase" <= NOW()
+          AND orders."restaurantId" = $2
+          GROUP BY name
+          ORDER BY total DESC;
+          `
+        }
+        let correctStartDate = new Date()
+        correctStartDate.setDate(
+          correctStartDate.getDate() - +req.query.timeInterval
+        )
+        correctStartDate = new Date(correctStartDate.toString().slice(0, 15))
+        const restaurantId = req.user.restaurantId
+        const values = [correctStartDate, restaurantId]
+        const menuSalesNumbers = await client.query(text, values)
+        const [xAxis, yAxis] = axisMapping(
+          menuSalesNumbers.rows,
+          menuSalesNumbers.fields[0].name,
+          menuSalesNumbers.fields[1].name
+        )
+        res.json({xAxis, yAxis})
+      }
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+//HELPER FUNCTIONS
 function tableFormatting(array) {
   let DOWconversion = {
     0: 'Sunday',
@@ -215,4 +277,85 @@ function tableFormatting(array) {
     element.dayOfWeek = DOWconversion[element.dayOfWeek]
   })
   return array
+}
+
+function revenueVsTimeFormatting(arr) {
+  let xAxis = []
+  let year2018 = []
+  let year2019 = []
+  let year2020 = []
+
+  for (let i = 0; i < arr.length; i++) {
+    if (i <= 11) {
+      xAxis.push(arr[i].mon)
+    }
+    if (arr[i].yyyy === 2018) {
+      year2018.push(+arr[i].monthlyRevenue)
+    }
+    if (arr[i].yyyy === 2019) {
+      year2019.push(+arr[i].monthlyRevenue)
+    }
+    if (arr[i].yyyy === 2020) {
+      year2020.push(+arr[i].monthlyRevenue)
+    }
+  }
+  while (year2020.length < 12) {
+    year2020.push(0)
+  }
+
+  return {xAxis, year2018, year2019, year2020}
+}
+
+function numberOfGuestsVsHourFormatting(arr) {
+  const xAxis = []
+  const yAxis = []
+  let hourConversion = {
+    11: '11am',
+    12: '12pm',
+    13: '1pm',
+    14: '2pm',
+    15: '3pm',
+    16: '4pm',
+    17: '5pm',
+    18: '6pm',
+    19: '7pm',
+    20: '8pm',
+    21: '9pm',
+    22: '10pm'
+  }
+  let hourTracking = 11
+  let end = 22
+  let i = 0
+  while (hourTracking <= end) {
+    if (arr[i] && hourTracking === arr[i].hours) {
+      xAxis.push(hourConversion[hourTracking])
+      yAxis.push(arr[i].percentage)
+      i++
+      hourTracking++
+    } else {
+      xAxis.push(hourConversion[hourTracking])
+      yAxis.push(0)
+      hourTracking++
+    }
+  }
+  return {xAxis, yAxis}
+}
+
+function axisMapping(arr, xAxisName, yAxisName) {
+  const xAxis = []
+  const yAxis = []
+  let sumOfOthers = 0
+  for (let i = 0; i <= 4; i++) {
+    xAxis.push(arr[i][xAxisName])
+    yAxis.push(+arr[i][yAxisName])
+  }
+
+  for (let i = 5; i < arr.length; i++) {
+    sumOfOthers += +arr[i][yAxisName]
+  }
+
+  xAxis.push('allOtherMenuItems')
+  yAxis.push(sumOfOthers)
+
+  return [xAxis, yAxis]
 }

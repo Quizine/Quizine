@@ -5,7 +5,7 @@ import {NavLink as RouterLink} from 'react-router-dom'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
 import {makeStyles} from '@material-ui/styles'
-import {List, ListItem, Button, colors} from '@material-ui/core'
+import {List, ListItem, Button} from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -37,19 +37,20 @@ const useStyles = makeStyles(theme => ({
   },
   active: {
     color: 'inherit',
-    // fontWeight: 'bolder',
+    fontWeight: 'bold',
     '& $icon': {
       color: 'inherit'
     }
-    // backgroundColor: 'black'
   }
 }))
 
-const CustomRouterLink = forwardRef((props, ref) => (
-  <div ref={ref} style={{flexGrow: 1}}>
-    <RouterLink {...props} />
-  </div>
-))
+const CustomRouterLink = forwardRef((props, ref) => {
+  return (
+    <div ref={ref} style={{flexGrow: 1}}>
+      <RouterLink {...props} />
+    </div>
+  )
+})
 
 const SidebarNav = props => {
   const {pages, className, ...rest} = props
@@ -77,8 +78,7 @@ const SidebarNav = props => {
 
 SidebarNav.propTypes = {
   className: PropTypes.string,
-  pages: PropTypes.array.isRequired,
-  handleClick: PropTypes.func.isRequired
+  pages: PropTypes.array.isRequired
 }
 
 export default SidebarNav

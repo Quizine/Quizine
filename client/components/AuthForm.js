@@ -40,6 +40,8 @@ const AuthForm = ({name, displayName, handleSubmit, error}) => {
     <div>
       <div>
         <div className="context">
+          <h1>Welcome to Quizine</h1>
+          <h3>where your restaurants become profitable</h3>
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>

@@ -3,21 +3,14 @@ import {connect} from 'react-redux'
 import {getPeakTimeOrders} from '../../store/summaryReducer'
 import {Bar} from 'react-chartjs-2'
 import clsx from 'clsx'
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Divider,
-  Button
-} from '@material-ui/core'
+import {Card, CardHeader, CardContent, Divider} from '@material-ui/core'
 
 class PeakTimeGraph extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedOption: 'year'
+      selectedOption: '30'
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -28,27 +21,12 @@ class PeakTimeGraph extends Component {
 
   handleChange(event) {
     this.setState({selectedOption: event.target.value})
-    if (!Object.keys(this.props.peakTimeOrders[event.target.value]).length) {
-      this.props.loadPeakTimeOrders(event.target.value)
-    }
+    this.props.loadPeakTimeOrders(event.target.value)
   }
 
   render() {
-    const labels = [
-      '11am',
-      '12pm',
-      '1pm',
-      '2pm',
-      '3pm',
-      '4pm',
-      '5pm',
-      '6pm',
-      '7pm',
-      '8pm',
-      '9pm'
-      // '10pm' NO ORDERS AT 10PM IN CURRENT DB
-    ]
-    const arrPerc = this.props.peakTimeOrders[this.state.selectedOption]
+    const labels = this.props.peakTimeOrders.xAxis
+    const arrPerc = this.props.peakTimeOrders.yAxis
 
     const chartData = {
       labels: labels,
@@ -56,33 +34,67 @@ class PeakTimeGraph extends Component {
         {
           label: 'Percentage',
           data: arrPerc,
-          backgroundColor: 'yellow'
+          backgroundColor: '#A6B1E1',
+          hoverBackgroundColor: '#424874',
+          borderColor: '#424874'
         }
       ]
     }
+    if (!arrPerc) {
+      return <h6>loading...</h6>
+    }
     return (
-      <div className="peak-time-div">
+      <div className="summary-charts-div">
         <Card className={clsx('classes.root, className')}>
-          <CardHeader
-            action={
-              <select onChange={this.handleChange} className="select-css">
-                <option value="year">Year</option>
-                <option value="month">Month</option>
-                <option value="week">Week</option>
-              </select>
-            }
-            title="Guest Distribution per Hour (%)"
-          />
+          <div>
+            <CardHeader
+              align="center"
+              action={
+                <div className="month-button">
+                  <select
+                    onChange={this.handleChange}
+                    className="select-cust-time-interval"
+                    defaultValue="30"
+                  >
+                    <option value="365">Last 1 Year</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="7">Last 7 Days</option>
+                  </select>
+                </div>
+              }
+              title="Guest Distribution Per Hour"
+            />
+          </div>
+
           <Divider />
           <CardContent>
             <div className="classes.chartContainer">
               <Bar
                 data={chartData}
                 options={{
+                  title: {
+                    display: false
+                  },
+                  legend: {
+                    display: false
+                  },
                   plugins: {
                     datalabels: {
                       display: false
                     }
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: Math.max(...arrPerc) * 1.1,
+                          callback: function(value) {
+                            return value + '%'
+                          }
+                        }
+                      }
+                    ]
                   }
                 }}
               />

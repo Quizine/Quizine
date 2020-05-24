@@ -10,6 +10,8 @@ const GET_PEAK_TIME_VS_ORDERS = 'GET_PEAK_TIME_VS_ORDERS'
 const GET_REVENUE_VS_TIME = 'GET_REVENUE_VS_TIME'
 const GET_CALENDAR_DATA = 'GET_CALENDAR_DATA'
 const GET_DOW_ANALYSIS_TABLE = 'GET_DOW_ANALYSIS_TABLE'
+const GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5 =
+  'GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5'
 const GET_YELP_RATING = 'GET_YELP_RATING'
 /**
  * INITIAL STATE
@@ -17,20 +19,16 @@ const GET_YELP_RATING = 'GET_YELP_RATING'
 const initialState = {
   restaurantInfo: {},
   numberOfWaiters: '',
-  peakTimeOrdersVsTime: {
-    year: [],
-    month: [],
-    week: []
-  },
-  revenueVsTime: {
-    allPeriod: {},
-    oneYear: {},
-    twoYears: {}
-  },
+  peakTimeOrdersVsTime: [],
+  revenueVsTime: {},
   calendarData: {
     revenue: '',
     listOfWaiters: [],
     popularDish: ''
+  },
+  menuSalesNumbersVsMenuItemsTopOrBottom5: {
+    top5: {},
+    bottom5: {}
   },
   DOWAnalysisTable: [],
   yelpRating: 0
@@ -50,15 +48,13 @@ const gotNumberOfWaiters = numOfWaiters => ({
   numOfWaiters
 })
 
-const gotPeakTimeOrders = (orders, timeInterval) => ({
+const gotPeakTimeOrders = peakTimeData => ({
   type: GET_PEAK_TIME_VS_ORDERS,
-  orders,
-  timeInterval
+  peakTimeData
 })
-const gotRevenueVsTime = (chartData, yearQty) => ({
+const gotRevenueVsTime = revenueSummaryData => ({
   type: GET_REVENUE_VS_TIME,
-  chartData,
-  yearQty
+  revenueSummaryData
 })
 const gotDOWAnalysisTable = (DOWresults, timeInterval) => ({
   type: GET_DOW_ANALYSIS_TABLE,
@@ -71,6 +67,12 @@ const gotCalendarData = (revenue, listOfWaiters, popularDish) => ({
   revenue,
   listOfWaiters,
   popularDish
+})
+
+const gotMenuSalesNumbersVsMenuItemsTopOrBottom5 = (top5, bottom5) => ({
+  type: GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5,
+  top5,
+  bottom5
 })
 
 const gotYelpRating = yelpRating => ({
@@ -99,24 +101,18 @@ export const getNumberOfWaiters = () => async dispatch => {
 export const getPeakTimeOrders = timeInterval => async dispatch => {
   try {
     const {data} = await axios.get('/api/summary/numberOfGuestsVsHour', {
-      params: {interval: timeInterval}
+      params: {timeInterval}
     })
-    dispatch(gotPeakTimeOrders(data, timeInterval))
+    dispatch(gotPeakTimeOrders(data))
   } catch (err) {
     console.error(err)
   }
 }
 
-export const getRevenueVsTime = yearQty => async dispatch => {
-  let sendYear
-  if (yearQty === 'oneYear') sendYear = '1'
-  else if (yearQty === 'twoYears') sendYear = '2'
-  else sendYear = '3'
+export const getRevenueVsTime = () => async dispatch => {
   try {
-    const {data} = await axios.get('/api/summary/revenueVsTime', {
-      params: {year: sendYear}
-    })
-    dispatch(gotRevenueVsTime(data, yearQty))
+    const {data} = await axios.get('/api/summary/revenueVsTime')
+    dispatch(gotRevenueVsTime(data))
   } catch (error) {
     console.error(error)
   }
@@ -156,6 +152,26 @@ export const getDOWAnalysisTable = () => async dispatch => {
   }
 }
 
+export const getMenuSalesNumbersVsMenuItemsTopOrBottom5 = timeInterval => async dispatch => {
+  try {
+    const top = await axios.get(
+      '/api/summary/menuSalesNumbersVsMenuItemsTopOrBottom5',
+      {
+        params: {timeInterval, topOrBottom: 'desc'}
+      }
+    )
+    const bottom = await axios.get(
+      '/api/summary/menuSalesNumbersVsMenuItemsTopOrBottom5',
+      {
+        params: {timeInterval, topOrBottom: 'asc'}
+      }
+    )
+    dispatch(gotMenuSalesNumbersVsMenuItemsTopOrBottom5(top.data, bottom.data))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const getYelpRating = (restaurantName, location) => async dispatch => {
   // let Promise = require("bluebird");
   try {
@@ -184,6 +200,7 @@ export const getYelpRating = (restaurantName, location) => async dispatch => {
 /**
  * REDUCER
  */
+// eslint-disable-next-line complexity
 export default function(state = initialState, action) {
   switch (action.type) {
     case GET_RESTAURANT_INFO:
@@ -199,18 +216,12 @@ export default function(state = initialState, action) {
     case GET_PEAK_TIME_VS_ORDERS:
       return {
         ...state,
-        peakTimeOrdersVsTime: {
-          ...state.peakTimeOrdersVsTime,
-          [`${action.timeInterval}`]: action.orders
-        }
+        peakTimeOrdersVsTime: action.peakTimeData
       }
     case GET_REVENUE_VS_TIME:
       return {
         ...state,
-        revenueVsTime: {
-          ...state.revenueVsTime,
-          [`${action.yearQty}`]: action.chartData
-        }
+        revenueVsTime: action.revenueSummaryData
       }
     case GET_CALENDAR_DATA:
       return {
@@ -225,6 +236,15 @@ export default function(state = initialState, action) {
       return {
         ...state,
         DOWAnalysisTable: action.DOWresults
+      }
+    case GET_MENU_SALES_NUMBERS_VS_MENU_ITEMS_TOP_OR_BOTTOM_5:
+      return {
+        ...state,
+        menuSalesNumbersVsMenuItemsTopOrBottom5: {
+          ...state.menuSalesNumbersVsMenuItemsTopOrBottom5,
+          top5: action.top5,
+          bottom5: action.bottom5
+        }
       }
     case GET_YELP_RATING:
       return {

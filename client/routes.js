@@ -5,12 +5,11 @@ import PropTypes from 'prop-types'
 import {
   Login,
   Signup,
-  UserHome,
   Summary,
   CustomizedQueryContainer,
-  WelcomePage,
   Sidebar,
-  BusinessAnalytics
+  RevenueAnalytics,
+  StaffAnalytics
 } from './components'
 import {me} from './store'
 /**
@@ -29,15 +28,15 @@ class Routes extends Component {
         <Sidebar />
         <Switch>
           <Route exact path="/" component={Summary} />
-          {/* <Route path="/home" component={UserHome} /> */}
           <Route path="/customizedQuery" component={CustomizedQueryContainer} />
           <Route path="/summary" component={Summary} />
-          <Route path="/businessAnalytics" component={BusinessAnalytics} />
+          <Route path="/revenueAnalytics" component={RevenueAnalytics} />
+          <Route path="/staffAnalytics" component={StaffAnalytics} />
         </Switch>
       </div>
     ) : (
       <Switch>
-        <Route exact path="/" component={WelcomePage} />
+        <Route exact path="/" component={Login} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
       </Switch>

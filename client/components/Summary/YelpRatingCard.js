@@ -64,7 +64,7 @@ const YelpRating = props => {
               <Typography variant="h6">
                 {props.yelpRating.toFixed(1)}/5.0
               </Typography>
-              <Rating name="yelp-rating" value={props.yelpRating} />
+              <Rating name="yelp-rating" value={props.yelpRating} readOnly />
             </Box>
           </Grid>
           <Grid item>
@@ -73,11 +73,6 @@ const YelpRating = props => {
             </Avatar>
           </Grid>
         </Grid>
-        {/* <div className={classes.difference}>
-          <Typography className={classes.caption} variant="caption">
-            current rating
-          </Typography>
-        </div> */}
       </CardContent>
     </Card>
   )

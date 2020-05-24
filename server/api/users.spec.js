@@ -21,20 +21,3 @@ before(function(done) {
       done(err)
     })
 })
-
-describe('FE GET businessAnalytics', function(done) {
-  it('should return a 200 response if the user is logged in', function(done) {
-    authenticatedUser.get('/businessAnalytics').expect(200, done)
-  })
-})
-
-// describe('BE /avgNumberOfGuestsVsWaitersPerOrder', function(done) {
-//   it('should return an object', function(done) {
-//     authenticatedUser
-//       .get('/api/businessAnalytics/avgNumberOfGuestsVsWaitersPerOrder')
-//       .query({
-//         timeInterval: 'month'
-//       })
-//       .expect(200, done)
-//   })
-// })

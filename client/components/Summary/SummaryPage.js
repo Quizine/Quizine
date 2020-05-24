@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PeakTimeGraph from './PeakTimeGraph'
-import LineGraphRevenue from './LineGraphRevenue'
+import StackedBarGraphRevenue from './StackedBarGraphRevenue'
 import EnhancedTable from './DOWAnalysisTable'
+import PopularMenuItemsTopOrBottom5 from './PopularMenuItemsTopOrBottom5'
 import CalendarContainer from './Calendar/Calendar'
 import {
   getDOWAnalysisTable,
@@ -35,51 +36,62 @@ class SummaryPage extends Component {
   }
 
   getTotalRevenue(arr) {
-    return (
-      arr.reduce((acc, currentVal) => acc + currentVal, 0) / 1000
-    ).toFixed(2)
+    return arr.reduce((acc, currentVal) => acc + currentVal.dayRevenue, 0)
   }
 
   render() {
     return (
       <div className="summary-page-container">
-        {this.props.DOWAnalysisTable &&
-        this.props.restaurantInfo[0] &&
-        this.props.revenueVsTime.oneYear.revenue &&
-        this.props.numberOfWaiters ? (
-          <div className="card-container">
-            <Grid container spacing={4}>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <RestaurantInfo restaurantInfo={this.props.restaurantInfo[0]} />
+        <div className="summary-subcontainter">
+          {this.props.DOWAnalysisTable &&
+          this.props.restaurantInfo[0] &&
+          this.props.revenueVsTime.xAxis &&
+          this.props.numberOfWaiters ? (
+            <div className="card-container">
+              <Grid container spacing={4}>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <RestaurantInfo
+                    restaurantInfo={this.props.restaurantInfo[0]}
+                  />
+                </Grid>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <TotalRevenue
+                    totalRevenue={
+                      this.props.DOWAnalysisTable &&
+                      this.getTotalRevenue(this.props.DOWAnalysisTable)
+                    }
+                  />
+                </Grid>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <NumberOfWaiters
+                    numberOfWaiters={this.props.numberOfWaiters}
+                  />
+                </Grid>
+                <Grid item lg={3} sm={6} xl={3} xs={12}>
+                  <YelpRating yelpRating={this.props.yelpRating} />
+                </Grid>
               </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <TotalRevenue
-                  totalRevenue={this.getTotalRevenue(
-                    this.props.revenueVsTime.oneYear.revenue
-                  )}
-                />
-              </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <NumberOfWaiters numberOfWaiters={this.props.numberOfWaiters} />
-              </Grid>
-              <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <YelpRating yelpRating={this.props.yelpRating} />
-              </Grid>
-            </Grid>
+            </div>
+          ) : null}
+          <div>
+            <CalendarContainer />
+            <div className="summary-divider">
+              <Divider />
+            </div>
           </div>
-        ) : null}
-        <Divider />
-        <div>
-          <CalendarContainer />
+          <div className="summary-chart-container">
+            <StackedBarGraphRevenue />
+            <PeakTimeGraph />
+          </div>
+
+          <div className="summary-table-container">
+            <PopularMenuItemsTopOrBottom5 />
+            <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
+          </div>
+          <div className="summary-divider-bottom">
+            <Divider />
+          </div>
           <Divider />
-        </div>
-        <div className="summary-chart-container">
-          <LineGraphRevenue />
-          <PeakTimeGraph />
-          <Divider />
-        </div>
-        <div className="summary-table-container">
-          <EnhancedTable DOWAnalysisTable={this.props.DOWAnalysisTable} />
         </div>
       </div>
     )
@@ -111,7 +123,7 @@ const mapDispatchToProps = dispatch => {
   return {
     loadDOWAnalysisTable: () => dispatch(getDOWAnalysisTable()),
     loadRestaurantInfo: () => dispatch(getRestaurantInfo()),
-    loadRevenueVsTime: () => dispatch(getRevenueVsTime('oneYear')),
+    loadRevenueVsTime: () => dispatch(getRevenueVsTime()),
     loadNumberOfWaiters: () => dispatch(getNumberOfWaiters()),
     loadYelpRating: (restaurantName, location) =>
       dispatch(getYelpRating(restaurantName, location))
