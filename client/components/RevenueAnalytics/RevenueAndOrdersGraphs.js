@@ -106,7 +106,7 @@ export default class RevenueAndOrdersGraphs extends Component {
                       {
                         ticks: {
                           suggestedMin: 0,
-                          suggestedMax: queryData.max() * 1.1,
+                          suggestedMax: Math.max(...queryData) * 1.1,
                           callback: function(value) {
                             if (
                               selectedQueryTitle === 'detailedRevenueAnalysis'
