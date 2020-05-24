@@ -11,13 +11,7 @@ export {
   default as CustomizedQueryContainer
 } from './CustomizedQuery/CustomizedQueryContainer'
 export {
-  default as BusinessAnalytics
-} from './BusinessAnalytics/BusinessAnalyticsPage'
-
-export {
   default as RevenueAnalytics
 } from './RevenueAnalytics/RevenueAnalyticsPage'
-
 export {default as StaffAnalytics} from './StaffAnalytics/StaffAnalyticsPage'
-
 export {Login, Signup} from './AuthForm'

@@ -8,7 +8,6 @@ import {
   Summary,
   CustomizedQueryContainer,
   Sidebar,
-  BusinessAnalytics,
   RevenueAnalytics,
   StaffAnalytics
 } from './components'
@@ -29,10 +28,8 @@ class Routes extends Component {
         <Sidebar />
         <Switch>
           <Route exact path="/" component={Summary} />
-          {/* <Route path="/home" component={UserHome} /> */}
           <Route path="/customizedQuery" component={CustomizedQueryContainer} />
           <Route path="/summary" component={Summary} />
-          <Route path="/businessAnalytics" component={BusinessAnalytics} />
           <Route path="/revenueAnalytics" component={RevenueAnalytics} />
           <Route path="/staffAnalytics" component={StaffAnalytics} />
         </Switch>

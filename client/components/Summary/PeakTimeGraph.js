@@ -88,7 +88,7 @@ class PeakTimeGraph extends Component {
                       {
                         ticks: {
                           suggestedMin: 0,
-                          suggestedMax: arrPerc.max() * 1.1,
+                          suggestedMax: Math.max(...arrPerc) * 1.1,
                           callback: function(value) {
                             return value + '%'
                           }
