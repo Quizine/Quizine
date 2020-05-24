@@ -58,7 +58,6 @@ router.get('/lunchAndDinnerRevenueComparison', async (req, res, next) => {
         AND orders."restaurantId" = $3
         GROUP BY date, "mealType"
         ORDER BY date;`
-        console.log('TEXT--->', text)
         correctStartDate = new Date(req.query.startDate)
         correctEndDate = new Date(
           Math.min(new Date(), new Date(req.query.endDate))
@@ -417,7 +416,6 @@ function formattingData(arr, startDate, endDate, xAxisOption) {
 
 // eslint-disable-next-line complexity
 function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
-  console.log('ARR--->', arr)
   let xAxis = []
   let lunchRevenue = []
   let dinnerRevenue = []
@@ -428,7 +426,11 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
     day: [0, 15]
   }
 
-  if (xAxisOption !== 'hour' && xAxisOption !== 'day') {
+  if (
+    xAxisOption !== 'hour' &&
+    xAxisOption !== 'day' &&
+    xAxisOption !== 'week'
+  ) {
     for (let i = 0; i < arr.length; i++) {
       let formattedElement
 
@@ -447,22 +449,6 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
               xAxisOptionHashTable[xAxisOption][2],
               xAxisOptionHashTable[xAxisOption][3]
             )
-      } else if (xAxisOption === 'week') {
-        if (i === 0 || i === 1) {
-          formattedElement = startDate
-            .toString()
-            .slice(
-              xAxisOptionHashTable[xAxisOption][0],
-              xAxisOptionHashTable[xAxisOption][1]
-            )
-        } else {
-          formattedElement = arr[i].date
-            .toString()
-            .slice(
-              xAxisOptionHashTable[xAxisOption][0],
-              xAxisOptionHashTable[xAxisOption][1]
-            )
-        }
       } else {
         //Formatting for year
         formattedElement = arr[i].date
@@ -555,6 +541,78 @@ function formattingLunchAndDinnerData(arr, startDate, endDate, xAxisOption) {
         lunchRevenue.push(0)
         dinnerRevenue.push(0)
         startDate.setDate(startDate.getDate() + 1)
+      }
+    }
+    if (lunchRevenue.length < dinnerRevenue.length) {
+      lunchRevenue.push(0)
+    }
+    if (lunchRevenue.length > dinnerRevenue.length) {
+      dinnerRevenue.push(0)
+    }
+  } else if (xAxisOption === 'week') {
+    let i = 0
+
+    //Logic for first date of week data array
+    xAxis.push(startDate.toString().slice(0, 15))
+
+    if (startDate < arr[i].date) {
+      dinnerRevenue.push(0)
+      lunchRevenue.push(0)
+    }
+
+    if (startDate >= arr[i].date && arr[i].mealType === 'dinner') {
+      dinnerRevenue.push(+arr[i].revenue)
+      i++
+    } else if (startDate >= arr[i].date && arr[i].mealType !== 'dinner') {
+      dinnerRevenue.push(0)
+    }
+
+    if (startDate >= arr[i].date && arr[i].mealType === 'lunch') {
+      lunchRevenue.push(+arr[i].revenue)
+      i++
+    } else if (startDate >= arr[i].date && arr[i].mealType !== 'lunch') {
+      lunchRevenue.push(0)
+    }
+
+    //Logic for remaining dates of week data array
+    startDate = arr[i].date
+    while (startDate <= endDate) {
+      if (
+        arr[i] &&
+        startDate.toString().slice(0, 15) ===
+          arr[i].date.toString().slice(0, 15)
+      ) {
+        if (
+          xAxis.length === 0 ||
+          arr[i].date.toString().slice(0, 15) !== xAxis[xAxis.length - 1]
+        ) {
+          xAxis.push(arr[i].date.toString().slice(0, 15))
+        }
+        if (arr[i].mealType === 'lunch') {
+          if (xAxis.length - 1 !== lunchRevenue.length) {
+            lunchRevenue.push(0)
+          }
+          lunchRevenue.push(+arr[i].revenue)
+        } else {
+          if (xAxis.length - 1 !== dinnerRevenue.length) {
+            dinnerRevenue.push(0)
+          }
+          dinnerRevenue.push(+arr[i].revenue)
+        }
+
+        if (
+          !arr[i + 1] ||
+          (arr[i + 1] &&
+            xAxis[xAxis.length - 1] !== arr[i + 1].date.toString().slice(0, 15))
+        ) {
+          startDate.setDate(startDate.getDate() + 7)
+        }
+        i++
+      } else {
+        xAxis.push(startDate.toString().slice(0, 15))
+        lunchRevenue.push(0)
+        dinnerRevenue.push(0)
+        startDate.setDate(startDate.getDate() + 7)
       }
     }
     if (lunchRevenue.length < dinnerRevenue.length) {

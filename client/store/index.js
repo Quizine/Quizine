@@ -21,6 +21,9 @@ const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )
 const store = createStore(reducer, middleware)
+// const store = Process.ENV.dev
+//   ? createStore(reducer, middleware)
+//   : createStore(reducer)
 
 export default store
 export * from './userReducer'
