@@ -41,7 +41,9 @@ passport.deserializeUser(async (id, done) => {
 
 const createApp = () => {
   // logging middleware
-  app.use(morgan('dev'))
+  if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'))
+  }
 
   // body parsing middleware
   app.use(express.json())
