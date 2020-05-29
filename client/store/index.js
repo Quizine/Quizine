@@ -15,9 +15,14 @@ const reducer = combineReducers({
   revenueAnalytics,
   staffAnalytics
 })
-const middleware = composeWithDevTools(
-  applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
-)
+
+const middleware =
+  process.env.NODE_ENV === 'development'
+    ? composeWithDevTools(
+        applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
+      )
+    : composeWithDevTools(applyMiddleware(thunkMiddleware))
+
 const store = createStore(reducer, middleware)
 
 export default store

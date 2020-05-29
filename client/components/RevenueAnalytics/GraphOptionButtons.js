@@ -5,11 +5,6 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // display: 'flex',
-    // flexDirection: 'row'
-    // width: 150,
-    //fontWeight: theme.typography.fontWeightMedium
-    // backgroundColor: "blue"
     marginLeft: '20px',
     marginBottom: '5px'
   },
