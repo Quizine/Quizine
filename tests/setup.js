@@ -1,7 +1,7 @@
 const {JSDOM} = require('jsdom')
 import Enzyme from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import store, {resetStore} from '../app/store'
+import store, {resetStore} from '../client/store'
 import waitForExpect from 'wait-for-expect'
 import chai from 'chai'
 import sinonChai from 'sinon-chai'
