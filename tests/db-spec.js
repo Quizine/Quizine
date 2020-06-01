@@ -1,17 +1,13 @@
 import {expect} from 'chai'
 
 const db = require('../server/db')
-const {
-  User,
-  Order, //Desi
-  MenuItem //John
-} = require('../server/db/models')
+const {User, Order, MenuItem} = require('../server/db/models')
 
 describe('Sequelize Model', () => {
   describe('User Model', () => {
     before(() => db.sync({force: true}))
     afterEach(() => db.sync({force: true}))
-    it('has fields firstName, lastName, email, title, imgUrl, admin', async () => {
+    it('has first name, last name, email, title, imgUrl and admin fields', async () => {
       const user = await User.create({
         firstName: 'Jane',
         lastName: 'Shen',
@@ -48,8 +44,7 @@ describe('Sequelize Model', () => {
         lastName: 'Shen',
         email: 'shen@email.com',
         title: 'Administrative Manager',
-        imgUrl: 'default',
-        admin: false
+        imgUrl: 'default'
       })
       expect(user.admin).to.equal(false)
     })
@@ -71,7 +66,75 @@ describe('Sequelize Model', () => {
     })
   })
 
-  describe('Order Model', () => {})
+  describe('Order Model', async () => {
+    before(() => db.sync({force: true}))
+    afterEach(() => db.sync({force: true}))
+    it('has time of purchase field which is a date, and subtotal, tax, tip, revenue and number of guests fields which are numbers', async () => {
+      const order = await Order.create({
+        timeOfPurchase: 'Fri, 22 Nov 2019 22:38:00 GMT',
+        subtotal: 220,
+        tax: 22,
+        tip: 20,
+        revenue: 262,
+        numberOfGuests: 5
+      })
+      expect(order.timeOfPurchase.toString()).to.equal(
+        'Fri Nov 22 2019 17:38:00 GMT-0500 (Eastern Standard Time)'
+      )
+      expect(order.subtotal).to.equal(220)
+      expect(order.tax).to.equal(22)
+      expect(order.tip).to.equal(20)
+      expect(order.revenue).to.equal(262)
+      expect(order.numberOfGuests).to.equal(5)
+      expect(order.timeOfPurchase).to.be.a('date')
+      expect(order.subtotal).to.be.a('number')
+      expect(order.tax).to.be.a('number')
+      expect(order.tip).to.be.a('number')
+      expect(order.revenue).to.be.a('number')
+      expect(order.numberOfGuests).to.be.a('number')
+    })
+    it('requires time of purchase, subtotal, tax, tip, revenue and number of guests', async () => {
+      const order = await Order.build({
+        timeOfPurchase: null,
+        subtotal: null,
+        tax: null,
+        tip: null,
+        revenue: null,
+        numberOfGuests: null
+      })
+      try {
+        await order.validate()
+        throw Error(
+          'validation should have failed with time of purchase, subtotal, tax, tip, revenue and number of guests as null'
+        )
+      } catch (err) {
+        expect(err.message).to.contain('order.timeOfPurchase cannot be null')
+        expect(err.message).to.contain('order.subtotal cannot be null')
+        expect(err.message).to.contain('order.tax cannot be null')
+        expect(err.message).to.contain('order.tip cannot be null')
+        expect(err.message).to.contain('order.revenue cannot be null')
+        expect(err.message).to.contain('order.numberOfGuests cannot be null')
+      }
+    })
+    it('type of time of purchase field is a date', async () => {
+      const newOrder = {
+        timeOfPurchase: 'string',
+        subtotal: 220,
+        tax: 22,
+        tip: 20,
+        revenue: 262,
+        numberOfGuests: 5
+      }
+      try {
+        await Order.create(newOrder)
+        throw Error(
+          'input syntax should have failed with time of purchase as string'
+        )
+      } catch (err) {
+        expect(err.message).to.contain('Invalid date')
+      }
+    })
+  })
 
   describe('Menu Model', () => {
     before(() => db.sync({force: true}))
